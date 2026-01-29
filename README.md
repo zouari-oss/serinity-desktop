@@ -133,7 +133,7 @@ mvn clean install
 
 ## Download
 
-You can [download](https://github.com/zouari-oss/serinity-desktop/releases) the latest installable version of tech-solutions-sarl-network-infrastructure for Windows, macOS and Linux.
+You can [download](https://github.com/zouari-oss/serinity-desktop/releases) the latest installable version of Serinity for Windows, macOS and Linux.
 
 ## Emailware
 

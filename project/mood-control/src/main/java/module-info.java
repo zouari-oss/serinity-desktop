@@ -2,6 +2,10 @@ module com.serinity {
   requires transitive javafx.controls;
     requires javafx.fxml;
 
+    requires java.sql;
+    requires org.mariadb.jdbc;
+
+
     opens com.serinity.moodcontrol.controller to javafx.fxml;
 
 

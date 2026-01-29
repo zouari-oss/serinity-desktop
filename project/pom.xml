@@ -122,6 +122,8 @@
 
             </plugins>
         </pluginManagement>
+
     </build>
+
 
 </project>

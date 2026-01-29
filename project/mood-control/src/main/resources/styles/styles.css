@@ -598,3 +598,25 @@
 .icon-btn-delete:hover {
     -fx-background-color: rgba(217,83,79,0.18);
 }
+/* ===== Footer (Serinity style) ===== */
+
+.footer-bar {
+    -fx-padding: 10 20 10 20;
+
+    /* same Serinity navbar vibe */
+    -fx-background-color: linear-gradient(
+            to right,
+            #2f6f6d,
+            #3b8f8b
+    );
+
+    -fx-border-width: 1 0 0 0;
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+}
+
+.footer-bar Label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+    -fx-text-fill: rgba(255, 255, 255, 0.75);
+}
+

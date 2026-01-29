@@ -79,6 +79,10 @@
     <center>
         <StackPane fx:id="contentHost" styleClass="content-host" />
     </center>
-
+    <bottom>
+        <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
+            <Label text="© 2026 Serinity. All rights reserved." />
+        </HBox>
+    </bottom>
 
 </BorderPane>
