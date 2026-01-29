@@ -1,6 +1,6 @@
 <!-- PROJECT SHIELDS -->
 
-[![Contributors](https://img.shields.io/badge/CONTRIBUTORS-01-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/graphs/contributors)
+[![Contributors](https://img.shields.io/badge/CONTRIBUTORS-02-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/graphs/contributors)
 [![Forks](https://img.shields.io/badge/FORKS-00-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/network/members)
 [![Stargazers](https://img.shields.io/badge/STARS-01-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/stargazers)
 [![Issues](https://img.shields.io/badge/ISSUES-00-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/issues)
@@ -107,8 +107,8 @@ The platform integrates **Artificial Intelligence** to provide personalized emot
 ### 1. Clone the Repository and Navigate to the Project
 
 ```bash
-git clone https://github.com/ORGANIZATION/serinity
-cd serinity/project
+git clone https://github.com/zouari-oss/serinity-desktop/
+cd serinity-desktop/project
 ```
 
 ### 2. Compile the Project
@@ -133,12 +133,12 @@ mvn clean install
 
 ## Download
 
-You can [download](https://github.com/ZouariOmar/serinity/releases) the latest installable version of tech-solutions-sarl-network-infrastructure for Windows, macOS and Linux.
+You can [download](https://github.com/zouari-oss/serinity-desktop/releases) the latest installable version of tech-solutions-sarl-network-infrastructure for Windows, macOS and Linux.
 
 ## Emailware
 
 serinity is an emailware. Meaning, if you liked using this app or it has helped you in any way,
-would like you send as an email at <zouariomar20@gmail.com> about anything you'd want to say about
+would like you send as an email at <zouariomar20@gmail.com> or <ghaithbensalah1999@gmail.com> about anything you'd want to say about
 this software. I'd really appreciate it!
 
 ## License
