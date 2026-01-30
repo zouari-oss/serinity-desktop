@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox spacing="14"
+      styleClass="wizard-card"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.moodcontrol.controller.StepMoodController">
+
+    <padding>
+        <Insets top="22" right="22" bottom="22" left="22"/>
+    </padding>
+
+    <Label text="How do you feel right now?" styleClass="wizard-question"/>
+    <Label text="Move the slider to match your current state." styleClass="wizard-sub"/>
+
+    <Region minHeight="10"/>
+
+    <!-- Mood Circle -->
+    <StackPane fx:id="circleWrap" styleClass="mood-circle-wrap">
+        <Circle fx:id="moodCircle" radius="76" styleClass="mood-circle"/>
+    </StackPane>
+
+    <Label fx:id="moodLabel" text="Neutral" styleClass="mood-label"/>
+
+    <Region minHeight="6"/>
+
+    <!-- 5-step slider (simple, stable) -->
+    <Slider fx:id="moodSlider"
+            min="1" max="5" value="3"
+            majorTickUnit="1" minorTickCount="0"
+            snapToTicks="true"
+            showTickMarks="false"
+            showTickLabels="false"
+            styleClass="mood-slider"/>
+
+</VBox>
