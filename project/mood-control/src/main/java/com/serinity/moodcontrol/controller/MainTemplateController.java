@@ -8,6 +8,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.text.MessageFormat;
+import javafx.scene.control.TextField;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -25,16 +30,30 @@ public class MainTemplateController {
     @FXML private ImageView avatarImg;
 
     @FXML private StackPane contentHost;
+    @FXML private TextField searchField;   // you already have it in FXML
+    @FXML private Label footerLabel;       // we’ll add fx:id to footer label
+    @FXML private ResourceBundle resources;
+
+    private ResourceBundle bundle;
 
     private List<Button> navButtons;
 
     @FXML
     public void initialize() {
-        navButtons = List.of(btnDashboard, btnSleep, btnMood, btnSupport, btnExercises, btnAppointments);
+
+        if (resources == null) {
+            throw new IllegalStateException("Bundle not injected");
+        }
+
+        footerLabel.setText(resources.getString("footer.text"));
+
+        navButtons = List.of(
+                btnDashboard, btnSleep, btnMood,
+                btnSupport, btnExercises, btnAppointments
+        );
 
         userNameLabel.setText("7ot_User_Name_lena");
 
-        // Default: Mood page (since you're working there)
         setActiveNav(btnMood);
         loadIntoHost("/fxml/mood/MoodHome.fxml");
     }
@@ -65,10 +84,13 @@ public class MainTemplateController {
 
     private void loadIntoHost(String fxmlPath) {
         try {
-            Parent page = FXMLLoader.load(getClass().getResource(fxmlPath));
+            // resources is injected into this controller because Template.fxml was loaded with a bundle
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath), resources);
+            Parent page = loader.load();
             contentHost.getChildren().setAll(page);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load: " + fxmlPath, e);
         }
     }
+
 }

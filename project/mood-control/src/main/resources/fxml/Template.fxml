@@ -36,12 +36,12 @@
             <!-- Navigation -->
             <HBox fx:id="navBox" alignment="CENTER_LEFT" spacing="10.0" styleClass="nav">
                 <children>
-                    <Button fx:id="btnDashboard" onAction="#onNavClick" styleClass="nav-btn nav-btn-active" text="Dashboard" />
-                    <Button fx:id="btnSleep" onAction="#onNavClick" styleClass="nav-btn" text="Sleep" />
-                    <Button fx:id="btnMood" onAction="#onNavClick" styleClass="nav-btn" text="Mood" />
-                    <Button fx:id="btnSupport" onAction="#onNavClick" styleClass="nav-btn" text="Support" />
-                    <Button fx:id="btnExercises" onAction="#onNavClick" styleClass="nav-btn" text="Exercises" />
-                    <Button fx:id="btnAppointments" onAction="#onNavClick" styleClass="nav-btn" text="Appointments" />
+                    <Button fx:id="btnDashboard" onAction="#onNavClick" styleClass="nav-btn nav-btn-active" text="%nav.dashboard" />
+                    <Button fx:id="btnSleep" onAction="#onNavClick" styleClass="nav-btn" text="%nav.sleep" />
+                    <Button fx:id="btnMood" onAction="#onNavClick" styleClass="nav-btn" text="%nav.mood" />
+                    <Button fx:id="btnSupport" onAction="#onNavClick" styleClass="nav-btn" text="%nav.support" />
+                    <Button fx:id="btnExercises" onAction="#onNavClick" styleClass="nav-btn" text="%nav.exercises" />
+                    <Button fx:id="btnAppointments" onAction="#onNavClick" styleClass="nav-btn" text="%nav.appointments" />
                 </children>
             </HBox>
 
@@ -55,7 +55,8 @@
                 <HBox fx:id="searchBox" spacing="8.0" styleClass="search">
                     <children>
                         <Label styleClass="search-icon" text="🔍" />
-                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="220.0" promptText="Search" styleClass="search-field" />
+                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="220.0"
+                                   promptText="%search.placeholder" styleClass="search-field" />
                     </children>
                 </HBox>
 
@@ -81,7 +82,8 @@
     </center>
     <bottom>
         <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
-            <Label text="© 2026 Serinity. All rights reserved." />
+            <Label fx:id="footerLabel"/>
+
         </HBox>
     </bottom>
 
