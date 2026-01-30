@@ -3,13 +3,17 @@
  *
  * Fxml filename manager (enum)
  *
- * <p>none</p>
+ * <p>see `/fxml/*`</p>
  *
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 2026-01-28
  *
- * <a href="https://github.com/zouari-oss/serinity" target="_blank">FXMLFile.java</a>
+ * <a
+ * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/flag/FXMLFile.java" 
+ * target="_blank">
+ * FXMLFile.java
+ * </a>
  */
 
 // `FXMLFile` package name
@@ -24,8 +28,8 @@ package com.serinity.accesscontrol.flag;
  *
  * <pre>
  * {@code
- * // Example
- * final static String SIGININ_FILENAME = FXMLFile.SIGNIN.getFileName();
+ * // Example usage
+ * final static String SIGNIN_FILENAME = FXMLFile.SIGNIN.getFileName();
  * }</pre>
  */
 public enum FXMLFile {
