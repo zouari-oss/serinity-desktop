@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.moodcontrol.controller.MoodHistoryController"
+            styleClass="mood-root">
+
+    <!-- Header -->
+    <top>
+        <VBox spacing="12" styleClass="history-top">
+            <padding>
+                <Insets top="18" right="16" bottom="10" left="16"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Mood History" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnLogNew" text="Log new" styleClass="btn-primary" onAction="#onLogNew"/>
+            </HBox>
+
+            <!-- Filters -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="history-filters">
+                <Label text="Range" styleClass="filter-label"/>
+                <ComboBox fx:id="rangeBox" prefWidth="160" styleClass="filter-box"/>
+                <Region minWidth="10"/>
+
+                <Label text="Type" styleClass="filter-label"/>
+                <ComboBox fx:id="typeBox" prefWidth="140" styleClass="filter-box"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnRefresh" text="Refresh" styleClass="btn-ghost" onAction="#onRefresh"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Timeline -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="history-scroll" hbarPolicy="NEVER">
+            <content>
+                <VBox fx:id="timelineBox" spacing="14" styleClass="history-timeline">
+                    <padding>
+                        <Insets top="10" right="16" bottom="18" left="16"/>
+                    </padding>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
