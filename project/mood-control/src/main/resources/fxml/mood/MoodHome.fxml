@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.moodcontrol.controller.MoodHomeController"
+            styleClass="mood-root">
+
+    <!-- ===== HEADER ===== -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="page-header">
+            <padding>
+                <Insets top="16" right="16" bottom="10" left="16"/>
+            </padding>
+
+            <Label text="%mood.title" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="%mood.hint" styleClass="page-hint"/>
+        </HBox>
+    </top>
+
+    <!-- ===== CONTENT ===== -->
+    <center>
+        <StackPane fx:id="moodHost" styleClass="mood-host">
+
+            <HBox spacing="18" alignment="CENTER" styleClass="mood-hub-row">
+                <padding>
+                    <Insets top="26" right="26" bottom="26" left="26"/>
+                </padding>
+
+                <!-- Log -->
+                <StackPane fx:id="cardLogMood"
+                           prefWidth="320" prefHeight="220"
+                           styleClass="mood-card">
+                    <VBox alignment="CENTER" spacing="10">
+                        <Label text="☯" styleClass="mood-card-icon"/>
+                        <Label text="%mood.card.log.title" styleClass="mood-card-title"/>
+                        <Label text="%mood.card.log.sub" styleClass="mood-card-sub"/>
+                    </VBox>
+                </StackPane>
+
+                <!-- History -->
+                <StackPane fx:id="cardMoodHistory"
+                           prefWidth="320" prefHeight="220"
+                           styleClass="mood-card">
+                    <VBox alignment="CENTER" spacing="10">
+                        <Label text="👁" styleClass="mood-card-icon"/>
+                        <Label text="%mood.card.history.title" styleClass="mood-card-title"/>
+                        <Label text="%mood.card.history.sub" styleClass="mood-card-sub"/>
+                    </VBox>
+                </StackPane>
+
+                <!-- Journal -->
+                <StackPane fx:id="cardJournal"
+                           prefWidth="320" prefHeight="220"
+                           styleClass="mood-card mood-card-disabled">
+                    <VBox alignment="CENTER" spacing="10">
+                        <Label text="✎" styleClass="mood-card-icon"/>
+                        <Label text="%mood.card.journal.title" styleClass="mood-card-title"/>
+                        <Label text="%mood.card.journal.sub" styleClass="mood-card-sub"/>
+                    </VBox>
+                </StackPane>
+
+            </HBox>
+
+        </StackPane>
+    </center>
+
+
+</BorderPane>
