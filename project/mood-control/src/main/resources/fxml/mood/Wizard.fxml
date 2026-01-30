@@ -22,20 +22,20 @@
 
             <!-- Progress / Title row -->
             <HBox alignment="CENTER_LEFT" spacing="10" styleClass="wizard-top">
-                <Label fx:id="stepTitle" text="State of Mind" styleClass="wizard-title"/>
+                <Label fx:id="stepTitle" text="%wizard.title" styleClass="wizard-title"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="stepCounter" text="Step 1 of 4" styleClass="wizard-counter"/>
+                <!-- Controller will overwrite this dynamically; key is just initial fallback -->
+                <Label fx:id="stepCounter" text="%wizard.counter.fallback" styleClass="wizard-counter"/>
             </HBox>
 
             <!-- Card container (steps will be injected here) -->
             <StackPane fx:id="cardHost" styleClass="wizard-cardhost"/>
 
-
             <!-- Bottom controls -->
             <HBox alignment="CENTER_LEFT" spacing="10" styleClass="wizard-controls">
-                <Button fx:id="btnBack" text="Back" onAction="#onBack" styleClass="btn-ghost"/>
+                <Button fx:id="btnBack" text="%btn.back" onAction="#onBack" styleClass="btn-ghost"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="btnNext" text="Next" onAction="#onNext" styleClass="btn-primary"/>
+                <Button fx:id="btnNext" text="%btn.next" onAction="#onNext" styleClass="btn-primary"/>
             </HBox>
 
         </VBox>

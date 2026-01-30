@@ -18,10 +18,10 @@
         <Insets top="22" right="22" bottom="22" left="22"/>
     </padding>
 
-    <Label text="What influenced your mood?"
+    <Label text="%wizard.step.influences.question"
            styleClass="wizard-question"/>
 
-    <Label text="Select up to 5 influences. Tap again to remove."
+    <Label text="%wizard.step.influences.sub"
            styleClass="wizard-sub"/>
 
     <Region minHeight="8"/>

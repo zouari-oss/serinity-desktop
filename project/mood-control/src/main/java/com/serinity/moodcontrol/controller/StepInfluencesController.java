@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.FlowPane;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 public class StepInfluencesController {
@@ -12,23 +13,30 @@ public class StepInfluencesController {
     @FXML private FlowPane chipPane;
     @FXML private Label limitLabel;
 
-    private StateOfMindWizardController wizard;
+    @FXML private ResourceBundle resources;
 
-    private boolean prefilling = false; // ✅ add this
+    private StateOfMindWizardController wizard;
+    private boolean prefilling = false;
 
     private static final int MAX_SELECTED = 5;
 
+    // Store CODES, not display text
     private final Set<String> selected = new LinkedHashSet<>();
     private final List<ToggleButton> buttons = new ArrayList<>();
 
-    private static final String[] INFLUENCES = {
-            "Sleep", "School/Work", "Deadlines", "Stress",
-            "Friends", "Family", "Relationship", "Social media",
-            "Health", "Pain", "Exercise", "Food",
-            "Weather", "News", "Money", "Travel/Commute",
-            "Loneliness", "Conflict", "Achievement", "Failure",
-            "Relaxation", "Music", "Gaming", "Study",
-            "Therapy", "Medication", "Caffeine"
+    // Codes derived from your DB "influence.name"
+    // Sleep -> SLEEP
+    // School/Work -> SCHOOL_WORK
+    // Social media -> SOCIAL_MEDIA
+    // Travel/Commute -> TRAVEL_COMMUTE
+    private static final String[] INFLUENCE_CODES = {
+            "SLEEP", "SCHOOL_WORK", "DEADLINES", "STRESS",
+            "FRIENDS", "FAMILY", "RELATIONSHIP", "SOCIAL_MEDIA",
+            "HEALTH", "PAIN", "EXERCISE", "FOOD",
+            "WEATHER", "NEWS", "MONEY", "TRAVEL_COMMUTE",
+            "LONELINESS", "CONFLICT", "ACHIEVEMENT", "FAILURE",
+            "RELAXATION", "MUSIC", "GAMING", "STUDY",
+            "THERAPY", "MEDICATION", "CAFFEINE"
     };
 
     public void setWizard(StateOfMindWizardController wizard) {
@@ -38,26 +46,32 @@ public class StepInfluencesController {
 
     @FXML
     public void initialize() {
-        for (String item : INFLUENCES) {
-            ToggleButton t = new ToggleButton(item);
+        if (resources == null) {
+            throw new IllegalStateException("ResourceBundle not injected for StepInfluences. Load StepInfluences.fxml with a bundle.");
+        }
+
+        for (String code : INFLUENCE_CODES) {
+            ToggleButton t = new ToggleButton(labelFor(code));
             t.getStyleClass().add("chip-toggle");
             t.setFocusTraversable(false);
 
-            t.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
+            // Keep the code attached to the button
+            t.setUserData(code);
 
-                // ✅ IMPORTANT: ignore events triggered by prefill
+            t.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
                 if (prefilling) return;
 
-                String key = t.getText() == null ? "" : t.getText().trim();
+                String c = (String) t.getUserData();
+                if (c == null) c = "";
 
                 if (isSelected) {
                     if (selected.size() >= MAX_SELECTED) {
                         t.setSelected(false);
                         return;
                     }
-                    if (!key.isEmpty()) selected.add(key);
+                    if (!c.isEmpty()) selected.add(c);
                 } else {
-                    selected.remove(key);
+                    selected.remove(c);
                 }
 
                 updateLimitUI();
@@ -71,6 +85,16 @@ public class StepInfluencesController {
 
         updateLimitUI();
         updateDisableState();
+        updateNextState();
+    }
+
+    private String labelFor(String code) {
+        String key = "influence." + code;
+        try {
+            return resources.getString(key);
+        } catch (MissingResourceException e) {
+            return code; // fallback
+        }
     }
 
     private void updateNextState() {
@@ -87,53 +111,52 @@ public class StepInfluencesController {
 
     private void updateLimitUI() {
         int left = MAX_SELECTED - selected.size();
-        if (left <= 0) limitLabel.setText("Max selected (" + MAX_SELECTED + "). Remove one to choose another.");
-        else limitLabel.setText(left + " selection" + (left == 1 ? "" : "s") + " left.");
+
+        if (left <= 0) {
+            String pattern = resources.getString("influences.limit.max");
+            limitLabel.setText(MessageFormat.format(pattern, MAX_SELECTED));
+        } else {
+            String one = resources.getString("influences.limit.left.one");
+            String many = resources.getString("influences.limit.left.many");
+            limitLabel.setText(MessageFormat.format(left == 1 ? one : many, left));
+        }
     }
 
+    // returns CODES (DB-safe)
     public List<String> getSelectedInfluences() {
         return new ArrayList<>(selected);
     }
 
-    // ✅ PREFILL (for Edit) — does NOT truncate saved influences
-    public void setSelectedInfluences(List<String> names) {
+    // PREFILL (for Edit) - expects CODES (what DAO should now return)
+    public void setSelectedInfluences(List<String> codes) {
         prefilling = true;
         try {
             selected.clear();
 
-            // clear buttons first
             for (ToggleButton b : buttons) b.setSelected(false);
 
-            // keep ALL saved names (no MAX_SELECTED break)
-            if (names != null) {
-                for (String n : names) {
-                    if (n == null) continue;
-                    String cleaned = n.trim();
-                    if (!cleaned.isEmpty()) selected.add(cleaned);
+            if (codes != null) {
+                for (String c : codes) {
+                    if (c == null) continue;
+                    String v = c.trim().toUpperCase(Locale.ROOT);
+                    if (!v.isEmpty()) selected.add(v);
                 }
             }
 
-            // apply selection to buttons
+            // apply selection based on code
             for (ToggleButton b : buttons) {
-                String txt = b.getText() == null ? "" : b.getText().trim();
-                boolean match = false;
-
-                for (String s : selected) {
-                    if (s != null && s.trim().equalsIgnoreCase(txt)) {
-                        match = true;
-                        break;
-                    }
+                String code = (String) b.getUserData();
+                if (code != null && selected.contains(code)) {
+                    b.setSelected(true);
                 }
-
-                if (match) b.setSelected(true);
             }
 
-            // sync selected back from UI (optional but safe)
+            // sync selected from UI
             selected.clear();
             for (ToggleButton b : buttons) {
                 if (b.isSelected()) {
-                    String txt = b.getText() == null ? "" : b.getText().trim();
-                    if (!txt.isEmpty()) selected.add(txt);
+                    String code = (String) b.getUserData();
+                    if (code != null && !code.trim().isEmpty()) selected.add(code);
                 }
             }
 

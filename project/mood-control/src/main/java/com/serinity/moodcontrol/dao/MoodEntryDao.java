@@ -17,10 +17,12 @@ public class MoodEntryDao {
             try {
                 long entryId = insertMoodEntry(cn, entry);
 
-                List<Integer> emotionIds = idsByNames(cn, "emotion", entry.getEmotions());
+                // entry.getEmotions() MUST be codes now: CALM, AFRAID, ...
+                List<Integer> emotionIds = idsByCodes(cn, "emotion", entry.getEmotions());
                 linkMany(cn, "mood_entry_emotion", "emotion_id", entryId, emotionIds);
 
-                List<Integer> influenceIds = idsByNames(cn, "influence", entry.getInfluences());
+                // entry.getInfluences() are now codes too: SCHOOL_WORK, SOCIAL_MEDIA, ...
+                List<Integer> influenceIds = idsByCodes(cn, "influence", entry.getInfluences());
                 linkMany(cn, "mood_entry_influence", "influence_id", entryId, influenceIds);
 
                 cn.commit();
@@ -41,7 +43,7 @@ public class MoodEntryDao {
 
         try (PreparedStatement ps = cn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, entry.getUserId());
-            ps.setString(2, entry.getMomentType());
+            ps.setString(2, entry.getMomentType()); // MOMENT / DAY
             ps.setInt(3, entry.getMoodLevel());
             ps.executeUpdate();
 
@@ -52,15 +54,37 @@ public class MoodEntryDao {
         }
     }
 
-    private List<Integer> idsByNames(Connection cn, String table, List<String> names) throws SQLException {
-        if (names == null || names.isEmpty()) return Collections.emptyList();
+    /**
+     * Resolve IDs by matching codes against normalized DB names.
+     *
+     * emotion:     UPPER(name) matches CALM because "Calm" -> CALM
+     * influence:   UPPER(REPLACE(REPLACE(name,'/','_'),' ','_')) matches SCHOOL_WORK because "School/Work" -> SCHOOL_WORK
+     */
+    private List<Integer> idsByCodes(Connection cn, String table, List<String> codes) throws SQLException {
+        if (codes == null || codes.isEmpty()) return Collections.emptyList();
 
-        String placeholders = String.join(",", Collections.nCopies(names.size(), "?"));
-        String sql = "SELECT id FROM " + table + " WHERE name IN (" + placeholders + ")";
+        List<String> cleaned = new ArrayList<>();
+        for (String c : codes) {
+            if (c == null) continue;
+            String v = c.trim().toUpperCase(Locale.ROOT);
+            if (!v.isEmpty()) cleaned.add(v);
+        }
+        if (cleaned.isEmpty()) return Collections.emptyList();
+
+        String placeholders = String.join(",", Collections.nCopies(cleaned.size(), "?"));
+
+        String nameExpr;
+        if ("influence".equalsIgnoreCase(table)) {
+            nameExpr = "UPPER(REPLACE(REPLACE(name,'/','_'),' ','_'))";
+        } else {
+            nameExpr = "UPPER(name)";
+        }
+
+        String sql = "SELECT id FROM " + table + " WHERE " + nameExpr + " IN (" + placeholders + ")";
 
         try (PreparedStatement ps = cn.prepareStatement(sql)) {
-            for (int i = 0; i < names.size(); i++) {
-                ps.setString(i + 1, names.get(i));
+            for (int i = 0; i < cleaned.size(); i++) {
+                ps.setString(i + 1, cleaned.get(i));
             }
 
             List<Integer> ids = new ArrayList<>();
@@ -96,21 +120,19 @@ public class MoodEntryDao {
                         "FROM mood_entry WHERE user_id = ? "
         );
 
-        List<Object> params = new ArrayList<>();
-        params.add(userId);
+        List<Object> params = new ArrayList<Object>();
+        params.add(Long.valueOf(userId));
 
         if (lastDays != null) {
             sql.append(" AND entry_date >= (NOW() - INTERVAL ? DAY) ");
-            params.add(lastDays);
+            params.add(Integer.valueOf(lastDays));
         }
 
-        if (typeFilter != null && !"All".equalsIgnoreCase(typeFilter)) {
-            String dbType;
-            if ("Moment".equalsIgnoreCase(typeFilter)) dbType = "MOMENT";
-            else if ("Day".equalsIgnoreCase(typeFilter)) dbType = "DAY";
-            else dbType = null;
-
-            if (dbType != null) {
+        // IMPORTANT:
+        // typeFilter should be "ALL" or null or "MOMENT" or "DAY" (codes), not UI strings
+        if (typeFilter != null && !"ALL".equalsIgnoreCase(typeFilter)) {
+            String dbType = typeFilter.trim().toUpperCase(Locale.ROOT);
+            if ("MOMENT".equals(dbType) || "DAY".equals(dbType)) {
                 sql.append(" AND moment_type = ? ");
                 params.add(dbType);
             }
@@ -118,15 +140,15 @@ public class MoodEntryDao {
 
         sql.append(" ORDER BY entry_date DESC ");
 
-        Map<Long, MoodHistoryItem> map = new LinkedHashMap<>();
+        Map<Long, MoodHistoryItem> map = new LinkedHashMap<Long, MoodHistoryItem>();
 
         try (Connection cn = DbConnection.getConnection();
              PreparedStatement ps = cn.prepareStatement(sql.toString())) {
 
             for (int i = 0; i < params.size(); i++) {
                 Object p = params.get(i);
-                if (p instanceof Long) ps.setLong(i + 1, (Long) p);
-                else if (p instanceof Integer) ps.setInt(i + 1, (Integer) p);
+                if (p instanceof Long) ps.setLong(i + 1, ((Long) p).longValue());
+                else if (p instanceof Integer) ps.setInt(i + 1, ((Integer) p).intValue());
                 else ps.setString(i + 1, String.valueOf(p));
             }
 
@@ -137,21 +159,20 @@ public class MoodEntryDao {
                     String momentType = rs.getString("moment_type");
                     int moodLevel = rs.getInt("mood_level");
 
-                    map.put(id, new MoodHistoryItem(id, dt, momentType, moodLevel));
+                    map.put(Long.valueOf(id), new MoodHistoryItem(id, dt, momentType, moodLevel));
                 }
             }
         }
 
-        if (map.isEmpty()) return new ArrayList<>();
+        if (map.isEmpty()) return new ArrayList<MoodHistoryItem>();
 
         fillEmotions(map);
         fillInfluences(map);
 
-        return new ArrayList<>(map.values());
+        return new ArrayList<MoodHistoryItem>(map.values());
     }
 
     // ---------------- READ ONE (FOR EDIT) ----------------
-    // ✅ method: findById(long moodEntryId, long userId)
 
     public MoodHistoryItem findById(long moodEntryId, long userId) throws SQLException {
 
@@ -160,7 +181,7 @@ public class MoodEntryDao {
                         "FROM mood_entry " +
                         "WHERE id = ? AND user_id = ?";
 
-        Map<Long, MoodHistoryItem> map = new LinkedHashMap<>();
+        Map<Long, MoodHistoryItem> map = new LinkedHashMap<Long, MoodHistoryItem>();
 
         try (Connection cn = DbConnection.getConnection();
              PreparedStatement ps = cn.prepareStatement(sql)) {
@@ -175,7 +196,7 @@ public class MoodEntryDao {
                     String momentType = rs.getString("moment_type");
                     int moodLevel = rs.getInt("mood_level");
 
-                    map.put(id, new MoodHistoryItem(id, dt, momentType, moodLevel));
+                    map.put(Long.valueOf(id), new MoodHistoryItem(id, dt, momentType, moodLevel));
                 }
             }
         }
@@ -189,7 +210,6 @@ public class MoodEntryDao {
     }
 
     // ---------------- UPDATE (REAL) ----------------
-    // ✅ updates mood_entry + refreshes join tables
 
     public void update(MoodEntry entry) throws SQLException {
         if (entry == null) throw new IllegalArgumentException("entry is null");
@@ -200,7 +220,6 @@ public class MoodEntryDao {
             cn.setAutoCommit(false);
 
             try {
-                // main row
                 String sql =
                         "UPDATE mood_entry " +
                                 "SET moment_type = ?, mood_level = ?, updated_at = CURRENT_TIMESTAMP " +
@@ -218,15 +237,13 @@ public class MoodEntryDao {
                     }
                 }
 
-                // clear old links
                 deleteLinks(cn, "mood_entry_emotion", entry.getId());
                 deleteLinks(cn, "mood_entry_influence", entry.getId());
 
-                // insert new links
-                List<Integer> emotionIds = idsByNames(cn, "emotion", entry.getEmotions());
+                List<Integer> emotionIds = idsByCodes(cn, "emotion", entry.getEmotions());
                 linkMany(cn, "mood_entry_emotion", "emotion_id", entry.getId(), emotionIds);
 
-                List<Integer> influenceIds = idsByNames(cn, "influence", entry.getInfluences());
+                List<Integer> influenceIds = idsByCodes(cn, "influence", entry.getInfluences());
                 linkMany(cn, "mood_entry_influence", "influence_id", entry.getId(), influenceIds);
 
                 cn.commit();
@@ -249,11 +266,12 @@ public class MoodEntryDao {
     }
 
     // ---------------- FILL EMOTIONS / INFLUENCES ----------------
+    // IMPORTANT: return CODES, not English labels
 
     private void fillEmotions(Map<Long, MoodHistoryItem> map) throws SQLException {
         String in = makeInClause(map.size());
         String sql =
-                "SELECT mee.mood_entry_id, e.name " +
+                "SELECT mee.mood_entry_id, UPPER(e.name) AS code " +
                         "FROM mood_entry_emotion mee " +
                         "JOIN emotion e ON e.id = mee.emotion_id " +
                         "WHERE mee.mood_entry_id IN " + in + " " +
@@ -263,14 +281,14 @@ public class MoodEntryDao {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             int idx = 1;
-            for (Long id : map.keySet()) ps.setLong(idx++, id);
+            for (Long id : map.keySet()) ps.setLong(idx++, id.longValue());
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     long moodEntryId = rs.getLong("mood_entry_id");
-                    String name = rs.getString("name");
-                    MoodHistoryItem item = map.get(moodEntryId);
-                    if (item != null) item.getEmotions().add(name);
+                    String code = rs.getString("code"); // ex: CALM
+                    MoodHistoryItem item = map.get(Long.valueOf(moodEntryId));
+                    if (item != null) item.getEmotions().add(code);
                 }
             }
         }
@@ -279,7 +297,8 @@ public class MoodEntryDao {
     private void fillInfluences(Map<Long, MoodHistoryItem> map) throws SQLException {
         String in = makeInClause(map.size());
         String sql =
-                "SELECT mei.mood_entry_id, i.name " +
+                "SELECT mei.mood_entry_id, " +
+                        "UPPER(REPLACE(REPLACE(i.name,'/','_'),' ','_')) AS code " +
                         "FROM mood_entry_influence mei " +
                         "JOIN influence i ON i.id = mei.influence_id " +
                         "WHERE mei.mood_entry_id IN " + in + " " +
@@ -289,14 +308,14 @@ public class MoodEntryDao {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             int idx = 1;
-            for (Long id : map.keySet()) ps.setLong(idx++, id);
+            for (Long id : map.keySet()) ps.setLong(idx++, id.longValue());
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     long moodEntryId = rs.getLong("mood_entry_id");
-                    String name = rs.getString("name");
-                    MoodHistoryItem item = map.get(moodEntryId);
-                    if (item != null) item.getInfluences().add(name);
+                    String code = rs.getString("code"); // ex: SOCIAL_MEDIA
+                    MoodHistoryItem item = map.get(Long.valueOf(moodEntryId));
+                    if (item != null) item.getInfluences().add(code);
                 }
             }
         }
@@ -313,7 +332,6 @@ public class MoodEntryDao {
     }
 
     // ---------------- DELETE ----------------
-    // ✅ signature is delete(id, userId)
 
     public boolean delete(long moodEntryId, long userId) throws SQLException {
         String sql = "DELETE FROM mood_entry WHERE id = ? AND user_id = ?";

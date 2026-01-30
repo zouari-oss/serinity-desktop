@@ -11,11 +11,17 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane minHeight="600.0" minWidth="900.0" prefHeight="800.0" prefWidth="1200.0" styleClass="app-bg" stylesheets="@../styles/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.moodcontrol.controller.MainTemplateController">
+<BorderPane minHeight="600.0" minWidth="900.0" prefHeight="800.0" prefWidth="1200.0"
+            styleClass="app-bg"
+            stylesheets="@../styles/styles.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.moodcontrol.controller.MainTemplateController">
 
     <!-- ================= TOP BAR ================= -->
     <top>
-        <HBox fx:id="topBar" alignment="CENTER_LEFT" prefHeight="64.0" spacing="14.0" styleClass="topbar" BorderPane.alignment="CENTER_LEFT">
+        <HBox fx:id="topBar" alignment="CENTER_LEFT" prefHeight="64.0" spacing="14.0"
+              styleClass="topbar" BorderPane.alignment="CENTER_LEFT">
 
             <padding>
                 <Insets bottom="10" left="16" right="16" top="10" />
@@ -29,7 +35,8 @@
                             <Image url="@../assets/logo2.png" />
                         </image>
                     </ImageView>
-                    <Label styleClass="brand-title" text="SERINITY" />
+                    <!-- Keep as key so you can rename brand later without code changes -->
+                    <Label styleClass="brand-title" text="%app.brand" />
                 </children>
             </HBox>
 
@@ -56,14 +63,16 @@
                     <children>
                         <Label styleClass="search-icon" text="🔍" />
                         <TextField fx:id="searchField" prefHeight="30.0" prefWidth="220.0"
-                                   promptText="%search.placeholder" styleClass="search-field" />
+                                   promptText="%search.placeholder"
+                                   styleClass="search-field" />
                     </children>
                 </HBox>
 
                 <!-- User -->
                 <HBox fx:id="userBox" alignment="CENTER_RIGHT" spacing="10.0" styleClass="user">
                     <children>
-                        <Label fx:id="userNameLabel" styleClass="user-name" text="User" />
+                        <!-- default label handled in controller via bundle (placeholder until real auth/user) -->
+                        <Label fx:id="userNameLabel" styleClass="user-name" />
                         <ImageView fx:id="avatarImg" fitHeight="40.0" fitWidth="40.0" preserveRatio="true" styleClass="avatar">
                             <image>
                                 <Image url="@../assets/user_logo.png" />
@@ -80,10 +89,11 @@
     <center>
         <StackPane fx:id="contentHost" styleClass="content-host" />
     </center>
+
+    <!-- ================= FOOTER ================= -->
     <bottom>
         <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
             <Label fx:id="footerLabel"/>
-
         </HBox>
     </bottom>
 

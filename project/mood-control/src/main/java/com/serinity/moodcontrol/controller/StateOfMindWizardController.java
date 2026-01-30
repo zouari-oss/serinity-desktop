@@ -2,20 +2,19 @@ package com.serinity.moodcontrol.controller;
 
 import com.serinity.moodcontrol.dao.MoodEntryDao;
 import com.serinity.moodcontrol.model.MoodEntry;
-import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 public class StateOfMindWizardController {
 
@@ -24,6 +23,11 @@ public class StateOfMindWizardController {
     @FXML private StackPane cardHost;
     @FXML private Button btnBack;
     @FXML private Button btnNext;
+
+    @FXML private ResourceBundle resources;
+
+    // ✅ host to navigate after finish
+    private StackPane moodHost;
 
     private int stepIndex = 0;
     private final int totalSteps = 4;
@@ -41,9 +45,18 @@ public class StateOfMindWizardController {
 
     @FXML
     public void initialize() {
+        if (resources == null) {
+            throw new IllegalStateException("ResourceBundle not injected for Wizard. Load Wizard.fxml with a bundle.");
+        }
+
         btnNext.setDisable(true);
         refreshUI();
         loadStep(0, 0, false);
+    }
+
+    // ✅ inject host (MoodHomeController / MoodHistoryController must call this)
+    public void setMoodHost(StackPane moodHost) {
+        this.moodHost = moodHost;
     }
 
     public void setOnFinish(Runnable onFinish) {
@@ -54,7 +67,6 @@ public class StateOfMindWizardController {
     public void startEdit(MoodEntry entry) {
         this.editingEntry = entry;
         this.editMode = (entry != null && entry.getId() > 0);
-        // optional: if wizard already on screen, reload current step to apply prefill
         loadStep(stepIndex, stepIndex, false);
     }
 
@@ -87,24 +99,36 @@ public class StateOfMindWizardController {
     }
 
     private void refreshUI() {
-        stepCounter.setText("Step " + (stepIndex + 1) + " of " + totalSteps);
+        // Step counter (pattern-based)
+        String counterPattern = resources.getString("wizard.counter");
+        stepCounter.setText(MessageFormat.format(counterPattern, stepIndex + 1, totalSteps));
+
         btnBack.setDisable(stepIndex == 0);
 
-        if (stepIndex == 0) {
-            stepTitle.setText("State of Mind • Type");
-            btnNext.setText("Next");
-        } else if (stepIndex == 1) {
-            stepTitle.setText("State of Mind • Mood");
-            btnNext.setText("Next");
-        } else if (stepIndex == 2) {
-            stepTitle.setText("State of Mind • Emotions");
-            btnNext.setText("Next");
-        } else if (stepIndex == 3) {
-            stepTitle.setText("State of Mind • Influences");
-            btnNext.setText("Finish");
+        // Step title per step (Java 11 compatible)
+        switch (stepIndex) {
+            case 0:
+                stepTitle.setText(resources.getString("wizard.step.type.title"));
+                break;
+            case 1:
+                stepTitle.setText(resources.getString("wizard.step.mood.title"));
+                break;
+            case 2:
+                stepTitle.setText(resources.getString("wizard.step.emotions.title"));
+                break;
+            case 3:
+                stepTitle.setText(resources.getString("wizard.step.influences.title"));
+                break;
+            default:
+                stepTitle.setText(resources.getString("wizard.title"));
+                break;
+        }
+
+        // Next / Finish button
+        if (stepIndex == totalSteps - 1) {
+            btnNext.setText(resources.getString("btn.finish"));
         } else {
-            stepTitle.setText("State of Mind");
-            btnNext.setText("Next");
+            btnNext.setText(resources.getString("btn.next"));
         }
     }
 
@@ -113,13 +137,16 @@ public class StateOfMindWizardController {
             Node nextView;
 
             if (newIndex == 0) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/steps/StepType.fxml"));
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/fxml/mood/steps/StepType.fxml"),
+                        resources
+                );
                 nextView = loader.load();
 
                 stepTypeController = loader.getController();
                 stepTypeController.setWizard(this);
 
-                // ✅ PREFILL
+                // PREFILL
                 if (editMode && editingEntry != null) {
                     stepTypeController.setSelectedType(editingEntry.getMomentType());
                 }
@@ -127,12 +154,15 @@ public class StateOfMindWizardController {
                 setCanGoNext(stepTypeController.getSelectedType() != null);
 
             } else if (newIndex == 1) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/steps/StepMood.fxml"));
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/fxml/mood/steps/StepMood.fxml"),
+                        resources
+                );
                 nextView = loader.load();
 
                 stepMoodController = loader.getController();
 
-                // ✅ PREFILL (requires StepMoodController.setMoodLevel(int))
+                // PREFILL
                 if (editMode && editingEntry != null) {
                     stepMoodController.setMoodLevel(editingEntry.getMoodLevel());
                 }
@@ -140,29 +170,34 @@ public class StateOfMindWizardController {
                 setCanGoNext(true);
 
             } else if (newIndex == 2) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/steps/StepEmotions.fxml"));
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/fxml/mood/steps/StepEmotions.fxml"),
+                        resources
+                );
                 nextView = loader.load();
 
                 stepEmotionsController = loader.getController();
                 stepEmotionsController.setWizard(this);
 
-                // ✅ PREFILL (requires StepEmotionsController.setSelectedEmotions(List<String>))
+                // PREFILL
                 if (editMode && editingEntry != null) {
                     stepEmotionsController.setSelectedEmotions(editingEntry.getEmotions());
                 }
 
-                // StepEmotions enforces "at least 1 selected" -> enable next accordingly
                 setCanGoNext(stepEmotionsController.getSelectedEmotions() != null
                         && !stepEmotionsController.getSelectedEmotions().isEmpty());
 
             } else if (newIndex == 3) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/steps/StepInfluences.fxml"));
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/fxml/mood/steps/StepInfluences.fxml"),
+                        resources
+                );
                 nextView = loader.load();
 
                 stepInfluencesController = loader.getController();
                 stepInfluencesController.setWizard(this);
 
-                // ✅ PREFILL (requires StepInfluencesController.setSelectedInfluences(List<String>))
+                // PREFILL
                 if (editMode && editingEntry != null) {
                     stepInfluencesController.setSelectedInfluences(editingEntry.getInfluences());
                 }
@@ -171,7 +206,9 @@ public class StateOfMindWizardController {
                         && !stepInfluencesController.getSelectedInfluences().isEmpty());
 
             } else {
-                nextView = new StackPane(new Label("Step " + (newIndex + 1) + " coming next…"));
+                nextView = new StackPane(new Label(
+                        MessageFormat.format(resources.getString("wizard.step.unknown"), newIndex + 1)
+                ));
                 setCanGoNext(true);
             }
 
@@ -202,27 +239,49 @@ public class StateOfMindWizardController {
 
             if (editMode && editingEntry != null) {
                 entry.setId(editingEntry.getId());
-                dao.update(entry); // must exist
+                dao.update(entry);
                 System.out.println("Updated mood entry: id=" + entry.getId());
             } else {
                 long id = dao.save(entry);
                 System.out.println("Saved mood entry: id=" + id);
             }
 
+            // keep old behavior (History refresh hook)
             if (onFinish != null) onFinish.run();
 
-            // mimic “switch tab then come back” (reload MoodHome)
-            Scene scene = btnNext.getScene();
-            StackPane host = (StackPane) scene.lookup("#contentHost");
-            if (host == null) {
-                throw new IllegalStateException("contentHost not found. Did you set fx:id=\"contentHost\" in MainTemplate.fxml?");
-            }
-
-            Parent moodHome = FXMLLoader.load(getClass().getResource("/fxml/mood/MoodHome.fxml"));
-            animateHostSwap(host, moodHome);
+            // ✅ ALWAYS navigate to MoodHistory after finish
+            goToHistory();
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // ✅ navigate to history inside same host
+    private void goToHistory() {
+        if (moodHost == null) {
+            System.out.println("[Wizard] moodHost is null → cannot navigate to history.");
+            return;
+        }
+        if (resources == null) {
+            System.out.println("[Wizard] resources is null → cannot load history with bundle.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/mood/MoodHistory.fxml"),
+                    resources
+            );
+            Parent view = loader.load();
+
+            MoodHistoryController c = loader.getController();
+            c.setMoodHost(moodHost);
+
+            moodHost.getChildren().setAll(view);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load /fxml/mood/MoodHistory.fxml", e);
         }
     }
 
@@ -247,47 +306,5 @@ public class StateOfMindWizardController {
             cardHost.getChildren().remove(current);
             current.setTranslateX(0);
         });
-    }
-
-    private void animateHostSwap(StackPane host, Parent nextView) {
-        if (host == null) return;
-
-        if (host.getChildren().isEmpty()) {
-            host.getChildren().setAll(nextView);
-            nextView.setOpacity(0);
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(180), nextView);
-            fadeIn.setToValue(1);
-            fadeIn.play();
-            return;
-        }
-
-        Node current = host.getChildren().get(0);
-
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(160), current);
-        fadeOut.setToValue(0);
-
-        TranslateTransition slideOut = new TranslateTransition(Duration.millis(160), current);
-        slideOut.setToX(-28);
-
-        ParallelTransition out = new ParallelTransition(fadeOut, slideOut);
-
-        out.setOnFinished(e -> {
-            current.setOpacity(1);
-            current.setTranslateX(0);
-
-            nextView.setOpacity(0);
-            nextView.setTranslateX(12);
-            host.getChildren().setAll(nextView);
-
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(180), nextView);
-            fadeIn.setToValue(1);
-
-            TranslateTransition slideIn = new TranslateTransition(Duration.millis(180), nextView);
-            slideIn.setToX(0);
-
-            new ParallelTransition(fadeIn, slideIn).play();
-        });
-
-        out.play();
     }
 }

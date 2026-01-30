@@ -18,10 +18,10 @@
         <Insets top="22" right="22" bottom="22" left="22"/>
     </padding>
 
-    <Label text="What emotions are you feeling?"
+    <Label text="%wizard.step.emotions.question"
            styleClass="wizard-question"/>
 
-    <Label text="Select up to 5 emotions. You can tap again to remove."
+    <Label text="%wizard.step.emotions.sub"
            styleClass="wizard-sub"/>
 
     <Region minHeight="8"/>

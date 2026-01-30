@@ -17,17 +17,19 @@
         <Insets top="22" right="22" bottom="22" left="22"/>
     </padding>
 
-    <Label text="What are you logging?" styleClass="wizard-question"/>
-    <Label text="Choose one option." styleClass="wizard-sub"/>
+    <Label text="%wizard.step.type.question" styleClass="wizard-question"/>
+    <Label text="%wizard.step.type.sub" styleClass="wizard-sub"/>
 
     <Region minHeight="6"/>
 
     <HBox spacing="18">
-        <ToggleButton fx:id="btnMoment" text="Moment"
+        <ToggleButton fx:id="btnMoment"
+                      text="%wizard.step.type.option.moment"
                       onAction="#onSelect"
                       styleClass="pick-btn"
                       prefWidth="180"/>
-        <ToggleButton fx:id="btnDay" text="Day"
+        <ToggleButton fx:id="btnDay"
+                      text="%wizard.step.type.option.day"
                       onAction="#onSelect"
                       styleClass="pick-btn"
                       prefWidth="180"/>

@@ -31,20 +31,36 @@ public class MoodHistoryController {
     @FXML private ComboBox<String> rangeBox;
     @FXML private ComboBox<String> typeBox;
 
+    @FXML private ResourceBundle resources;
+
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
 
     // Host injected by MoodHomeController
     private StackPane moodHost;
 
     // Keep current items for UI delete (we’ll make DB delete next step)
-    private List<MoodCardVM> currentItems = new ArrayList<>();
+    private List<MoodCardVM> currentItems = new ArrayList<MoodCardVM>();
 
     @FXML
     public void initialize() {
-        rangeBox.getItems().setAll("Last 7 days", "Last 30 days", "All");
+        if (resources == null) {
+            throw new IllegalStateException("ResourceBundle not injected in MoodHistoryController. Load MoodHistory.fxml with bundle.");
+        }
+
+        // Range options (localized labels, but we map them to numeric days)
+        rangeBox.getItems().setAll(
+                t("history.range.last7"),
+                t("history.range.last30"),
+                t("history.range.all")
+        );
         rangeBox.getSelectionModel().select(0);
 
-        typeBox.getItems().setAll("All", "Moment", "Day");
+        // Type options (localized labels, but we map them to ALL/MOMENT/DAY codes)
+        typeBox.getItems().setAll(
+                t("history.type.all"),
+                t("history.type.moment"),
+                t("history.type.day")
+        );
         typeBox.getSelectionModel().select(0);
 
         rangeBox.setOnAction(e -> loadAndRenderFromDb());
@@ -65,7 +81,13 @@ public class MoodHistoryController {
     @FXML
     private void onLogNew() {
         try {
-            Parent wizard = FXMLLoader.load(getClass().getResource("/fxml/mood/Wizard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/Wizard.fxml"), resources);
+            Parent wizard = loader.load();
+
+            // ✅ IMPORTANT: inject host so Finish can navigate to history
+            StateOfMindWizardController wiz = loader.getController();
+            wiz.setMoodHost(moodHost);
+
             moodHost.getChildren().setAll(wizard);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -79,27 +101,28 @@ public class MoodHistoryController {
             Integer lastDays = null;
 
             String range = rangeBox.getValue();
-            if ("Last 7 days".equals(range)) {
-                lastDays = 7;
-            } else if ("Last 30 days".equals(range)) {
-                lastDays = 30;
+            if (t("history.range.last7").equals(range)) {
+                lastDays = Integer.valueOf(7);
+            } else if (t("history.range.last30").equals(range)) {
+                lastDays = Integer.valueOf(30);
             } else {
                 lastDays = null; // All
             }
 
-            String typeFilter = typeBox.getValue(); // "All" / "Moment" / "Day"
+            // Map localized label -> CODE expected by DAO
+            String typeFilter = toTypeCode(typeBox.getValue()); // ALL/MOMENT/DAY
 
             List<MoodHistoryItem> data = new MoodEntryDao().findHistory(userId, lastDays, typeFilter);
 
-            List<MoodCardVM> vms = new ArrayList<>();
+            List<MoodCardVM> vms = new ArrayList<MoodCardVM>();
             for (MoodHistoryItem it : data) {
                 vms.add(new MoodCardVM(
                         it.getId(),
                         it.getDateTime(),
                         it.getMomentType(),   // "MOMENT"/"DAY"
                         it.getMoodLevel(),
-                        it.getEmotions(),
-                        it.getInfluences()
+                        it.getEmotions(),     // CODES
+                        it.getInfluences()    // CODES
                 ));
             }
 
@@ -108,7 +131,7 @@ public class MoodHistoryController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            currentItems = new ArrayList<>();
+            currentItems = new ArrayList<MoodCardVM>();
             renderTimeline(currentItems);
         }
     }
@@ -118,12 +141,19 @@ public class MoodHistoryController {
     private void renderTimeline(List<MoodCardVM> items) {
         timelineBox.getChildren().clear();
 
-        List<MoodCardVM> sorted = new ArrayList<>(items);
-        sorted.sort(Comparator.comparing((MoodCardVM m) -> m.dateTime).reversed());
+        List<MoodCardVM> sorted = new ArrayList<MoodCardVM>(items);
+        sorted.sort(new Comparator<MoodCardVM>() {
+            @Override
+            public int compare(MoodCardVM a, MoodCardVM b) {
+                return b.dateTime.compareTo(a.dateTime);
+            }
+        });
 
-        Map<LocalDate, List<MoodCardVM>> grouped = new LinkedHashMap<>();
+        Map<LocalDate, List<MoodCardVM>> grouped = new LinkedHashMap<LocalDate, List<MoodCardVM>>();
         for (MoodCardVM m : sorted) {
-            grouped.computeIfAbsent(m.dateTime.toLocalDate(), k -> new ArrayList<>()).add(m);
+            LocalDate d = m.dateTime.toLocalDate();
+            if (!grouped.containsKey(d)) grouped.put(d, new ArrayList<MoodCardVM>());
+            grouped.get(d).add(m);
         }
 
         for (Map.Entry<LocalDate, List<MoodCardVM>> entry : grouped.entrySet()) {
@@ -139,8 +169,9 @@ public class MoodHistoryController {
     private Node dateHeader(LocalDate date) {
         String title;
         LocalDate today = LocalDate.now();
-        if (date.equals(today)) title = "Today";
-        else if (date.equals(today.minusDays(1))) title = "Yesterday";
+
+        if (date.equals(today)) title = t("history.today");
+        else if (date.equals(today.minusDays(1))) title = t("history.yesterday");
         else title = date.toString();
 
         Label lbl = new Label(title);
@@ -161,12 +192,12 @@ public class MoodHistoryController {
 
         VBox main = new VBox(4);
 
-        String type = m.momentType.equals("DAY") ? "Day" : "Moment";
-        String time = m.momentType.equals("DAY") ? "" : (" • " + TIME_FMT.format(m.dateTime));
+        String type = "DAY".equals(m.momentType) ? t("history.type.day") : t("history.type.moment");
+        String time = "DAY".equals(m.momentType) ? "" : (" • " + TIME_FMT.format(m.dateTime));
         Label title = new Label(type + time);
         title.getStyleClass().add("history-card-title");
 
-        Label sub = new Label("Mood: " + moodLabel(m.moodLevel));
+        Label sub = new Label(t("history.mood.prefix") + " " + moodLabel(m.moodLevel));
         sub.getStyleClass().add("history-card-sub");
 
         main.getChildren().addAll(title, sub);
@@ -202,15 +233,15 @@ public class MoodHistoryController {
         FlowPane preview = new FlowPane(8, 8);
         preview.getStyleClass().add("history-tags");
 
-        addPreviewTags(preview, m.emotions, 3, "emotion-tag");
-        addPreviewTags(preview, m.influences, 2, "influence-tag");
+        addPreviewTags(preview, m.emotions, 3, "emotion-tag", "emotion.");
+        addPreviewTags(preview, m.influences, 2, "influence-tag", "influence.");
 
         VBox details = new VBox(10);
         details.getStyleClass().add("history-details");
 
         details.getChildren().addAll(
-                fullTagBlock("Emotions", m.emotions, "emotion-tag"),
-                fullTagBlock("Influences", m.influences, "influence-tag")
+                fullTagBlock(t("history.details.emotions"), m.emotions, "emotion-tag", "emotion."),
+                fullTagBlock(t("history.details.influences"), m.influences, "influence-tag", "influence.")
         );
 
         collapse(details);
@@ -230,11 +261,11 @@ public class MoodHistoryController {
         return card;
     }
 
-    private void addPreviewTags(FlowPane pane, List<String> items, int max, String styleClass) {
+    private void addPreviewTags(FlowPane pane, List<String> items, int max, String styleClass, String keyPrefix) {
         int count = 0;
         for (String s : items) {
             if (count >= max) break;
-            Label tag = new Label(s);
+            Label tag = new Label(t(keyPrefix + s));
             tag.getStyleClass().addAll("tag", styleClass);
             pane.getChildren().add(tag);
             count++;
@@ -247,7 +278,7 @@ public class MoodHistoryController {
         }
     }
 
-    private Node fullTagBlock(String title, List<String> items, String styleClass) {
+    private Node fullTagBlock(String title, List<String> items, String styleClass, String keyPrefix) {
         VBox box = new VBox(8);
 
         Label t = new Label(title);
@@ -255,7 +286,7 @@ public class MoodHistoryController {
 
         FlowPane tags = new FlowPane(8, 8);
         for (String s : items) {
-            Label tag = new Label(s);
+            Label tag = new Label(t(keyPrefix + s));
             tag.getStyleClass().addAll("tag", styleClass);
             tags.getChildren().add(tag);
         }
@@ -326,14 +357,7 @@ public class MoodHistoryController {
     }
 
     private String moodLabel(int level) {
-        switch (level) {
-            case 1: return "Very Low";
-            case 2: return "Low";
-            case 3: return "Neutral";
-            case 4: return "Good";
-            case 5: return "Very Good";
-            default: return "Neutral";
-        }
+        return t("mood.level." + level);
     }
 
     // ---------- Actions ----------
@@ -346,22 +370,21 @@ public class MoodHistoryController {
             MoodHistoryItem it = dao.findById(m.id, userId);
             if (it == null) return;
 
-            // build MoodEntry model from history item
             com.serinity.moodcontrol.model.MoodEntry entry = new com.serinity.moodcontrol.model.MoodEntry();
             entry.setId(it.getId());
             entry.setUserId(userId);
             entry.setMomentType(it.getMomentType());
             entry.setMoodLevel(it.getMoodLevel());
-            entry.setEmotions(new ArrayList<>(it.getEmotions()));
-            entry.setInfluences(new ArrayList<>(it.getInfluences()));
+            entry.setEmotions(new ArrayList<String>(it.getEmotions()));       // CODES
+            entry.setInfluences(new ArrayList<String>(it.getInfluences()));   // CODES
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/Wizard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/Wizard.fxml"), resources);
             Parent wizard = loader.load();
 
             StateOfMindWizardController wiz = loader.getController();
+            wiz.setMoodHost(moodHost); // ✅ IMPORTANT: inject host so Finish can navigate
             wiz.startEdit(entry);
 
-            // after finish, come back here and refresh list
             wiz.setOnFinish(new Runnable() {
                 @Override
                 public void run() {
@@ -376,22 +399,37 @@ public class MoodHistoryController {
         }
     }
 
-
     private void onDelete(MoodCardVM m) {
         javafx.scene.control.Alert alert =
                 new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.CONFIRMATION);
 
-        alert.setTitle("Delete mood entry");
-        alert.setHeaderText("Delete this entry?");
-        alert.setContentText("This will remove the mood entry and its emotions/influences.");
+        alert.setTitle(t("history.delete.title"));
+        alert.setHeaderText(t("history.delete.header"));
+        alert.setContentText(t("history.delete.body"));
 
         Optional<javafx.scene.control.ButtonType> res = alert.showAndWait();
         if (res.isPresent() && res.get() == javafx.scene.control.ButtonType.OK) {
-
             // Still UI-only delete for now (next step we make DB delete real)
             currentItems.removeIf(x -> x.id == m.id);
             renderTimeline(currentItems);
         }
+    }
+
+    // ---------- Helpers ----------
+
+    private String t(String key) {
+        try {
+            return resources.getString(key);
+        } catch (MissingResourceException e) {
+            return key;
+        }
+    }
+
+    private String toTypeCode(String label) {
+        if (label == null) return "ALL";
+        if (label.equals(t("history.type.moment"))) return "MOMENT";
+        if (label.equals(t("history.type.day"))) return "DAY";
+        return "ALL";
     }
 
     // ---------- VM ----------
@@ -401,8 +439,8 @@ public class MoodHistoryController {
         final LocalDateTime dateTime;
         final String momentType; // "MOMENT"/"DAY"
         final int moodLevel;
-        final List<String> emotions;
-        final List<String> influences;
+        final List<String> emotions;    // CODES
+        final List<String> influences;  // CODES
 
         MoodCardVM(long id, LocalDateTime dateTime, String momentType, int moodLevel,
                    List<String> emotions, List<String> influences) {
@@ -410,8 +448,8 @@ public class MoodHistoryController {
             this.dateTime = dateTime;
             this.momentType = momentType;
             this.moodLevel = moodLevel;
-            this.emotions = emotions;
-            this.influences = influences;
+            this.emotions = emotions == null ? new ArrayList<String>() : emotions;
+            this.influences = influences == null ? new ArrayList<String>() : influences;
         }
     }
 }

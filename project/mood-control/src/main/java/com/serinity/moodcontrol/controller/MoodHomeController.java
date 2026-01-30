@@ -16,18 +16,35 @@ public class MoodHomeController {
     @FXML private StackPane cardMoodHistory;
     @FXML private StackPane cardJournal;
 
-    //  this is the ResourceBundle used to load MoodHome.fxml
     @FXML private ResourceBundle resources;
 
     @FXML
     public void initialize() {
+        if (resources == null) {
+            throw new IllegalStateException("ResourceBundle not injected for MoodHome. Load MoodHome.fxml with a bundle.");
+        }
+
         cardLogMood.setOnMouseClicked(e -> loadWizard());
         cardMoodHistory.setOnMouseClicked(e -> loadHistory());
-        // Journal intentionally does nothing (coming soon)
+        // Journal intentionally does nothing for now
     }
 
     private void loadWizard() {
-        loadIntoHost("/fxml/mood/Wizard.fxml");
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/mood/Wizard.fxml"),
+                    resources
+            );
+            Parent view = loader.load();
+
+            StateOfMindWizardController wiz = loader.getController();
+            wiz.setMoodHost(moodHost); // ✅ THIS is the missing link
+
+            moodHost.getChildren().setAll(view);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load /fxml/mood/Wizard.fxml", e);
+        }
     }
 
     private void loadHistory() {
@@ -45,16 +62,6 @@ public class MoodHomeController {
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to load /fxml/mood/MoodHistory.fxml", e);
-        }
-    }
-
-    private void loadIntoHost(String fxml) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml), resources);
-            Parent view = loader.load();
-            moodHost.getChildren().setAll(view);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load " + fxml, e);
         }
     }
 }

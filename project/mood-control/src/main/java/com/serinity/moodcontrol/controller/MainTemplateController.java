@@ -6,16 +6,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.text.MessageFormat;
-import javafx.scene.control.TextField;
-
 
 import java.io.IOException;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class MainTemplateController {
 
@@ -30,30 +27,33 @@ public class MainTemplateController {
     @FXML private ImageView avatarImg;
 
     @FXML private StackPane contentHost;
-    @FXML private TextField searchField;   // you already have it in FXML
-    @FXML private Label footerLabel;       // we’ll add fx:id to footer label
-    @FXML private ResourceBundle resources;
+    @FXML private TextField searchField;
 
-    private ResourceBundle bundle;
+    @FXML private Label footerLabel;
+
+    // Injected automatically when Template.fxml is loaded with a bundle
+    @FXML private ResourceBundle resources;
 
     private List<Button> navButtons;
 
     @FXML
     public void initialize() {
-
         if (resources == null) {
-            throw new IllegalStateException("Bundle not injected");
+            throw new IllegalStateException("ResourceBundle not injected. Make sure Template.fxml is loaded with a bundle.");
         }
-
-        footerLabel.setText(resources.getString("footer.text"));
 
         navButtons = List.of(
                 btnDashboard, btnSleep, btnMood,
                 btnSupport, btnExercises, btnAppointments
         );
 
-        userNameLabel.setText("7ot_User_Name_lena");
+        // Footer text from bundle
+        footerLabel.setText(resources.getString("footer.text"));
 
+        // Placeholder username (replace later with real user session)
+        userNameLabel.setText(resources.getString("user.name.placeholder"));
+
+        // Default landing
         setActiveNav(btnMood);
         loadIntoHost("/fxml/mood/MoodHome.fxml");
     }
@@ -84,7 +84,6 @@ public class MainTemplateController {
 
     private void loadIntoHost(String fxmlPath) {
         try {
-            // resources is injected into this controller because Template.fxml was loaded with a bundle
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath), resources);
             Parent page = loader.load();
             contentHost.getChildren().setAll(page);
@@ -92,5 +91,4 @@ public class MainTemplateController {
             throw new RuntimeException("Failed to load: " + fxmlPath, e);
         }
     }
-
 }

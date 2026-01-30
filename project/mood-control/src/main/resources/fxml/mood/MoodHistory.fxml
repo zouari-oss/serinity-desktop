@@ -15,7 +15,6 @@
             fx:controller="com.serinity.moodcontrol.controller.MoodHistoryController"
             styleClass="mood-root">
 
-    <!-- Header -->
     <top>
         <VBox spacing="12" styleClass="history-top">
             <padding>
@@ -23,31 +22,38 @@
             </padding>
 
             <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="Mood History" styleClass="page-title"/>
+                <Label text="%history.title" styleClass="page-title"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="btnLogNew" text="Log new" styleClass="btn-primary" onAction="#onLogNew"/>
+                <Button fx:id="btnLogNew"
+                        text="%history.lognew"
+                        styleClass="btn-primary"
+                        onAction="#onLogNew"/>
             </HBox>
 
-            <!-- Filters -->
             <HBox alignment="CENTER_LEFT" spacing="10" styleClass="history-filters">
-                <Label text="Range" styleClass="filter-label"/>
+                <Label text="%history.range" styleClass="filter-label"/>
                 <ComboBox fx:id="rangeBox" prefWidth="160" styleClass="filter-box"/>
-                <Region minWidth="10"/>
 
-                <Label text="Type" styleClass="filter-label"/>
+                <Label text="%history.type" styleClass="filter-label"/>
                 <ComboBox fx:id="typeBox" prefWidth="140" styleClass="filter-box"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="btnRefresh" text="Refresh" styleClass="btn-ghost" onAction="#onRefresh"/>
+                <Button fx:id="btnRefresh"
+                        text="%history.refresh"
+                        styleClass="btn-ghost"
+                        onAction="#onRefresh"/>
             </HBox>
         </VBox>
     </top>
 
-    <!-- Timeline -->
     <center>
-        <ScrollPane fitToWidth="true" styleClass="history-scroll" hbarPolicy="NEVER">
+        <ScrollPane fitToWidth="true"
+                    styleClass="history-scroll"
+                    hbarPolicy="NEVER">
             <content>
-                <VBox fx:id="timelineBox" spacing="14" styleClass="history-timeline">
+                <VBox fx:id="timelineBox"
+                      spacing="14"
+                      styleClass="history-timeline">
                     <padding>
                         <Insets top="10" right="16" bottom="18" left="16"/>
                     </padding>

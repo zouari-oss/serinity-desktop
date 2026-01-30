@@ -12,11 +12,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
+import java.util.ResourceBundle;
+
 public class StepMoodController {
 
     @FXML private Slider moodSlider;
     @FXML private Circle moodCircle;
     @FXML private Label moodLabel;
+
+    @FXML private ResourceBundle resources;
 
     private final DropShadow glow = new DropShadow();
 
@@ -26,12 +30,12 @@ public class StepMoodController {
     private static final Color C4 = Color.web("#62B48F");
     private static final Color C5 = Color.web("#B9C56A");
 
-    private static final String[] LABELS = {
-            "Very Low", "Low", "Neutral", "Good", "Very Good"
-    };
-
     @FXML
     public void initialize() {
+        if (resources == null) {
+            throw new IllegalStateException("ResourceBundle not injected for StepMood. Load StepMood.fxml with a bundle.");
+        }
+
         glow.setOffsetX(0);
         glow.setOffsetY(8);
         glow.setSpread(0.10);
@@ -47,7 +51,9 @@ public class StepMoodController {
 
     private void applyMood(int level, boolean animate) {
         level = clamp(level, 1, 5);
-        moodLabel.setText(LABELS[level - 1]);
+
+        // Keep the exact wording (for now) but take it from the bundle
+        moodLabel.setText(resources.getString("mood.level." + level));
 
         Color target = colorFor(level);
         double targetRadius = glowRadiusFor(level);
@@ -121,6 +127,6 @@ public class StepMoodController {
     public void setMoodLevel(int level) {
         level = clamp(level, 1, 5);
         moodSlider.setValue(level);
-        applyMood(level, false); // no animation on prefill
+        applyMood(level, false);
     }
 }
