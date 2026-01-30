@@ -3,24 +3,28 @@
  *
  * Fxml loader util class
  *
- * <p>none</p>
+ * <p>see `/fxml/*`</p>
  *
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 2026-01-28
  *
- * <a href="https://github.com/zouari-oss/serinity" target="_blank">FXMLLoaderUtil.java</a>
+ * <a
+ * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/util/FXMLLoaderUtil.java"
+ * target="_blank">
+ * FXMLLoaderUtil.java
+ * </a>
  */
 
 // `FXMLLoaderUtil` package name
 package com.serinity.accesscontrol.util;
 
-// `java` imports
+// `java` import(s)
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-// `javafx` imports
+// `javafx` import(s)
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 
@@ -33,14 +37,13 @@ import javafx.scene.Scene;
  *
  * <pre>
  * {@code
- * // Example
- * FXMLLoaderUtil.loadScene(this.getClass(), FXMLFile.SIGNIN.getFileName())
+ * // Example usage
+ * Scene scene = FXMLLoaderUtil.loadScene(this.getClass(), FXMLFile.SIGNIN.getFileName());
  * }
  * </pre>
  */
 final public class FXMLLoaderUtil {
-  // No i18n
-  public static Scene loadScene(final Class<?> caller, final String fxmlPath) {
+  public static Scene loadScene(final Class<?> caller, final String fxmlPath) { // No i18n
     return loadScene(caller, fxmlPath, null);
   }
 

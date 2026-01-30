@@ -9,18 +9,22 @@
  * @version 1.0
  * @since 2026-01-28
  *
- * <a href="https://github.com/zouari-oss/hashhash-books" target="_blank">App.java</a>
+ * <a
+ * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/App.java"
+ * target="_blank">
+ * App.java
+ * </a>
  */
 
 // `App` package name
 package com.serinity.accesscontrol;
 
-// `serinity` imports
+// `serinity` import(s)
 import com.serinity.accesscontrol.flag.FXMLFile;
 import com.serinity.accesscontrol.util.FXMLLoaderUtil;
 import com.serinity.accesscontrol.util.I18nUtil;
 
-// `javafx` imports
+// `javafx` import(s)
 import javafx.application.Application;
 import javafx.stage.Stage;
 
