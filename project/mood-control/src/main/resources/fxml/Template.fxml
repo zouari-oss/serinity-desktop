@@ -3,15 +3,13 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
 
 <BorderPane minHeight="600.0" minWidth="900.0" prefHeight="800.0" prefWidth="1200.0"
             styleClass="app-bg"
@@ -37,19 +35,20 @@
                             <Image url="@../assets/logo2.png" />
                         </image>
                     </ImageView>
-                    <Label styleClass="brand-title" text="SERINITY" />
+                    <!-- Keep as key so you can rename brand later without code changes -->
+                    <Label styleClass="brand-title" text="%app.brand" />
                 </children>
             </HBox>
 
             <!-- Navigation -->
             <HBox fx:id="navBox" alignment="CENTER_LEFT" spacing="10.0" styleClass="nav">
                 <children>
-                    <Button fx:id="btnDashboard" onAction="#onNavClick" styleClass="nav-btn nav-btn-active" text="Dashboard" />
-                    <Button fx:id="btnSleep" onAction="#onNavClick" styleClass="nav-btn" text="Sleep" />
-                    <Button fx:id="btnMood" onAction="#onNavClick" styleClass="nav-btn" text="Mood" />
-                    <Button fx:id="btnSupport" onAction="#onNavClick" styleClass="nav-btn" text="Support" />
-                    <Button fx:id="btnExercises" onAction="#onNavClick" styleClass="nav-btn" text="Exercises" />
-                    <Button fx:id="btnAppointments" onAction="#onNavClick" styleClass="nav-btn" text="Appointments" />
+                    <Button fx:id="btnDashboard" onAction="#onNavClick" styleClass="nav-btn nav-btn-active" text="%nav.dashboard" />
+                    <Button fx:id="btnSleep" onAction="#onNavClick" styleClass="nav-btn" text="%nav.sleep" />
+                    <Button fx:id="btnMood" onAction="#onNavClick" styleClass="nav-btn" text="%nav.mood" />
+                    <Button fx:id="btnSupport" onAction="#onNavClick" styleClass="nav-btn" text="%nav.support" />
+                    <Button fx:id="btnExercises" onAction="#onNavClick" styleClass="nav-btn" text="%nav.exercises" />
+                    <Button fx:id="btnAppointments" onAction="#onNavClick" styleClass="nav-btn" text="%nav.appointments" />
                 </children>
             </HBox>
 
@@ -64,14 +63,16 @@
                     <children>
                         <Label styleClass="search-icon" text="🔍" />
                         <TextField fx:id="searchField" prefHeight="30.0" prefWidth="220.0"
-                                   promptText="Search" styleClass="search-field" />
+                                   promptText="%search.placeholder"
+                                   styleClass="search-field" />
                     </children>
                 </HBox>
 
                 <!-- User -->
                 <HBox fx:id="userBox" alignment="CENTER_RIGHT" spacing="10.0" styleClass="user">
                     <children>
-                        <Label fx:id="userNameLabel" styleClass="user-name" text="User" />
+                        <!-- default label handled in controller via bundle (placeholder until real auth/user) -->
+                        <Label fx:id="userNameLabel" styleClass="user-name" />
                         <ImageView fx:id="avatarImg" fitHeight="40.0" fitWidth="40.0" preserveRatio="true" styleClass="avatar">
                             <image>
                                 <Image url="@../assets/user_logo.png" />
@@ -84,75 +85,16 @@
         </HBox>
     </top>
 
-    <!-- ================= CENTER CONTENT ================= -->
+    <!-- ================= CENTER CONTENT (PAGE HOST) ================= -->
     <center>
-        <VBox fx:id="mainContent" spacing="14.0" styleClass="content">
-
-            <padding>
-                <Insets bottom="16" left="16" right="16" top="16" />
-            </padding>
-
-            <!-- Page header -->
-            <HBox fx:id="pageHeader" alignment="CENTER_LEFT" spacing="10.0" styleClass="page-header">
-                <children>
-                    <Label fx:id="pageTitle" styleClass="page-title" text="Dashboard" />
-                    <Region HBox.hgrow="ALWAYS" />
-                    <Label fx:id="pageHint" styleClass="page-hint" text="Overview" />
-                </children>
-            </HBox>
-
-            <!-- CRUD toolbar (styled like your screenshot) -->
-            <HBox fx:id="crudBar" alignment="CENTER_LEFT" spacing="10.0" styleClass="crud-bar">
-                <children>
-
-                    <!-- Primary -->
-                    <Button fx:id="btnAdd" styleClass="btn-primary" text="New item">
-                        <graphic>
-                            <Label text="＋" styleClass="btn-icon"/>
-                        </graphic>
-                    </Button>
-
-                    <!-- Secondary -->
-                    <Button fx:id="btnEdit" styleClass="btn-ghost" text="Edit">
-                        <graphic>
-                            <Label text="✎" styleClass="btn-icon"/>
-                        </graphic>
-                    </Button>
-
-                    <Button fx:id="btnDelete" styleClass="btn-ghost-danger" text="Delete">
-                        <graphic>
-                            <Label text="🗑" styleClass="btn-icon"/>
-                        </graphic>
-                    </Button>
-
-                    <Button fx:id="btnExport" styleClass="btn-ghost" text="Export">
-                        <graphic>
-                            <Label text="⤓" styleClass="btn-icon"/>
-                        </graphic>
-                    </Button>
-
-                    <Region HBox.hgrow="ALWAYS" />
-
-                    <Button fx:id="btnRefresh" styleClass="btn-ghost" text="Refresh">
-                        <graphic>
-                            <Label text="⟳" styleClass="btn-icon"/>
-                        </graphic>
-                    </Button>
-
-                </children>
-            </HBox>
-
-            <!-- Table -->
-            <TableView fx:id="tableView" styleClass="table" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn fx:id="colId" prefWidth="80.0" text="ID" />
-                    <TableColumn fx:id="colTitle" prefWidth="240.0" text="Title" />
-                    <TableColumn fx:id="colStatus" prefWidth="160.0" text="Status" />
-                    <TableColumn fx:id="colDate" prefWidth="160.0" text="Date" />
-                </columns>
-            </TableView>
-
-        </VBox>
+        <StackPane fx:id="contentHost" styleClass="content-host" />
     </center>
+
+    <!-- ================= FOOTER ================= -->
+    <bottom>
+        <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
+            <Label fx:id="footerLabel"/>
+        </HBox>
+    </bottom>
 
 </BorderPane>

@@ -1,0 +1,67 @@
+package com.serinity.moodcontrol.controller;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.layout.StackPane;
+
+import java.io.IOException;
+import java.util.ResourceBundle;
+
+public class MoodHomeController {
+
+    @FXML private StackPane moodHost;
+
+    @FXML private StackPane cardLogMood;
+    @FXML private StackPane cardMoodHistory;
+    @FXML private StackPane cardJournal;
+
+    @FXML private ResourceBundle resources;
+
+    @FXML
+    public void initialize() {
+        if (resources == null) {
+            throw new IllegalStateException("ResourceBundle not injected for MoodHome. Load MoodHome.fxml with a bundle.");
+        }
+
+        cardLogMood.setOnMouseClicked(e -> loadWizard());
+        cardMoodHistory.setOnMouseClicked(e -> loadHistory());
+        // Journal intentionally does nothing for now
+    }
+
+    private void loadWizard() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/mood/Wizard.fxml"),
+                    resources
+            );
+            Parent view = loader.load();
+
+            StateOfMindWizardController wiz = loader.getController();
+            wiz.setMoodHost(moodHost); // ✅ THIS is the missing link
+
+            moodHost.getChildren().setAll(view);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load /fxml/mood/Wizard.fxml", e);
+        }
+    }
+
+    private void loadHistory() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/mood/MoodHistory.fxml"),
+                    resources
+            );
+            Parent view = loader.load();
+
+            MoodHistoryController c = loader.getController();
+            c.setMoodHost(moodHost);
+
+            moodHost.getChildren().setAll(view);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load /fxml/mood/MoodHistory.fxml", e);
+        }
+    }
+}

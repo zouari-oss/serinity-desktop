@@ -41,6 +41,11 @@
       <scope>test</scope>
     </dependency>
     <!-- !org.junit.jupiter.junit-jupiter-engine -->
+      <dependency>
+          <groupId>org.mariadb.jdbc</groupId>
+          <artifactId>mariadb-java-client</artifactId>
+          <version>3.5.2</version>
+      </dependency>
   </dependencies>
 
   <build>
