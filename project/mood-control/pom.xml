@@ -4,14 +4,14 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
 
-  <!-- Parent & Child GAV properties -->
+  <!-- Super & Child GAV properties -->
   <parent>
     <groupId>com.serinity</groupId>
     <artifactId>serinity</artifactId>
     <version>1.0.0</version>
   </parent>
   <artifactId>mood-controll</artifactId>
-  <!-- !Parent & Child GAV properties -->
+  <!-- !Super & Child GAV properties -->
 
   <!-- Module properties -->
   <name>modd-control</name>
@@ -41,11 +41,21 @@
       <scope>test</scope>
     </dependency>
     <!-- !org.junit.jupiter.junit-jupiter-engine -->
-      <dependency>
-          <groupId>org.mariadb.jdbc</groupId>
-          <artifactId>mariadb-java-client</artifactId>
-          <version>3.5.2</version>
-      </dependency>
+
+    <!-- org.mariadb.jdbc.mariadb-java-client -->
+    <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+    </dependency>
+    <!-- !org.mariadb.jdbc.mariadb-java-client -->
+
+    <!-- io.github.cdimascio.dotenv-java -->
+    <dependency>
+      <groupId>io.github.cdimascio</groupId>
+      <artifactId>dotenv-java</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !io.github.cdimascio.dotenv-java -->
   </dependencies>
 
   <build>

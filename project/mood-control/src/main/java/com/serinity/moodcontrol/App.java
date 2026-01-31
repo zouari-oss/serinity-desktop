@@ -1,45 +1,34 @@
 package com.serinity.moodcontrol;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 public class App extends Application {
+  public static void main(final String[] args) {
+    launch();
+  }
 
-    @Override
-    public void start(Stage stage) throws Exception {
+  @Override
+  public void start(final Stage stage) throws Exception {
+    // force to use french
+    final Locale locale = Locale.FRENCH;
 
-        // use system language
-        //Locale locale = Locale.getDefault();
+    // 1) load translations
+    final ResourceBundle bundle = ResourceBundle.getBundle("i18n.messages", locale);
 
-        //  force
-         Locale locale = Locale.FRENCH;
+    // 3) load FXML with bundle
+    final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Template.fxml"), bundle);
+    final Scene scene = new Scene(loader.load());
 
-        // 1) load translations
-        ResourceBundle bundle = ResourceBundle.getBundle("i18n.messages", locale);
-
-        //System.out.println("FR footer = " + bundle.getString("footer.text.simple"));
-
-
-        // 3) load FXML with bundle
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Template.fxml"), bundle);
-        Scene scene = new Scene(loader.load());
-
-        // title: keep hardcoded if you don't want app name translated
-        stage.setTitle("SERINITY");
-        // or: stage.setTitle(bundle.getString("app.name"));
-
-        stage.setMinWidth(900);
-        stage.setMinHeight(600);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch();
-    }
-}
+    // title: keep hardcoded if you don't want app name translated
+    // or: stage.setTitle(bundle.getString("app.name"));
+    stage.setTitle("SERINITY");
+    stage.setScene(scene);
+    stage.show();
+  }
+} // App class

@@ -8,31 +8,31 @@
 <?import javafx.scene.layout.Region?>
 
 <VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.serinity.moodcontrol.controller.StepTypeController"
-      spacing="14"
-      styleClass="wizard-card">
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="com.serinity.moodcontrol.controller.StepTypeController"
+  spacing="14"
+  styleClass="wizard-card">
 
-    <padding>
-        <Insets top="22" right="22" bottom="22" left="22"/>
-    </padding>
+  <padding>
+    <Insets top="22" right="22" bottom="22" left="22" />
+  </padding>
 
-    <Label text="%wizard.step.type.question" styleClass="wizard-question"/>
-    <Label text="%wizard.step.type.sub" styleClass="wizard-sub"/>
+  <Label text="%wizard.step.type.question" styleClass="wizard-question" />
+  <Label text="%wizard.step.type.sub" styleClass="wizard-sub" />
 
-    <Region minHeight="6"/>
+  <Region minHeight="6" />
 
-    <HBox spacing="18">
-        <ToggleButton fx:id="btnMoment"
-                      text="%wizard.step.type.option.moment"
-                      onAction="#onSelect"
-                      styleClass="pick-btn"
-                      prefWidth="180"/>
-        <ToggleButton fx:id="btnDay"
-                      text="%wizard.step.type.option.day"
-                      onAction="#onSelect"
-                      styleClass="pick-btn"
-                      prefWidth="180"/>
-    </HBox>
+  <HBox spacing="18">
+    <ToggleButton fx:id="btnMoment"
+      text="%wizard.step.type.option.moment"
+      onAction="#onSelect"
+      styleClass="pick-btn"
+      prefWidth="180" />
+    <ToggleButton fx:id="btnDay"
+      text="%wizard.step.type.option.day"
+      onAction="#onSelect"
+      styleClass="pick-btn"
+      prefWidth="180" />
+  </HBox>
 
 </VBox>

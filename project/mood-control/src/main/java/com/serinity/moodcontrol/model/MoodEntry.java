@@ -4,42 +4,78 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoodEntry {
+  private long id; // db generated
+  private long userId = 1; // TEMP until Users module
 
-    private long id;          // db generated
-    private long userId = 1;  // TEMP until Users module
+  private String momentType; // "MOMENT" or "DAY" --> enum
+  private int moodLevel; // 1..5
 
-    private String momentType; // "MOMENT" or "DAY"
-    private int moodLevel;     // 1..5
+  private List<String> emotions = new ArrayList<>(),
+      influences = new ArrayList<>();
 
-    private List<String> emotions = new ArrayList<>();
-    private List<String> influences = new ArrayList<>();
+  public MoodEntry() {
+  }
 
-    public MoodEntry() {}
+  public MoodEntry(
+      final long userId,
+      final String momentType,
+      final int moodLevel,
+      final List<String> emotions,
+      final List<String> influences) {
+    this.userId = userId;
+    this.momentType = momentType;
+    this.moodLevel = moodLevel;
+    if (emotions != null)
+      this.emotions = emotions;
+    if (influences != null)
+      this.influences = influences;
+  }
 
-    public MoodEntry(long userId, String momentType, int moodLevel,
-                     List<String> emotions, List<String> influences) {
-        this.userId = userId;
-        this.momentType = momentType;
-        this.moodLevel = moodLevel;
-        if (emotions != null) this.emotions = emotions;
-        if (influences != null) this.influences = influences;
-    }
+  public long getId() {
+    return id;
+  }
 
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
+  public void setId(final long id) {
+    this.id = id;
+  }
 
-    public long getUserId() { return userId; }
-    public void setUserId(long userId) { this.userId = userId; }
+  public long getUserId() {
+    return userId;
+  }
 
-    public String getMomentType() { return momentType; }
-    public void setMomentType(String momentType) { this.momentType = momentType; }
+  public void setUserId(final long userId) {
+    this.userId = userId;
+  }
 
-    public int getMoodLevel() { return moodLevel; }
-    public void setMoodLevel(int moodLevel) { this.moodLevel = moodLevel; }
+  public String getMomentType() {
+    return momentType;
+  }
 
-    public List<String> getEmotions() { return emotions; }
-    public void setEmotions(List<String> emotions) { this.emotions = emotions; }
+  public void setMomentType(final String momentType) {
+    this.momentType = momentType;
+  }
 
-    public List<String> getInfluences() { return influences; }
-    public void setInfluences(List<String> influences) { this.influences = influences; }
-}
+  public int getMoodLevel() {
+    return moodLevel;
+  }
+
+  public void setMoodLevel(final int moodLevel) {
+    this.moodLevel = moodLevel;
+  }
+
+  public List<String> getEmotions() {
+    return emotions;
+  }
+
+  public void setEmotions(final List<String> emotions) {
+    this.emotions = emotions;
+  }
+
+  public List<String> getInfluences() {
+    return influences;
+  }
+
+  public void setInfluences(final List<String> influences) {
+    this.influences = influences;
+  }
+} // MoodEntry class

@@ -3,5 +3,5 @@
 <?import javafx.scene.layout.StackPane?>
 
 <StackPane xmlns="http://javafx.com/javafx/21"
-           xmlns:fx="http://javafx.com/fxml/1"
-           styleClass="blank-page"/>
+  xmlns:fx="http://javafx.com/fxml/1"
+  styleClass="blank-page" />

@@ -5,26 +5,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoodHistoryItem {
-    private final long id;
-    private final LocalDateTime dateTime;
-    private final String momentType; // "MOMENT" / "DAY"
-    private final int moodLevel;
+  private final long id; // BigInt
+  private final LocalDateTime dateTime; // dateTime
+  private final String momentType; // "MOMENT" / "DAY" --> enum
+  private final int moodLevel; // 1..5
 
-    private final List<String> emotions = new ArrayList<>();
-    private final List<String> influences = new ArrayList<>();
+  private final List<String> emotions = new ArrayList<>();
+  private final List<String> influences = new ArrayList<>();
 
-    public MoodHistoryItem(long id, LocalDateTime dateTime, String momentType, int moodLevel) {
-        this.id = id;
-        this.dateTime = dateTime;
-        this.momentType = momentType;
-        this.moodLevel = moodLevel;
-    }
+  public MoodHistoryItem(final long id, final LocalDateTime dateTime, final String momentType, final int moodLevel) {
+    this.id = id;
+    this.dateTime = dateTime;
+    this.momentType = momentType;
+    this.moodLevel = moodLevel;
+  }
 
-    public long getId() { return id; }
-    public LocalDateTime getDateTime() { return dateTime; }
-    public String getMomentType() { return momentType; }
-    public int getMoodLevel() { return moodLevel; }
+  public long getId() {
+    return id;
+  }
 
-    public List<String> getEmotions() { return emotions; }
-    public List<String> getInfluences() { return influences; }
-}
+  public LocalDateTime getDateTime() {
+    return dateTime;
+  }
+
+  public String getMomentType() {
+    return momentType;
+  }
+
+  public int getMoodLevel() {
+    return moodLevel;
+  }
+
+  public List<String> getEmotions() {
+    return emotions;
+  }
+
+  public List<String> getInfluences() {
+    return influences;
+  }
+} // MoodHistoryItem class
