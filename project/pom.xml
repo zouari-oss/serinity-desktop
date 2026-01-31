@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="
-           http://maven.apache.org/POM/4.0.0
-           http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Packaging -->
-    <packaging>pom</packaging>
-
-    <!-- GAV -->
     <groupId>com.serinity</groupId>
     <artifactId>serinity</artifactId>
     <version>1.0.0</version>
+    <packaging>pom</packaging>
 
-    <!-- Project info -->
     <name>Serinity</name>
     <url>http://serinity.dev</url>
 
-    <!-- Licenses -->
     <licenses>
         <license>
             <name>GPL-3.0</name>
@@ -27,7 +21,6 @@
         </license>
     </licenses>
 
-    <!-- Developers -->
     <developers>
         <developer>
             <id>Gl3diator</id>
@@ -37,36 +30,38 @@
             <organizationUrl>https://www.esprit.tn</organizationUrl>
             <timezone>GMT+1</timezone>
         </developer>
+        <developer>
+            <id>ZouariOmar</id>
+            <name>Zouari Omar</name>
+            <email>zouariomar20@gmail.com</email>
+            <url>https://github.com/ZouariOmar</url>
+            <organization>Esprit</organization>
+            <organizationUrl>https://www.esprit.tn</organizationUrl>
+            <timezone>GMT+1</timezone>
+        </developer>
     </developers>
 
-    <!-- ========================================================= -->
-    <!-- GLOBAL PROPERTIES (ONE SOURCE OF TRUTH) -->
-    <!-- ========================================================= -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Java -->
+        <!-- One source of truth -->
         <maven.compiler.release>25</maven.compiler.release>
+        <!-- Optional compatibility -->
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
 
-        <!-- Dependencies -->
         <javafx.version>25.0.2</javafx.version>
         <junit.jupiter.version>5.14.2</junit.jupiter.version>
+        <mariadb.version>3.5.2</mariadb.version>
     </properties>
 
-    <!-- ========================================================= -->
-    <!-- MODULES -->
-    <!-- ========================================================= -->
     <modules>
+        <module>access-control</module>
         <module>mood-control</module>
     </modules>
 
-    <!-- ========================================================= -->
-    <!-- DEPENDENCY MANAGEMENT -->
-    <!-- ========================================================= -->
     <dependencyManagement>
         <dependencies>
-
-            <!-- JavaFX -->
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-controls</artifactId>
@@ -79,24 +74,25 @@
                 <version>${javafx.version}</version>
             </dependency>
 
-            <!-- JUnit -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <!-- ========================================================= -->
-    <!-- BUILD / PLUGIN MANAGEMENT -->
-    <!-- ========================================================= -->
     <build>
         <pluginManagement>
             <plugins>
 
-                <!-- Compiler -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -106,14 +102,15 @@
                     </configuration>
                 </plugin>
 
-                <!-- Surefire (tests) -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.4</version>
+                    <configuration>
+                        <useModulePath>true</useModulePath>
+                    </configuration>
                 </plugin>
 
-                <!-- JavaFX -->
                 <plugin>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-maven-plugin</artifactId>
@@ -122,8 +119,6 @@
 
             </plugins>
         </pluginManagement>
-
     </build>
-
 
 </project>
