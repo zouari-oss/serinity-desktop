@@ -24,11 +24,6 @@ public class App extends Application {
         // 1) load translations
         final ResourceBundle bundle = ResourceBundle.getBundle("i18n.messages", locale);
 
-        // 2) load icon font (Material Symbols)
-
-        try (var in = getClass().getResourceAsStream("/assets/fonts/MaterialSymbolsOutlined.ttf")) {
-            javafx.scene.text.Font.loadFont(in, 16);
-        }
 
 
 

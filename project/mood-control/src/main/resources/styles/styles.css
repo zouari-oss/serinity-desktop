@@ -174,10 +174,53 @@
   -fx-opacity: 0.80;
 }
 
-/* icon styling */
-.mood-card-icon {
-    -fx-font-family: "Material Symbols Outlined";
-    -fx-font-size: 60px;
+/* Hover: stronger lift + subtle tint */
+.mood-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.20), 34, 0.22, 0, 14);
+    -fx-border-color: rgba(47, 111, 109, 0.32);
+    -fx-background-color: rgba(230, 242, 241, 0.35);
+    /* very light ser-secondary tint */
+}
+
+.mood-card #mood_log {
+    -fx-image: url("../assets/icons/mood_log.png");
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    transition:
+            -fx-scale-x 0.5s ease,
+            -fx-scale-y 0.5s ease;
+}
+
+.mood-card:hover #mood_log {
+    -fx-scale-x: 1.5;
+    -fx-scale-y: 1.5;
+}
+.mood-card #mood_history {
+    -fx-image: url("../assets/icons/mood_history.png");
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    transition:
+            -fx-scale-x 0.5s ease,
+            -fx-scale-y 0.5s ease;
+}
+
+.mood-card:hover #mood_history {
+    -fx-scale-x: 1.5;
+    -fx-scale-y: 1.5;
+}
+
+.mood-card #mood_journal {
+     -fx-image: url("../assets/icons/mood_journal.png");
+     -fx-scale-x: 1;
+     -fx-scale-y: 1;
+     transition:
+             -fx-scale-x 0.5s ease,
+             -fx-scale-y 0.5s ease;
+ }
+
+.mood-card:hover #mood_journal {
+    -fx-scale-x: 1.5;
+    -fx-scale-y: 1.5;
 }
 
 
