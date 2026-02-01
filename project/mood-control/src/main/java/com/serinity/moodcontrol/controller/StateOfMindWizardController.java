@@ -32,7 +32,7 @@ public class StateOfMindWizardController {
   @FXML
   private ResourceBundle resources;
 
-  // ✅ host to navigate after finish
+  // host to navigate after finish
   private StackPane moodHost;
 
   private int stepIndex = 0;
@@ -60,7 +60,7 @@ public class StateOfMindWizardController {
     loadStep(0, 0, false);
   }
 
-  // ✅ inject host (MoodHomeController / MoodHistoryController must call this)
+  // inject host (MoodHomeController / MoodHistoryController must call this)
   public void setMoodHost(final StackPane moodHost) {
     this.moodHost = moodHost;
   }
@@ -252,7 +252,7 @@ public class StateOfMindWizardController {
       if (onFinish != null)
         onFinish.run();
 
-      // ✅ ALWAYS navigate to MoodHistory after finish
+      //  ALWAYS navigate to MoodHistory after finish
       goToHistory();
 
     } catch (final Exception e) {
@@ -260,7 +260,7 @@ public class StateOfMindWizardController {
     }
   }
 
-  // ✅ navigate to history inside same host
+  //  navigate to history inside same host
   private void goToHistory() {
     if (moodHost == null) {
       System.out.println("[Wizard] moodHost is null → cannot navigate to history.");

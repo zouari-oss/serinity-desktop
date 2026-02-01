@@ -41,8 +41,8 @@
           prefWidth="320" prefHeight="220"
           styleClass="mood-card">
           <VBox alignment="CENTER" spacing="10">
-            <Label text="☯" styleClass="mood-card-icon" />
-            <Label text="%mood.card.log.title" styleClass="mood-card-title" />
+              <Label text="&#xEA78;" styleClass="mood-card-icon" />
+              <Label text="%mood.card.log.title" styleClass="mood-card-title" />
             <Label text="%mood.card.log.sub" styleClass="mood-card-sub" />
           </VBox>
         </StackPane>
@@ -52,7 +52,7 @@
           prefWidth="320" prefHeight="220"
           styleClass="mood-card">
           <VBox alignment="CENTER" spacing="10">
-            <Label text="👁" styleClass="mood-card-icon" />
+              <Label text="&#xE03F;" styleClass="mood-card-icon" />
             <Label text="%mood.card.history.title" styleClass="mood-card-title" />
             <Label text="%mood.card.history.sub" styleClass="mood-card-sub" />
           </VBox>
@@ -63,7 +63,7 @@
           prefWidth="320" prefHeight="220"
           styleClass="mood-card mood-card-disabled">
           <VBox alignment="CENTER" spacing="10">
-            <Label text="✎" styleClass="mood-card-icon" />
+              <Label text="&#xEA19;" styleClass="mood-card-icon" />
             <Label text="%mood.card.journal.title" styleClass="mood-card-title" />
             <Label text="%mood.card.journal.sub" styleClass="mood-card-sub" />
           </VBox>

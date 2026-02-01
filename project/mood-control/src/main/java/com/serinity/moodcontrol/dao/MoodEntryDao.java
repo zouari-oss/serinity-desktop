@@ -189,17 +189,33 @@ public class MoodEntryDao {
 
   // ---------------- DELETE ----------------
   public boolean delete(final long moodEntryId, final long userId) throws SQLException {
-    final String sql = "DELETE FROM mood_entry WHERE id = ? AND user_id = ?";
+      try (Connection cn = DbConnection.getConnection()) {
+          cn.setAutoCommit(false);
 
-    try (Connection cn = DbConnection.getConnection();
-        PreparedStatement ps = cn.prepareStatement(sql)) {
+          try {
+              // delete join rows first (safe even if none)
+              deleteLinks(cn, "mood_entry_emotion", moodEntryId);
+              deleteLinks(cn, "mood_entry_influence", moodEntryId);
 
-      ps.setLong(1, moodEntryId);
-      ps.setLong(2, userId);
+              // then delete the entry (scoped to user)
+              final String sql = "DELETE FROM mood_entry WHERE id = ? AND user_id = ?";
+              int rows;
+              try (PreparedStatement ps = cn.prepareStatement(sql)) {
+                  ps.setLong(1, moodEntryId);
+                  ps.setLong(2, userId);
+                  rows = ps.executeUpdate();
+              }
 
-      final int rows = ps.executeUpdate();
-      return rows > 0;
-    }
+              cn.commit();
+              return rows > 0;
+
+          } catch (final SQLException e) {
+              cn.rollback();
+              throw e;
+          } finally {
+              cn.setAutoCommit(true);
+          }
+      }
   }
 
   private long insertMoodEntry(final Connection cn, final MoodEntry entry) throws SQLException {

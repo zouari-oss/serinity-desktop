@@ -6,12 +6,14 @@ import java.sql.SQLException;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
+
 public final class DbConnection {
   private final static Dotenv dotenv = Dotenv.configure()
-      .filename(".env.development")
-      .ignoreIfMalformed()
-      .ignoreIfMissing()
-      .load();
+          .directory("mood-control")
+          .filename(".env.development")
+          .ignoreIfMalformed()
+          .ignoreIfMissing()
+          .load();
 
   private DbConnection() {
   }
@@ -21,7 +23,7 @@ public final class DbConnection {
       PASS = dotenv.get("DATABASE_PASSWORD");
 
   public static Connection getConnection() throws SQLException {
-    System.out.println(dotenv.entries());
+   // dont env debug System.out.println(dotenv.entries());
     return DriverManager.getConnection(URL, USER, PASS);
   }
 } // DbConnection class
