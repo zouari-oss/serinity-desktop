@@ -29,7 +29,8 @@ public class MoodHomeController {
 
     cardLogMood.setOnMouseClicked(e -> loadWizard());
     cardMoodHistory.setOnMouseClicked(e -> loadHistory());
-    // Journal intentionally does nothing for now
+    cardJournal.setOnMouseClicked(e -> loadJournal());
+
   }
 
   private void loadWizard() {
@@ -40,7 +41,7 @@ public class MoodHomeController {
       final Parent view = loader.load();
 
       final StateOfMindWizardController wiz = loader.getController();
-      wiz.setMoodHost(moodHost); // ✅ THIS is the missing link
+      wiz.setMoodHost(moodHost); // THIS is the missing link
 
       moodHost.getChildren().setAll(view);
 
@@ -65,4 +66,21 @@ public class MoodHomeController {
       throw new RuntimeException("Failed to load /fxml/mood/MoodHistory.fxml", e);
     }
   }
+    private void loadJournal() {
+        try {
+            final FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/mood/Journal.fxml"),
+                    resources
+            );
+
+            final Parent view = loader.load();
+
+            moodHost.getChildren().setAll(view);
+
+        } catch (final IOException e) {
+            throw new RuntimeException("Failed to load /fxml/mood/Journal.fxml", e);
+        }
+    }
+
+
 } // MoodHistoryController class

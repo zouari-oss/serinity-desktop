@@ -5,30 +5,48 @@ import java.util.ResourceBundle;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.geometry.NodeOrientation;
 
 public class App extends Application {
-  public static void main(final String[] args) {
-    launch();
-  }
 
-  @Override
-  public void start(final Stage stage) throws Exception {
-    // force to use french
-    final Locale locale = Locale.FRENCH;
+    public static void main(final String[] args) {
+        launch();
+    }
 
-    // 1) load translations
-    final ResourceBundle bundle = ResourceBundle.getBundle("i18n.messages", locale);
+    @Override
+    public void start(final Stage stage) throws Exception {
 
-    // 3) load FXML with bundle
-    final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Template.fxml"), bundle);
-    final Scene scene = new Scene(loader.load());
+        // 🇫force French
+         //final Locale locale = Locale.FRENCH;
 
-    // title: keep hardcoded if you don't want app name translated
-    // or: stage.setTitle(bundle.getString("app.name"));
-    stage.setTitle("SERINITY");
-    stage.setScene(scene);
-    stage.show();
-  }
-} // App class
+        //  default system locale
+         final Locale locale = Locale.getDefault();
+
+        // Safa9os
+        //final Locale locale = new Locale("ar");
+
+        // load translations
+        final ResourceBundle bundle =
+                ResourceBundle.getBundle("i18n.messages", locale);
+
+        //  load FXML with bundle
+        final FXMLLoader loader =
+                new FXMLLoader(getClass().getResource("/fxml/Template.fxml"), bundle);
+
+        final Parent root = loader.load();
+
+        // ymin lel ysar
+        //if ("ar".equals(locale.getLanguage())) {
+        //    root.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        //}
+
+        final Scene scene = new Scene(root);
+
+        stage.setTitle("SERINITY");
+        stage.setScene(scene);
+        stage.show();
+    }
+}

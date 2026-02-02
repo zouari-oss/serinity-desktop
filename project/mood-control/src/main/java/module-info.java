@@ -6,7 +6,12 @@ module com.serinity {
   requires org.mariadb.jdbc;
   requires io.github.cdimascio.dotenv.java;
 
-  opens com.serinity.moodcontrol.controller to javafx.fxml;
+  requires javafx.graphics;
+
+
+
+
+    opens com.serinity.moodcontrol.controller to javafx.fxml;
 
   exports com.serinity.moodcontrol;
 }

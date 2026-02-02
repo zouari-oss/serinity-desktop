@@ -17,7 +17,7 @@ import javafx.scene.layout.FlowPane;
 public class StepInfluencesController {
 
   private static final int MAX_SELECTED = 5;
-  // Codes derived from your DB "influence.name"
+  // Codes derived from  DB "influence.name"
   // Sleep -> SLEEP
   // School/Work -> SCHOOL_WORK
   // Social media -> SOCIAL_MEDIA

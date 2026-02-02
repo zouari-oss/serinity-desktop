@@ -107,7 +107,7 @@ public class MoodHistoryController {
       final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/Wizard.fxml"), resources);
       final Parent wizard = loader.load();
 
-      // ✅ IMPORTANT: inject host so Finish can navigate to history
+      //  inject host so Finish can navigate to history
       final StateOfMindWizardController wiz = loader.getController();
       wiz.setMoodHost(moodHost);
 
@@ -236,16 +236,16 @@ public class MoodHistoryController {
     final HBox actions = new HBox(8);
     actions.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
 
-    final javafx.scene.control.Button btnEdit = new javafx.scene.control.Button("✎");
-    btnEdit.getStyleClass().addAll("icon-btn", "icon-btn-edit");
-    btnEdit.setOnAction(e -> {
+      final javafx.scene.control.Button btnEdit = new javafx.scene.control.Button("✎"); // edit
+      btnEdit.getStyleClass().addAll("icon-btn", "icon-btn-edit", "ms-icon");
+      btnEdit.setOnAction(e -> {
       e.consume();
       onEdit(m);
     });
 
-    final javafx.scene.control.Button btnDelete = new javafx.scene.control.Button("🗑");
-    btnDelete.getStyleClass().addAll("icon-btn", "icon-btn-delete");
-    btnDelete.setOnAction(e -> {
+      final javafx.scene.control.Button btnDelete = new javafx.scene.control.Button("\uD83D\uDDD1"); // delete
+      btnDelete.getStyleClass().addAll("icon-btn", "icon-btn-delete", "ms-icon");
+      btnDelete.setOnAction(e -> {
       e.consume();
       onDelete(m);
     });
@@ -443,9 +443,17 @@ public class MoodHistoryController {
 
     final Optional<javafx.scene.control.ButtonType> res = alert.showAndWait();
     if (res.isPresent() && res.get() == javafx.scene.control.ButtonType.OK) {
-      // Still UI-only delete for now (next step we make DB delete real)
-      currentItems.removeIf(x -> x.id == m.id);
-      renderTimeline(currentItems);
+        try {
+            final long userId = 1L; // TEMP
+            final boolean ok = new MoodEntryDao().delete(m.id, userId);
+
+            if (ok) {
+                loadAndRenderFromDb(); // reload from DB so UI is always truthful
+            }
+        } catch (final Exception ex) {
+            ex.printStackTrace();
+        }
+
     }
   }
 
