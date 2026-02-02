@@ -643,15 +643,10 @@
   -fx-font-weight: 900;
   -fx-background-radius: 10;
   -fx-padding: 6 10;
-  -fx-cursor: hand;
+  -fx-cursor: hand; -fx-font-size: 16px;
 }
 
-.ms-icon {
-    -fx-font-family: "Material Symbols Outlined";
-    -fx-font-size: 16px;
-    -fx-font-weight: 900;
-    -fx-padding: 6 10;
-}
+
 
 .icon-btn:hover {
   -fx-background-color: rgba(31, 41, 51, 0.10);
@@ -723,15 +718,23 @@
     -fx-font-style: italic;
 }
 .journal-card .icon-btn {
-    -fx-background-color: transparent;
+    -fx-background-color: rgba(31, 41, 51, 0.06);
     -fx-text-fill: rgba(0,0,0,0.45);
+}
+.journal-card .icon-btn-delete {
+    -fx-text-fill: #B12B28; /* muted red */
+    -fx-background-color: rgba(217, 83, 79, 0.10);
+
 }
 
 .journal-card .icon-btn:hover {
     -fx-background-color: rgba(47,127,122,0.12);
     -fx-text-fill: #2F7F7A;
 }
-
+.journal-card .icon-btn-delete:hover {
+    -fx-background-color: rgba(217, 83, 79, 0.22);
+    -fx-text-fill: #7A1E1B;
+}
 
 .editor-panel {
     -fx-background-color: #F2FAF9; /* soft teal-tinted white */

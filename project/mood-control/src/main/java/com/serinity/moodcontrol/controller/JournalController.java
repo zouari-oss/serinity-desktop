@@ -1,5 +1,8 @@
 package com.serinity.moodcontrol.controller;
 
+import com.serinity.moodcontrol.dao.JournalEntryDao;
+import com.serinity.moodcontrol.model.JournalEntry;
+
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,6 +10,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -14,16 +19,24 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.ArrayList;
 
 public class JournalController {
 
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
+
+    // Keep this consistent with your editor width (Journal.fxml prefWidth)
+    private static final double EDITOR_WIDTH = 430.0;
+
+    // TEMP until users module
+    private static final long USER_ID = 1L;
 
     // ----- FXML -----
     @FXML private VBox journalBox;
@@ -35,32 +48,25 @@ public class JournalController {
 
     private JournalEditorController editor;
 
-    // ----- temp data (replace with DAO later) -----
-    private static class JournalVM {
-        String title;
-        String content;      // Q1[key]\nA1:...\n...
-        LocalDateTime dateTime;
+    // DB
+    private final JournalEntryDao dao = new JournalEntryDao();
 
-        JournalVM(String title, String content, LocalDateTime dt) {
-            this.title = title;
-            this.content = content;
-            this.dateTime = dt;
-        }
-    }
+    // current data
+    private List<JournalEntry> items = new ArrayList<JournalEntry>();
 
-    // tracks current "edit context" (no id needed)
-    private JournalVM editing = null;
-
-    private final List<JournalVM> items = new ArrayList<JournalVM>();
+    // tracks current "edit context"
+    private JournalEntry editing = null;
 
     @FXML
     public void initialize() {
         if (resources == null) {
-            throw new IllegalStateException("ResourceBundle not injected in JournalController. Load Journal.fxml with a bundle.");
+            throw new IllegalStateException(
+                    "ResourceBundle not injected in JournalController. Load Journal.fxml with a bundle."
+            );
         }
 
         loadEditor();
-        seed();
+        reloadFromDb();
         render();
         closeEditorInstant();
     }
@@ -107,6 +113,25 @@ public class JournalController {
         showEditor();
     }
 
+    @FXML
+    private void onRefresh() {
+        reloadFromDb();
+        render();
+    }
+
+    // ======================
+    // DB load
+    // ======================
+
+    private void reloadFromDb() {
+        try {
+            items = dao.findAll(USER_ID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            items = new ArrayList<JournalEntry>();
+        }
+    }
+
     // ======================
     // Editor callbacks
     // ======================
@@ -117,27 +142,46 @@ public class JournalController {
 
         final String content = serializeGuided(d.a1, d.a2, d.a3);
 
-        if (editing == null) {
-            items.add(0, new JournalVM(title, content, LocalDateTime.now()));
-        } else {
-            editing.title = title;
-            editing.content = content;
-            // keep original datetime (editing shouldn’t change time)
+        try {
+            if (editing == null) {
+                // NEW
+                JournalEntry e = new JournalEntry();
+                e.setUserId(USER_ID);
+                e.setTitle(title);
+                e.setContent(content);
+
+                dao.insert(e);
+
+            } else {
+                // EDIT
+                JournalEntry e = new JournalEntry();
+                e.setId(editing.getId());
+                e.setUserId(USER_ID);
+                e.setTitle(title);
+                e.setContent(content);
+
+                dao.update(e);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
 
+        // Always reload from DB so UI stays truthful
+        editing = null;
+        reloadFromDb();
         render();
         closeEditor();
     }
 
-    private void openEdit(final JournalVM vm) {
-        editing = vm;
+    private void openEdit(final JournalEntry entry) {
+        editing = entry;
 
-        final Parsed p = parseGuided(vm.content);
+        final Parsed p = parseGuided(entry.getContent());
 
         editor.openEdit(
                 t("journal.editor.edit"),
                 t("journal.editor.subtitle"),
-                vm.title,
+                entry.getTitle(),
                 p.a1, p.a2, p.a3
         );
 
@@ -151,19 +195,23 @@ public class JournalController {
     private void render() {
         journalBox.getChildren().clear();
 
-        if (items.isEmpty()) {
+        if (items == null || items.isEmpty()) {
             journalBox.getChildren().add(emptyState());
             return;
         }
 
         LocalDate current = null;
-        for (final JournalVM vm : items) {
-            final LocalDate d = vm.dateTime.toLocalDate();
+        for (final JournalEntry e : items) {
+            LocalDateTime dt = e.getCreatedAt();
+            if (dt == null) dt = LocalDateTime.now();
+
+            final LocalDate d = dt.toLocalDate();
             if (current == null || !current.equals(d)) {
                 current = d;
                 journalBox.getChildren().add(dateHeader(d));
             }
-            journalBox.getChildren().add(journalCard(vm));
+
+            journalBox.getChildren().add(journalCard(e, dt));
         }
     }
 
@@ -198,7 +246,7 @@ public class JournalController {
         return lbl;
     }
 
-    private Node journalCard(final JournalVM vm) {
+    private Node journalCard(final JournalEntry entry, final LocalDateTime dt) {
         final VBox card = new VBox(8);
         card.getStyleClass().add("journal-card");
 
@@ -207,10 +255,10 @@ public class JournalController {
 
         final VBox main = new VBox(4);
 
-        final Label title = new Label(vm.title);
+        final Label title = new Label(entry.getTitle());
         title.getStyleClass().add("journal-card-title");
 
-        final String time = " • " + TIME_FMT.format(vm.dateTime);
+        final String time = " • " + TIME_FMT.format(dt);
         final Label meta = new Label(t("journal.card.sub") + time);
         meta.getStyleClass().add("journal-card-meta");
 
@@ -226,30 +274,50 @@ public class JournalController {
         btnEdit.getStyleClass().addAll("icon-btn", "icon-btn-edit", "ms-icon");
         btnEdit.setOnAction(e -> {
             e.consume();
-            openEdit(vm);
+            openEdit(entry);
         });
 
         final Button btnDelete = new Button("\uD83D\uDDD1");
         btnDelete.getStyleClass().addAll("icon-btn", "icon-btn-delete", "ms-icon");
         btnDelete.setOnAction(e -> {
             e.consume();
-            items.remove(vm);
-            render();
+            onDelete(entry);
         });
 
         actions.getChildren().addAll(btnEdit, btnDelete);
 
         top.getChildren().addAll(main, spacer, actions);
 
-        final Label preview = new Label(makePreview(vm.content));
+        final Label preview = new Label(makePreview(entry.getContent()));
         preview.getStyleClass().add("journal-card-preview");
         preview.setWrapText(true);
 
         card.getChildren().addAll(top, preview);
 
-        card.setOnMouseClicked(e -> openEdit(vm));
+        // click card opens edit
+        card.setOnMouseClicked(e -> openEdit(entry));
 
         return card;
+    }
+
+    private void onDelete(final JournalEntry entry) {
+        final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+
+        // if you want i18n later, add keys like journal.delete.title/header/body
+        alert.setTitle(t("journal.delete.title"));
+        alert.setHeaderText(t("journal.delete.header"));
+        alert.setContentText(t("journal.delete.body"));
+
+        final Optional<ButtonType> res = alert.showAndWait();
+        if (res.isPresent() && res.get() == ButtonType.OK) {
+            try {
+                dao.delete(entry.getId(), USER_ID);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            reloadFromDb();
+            render();
+        }
     }
 
     // ======================
@@ -263,7 +331,7 @@ public class JournalController {
         editorHost.setManaged(true);
         editorHost.setVisible(true);
 
-        editorHost.setTranslateX(430); // same as editor prefWidth
+        editorHost.setTranslateX(EDITOR_WIDTH);
         final TranslateTransition tt = new TranslateTransition(Duration.millis(220), editorHost);
         tt.setToX(0);
         tt.play();
@@ -281,7 +349,7 @@ public class JournalController {
 
     private void closeEditor() {
         final TranslateTransition tt = new TranslateTransition(Duration.millis(160), editorHost);
-        tt.setToX(430);
+        tt.setToX(EDITOR_WIDTH);
         tt.setOnFinished(e -> closeEditorInstant());
         tt.play();
     }
@@ -338,22 +406,6 @@ public class JournalController {
 
         v = v.replace("\n", " ").trim();
         return v.length() > 120 ? v.substring(0, 120) + "…" : v;
-    }
-
-    // ======================
-    // Temp seed
-    // ======================
-
-    private void seed() {
-        if (!items.isEmpty()) return;
-
-        items.add(new JournalVM(
-                "First entry",
-                "Q1[journal.prompt.context]\nA1: I want to write about something on my mind.\n\n"
-                        + "Q2[journal.prompt.inner]\nA2: I feel a mix of pressure and excitement.\n\n"
-                        + "Q3[journal.prompt.meaning]\nA3: I want to take it one step at a time.\n",
-                LocalDateTime.now().minusHours(2)
-        ));
     }
 
     // ======================
