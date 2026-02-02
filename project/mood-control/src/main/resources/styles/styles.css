@@ -689,3 +689,121 @@
   -fx-font-weight: 800;
   -fx-text-fill: rgba(255, 255, 255, 0.75);
 }
+
+
+/* ===== Journal editor polish ===== */
+
+.journal-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 14;
+    -fx-spacing: 6;
+    -fx-border-width: 0 0 0 4;
+    -fx-border-color: transparent transparent transparent rgba(47,127,122,0.35);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 18, 0.12, 0, 2);
+}
+.journal-card:hover {
+    -fx-background-color: #F4FBFA;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.09), 22, 0.14, 0, 3);
+}
+.journal-card-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F5E5A;
+}
+.journal-card-meta {
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(47,127,122,0.65);
+}
+.journal-card-preview {
+    -fx-font-size: 13.5px;
+    -fx-text-fill: rgba(0,0,0,0.78);
+    -fx-wrap-text: true;
+    -fx-font-style: italic;
+}
+.journal-card .icon-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(0,0,0,0.45);
+}
+
+.journal-card .icon-btn:hover {
+    -fx-background-color: rgba(47,127,122,0.12);
+    -fx-text-fill: #2F7F7A;
+}
+
+
+.editor-panel {
+    -fx-background-color: #F2FAF9; /* soft teal-tinted white */
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(47,127,122,0.18);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.14), 26, 0.16, -7, 0);
+}
+
+/* Title hierarchy */
+.editor-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F5E5A; /* dark teal */
+}
+
+
+.editor-subtitle {
+    -fx-font-size: 12.5px;
+    -fx-text-fill: rgba(31,94,90,0.65);
+}
+
+
+/* Prompt sections */
+.prompt-block {
+    -fx-padding: 12 0 6 12;
+    -fx-border-color: transparent transparent transparent rgba(47,127,122,0.35);
+    -fx-border-width: 0 0 0 3;
+}
+
+/* Questions feel like guidance (not a form label) */
+.prompt-q {
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2F7F7A; /* primary teal */
+}
+
+
+.prompt-hint {
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(47,127,122,0.55);
+}
+
+/* focus */
+.prompt-answer {
+    -fx-background-radius: 14;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+    -fx-border-color: rgba(47,127,122,0.18);
+    -fx-background-color: #FFFFFF;
+}
+.prompt-answer:focused {
+    -fx-border-color: #2F7F7A;
+    -fx-effect: dropshadow(gaussian, rgba(47,127,122,0.25), 12, 0.3, 0, 0);
+}
+
+
+/* Softer focus ring */
+.text-area:focused, .text-field:focused {
+    -fx-border-color: rgba(0,0,0,0.18);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0.2, 0, 0);
+}
+
+/* Dim overlay - calm */
+.overlay-dim {
+    -fx-background-color: rgba(31,94,90,0.25);
+}
+.save-hint {
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(31,94,90,0.65);
+    -fx-padding: 0 2 0 0;
+    -fx-alignment: CENTER_RIGHT;
+}
+

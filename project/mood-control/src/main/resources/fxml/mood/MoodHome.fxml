@@ -61,7 +61,7 @@
         </StackPane>
 
         <!-- Journal -->
-        <StackPane fx:id="cardJournal" prefHeight="220" prefWidth="320" styleClass="mood-card mood-card-disabled">
+        <StackPane fx:id="cardJournal" prefHeight="220" prefWidth="320" styleClass="mood-card">
           <VBox alignment="CENTER" spacing="10">
               <ImageView fx:id="mood_journal" fitHeight="56.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
                   <image>
