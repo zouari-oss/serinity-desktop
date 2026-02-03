@@ -3,74 +3,67 @@ skinparam classAttributeIconSize 0
 skinparam packageStyle rectangle
 
 ' =======================
-' User Management Package
+'  `access-control` Package
 ' =======================
-package "User Management" {
+package "access-control" {
+
+  abstract class IdentifiableEntity {
+    +id: UUID
+  }
+
+  abstract class TimestampedEntity {
+    +createdAt: Instant
+    +updatedAt: Instant
+  }
+
+  IdentifiableEntity <|-- TimestampedEntity
 
   class User {
-    +id: UUID
     +email: String
-    +password: String
-    +status: AccountStatus
-    +createdAt: DateTime
+    +passwordHash: String
+    +role: Role
+    +createdAt: Instant
+    +updatedAt: Instant
   }
 
-  class Patient {
-    +medicalHistory: Text
-    +emergencyContact: String
-    +therapyGoals: Text
-  }
+  TimestampedEntity <|-- User
 
-  class Therapist {
-    +licenseNumber: String
-    +specialization: String
-    +yearsOfExperience: int
+  enum Role {
+    ADMIN
+    THERAPIST
+    PATIENT
   }
-  
-  class Admin {
-    +department: String
-    +accessLevel: int
-  }
-
-  User <|.. Patient
-  User <|.. Therapist
-  User <|.. Admin
 
   class Profile {
     +firstName: String
     +lastName: String
-    +dateOfBirth: Date
-    +gender: String
+    +phone: String
+    +country: String
+    +state: String
+    +aboutMe: String
+    +profileImageUrl: String
+    +createdAt: Instant
+    +updatedAt: Instant
   }
 
-  class Role {
-    +id: Long
-    +name: RoleType
-  }
-
-  class Permission {
-    +id: Long
-    +code: String
-  }
+  TimestampedEntity <|-- Profile
 
   class AuthSession {
-    +id: UUID
-    +loginTime: DateTime
-    +logoutTime: DateTime
-    +ipAddress: String
+    +refreshToken: String
+    +createdAt: Instant
+    +expiresAt: Instant
+    +revoked: boolean
   }
 
   class AuditLog {
-    +id: Long
     +action: String
-    +timestamp: DateTime
+    +ipAddress: String
+    +createdAt: Instant
   }
 
-  User "1" -- "1" Profile
-  User "1" -- "*" AuthSession
-  User "1" -- "*" AuditLog
-  User "*" -- "*" Role
-  Role "*" -- "*" Permission
+  User "1" -- "1" Profile : owns
+  User "1" -- "*" AuthSession : sessions
+  User "1" -- "*" AuditLog : audit logs
 }
 
 ' =======================
