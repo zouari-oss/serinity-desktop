@@ -8,6 +8,7 @@ entity "User" as U {
   -email : String
   -passwordHash : String
   -role : UserRole
+  -presenceStatus: PresenceStatus
   -accountStatus : AccountStatus
   -createdAt : Instant
   -updatedAt : Instant

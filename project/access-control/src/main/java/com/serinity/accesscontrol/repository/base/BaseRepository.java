@@ -1,8 +1,29 @@
+/**
+ * BaseRepository.java
+ *
+ * A base repository that support the common crud actions
+ *
+ * <p>none</p>
+ *
+ * @author  @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since   2026-02-04
+ *
+ * <a
+ * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/repository/base/BaseRepository.java"
+ * target="_blank">
+ * BaseRepository.java
+ * </a>
+ */
+
+// `serinity` package name
 package com.serinity.accesscontrol.repository.base;
 
+// `java` import(s)
 import java.util.List;
 import java.util.Optional;
 
+// `jakarta` import(s)
 import jakarta.persistence.EntityManager;
 
 public abstract class BaseRepository<T, ID> {

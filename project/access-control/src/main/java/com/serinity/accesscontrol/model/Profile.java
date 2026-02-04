@@ -38,20 +38,20 @@
 // `User` package name
 package com.serinity.accesscontrol.model;
 
-import com.serinity.accesscontrol.flag.Gender;
 // `serinity` import(s)
+import com.serinity.accesscontrol.flag.Gender;
 import com.serinity.accesscontrol.model.base.TimestampedEntity;
 import com.serinity.accesscontrol.util.UsernameGenerator;
 
 // `jakarta` import(s)
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity

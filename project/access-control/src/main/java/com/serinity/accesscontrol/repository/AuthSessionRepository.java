@@ -1,11 +1,32 @@
+/**
+ * AuthSessionRepository.java
+ *
+ * Repository class for performing CRUD operations on {@link com.serinity.accesscontrol.model.AuthSession} entities.
+ *
+ * @author  @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since   2026-02-04
+ * @see     com.serinity.accesscontrol.model.AuthSession
+ *
+ * <a
+ * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/repository/AuthSessionRepository.java"
+ * target="_blank">
+ * AuthSessionRepository.java
+ * </a>
+ */
+
+// `AuthSessionRepository` package name
 package com.serinity.accesscontrol.repository;
 
+// `java` import(s)
 import java.time.Instant;
 
+// `serinity` import(s)
 import com.serinity.accesscontrol.model.AuthSession;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.base.BaseRepository;
 
+// `jakarta` import(s)
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 

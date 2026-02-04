@@ -4,9 +4,9 @@
  * <p>This enum is used to define and enforce access control in the application.
  * Each role grants different permissions and access levels:</p>
  * <ul>
- *   <li>{@link UserRole->ADMIN}     - Full access to all system features and administrative operations</li>
- *   <li>{@link UserRole->THERAPIST} - Access to patient data, appointments, and therapy related features</li>
- *   <li>{@link UserRole->PATIENT}   - Limited access to personal data, appointments, mood tracking, and resources</li>
+ *   <li>{@link ADMIN}     - Full access to all system features and administrative operations</li>
+ *   <li>{@link THERAPIST} - Access to patient data, appointments, and therapy related features</li>
+ *   <li>{@link PATIENT}   - Limited access to personal data, appointments, mood tracking, and resources</li>
  * </ul>
  *
  * @author  @ZouariOmar (zouariomar20@gmail.com)

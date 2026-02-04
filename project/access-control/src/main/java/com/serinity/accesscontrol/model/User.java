@@ -22,6 +22,7 @@ package com.serinity.accesscontrol.model;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.flag.AccountStatus;
+import com.serinity.accesscontrol.flag.PresenceStatus;
 import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.base.TimestampedEntity;
 
@@ -49,8 +50,12 @@ public final class User extends TimestampedEntity {
   private UserRole role;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "presence_status", nullable = false)
+  private PresenceStatus presenceStatus; // Pre-persist
+
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private AccountStatus accountStatus = AccountStatus.ACTIVE; // Pre-persist
+  private AccountStatus accountStatus; // Pre-persist
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, optional = false) // User must have a profile
   private Profile profile;
@@ -83,6 +88,14 @@ public final class User extends TimestampedEntity {
     this.role = role;
   }
 
+  public PresenceStatus getPresenceStatus() {
+    return presenceStatus;
+  }
+
+  public void setPresenceStatus(PresenceStatus presenceStatus) {
+    this.presenceStatus = presenceStatus;
+  }
+
   public AccountStatus getAccountStatus() {
     return accountStatus;
   }
@@ -101,8 +114,13 @@ public final class User extends TimestampedEntity {
 
   @PrePersist
   protected void onAction() {
+    // Set accountStatus if not already set
     if (this.accountStatus == null) {
       this.accountStatus = AccountStatus.ACTIVE;
     }
+
+    // Set presenceStatus if not already set
+    if (this.presenceStatus == null)
+      this.presenceStatus = PresenceStatus.ONLINE;
   }
 } // User final class
