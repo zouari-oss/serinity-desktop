@@ -20,7 +20,7 @@
 package com.serinity.accesscontrol;
 
 // `serinity` import(s)
-import com.serinity.accesscontrol.flag.FXMLFile;
+import com.serinity.accesscontrol.flag.ResourceFile;
 import com.serinity.accesscontrol.util.FXMLLoaderUtil;
 import com.serinity.accesscontrol.util.I18nUtil;
 
@@ -45,7 +45,7 @@ public class App extends Application {
     I18nUtil.applySupportedLocale();
     stage.setScene(FXMLLoaderUtil.loadScene(
         this.getClass(),
-        FXMLFile.SIGNIN.getFileName(),
+        ResourceFile.SIGNIN_FXML.getFileName(),
         I18nUtil.getBundle()));
     stage.show();
   }
