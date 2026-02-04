@@ -38,6 +38,7 @@
 // `User` package name
 package com.serinity.accesscontrol.model;
 
+import com.serinity.accesscontrol.flag.Gender;
 // `serinity` import(s)
 import com.serinity.accesscontrol.model.base.TimestampedEntity;
 import com.serinity.accesscontrol.util.UsernameGenerator;
@@ -49,6 +50,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
@@ -57,7 +60,7 @@ import jakarta.persistence.UniqueConstraint;
 })
 public final class Profile extends TimestampedEntity {
   @Column(nullable = false, length = 50, updatable = false)
-  private String username;
+  private String username; // Pre-persist
 
   @Column(nullable = true)
   private String firstName;
@@ -67,6 +70,10 @@ public final class Profile extends TimestampedEntity {
 
   @Column(length = 20, nullable = true)
   private String phone;
+
+  @Enumerated(EnumType.STRING)
+  @Column(length = 10, nullable = true)
+  private Gender gender;
 
   @Column(name = "profile_image_url", length = 512, nullable = true)
   private String profileImageUrl;
@@ -84,17 +91,6 @@ public final class Profile extends TimestampedEntity {
   @JoinColumn(name = "user_id", nullable = false, unique = true)
   private User user;
 
-  /**
-   * Auto-generate username ONCE.
-   * Immutable after creation.
-   */
-  @PrePersist
-  protected void generateUsername() {
-    if (this.username == null) {
-      this.username = UsernameGenerator.generate(user.getEmail());
-    }
-  }
-
   // #########################
   // ### GETTERS & SETTERS ###
   // #########################
@@ -103,7 +99,7 @@ public final class Profile extends TimestampedEntity {
     return username;
   }
 
-  public void setUsername(String username) {
+  public void setUsername(final String username) {
     this.username = username;
   }
 
@@ -111,7 +107,7 @@ public final class Profile extends TimestampedEntity {
     return firstName;
   }
 
-  public void setFirstName(String firstName) {
+  public void setFirstName(final String firstName) {
     this.firstName = firstName;
   }
 
@@ -119,7 +115,7 @@ public final class Profile extends TimestampedEntity {
     return lastName;
   }
 
-  public void setLastName(String lastName) {
+  public void setLastName(final String lastName) {
     this.lastName = lastName;
   }
 
@@ -127,15 +123,23 @@ public final class Profile extends TimestampedEntity {
     return phone;
   }
 
-  public void setPhone(String phone) {
+  public void setPhone(final String phone) {
     this.phone = phone;
+  }
+
+  public Gender getGender() {
+    return gender;
+  }
+
+  public void setGender(final Gender gender) {
+    this.gender = gender;
   }
 
   public String getProfileImageUrl() {
     return profileImageUrl;
   }
 
-  public void setProfileImageUrl(String profileImageUrl) {
+  public void setProfileImageUrl(final String profileImageUrl) {
     this.profileImageUrl = profileImageUrl;
   }
 
@@ -143,7 +147,7 @@ public final class Profile extends TimestampedEntity {
     return country;
   }
 
-  public void setCountry(String country) {
+  public void setCountry(final String country) {
     this.country = country;
   }
 
@@ -151,7 +155,7 @@ public final class Profile extends TimestampedEntity {
     return state;
   }
 
-  public void setState(String state) {
+  public void setState(final String state) {
     this.state = state;
   }
 
@@ -159,7 +163,7 @@ public final class Profile extends TimestampedEntity {
     return aboutMe;
   }
 
-  public void setAboutMe(String aboutMe) {
+  public void setAboutMe(final String aboutMe) {
     this.aboutMe = aboutMe;
   }
 
@@ -167,7 +171,22 @@ public final class Profile extends TimestampedEntity {
     return user;
   }
 
-  public void setUser(User user) {
+  public void setUser(final User user) {
     this.user = user;
+  }
+
+  // #############################
+  // ### PRE_PERSIST METHOD(S) ###
+  // #############################
+
+  /**
+   * Auto-generate username ONCE.
+   * Immutable after creation.
+   */
+  @PrePersist
+  protected void onCreate() {
+    if (this.username == null) {
+      this.username = UsernameGenerator.generate(user.getEmail());
+    }
   }
 } // Profile final class

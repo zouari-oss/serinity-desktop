@@ -36,12 +36,22 @@
 // `AuditLog` package name
 package com.serinity.accesscontrol.model;
 
-// `jakarta` import(s)
-import jakarta.persistence.*;
+/// `java` import(s)
 import java.time.Instant;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.model.base.IdentifiableEntity;
+import com.serinity.accesscontrol.util.SystemInfo;
+
+// `jakarta` import(s)
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "audit_logs", indexes = {
@@ -52,18 +62,107 @@ public final class AuditLog extends IdentifiableEntity {
   @Column(nullable = false, length = 100)
   private String action;
 
-  @Column(name = "ip_address", nullable = false, length = 45)
-  private String ipAddress;
+  @Column(name = "os_name", length = 50, nullable = true)
+  private String osName; // Pre-persist - From system property
+
+  @Column(length = 100, nullable = true)
+  private String hostname; // Pre-persist - From system property
+
+  @Column(name = "private_ip_address", nullable = false, length = 45)
+  private String privateIpAddress; // Pre-persist - The current subnet private ip address
+
+  @Column(name = "mac_address", length = 17, nullable = true)
+  private String macAddress; // Pre-persist - From any network interface
+
+  @Column(length = 255, nullable = true)
+  private String location; // Pre-persist - From system property
 
   @Column(name = "created_at", nullable = false, updatable = false)
-  private Instant createdAt;
+  private Instant createdAt; // Pre-persist - Pre-persist
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "user_id", nullable = false, updatable = false)
-  private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "auth_session_id", nullable = true)
+  private AuthSession session;
+
+  // #########################
+  // ### GETTERS & SETTERS ###
+  // #########################
+
+  public String getAction() {
+    return action;
+  }
+
+  public void setAction(final String action) {
+    this.action = action;
+  }
+
+  public String getOsName() {
+    return osName;
+  }
+
+  public String getHostname() {
+    return hostname;
+  }
+
+  public String getPrivateIpAddress() {
+    return privateIpAddress;
+  }
+
+  public String getMacAddress() {
+    return macAddress;
+  }
+
+  public String getLocation() {
+    return location;
+  }
+
+  public Instant getCreatedAt() {
+    return createdAt;
+  }
+
+  public AuthSession getSession() {
+    return session;
+  }
+
+  public void setSession(final AuthSession session) {
+    this.session = session;
+  }
+
+  // #############################
+  // ### PRE_PERSIST METHOD(S) ###
+  // #############################
 
   @PrePersist
   protected void onCreate() {
     this.createdAt = Instant.now();
+
+    if (this.hostname == null) {
+      try {
+        this.hostname = java.net.InetAddress.getLocalHost().getHostName();
+      } catch (final Exception e) {
+        this.hostname = "unknown";
+      }
+    }
+
+    // Set ip address if not already set
+    if (this.privateIpAddress == null) {
+      this.privateIpAddress = SystemInfo.getPrivateIpAddress();
+    }
+
+    // Set MAC address if not already set (from any network interface)
+    if (this.macAddress == null) {
+      this.macAddress = SystemInfo.getMacAddress();
+    }
+
+    // Set OS name if not already set (from system property)
+    if (this.osName == null) {
+      this.osName = System.getProperty("os.name", "unknown");
+    }
+
+    // Set location if not already set (from system property)
+    if (this.location == null) {
+      // You can replace this with geolocation logic if available
+      this.location = System.getProperty("user.country", "unknown");
+    }
   }
 } // AuditLog final class

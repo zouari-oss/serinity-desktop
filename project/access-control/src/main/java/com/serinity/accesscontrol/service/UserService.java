@@ -25,7 +25,7 @@
 package com.serinity.accesscontrol.service;
 
 // `serinity` import(s)
-import com.serinity.accesscontrol.flag.Role;
+import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.ProfileRepository;
@@ -33,7 +33,7 @@ import com.serinity.accesscontrol.repository.UserRepository;
 import com.serinity.accesscontrol.util.PasswordEncoder;
 
 public final class UserService {
-  public void register(final String email, final String password, final Role role) {
+  public void register(final String email, final String password, final UserRole role) {
     final User user = new User();
     user.setEmail(email);
     user.setPasswordHash(PasswordEncoder.encode(password));

@@ -21,7 +21,8 @@
 package com.serinity.accesscontrol.model;
 
 // `serinity` import(s)
-import com.serinity.accesscontrol.flag.Role;
+import com.serinity.accesscontrol.flag.AccountStatus;
+import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.base.TimestampedEntity;
 
 // `jakarta` import(s)
@@ -30,8 +31,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
@@ -45,16 +46,14 @@ public final class User extends TimestampedEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private Role role;
+  private UserRole role;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private AccountStatus accountStatus = AccountStatus.ACTIVE; // Pre-persist
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, optional = false) // User must have a profile
   private Profile profile;
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private java.util.List<AuthSession> sessions = new java.util.ArrayList<>();
-
-  @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
-  private java.util.List<AuditLog> auditLogs = new java.util.ArrayList<>();
 
   // #########################
   // ### GETTERS & SETTERS ###
@@ -64,7 +63,7 @@ public final class User extends TimestampedEntity {
     return email;
   }
 
-  public void setEmail(final String email) {
+  public void setEmail(String email) {
     this.email = email;
   }
 
@@ -72,39 +71,38 @@ public final class User extends TimestampedEntity {
     return passwordHash;
   }
 
-  public void setPasswordHash(final String passwordHash) {
+  public void setPasswordHash(String passwordHash) {
     this.passwordHash = passwordHash;
   }
 
-  public Role getRole() {
+  public UserRole getRole() {
     return role;
   }
 
-  public void setRole(final Role role) {
+  public void setRole(UserRole role) {
     this.role = role;
+  }
+
+  public AccountStatus getAccountStatus() {
+    return accountStatus;
   }
 
   public Profile getProfile() {
     return profile;
   }
 
-  public void setProfile(final Profile profile) {
+  public void setProfile(Profile profile) {
     this.profile = profile;
   }
 
-  public java.util.List<AuthSession> getSessions() {
-    return sessions;
-  }
+  // #############################
+  // ### PRE_PERSIST METHOD(S) ###
+  // #############################
 
-  public void setSessions(final java.util.List<AuthSession> sessions) {
-    this.sessions = sessions;
-  }
-
-  public java.util.List<AuditLog> getAuditLogs() {
-    return auditLogs;
-  }
-
-  public void setAuditLogs(final java.util.List<AuditLog> auditLogs) {
-    this.auditLogs = auditLogs;
+  @PrePersist
+  protected void onAction() {
+    if (this.accountStatus == null) {
+      this.accountStatus = AccountStatus.ACTIVE;
+    }
   }
 } // User final class

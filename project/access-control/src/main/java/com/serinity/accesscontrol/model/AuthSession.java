@@ -39,12 +39,21 @@
 // `AuthSession` package name
 package com.serinity.accesscontrol.model;
 
-// `jakarta` import(s)
-import jakarta.persistence.*;
+import java.time.Duration;
+// `java` import(s)
 import java.time.Instant;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.model.base.IdentifiableEntity;
+
+// `jakarta` import(s)
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "auth_sessions", indexes = {
@@ -56,7 +65,7 @@ public final class AuthSession extends IdentifiableEntity {
   private String refreshToken;
 
   @Column(nullable = false, updatable = false)
-  private Instant createdAt;
+  private Instant createdAt; // Pre-persist
 
   @Column(nullable = false, updatable = false)
   private Instant expiresAt;
@@ -68,8 +77,53 @@ public final class AuthSession extends IdentifiableEntity {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
+  // #########################
+  // ### GETTERS & SETTERS ###
+  // #########################
+
+  public String getRefreshToken() {
+    return refreshToken;
+  }
+
+  public void setRefreshToken(String refreshToken) {
+    this.refreshToken = refreshToken;
+  }
+
+  public Instant getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Instant createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public Instant getExpiresAt() {
+    return expiresAt;
+  }
+
+  public void setExpiresAt(Instant expiresAt) {
+    this.expiresAt = expiresAt;
+  }
+
+  public boolean isRevoked() {
+    return revoked;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  // #############################
+  // ### PRE_PERSIST METHOD(S) ###
+  // #############################
+
   @PrePersist
   protected void onCreate() {
     this.createdAt = Instant.now();
+    this.expiresAt = Instant.now().plus(Duration.ofDays(7));
   }
 } // AuthSession final class
