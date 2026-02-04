@@ -31,16 +31,21 @@ package com.serinity.accesscontrol;
 
 // `junit` packages
 import org.junit.jupiter.api.Test;
+
+// `serinity` import(s)
+import com.serinity.accesscontrol.util.SystemInfo;
+
+// `junit` import(s)
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class MainTest {
   @Test
   public void testJavaVesion() {
-    assertEquals("25.0.2", SystemInfo.javaVersion());
+    assertEquals("25.0.2", SystemInfo.getJavaVersion());
   }
 
   @Test
   public void testJavafxVersion() {
-    assertEquals("25.0.2", SystemInfo.javafxVersion());
+    assertEquals("25.0.2", SystemInfo.getJavafxVersion());
   }
 } // MainTest final class
