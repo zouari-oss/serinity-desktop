@@ -57,7 +57,7 @@ import org.junit.jupiter.api.Test;
 
 // `serinity` imports
 import com.serinity.accesscontrol.config.HibernateConfig;
-import com.serinity.accesscontrol.flag.Role;
+import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.ProfileRepository;
@@ -77,7 +77,7 @@ public final class DatabaseTest {
     User user = new User();
     user.setEmail(email);
     user.setPasswordHash(password);
-    user.setRole(Role.PATIENT);
+    user.setRole(UserRole.PATIENT);
 
     // Create profile (username auto-generated)
     Profile profile = new Profile();
