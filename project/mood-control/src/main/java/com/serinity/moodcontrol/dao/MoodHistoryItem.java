@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoodHistoryItem {
-  private final long id; // BigInt
-  private final LocalDateTime dateTime; // dateTime
-  private final String momentType; // "MOMENT" / "DAY" --> enum
-  private final int moodLevel; // 1..5
+  private final long id;
+  private final LocalDateTime dateTime;
+  private final String momentType;
+  private final int moodLevel;
 
   private final List<String> emotions = new ArrayList<>();
   private final List<String> influences = new ArrayList<>();
@@ -43,4 +43,4 @@ public class MoodHistoryItem {
   public List<String> getInfluences() {
     return influences;
   }
-} // MoodHistoryItem class
+}

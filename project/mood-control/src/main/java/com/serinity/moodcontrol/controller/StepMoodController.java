@@ -54,7 +54,7 @@ public class StepMoodController {
     return (int) Math.round(moodSlider.getValue());
   }
 
-  // ✅ PREFILL (for Edit)
+  // PREFILL for Edit
   public void setMoodLevel(int level) {
     level = clamp(level, 1, 5);
     moodSlider.setValue(level);
@@ -64,7 +64,7 @@ public class StepMoodController {
   private void applyMood(int level, final boolean animate) {
     level = clamp(level, 1, 5);
 
-    // Keep the exact wording (for now) but take it from the bundle
+    //takeen from the bundle
     moodLabel.setText(resources.getString("mood.level." + level));
 
     final Color target = colorFor(level);
@@ -151,4 +151,4 @@ public class StepMoodController {
   private int clamp(final int v, final int min, final int max) {
     return Math.max(min, Math.min(max, v));
   }
-} // StepMoodController class
+}

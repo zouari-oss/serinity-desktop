@@ -13,7 +13,7 @@ public class StepTypeController {
 
   public void setWizard(final StateOfMindWizardController wizard) {
     this.wizard = wizard;
-    // if something already selected, enable next
+    // if selected enable next
     if (wizard != null) {
       wizard.setCanGoNext(btnMoment.isSelected() || btnDay.isSelected());
     }
@@ -27,7 +27,7 @@ public class StepTypeController {
     return null;
   }
 
-  // ✅ PREFILL (for Edit)
+  // PREFILL (for Edit)
   public void setSelectedType(final String type) {
     if (type == null) {
       btnMoment.setSelected(false);
@@ -59,4 +59,4 @@ public class StepTypeController {
       wizard.setCanGoNext(btnMoment.isSelected() || btnDay.isSelected());
     }
   }
-} // StepTypeController class
+}

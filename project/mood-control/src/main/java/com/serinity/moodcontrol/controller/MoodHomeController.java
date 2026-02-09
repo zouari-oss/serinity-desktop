@@ -41,7 +41,7 @@ public class MoodHomeController {
       final Parent view = loader.load();
 
       final StateOfMindWizardController wiz = loader.getController();
-      wiz.setMoodHost(moodHost); // THIS is the missing link
+      wiz.setMoodHost(moodHost); // link loadi fel stackpane
 
       moodHost.getChildren().setAll(view);
 
@@ -83,4 +83,4 @@ public class MoodHomeController {
     }
 
 
-} // MoodHistoryController class
+}

@@ -16,11 +16,11 @@ public class MoodEntryDao {
       try {
         final long entryId = insertMoodEntry(cn, entry);
 
-        // entry.getEmotions() MUST be codes now: CALM, AFRAID, ...
+        // entry.getEmotions() CODE
         final List<Integer> emotionIds = idsByCodes(cn, "emotion", entry.getEmotions());
         linkMany(cn, "mood_entry_emotion", "emotion_id", entryId, emotionIds);
 
-        // entry.getInfluences() are now codes too: SCHOOL_WORK, SOCIAL_MEDIA, ...
+        // entry.getInfluences() CODES
         final List<Integer> influenceIds = idsByCodes(cn, "influence", entry.getInfluences());
         linkMany(cn, "mood_entry_influence", "influence_id", entryId, influenceIds);
 
