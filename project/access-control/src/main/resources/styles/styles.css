@@ -1,4 +1,4 @@
-.root {
+* {
   -fx-font-family: "Segoe UI", system-ui, Arial;
 
   -color-primary: #2F6F6D;
@@ -15,5 +15,5 @@
 }
 
 .app-bg {
-  -fx-background-color: -ser-bg;
+  -fx-background-color: -bg-color;
 }

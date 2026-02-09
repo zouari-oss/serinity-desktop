@@ -87,6 +87,14 @@
       </dependency>
       <!-- !org.openjfx.javafx-fxml -->
 
+      <!-- org.openjfx.javafx-web -->
+      <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-web</artifactId>
+        <version>${javafx.version}</version>
+      </dependency>
+      <!-- !org.openjfx.javafx-web -->
+
       <!-- org.junit.jupiter.junit-jupiter-engine -->
       <dependency>
         <groupId>org.junit.jupiter</groupId>

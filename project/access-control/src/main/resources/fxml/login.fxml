@@ -3,10 +3,9 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
@@ -14,28 +13,41 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.web.WebView?>
 
-<AnchorPane fx:id="login_interface" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@../styles/login.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.accesscontrol.controller.LoginController">
+<AnchorPane fx:id="loginInterface" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+  minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="app-bg"
+  stylesheets="@../styles/login.css" xmlns="http://javafx.com/javafx/25"
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="com.serinity.accesscontrol.controller.LoginController">
   <children>
-    <ImageView fitHeight="529.0" fitWidth="406.0" layoutX="-6.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true" />
-    <Pane layoutX="400.0" layoutY="33.0" prefHeight="529.0" prefWidth="406.0">
+    <Pane layoutX="406.0" layoutY="41.0" prefHeight="561.0" prefWidth="394.0"
+      styleClass="signinPane" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0"
+      AnchorPane.topAnchor="0.0">
       <children>
-        <Group layoutX="14.0" layoutY="14.0">
+        <Group layoutX="14.0" layoutY="32.0">
           <children>
-            <Label prefHeight="18.0" prefWidth="345.0" text="%login.label.details" />
-            <Label layoutY="18.0" prefHeight="77.0" prefWidth="345.0" text="%login.label.welcom" />
+            <Label fx:id="upperDetailsLabel" prefHeight="18.0" prefWidth="345.0"
+              text="%login.label.details" />
+            <Label fx:id="loginWelcomeLabel" layoutY="18.0" prefHeight="119.0" prefWidth="345.0"
+              text="%login.label.welcom" />
           </children>
         </Group>
-        <Group layoutX="29.0" layoutY="157.0">
+        <Group layoutX="14.0" layoutY="174.0">
           <children>
-            <TextField fx:id="usernameOrEmail" prefHeight="40.0" prefWidth="300.0" promptText="%login.text_field.username_or_email" />
-            <Hyperlink layoutX="186.0" layoutY="89.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="114.0" text="%login.hyperlink.forget-password" />
-            <PasswordField fx:id="password" layoutY="45.0" prefHeight="40.0" prefWidth="300.0" promptText="%login.text_field.password" />
+            <TextField fx:id="usernameOrEmail" prefHeight="40.0" prefWidth="360.0"
+              promptText="%login.text_field.username_or_email" />
+            <PasswordField fx:id="password" layoutY="45.0" prefHeight="40.0" prefWidth="360.0"
+              promptText="%login.text_field.password" />
+            <Hyperlink alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="212.0"
+              layoutY="87.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0"
+              prefWidth="148.0" text="%login.hyperlink.forget-password" />
           </children>
         </Group>
-        <Group layoutX="82.0" layoutY="289.0">
+        <Group layoutX="102.0" layoutY="306.0">
           <children>
-            <ImageView fx:id="faceIdImageView" disable="true" fitHeight="30.0" fitWidth="30.0" layoutX="90.0" layoutY="91.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="faceIdImageView" disable="true" fitHeight="30.0" fitWidth="30.0"
+              layoutX="85.0" layoutY="92.0" pickOnBounds="true" preserveRatio="true">
               <image>
                 <Image url="@../assets/login/icons8-face-id-50.png" />
               </image>
@@ -44,29 +56,46 @@
               </cursor>
             </ImageView>
             <Separator layoutY="62.0" prefWidth="200.0" />
-            <Label alignment="CENTER" layoutX="2.0" layoutY="65.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="200.0" text="%login.label.or_login_with" textAlignment="CENTER" />
-            <Button fx:id="loginButton" layoutX="31.0" mnemonicParsing="false" onAction="#onLoginButtonAction" prefHeight="40.0" prefWidth="140.0" text="%login.button.login">
+            <Label alignment="CENTER" layoutX="1.0" layoutY="65.0" minHeight="-Infinity"
+              minWidth="-Infinity" prefHeight="20.0" prefWidth="200.0"
+              text="%login.label.or_login_with" textAlignment="CENTER" />
+            <Button fx:id="signInButton" defaultButton="true" layoutX="31.0" mnemonicParsing="false"
+              onAction="#onLoginButtonAction" prefHeight="40.0" prefWidth="140.0"
+              text="%login.button.login" textAlignment="CENTER">
               <cursor>
                 <Cursor fx:constant="CLOSED_HAND" />
               </cursor>
+              <graphic>
+                <ImageView fx:id="loginIconImageView" fitHeight="20.0" fitWidth="20.0"
+                  pickOnBounds="true" preserveRatio="true">
+                  <image>
+                    <Image url="@../assets/login/icons8-login-30.png" />
+                  </image>
+                </ImageView>
+              </graphic>
             </Button>
           </children>
         </Group>
-        <Group layoutX="92.0" layoutY="433.0">
+        <Group layoutX="98.0" layoutY="461.0">
           <children>
             <Label prefHeight="25.0" prefWidth="142.0" text="%login.label.to_signup" />
-            <Hyperlink fx:id="signupHyperlink" layoutX="142.0" minHeight="-Infinity" minWidth="-Infinity" onAction="#onSignupHyperlinkAction" prefHeight="25.0" prefWidth="60.0" text="%login.hyperlink.to_signup" />
+            <Hyperlink fx:id="signupHyperlink" layoutX="142.0" minHeight="-Infinity"
+              minWidth="-Infinity" onAction="#onSignupHyperlinkAction" prefHeight="25.0"
+              prefWidth="69.0" text="%login.hyperlink.to_signup" />
           </children>
         </Group>
-        <Label layoutX="14.0" layoutY="490.0" prefHeight="25.0" prefWidth="160.0" text="%login.label.terms_privacy" />
+        <Label layoutX="6.0" layoutY="535.0" prefHeight="25.0" prefWidth="345.0"
+          text="%login.label.terms_privacy" />
       </children>
     </Pane>
-    <Label layoutY="562.0" prefHeight="39.0" prefWidth="800.0" styleClass="footer-bar" text="%footer.label.text" />
-    <MenuButton fx:id="languageMenuButton" layoutX="735.0" layoutY="569.0" mnemonicParsing="false" onAction="#onLanguageMenuButtonaction" prefHeight="26.0" prefWidth="30.0" text="%login.menu_button.language">
-      <items>
-        <MenuItem mnemonicParsing="false" text="Action 1" />
-        <MenuItem mnemonicParsing="false" text="Action 2" />
-      </items>
-    </MenuButton>
+    <WebView fx:id="loginSideWebView" layoutY="41.0" prefHeight="560.0" prefWidth="405.0"
+      AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="395.0"
+      AnchorPane.topAnchor="0.0" />
+    <Label fx:id="footerLabel" layoutY="560.0" prefHeight="40.0" prefWidth="800.0"
+      styleClass="footer-bar" text="%footer.label.text" AnchorPane.bottomAnchor="0.0"
+      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+    <ComboBox fx:id="languageComboBox" layoutX="717.0" layoutY="566.0"
+      onAction="#languageComboBoxAction" prefHeight="18.0" prefWidth="68.0"
+      AnchorPane.bottomAnchor="8.0" AnchorPane.rightAnchor="15.0" />
   </children>
 </AnchorPane>

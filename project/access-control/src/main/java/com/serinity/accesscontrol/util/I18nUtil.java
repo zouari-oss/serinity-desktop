@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 // `serinity` import(s)
 import com.serinity.accesscontrol.flag.MessageKey;
 import com.serinity.accesscontrol.flag.PropertyBundle;
-import com.serinity.accesscontrol.flag.SupportedLanguage;
 
 /**
  * Internationalization app manager
@@ -99,6 +98,15 @@ public final class I18nUtil {
         .collect(Collectors.toList());
   }
 
+  public static List<String> getSupportedLanguagesToString() {
+    ResourceBundle config = ResourceBundle.getBundle(PropertyBundle.SUPPORTED_LANGUAGES_BUNDLE.getBaseName());
+
+    return List.of(config.getString(MessageKey.LANGUAGES.getValue()).split(","))
+        .stream()
+        .map(String::trim)
+        .collect(Collectors.toList());
+  }
+
   // INFO:
   // See
   // <a href=
@@ -124,6 +132,6 @@ public final class I18nUtil {
     }
 
     // Fallback to the configured default supported language.
-    setLocale(SupportedLanguage.DEFAULT.getLocale());
+    // setLocale(SupportedLanguage.DEFAULT.getLocale());
   }
 } // I18nUtil class

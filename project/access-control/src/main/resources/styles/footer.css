@@ -8,7 +8,7 @@
 }
 
 .footer-bar Label {
-  -fx-font-size: 12px;
+  -fx-font-size: 1.2em;
   -fx-font-weight: 800;
   -fx-text-fill: rgba(255, 255, 255, 0.75);
 }

@@ -20,6 +20,7 @@ module com.serinity.accesscontrol {
   // --- Javafx dependencies ---
   requires transitive javafx.controls;
   requires javafx.fxml;
+  requires javafx.web;
 
   // --- Persistence & database dependencies ---
   requires jakarta.persistence;
