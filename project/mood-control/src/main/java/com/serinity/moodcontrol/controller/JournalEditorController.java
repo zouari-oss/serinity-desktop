@@ -85,7 +85,7 @@ public class JournalEditorController {
         a2Area.clear();
         a3Area.clear();
 
-        // snapshot irrelevant for NEW, but reset anyway
+        // reset anyway
         originalTitle = "";
         originalA1 = "";
         originalA2 = "";

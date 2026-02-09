@@ -10,8 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
+
 import javafx.scene.layout.StackPane;
 
 public class MainTemplateController {
@@ -30,13 +29,11 @@ public class MainTemplateController {
 
   @FXML
   private Label userNameLabel;
-  @FXML
-  private ImageView avatarImg;
+
 
   @FXML
   private StackPane contentHost;
-  @FXML
-  private TextField searchField;
+
 
   @FXML
   private Label footerLabel;
@@ -101,4 +98,4 @@ public class MainTemplateController {
       throw new RuntimeException("Failed to load: " + fxmlPath, e);
     }
   }
-} // MainTemplateController class
+}

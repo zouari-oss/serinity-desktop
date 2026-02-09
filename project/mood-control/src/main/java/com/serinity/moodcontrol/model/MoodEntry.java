@@ -5,10 +5,10 @@ import java.util.List;
 
 public class MoodEntry {
   private long id; // db generated
-  private long userId = 1; // TEMP until Users module
+  private long userId = 1; // TEMP  User id
 
-  private String momentType; // "MOMENT" or "DAY" --> enum
-  private int moodLevel; // 1..5
+  private String momentType;
+  private int moodLevel;
 
   private List<String> emotions = new ArrayList<>(),
       influences = new ArrayList<>();
@@ -78,4 +78,4 @@ public class MoodEntry {
   public void setInfluences(final List<String> influences) {
     this.influences = influences;
   }
-} // MoodEntry class
+}

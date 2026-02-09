@@ -74,9 +74,9 @@ public class MoodHistoryController {
 
     // Range options (localized labels, but we map them to numeric days)
     rangeBox.getItems().setAll(
-        t("history.range.last7"),
+        t("history.range.all"),
         t("history.range.last30"),
-        t("history.range.all"));
+        t("history.range.last7"));
     rangeBox.getSelectionModel().select(0);
 
     // Type options (localized labels, but we map them to ALL/MOMENT/DAY codes)
