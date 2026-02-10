@@ -309,4 +309,4 @@ public class StateOfMindWizardController {
       current.setTranslateX(0);
     });
   }
-} // StateOfMindWizardController class
+}

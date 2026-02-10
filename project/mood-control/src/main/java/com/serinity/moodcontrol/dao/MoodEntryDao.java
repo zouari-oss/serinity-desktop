@@ -8,7 +8,7 @@ import java.util.*;
 
 public class MoodEntryDao {
 
-  // ---------------- SAVE ----------------
+  // SAVE
   public long save(final MoodEntry entry) throws SQLException {
     try (Connection cn = DbConnection.getConnection()) {
       cn.setAutoCommit(false);
@@ -37,7 +37,7 @@ public class MoodEntryDao {
     }
   }
 
-  // ---------------- READ HISTORY ----------------
+  // HISTORY
   public List<MoodHistoryItem> findHistory(final long userId, final Integer lastDays, final String typeFilter)
       throws SQLException {
 
@@ -53,9 +53,9 @@ public class MoodEntryDao {
       params.add(Integer.valueOf(lastDays));
     }
 
-    // IMPORTANT:
-    // typeFilter should be "ALL" or null or "MOMENT" or "DAY" (codes), not UI
-    // strings
+
+    // typeFilter  "MOMENT" or "DAY" codes strings
+
     if (typeFilter != null && !"ALL".equalsIgnoreCase(typeFilter)) {
       final String dbType = typeFilter.trim().toUpperCase(Locale.ROOT);
       if ("MOMENT".equals(dbType) || "DAY".equals(dbType)) {
