@@ -56,11 +56,17 @@ public class LoginController {
   @FXML // fx:id="faceIdImageView"
   private ImageView faceIdImageView; // Value injected by FXMLLoader
 
+  @FXML // fx:id="footerLabel"
+  private Label footerLabel; // Value injected by FXMLLoader
+
   @FXML // fx:id="languageComboBox"
   private ComboBox<String> languageComboBox; // Value injected by FXMLLoader
 
   @FXML // fx:id="loginIconImageView"
   private ImageView loginIconImageView; // Value injected by FXMLLoader
+
+  @FXML // fx:id="loginIconImageView1"
+  private ImageView loginIconImageView1; // Value injected by FXMLLoader
 
   @FXML // fx:id="loginInterface"
   private AnchorPane loginInterface; // Value injected by FXMLLoader
@@ -68,8 +74,8 @@ public class LoginController {
   @FXML // fx:id="loginSideWebView"
   private WebView loginSideWebView; // Value injected by FXMLLoader
 
-  @FXML // fx:id="loginWelcomeLabel"
-  private Label loginWelcomeLabel; // Value injected by FXMLLoader
+  @FXML // fx:id="loginWelcomeLabel1"
+  private Label loginWelcomeLabel1; // Value injected by FXMLLoader
 
   @FXML // fx:id="password"
   private PasswordField password; // Value injected by FXMLLoader
@@ -77,8 +83,23 @@ public class LoginController {
   @FXML // fx:id="signInButton"
   private Button signInButton; // Value injected by FXMLLoader
 
-  @FXML // fx:id="signupHyperlink"
-  private Hyperlink signupHyperlink; // Value injected by FXMLLoader
+  @FXML // fx:id="signInHyperlink"
+  private Hyperlink signInHyperlink; // Value injected by FXMLLoader
+
+  @FXML // fx:id="signUpButton"
+  private Button signUpButton; // Value injected by FXMLLoader
+
+  @FXML // fx:id="signUpConfirmPasswordField"
+  private PasswordField signUpConfirmPasswordField; // Value injected by FXMLLoader
+
+  @FXML // fx:id="signUpHyperlink"
+  private Hyperlink signUpHyperlink; // Value injected by FXMLLoader
+
+  @FXML // fx:id="signUpPasswordField"
+  private PasswordField signUpPasswordField; // Value injected by FXMLLoader
+
+  @FXML // fx:id="singnUpEmailTextField"
+  private TextField singnUpEmailTextField; // Value injected by FXMLLoader
 
   @FXML // fx:id="usernameOrEmail"
   private TextField usernameOrEmail; // Value injected by FXMLLoader
@@ -88,7 +109,7 @@ public class LoginController {
   // ##############################
 
   @FXML
-  void languageComboBoxAction() {
+  void onLanguageComboBoxAction(ActionEvent event) {
     I18nUtil.setLocale(
         languageComboBox.getValue().equals(SupportedLanguage.FR.getCode())
             ? SupportedLanguage.FR.getLocale() // To `fr`
@@ -102,12 +123,28 @@ public class LoginController {
   }
 
   @FXML
-  void onLoginButtonAction(final ActionEvent event) {
+  void onSignInButtonAction(ActionEvent event) {
 
   }
 
   @FXML
-  void onSignupHyperlinkAction(final ActionEvent event) {
+  void onSignInHyperlinkAction(ActionEvent event) {
+    FXMLAnimationUtil.slideFullScreen(
+        loginSideWebView,
+        loginInterface
+            .getScene()
+            .getWindow()
+            .getWidth(),
+        false);
+  }
+
+  @FXML
+  void onSignUpButtonAction(ActionEvent event) {
+
+  }
+
+  @FXML
+  void onSignUpHyperlinkAction(ActionEvent event) {
     FXMLAnimationUtil.slideFullScreen(
         loginSideWebView,
         loginInterface
@@ -141,16 +178,27 @@ public class LoginController {
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {
     assert faceIdImageView != null : "fx:id=\"faceIdImageView\" was not injected: check your FXML file 'login.fxml'.";
+    assert footerLabel != null : "fx:id=\"footerLabel\" was not injected: check your FXML file 'login.fxml'.";
     assert languageComboBox != null : "fx:id=\"languageComboBox\" was not injected: check your FXML file 'login.fxml'.";
     assert loginIconImageView != null
         : "fx:id=\"loginIconImageView\" was not injected: check your FXML file 'login.fxml'.";
+    assert loginIconImageView1 != null
+        : "fx:id=\"loginIconImageView1\" was not injected: check your FXML file 'login.fxml'.";
     assert loginInterface != null : "fx:id=\"loginInterface\" was not injected: check your FXML file 'login.fxml'.";
     assert loginSideWebView != null : "fx:id=\"loginSideWebView\" was not injected: check your FXML file 'login.fxml'.";
-    assert loginWelcomeLabel != null
-        : "fx:id=\"loginWelcomeLabel\" was not injected: check your FXML file 'login.fxml'.";
+    assert loginWelcomeLabel1 != null
+        : "fx:id=\"loginWelcomeLabel1\" was not injected: check your FXML file 'login.fxml'.";
     assert password != null : "fx:id=\"password\" was not injected: check your FXML file 'login.fxml'.";
     assert signInButton != null : "fx:id=\"signInButton\" was not injected: check your FXML file 'login.fxml'.";
-    assert signupHyperlink != null : "fx:id=\"signupHyperlink\" was not injected: check your FXML file 'login.fxml'.";
+    assert signInHyperlink != null : "fx:id=\"signInHyperlink\" was not injected: check your FXML file 'login.fxml'.";
+    assert signUpButton != null : "fx:id=\"signUpButton\" was not injected: check your FXML file 'login.fxml'.";
+    assert signUpConfirmPasswordField != null
+        : "fx:id=\"signUpConfirmPasswordField\" was not injected: check your FXML file 'login.fxml'.";
+    assert signUpHyperlink != null : "fx:id=\"signUpHyperlink\" was not injected: check your FXML file 'login.fxml'.";
+    assert signUpPasswordField != null
+        : "fx:id=\"signUpPasswordField\" was not injected: check your FXML file 'login.fxml'.";
+    assert singnUpEmailTextField != null
+        : "fx:id=\"singnUpEmailTextField\" was not injected: check your FXML file 'login.fxml'.";
     assert usernameOrEmail != null : "fx:id=\"usernameOrEmail\" was not injected: check your FXML file 'login.fxml'.";
 
     // Custom initialization
