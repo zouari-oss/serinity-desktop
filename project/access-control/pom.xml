@@ -76,6 +76,13 @@
       <artifactId>mariadb-java-client</artifactId>
     </dependency>
     <!-- !org.mariadb.jdbc.mariadb-java-client -->
+
+    <!-- org.zouarioss.skinned-rat-orm -->
+    <dependency>
+      <groupId>org.zouarioss</groupId>
+      <artifactId>skinned-rat-orm</artifactId>
+    </dependency>
+    <!-- !org.zouarioss.skinned-rat-orm -->
   </dependencies>
 
   <build>
