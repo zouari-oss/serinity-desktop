@@ -32,7 +32,7 @@ public class StateOfMindWizardController {
   @FXML
   private ResourceBundle resources;
 
-  // host to navigate after finish
+  // stakpane li bech tet3adelha
   private StackPane moodHost;
 
   private int stepIndex = 0;
@@ -309,4 +309,4 @@ public class StateOfMindWizardController {
       current.setTranslateX(0);
     });
   }
-} // StateOfMindWizardController class
+}

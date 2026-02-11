@@ -32,7 +32,7 @@ public class JournalController {
 
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
 
-    // Keep this consistent with your editor width (Journal.fxml prefWidth)
+    // kima Journal.fxml prefWidth
     private static final double EDITOR_WIDTH = 430.0;
 
     // TEMP until users module
@@ -54,7 +54,7 @@ public class JournalController {
     // current data
     private List<JournalEntry> items = new ArrayList<JournalEntry>();
 
-    // tracks current "edit context"
+    // tracki current "edit context"
     private JournalEntry editing = null;
 
     @FXML

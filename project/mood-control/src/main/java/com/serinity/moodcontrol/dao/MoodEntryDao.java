@@ -8,7 +8,7 @@ import java.util.*;
 
 public class MoodEntryDao {
 
-  // ---------------- SAVE ----------------
+  // SAVE
   public long save(final MoodEntry entry) throws SQLException {
     try (Connection cn = DbConnection.getConnection()) {
       cn.setAutoCommit(false);
@@ -16,11 +16,11 @@ public class MoodEntryDao {
       try {
         final long entryId = insertMoodEntry(cn, entry);
 
-        // entry.getEmotions() MUST be codes now: CALM, AFRAID, ...
+        // entry.getEmotions() CODE
         final List<Integer> emotionIds = idsByCodes(cn, "emotion", entry.getEmotions());
         linkMany(cn, "mood_entry_emotion", "emotion_id", entryId, emotionIds);
 
-        // entry.getInfluences() are now codes too: SCHOOL_WORK, SOCIAL_MEDIA, ...
+        // entry.getInfluences() CODES
         final List<Integer> influenceIds = idsByCodes(cn, "influence", entry.getInfluences());
         linkMany(cn, "mood_entry_influence", "influence_id", entryId, influenceIds);
 
@@ -37,7 +37,7 @@ public class MoodEntryDao {
     }
   }
 
-  // ---------------- READ HISTORY ----------------
+  // HISTORY
   public List<MoodHistoryItem> findHistory(final long userId, final Integer lastDays, final String typeFilter)
       throws SQLException {
 
@@ -53,9 +53,9 @@ public class MoodEntryDao {
       params.add(Integer.valueOf(lastDays));
     }
 
-    // IMPORTANT:
-    // typeFilter should be "ALL" or null or "MOMENT" or "DAY" (codes), not UI
-    // strings
+
+    // typeFilter  "MOMENT" or "DAY" codes strings
+
     if (typeFilter != null && !"ALL".equalsIgnoreCase(typeFilter)) {
       final String dbType = typeFilter.trim().toUpperCase(Locale.ROOT);
       if ("MOMENT".equals(dbType) || "DAY".equals(dbType)) {

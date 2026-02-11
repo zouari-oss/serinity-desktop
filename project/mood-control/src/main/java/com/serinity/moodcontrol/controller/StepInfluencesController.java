@@ -43,7 +43,7 @@ public class StepInfluencesController {
   private StateOfMindWizardController wizard;
 
   private boolean prefilling = false;
-  // Store CODES, not display text
+  // Store CODES
   private final Set<String> selected = new LinkedHashSet<>();
 
   private final List<ToggleButton> buttons = new ArrayList<>();
@@ -188,4 +188,4 @@ public class StepInfluencesController {
       limitLabel.setText(MessageFormat.format(left == 1 ? one : many, left));
     }
   }
-} // StepInfluencesController class
+}

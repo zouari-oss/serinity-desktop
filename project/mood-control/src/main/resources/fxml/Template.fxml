@@ -2,6 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -11,17 +14,12 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane minHeight="600.0" minWidth="900.0" prefHeight="800.0" prefWidth="1200.0"
-  styleClass="app-bg"
-  stylesheets="@../styles/styles.css"
-  xmlns="http://javafx.com/javafx/21"
-  xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="com.serinity.moodcontrol.controller.MainTemplateController">
+
+<BorderPane minHeight="600.0" minWidth="900.0" prefHeight="800.0" prefWidth="1200.0" styleClass="app-bg" stylesheets="@../styles/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.moodcontrol.controller.MainTemplateController">
 
   <!-- ================= TOP BAR ================= -->
   <top>
-    <HBox fx:id="topBar" alignment="CENTER_LEFT" prefHeight="64.0" spacing="14.0"
-      styleClass="topbar" BorderPane.alignment="CENTER_LEFT">
+    <HBox fx:id="topBar" alignment="CENTER_LEFT" prefHeight="64.0" spacing="14.0" styleClass="topbar" BorderPane.alignment="CENTER_LEFT">
 
       <padding>
         <Insets bottom="10" left="16" right="16" top="10" />
@@ -35,7 +33,6 @@
               <Image url="@../assets/logo2.png" />
             </image>
           </ImageView>
-          <!-- Keep as key so you can rename brand later without code changes -->
           <Label styleClass="brand-title" text="%app.brand" />
         </children>
       </HBox>
@@ -43,15 +40,12 @@
       <!-- Navigation -->
       <HBox fx:id="navBox" alignment="CENTER_LEFT" spacing="10.0" styleClass="nav">
         <children>
-          <Button fx:id="btnDashboard" onAction="#onNavClick" styleClass="nav-btn nav-btn-active"
-            text="%nav.dashboard" />
+          <Button fx:id="btnDashboard" onAction="#onNavClick" styleClass="nav-btn nav-btn-active" text="%nav.dashboard" />
           <Button fx:id="btnSleep" onAction="#onNavClick" styleClass="nav-btn" text="%nav.sleep" />
           <Button fx:id="btnMood" onAction="#onNavClick" styleClass="nav-btn" text="%nav.mood" />
           <Button fx:id="btnSupport" onAction="#onNavClick" styleClass="nav-btn" text="%nav.support" />
-          <Button fx:id="btnExercises" onAction="#onNavClick" styleClass="nav-btn"
-            text="%nav.exercises" />
-          <Button fx:id="btnAppointments" onAction="#onNavClick" styleClass="nav-btn"
-            text="%nav.appointments" />
+          <Button fx:id="btnExercises" onAction="#onNavClick" styleClass="nav-btn" text="%nav.exercises" />
+          <Button fx:id="btnAppointments" onAction="#onNavClick" styleClass="nav-btn" text="%nav.appointments" />
         </children>
       </HBox>
 
@@ -65,19 +59,15 @@
         <HBox fx:id="searchBox" spacing="8.0" styleClass="search">
           <children>
             <Label styleClass="search-icon" text="🔍" />
-            <TextField fx:id="searchField" prefHeight="30.0" prefWidth="220.0"
-              promptText="%search.placeholder"
-              styleClass="search-field" />
+            <TextField fx:id="searchField" prefHeight="30.0" prefWidth="220.0" promptText="%search.placeholder" styleClass="search-field" />
           </children>
         </HBox>
 
         <!-- User -->
         <HBox fx:id="userBox" alignment="CENTER_RIGHT" spacing="10.0" styleClass="user">
           <children>
-            <!-- default label handled in controller via bundle (placeholder until real auth/user) -->
             <Label fx:id="userNameLabel" styleClass="user-name" />
-            <ImageView fx:id="avatarImg" fitHeight="40.0" fitWidth="40.0" preserveRatio="true"
-              styleClass="avatar">
+            <ImageView fx:id="avatarImg" fitHeight="40.0" fitWidth="40.0" preserveRatio="true" styleClass="avatar">
               <image>
                 <Image url="@../assets/user_logo.png" />
               </image>
@@ -95,10 +85,33 @@
   </center>
 
   <!-- ================= FOOTER ================= -->
-  <bottom>
-    <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
-      <Label fx:id="footerLabel" />
-    </HBox>
-  </bottom>
+    <bottom>
+        <HBox alignment="CENTER_LEFT"
+              spacing="12"
+              styleClass="footer-bar">
+
+            <Label fx:id="footerLabel" />
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <MenuButton fx:id="langMenu"
+                        styleClass="lang-menu"
+                        text="EN">
+                <graphic>
+                    <ImageView fitHeight="14" fitWidth="14" preserveRatio="true">
+                        <image>
+                            <Image url="@../assets/icons/globe.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+                <items>
+                    <MenuItem fx:id="langEN" text="English"/>
+                    <MenuItem fx:id="langFR" text="Français"/>
+                </items>
+            </MenuButton>
+
+        </HBox>
+    </bottom>
+
 
 </BorderPane>

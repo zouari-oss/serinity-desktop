@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -9,7 +10,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.image.Image?>
 <BorderPane styleClass="mood-root" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.moodcontrol.controller.MoodHomeController">
 
   <!-- ===== HEADER ===== -->
@@ -41,6 +41,9 @@
                       <image>
                           <Image url="@../../assets/icons/mood_log.png" />
                       </image>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
                   </ImageView>
                   <Label styleClass="mood-card-title" text="%mood.card.log.title" />
                   <Label styleClass="mood-card-sub" text="%mood.card.log.sub" />
@@ -54,6 +57,9 @@
                   <image>
                       <Image url="@../../assets/icons/mood_history.png" />
                   </image>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
               </ImageView>
             <Label styleClass="mood-card-title" text="%mood.card.history.title" />
             <Label styleClass="mood-card-sub" text="%mood.card.history.sub" />
@@ -67,6 +73,9 @@
                   <image>
                       <Image url="@../../assets/icons/mood_journal.png" />
                   </image>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
               </ImageView>
             <Label styleClass="mood-card-title" text="%mood.card.journal.title" />
             <Label styleClass="mood-card-sub" text="%mood.card.journal.sub" />
