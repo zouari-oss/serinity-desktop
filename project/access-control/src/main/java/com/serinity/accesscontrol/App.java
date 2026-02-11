@@ -45,7 +45,7 @@ public class App extends Application {
     I18nUtil.applySupportedLocale();
     stage.setScene(FXMLLoaderUtil.loadScene(
         this.getClass(),
-        ResourceFile.SIGNIN_FXML.getFileName(),
+        ResourceFile.LOGIN_FXML.getFileName(),
         I18nUtil.getBundle()));
     stage.show();
   }

@@ -49,4 +49,8 @@ public enum SupportedLanguage {
   public Locale getLocale() {
     return locale;
   }
+
+  public String getCode() {
+    return locale.getLanguage();
+  }
 } // SupportedLanguage enum

@@ -33,8 +33,8 @@ package com.serinity.accesscontrol.flag;
  * }</pre>
  */
 public enum ResourceFile {
-  SIGNIN_FXML("/fxml/sign-in.fxml"),
-  SIGNUP_FXML("/fxml/sign-up.fxml"),
+  LOGIN_FXML("/fxml/login.fxml"),
+  LOGIN_SIDE_HTML("/html/login-side.html"),
   HIBERNATE_CFG_FXML("hibernate.cfg.xml");
 
   private final String fileName;

@@ -46,6 +46,12 @@
   <img src="https://img.shields.io/badge/Open%20Source-3DA639?style=for-the-badge&logo=opensourceinitiative&logoColor=white"/>
 </p>
 
+<p align="center">
+  <a href="doc/" target="_blank">
+    <img src="res/img/app/app.gif" alt="snapshots.gif">
+  </a>
+</p>
+
 ## Overview
 
 Serinity is a **desktop & web application** dedicated to **psychotherapy and personal development**, designed for both **individual users** and **mental health professionals**.
