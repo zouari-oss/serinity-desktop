@@ -9,21 +9,24 @@ import javafx.scene.Parent;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.text.Normalizer;
 
 public class MoodHistoryController {
 
-    // ---- Card VM (still here, because it’s UI-shaped data) ----
+    // ---- Card VM UI-shaped data ----
     static class MoodCardVM { // package-private so MoodHistoryCardController can use it
         final long id;
         final LocalDateTime dateTime;
-        final String momentType; // "MOMENT"/"DAY"
+        final String momentType; // "MOMENT"/"DAY" (FILTER ONLY, NOT SEARCHED)
         final int moodLevel;
         final List<String> emotions;   // CODES
         final List<String> influences; // CODES
@@ -43,9 +46,13 @@ public class MoodHistoryController {
         }
     }
 
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
+
     @FXML private VBox timelineBox;
     @FXML private ComboBox<String> rangeBox;
     @FXML private ComboBox<String> typeBox;
+    @FXML private TextField searchField; // <-- add in FXML next to typeBox
     @FXML private ResourceBundle resources;
 
     // Host injected by MoodHomeController
@@ -81,6 +88,11 @@ public class MoodHistoryController {
         // Filters only re-render locally (NO DB call)
         rangeBox.setOnAction(e -> applyFiltersAndRender());
         typeBox.setOnAction(e -> applyFiltersAndRender());
+
+        // Search (local, no SQL)
+        if (searchField != null) {
+            searchField.textProperty().addListener((obs, oldV, newV) -> applyFiltersAndRender());
+        }
 
         // One DB call on page load
         reloadMasterFromDb();
@@ -142,7 +154,7 @@ public class MoodHistoryController {
         }
     }
 
-    // ---------------- LOCAL FILTERING ----------------
+    // ---------------- LOCAL FILTERING (+ SEARCH) ----------------
 
     private void applyFiltersAndRender() {
         final String rangeLabel = rangeBox.getValue();
@@ -155,15 +167,25 @@ public class MoodHistoryController {
         final LocalDateTime cutoff =
                 (lastDays == null) ? null : LocalDate.now().minusDays(lastDays.intValue()).atStartOfDay();
 
+        final String q = (searchField == null) ? "" : normalize(searchField.getText());
+        final boolean hasQuery = q != null && q.trim().length() > 0;
+
         final List<MoodCardVM> filtered = new ArrayList<MoodCardVM>();
         for (final MoodCardVM m : masterItems) {
-            // range
+
+            // 1) range filter
             if (cutoff != null && m.dateTime.isBefore(cutoff)) continue;
 
-            // type
+            // 2) type filter (momentType)
             if (!"ALL".equalsIgnoreCase(typeCode)) {
                 final String mt = (m.momentType == null) ? "" : m.momentType.trim().toUpperCase(Locale.ROOT);
                 if (!typeCode.equals(mt)) continue;
+            }
+
+            // 3) search filter (NOT searching type/momentType)
+            if (hasQuery) {
+                final String hay = buildSearchText(m);
+                if (!hay.contains(q)) continue;
             }
 
             filtered.add(m);
@@ -171,6 +193,52 @@ public class MoodHistoryController {
 
         currentItems = filtered;
         renderTimeline(currentItems);
+    }
+
+    /**
+     * Build a search string that includes:
+     * - mood level LABEL (localized)
+     * - emotion labels (localized)
+     * - influence labels (localized)
+     * - date/time text
+     *
+     * DOES NOT include momentType (because you said: not Type / not moment type).
+     */
+    private String buildSearchText(final MoodCardVM m) {
+        final StringBuilder sb = new StringBuilder(160);
+
+        // date/time
+        if (m.dateTime != null) {
+            sb.append(DATE_FMT.format(m.dateTime)).append(' ');
+            sb.append(TIME_FMT.format(m.dateTime)).append(' ');
+        }
+
+        // mood label by level
+        sb.append(t("mood.level." + m.moodLevel)).append(' ');
+
+        // emotions labels
+        for (final String code : m.emotions) {
+            if (code == null) continue;
+            sb.append(t("emotion." + code)).append(' ');
+        }
+
+        // influences labels
+        for (final String code : m.influences) {
+            if (code == null) continue;
+            sb.append(t("influence." + code)).append(' ');
+        }
+
+        return normalize(sb.toString());
+    }
+
+    private String normalize(final String s) {
+        if (s == null) return "";
+        String x = s.toLowerCase(Locale.ROOT).trim();
+        // remove accents to make search forgiving (é == e)
+        x = Normalizer.normalize(x, Normalizer.Form.NFD).replaceAll("\\p{M}+", "");
+        // collapse spaces
+        x = x.replaceAll("\\s+", " ");
+        return x;
     }
 
     // ---------------- RENDERING ----------------
@@ -198,7 +266,7 @@ public class MoodHistoryController {
             timelineBox.getChildren().add(dateHeader(date));
 
             for (final MoodCardVM m : entry.getValue()) {
-                timelineBox.getChildren().add(moodCard(m)); // <-- FXML component now
+                timelineBox.getChildren().add(moodCard(m)); // FXML component
             }
         }
     }
@@ -254,7 +322,7 @@ public class MoodHistoryController {
             entry.setUserId(userId);
             entry.setMomentType(it.getMomentType());
             entry.setMoodLevel(it.getMoodLevel());
-            entry.setEmotions(new ArrayList<String>(it.getEmotions()));     // CODES
+            entry.setEmotions(new ArrayList<String>(it.getEmotions()));      // CODES
             entry.setInfluences(new ArrayList<String>(it.getInfluences())); // CODES
 
             final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/Wizard.fxml"), resources);
