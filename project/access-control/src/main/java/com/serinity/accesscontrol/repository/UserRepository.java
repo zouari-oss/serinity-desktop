@@ -19,13 +19,12 @@
 // `UserRepository` package name
 package com.serinity.accesscontrol.repository;
 
-// `hibernate` import(s)
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+// `zouarioss` import(s)
+import org.zouarioss.skinnedratorm.core.EntityManager;
 
 // `serinity` import(s)
-import com.serinity.accesscontrol.config.HibernateConfig;
 import com.serinity.accesscontrol.model.User;
+import com.serinity.accesscontrol.repository.base.BaseRepository;
 
 /**
  * Brief summary of the method.
@@ -49,17 +48,10 @@ import com.serinity.accesscontrol.model.User;
  * User foundUser = UserRepository.findByUsername("username123");
  * }</pre>
  */
-public final class UserRepository {
-  public static void save(final User user) {
-    Transaction tx = null;
-    try (Session session = HibernateConfig.getSessionFactory().openSession()) {
-      tx = session.beginTransaction();
-      session.persist(user);
-      tx.commit();
-    } catch (final Exception e) {
-      if (tx != null)
-        tx.rollback();
-      throw e;
-    }
+
+public final class UserRepository extends BaseRepository<User, Long> {
+
+  public UserRepository(final EntityManager em) {
+    super(em, User.class);
   }
 } // UserRepository final class

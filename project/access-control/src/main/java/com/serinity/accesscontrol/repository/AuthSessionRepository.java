@@ -21,59 +21,55 @@ package com.serinity.accesscontrol.repository;
 // `java` import(s)
 import java.time.Instant;
 
+// `zouarioss` import(s)
+import org.zouarioss.skinnedratorm.core.EntityManager;
+
+import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
 // `serinity` import(s)
 import com.serinity.accesscontrol.model.AuthSession;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.base.BaseRepository;
 
-// `jakarta` import(s)
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-
 public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
   private EntityManager em;
 
-  public AuthSessionRepository(final EntityManager em) {
-    super(em, AuthSession.class);
+  public AuthSessionRepository() {
+    super(SkinnedRatOrmEntityManager.getEntityManager(), AuthSession.class);
   }
 
   public AuthSession findByRefreshToken(final String refreshToken) {
     try {
-      return em.createQuery(
-          "SELECT s FROM AuthSession s WHERE s.refreshToken = :token",
-          AuthSession.class)
-          .setParameter("token", refreshToken)
+      return em.createQuery(AuthSession.class)
+          .where("refresh_token", refreshToken)
           .getSingleResult();
-    } catch (final NoResultException e) {
+    } catch (final Exception e) {
       return null;
     }
   }
 
   public AuthSession findValidByRefreshToken(final String refreshToken) {
     try {
-      return em.createQuery(
-          "SELECT s FROM AuthSession s " +
-              "WHERE s.refreshToken = :token " +
-              "AND s.revoked = false " +
-              "AND s.expiresAt > :now",
-          AuthSession.class)
-          .setParameter("token", refreshToken)
-          .setParameter("now", Instant.now())
+      return em.createQuery(AuthSession.class)
+          .where("refresh_token", refreshToken)
+          .where("revoked", false)
+          .where("expires_at", ">", Instant.now())
           .getSingleResult();
-    } catch (final NoResultException e) {
+    } catch (final Exception e) {
       return null;
     }
   }
 
   public boolean existsActiveSession(final User user, final Instant now) {
-    return em.createQuery(
-        "SELECT COUNT(s) FROM AuthSession s " +
-            "WHERE s.user = :user " +
-            "AND s.revoked = false " +
-            "AND s.expiresAt > :now",
-        Long.class)
-        .setParameter("user", user)
-        .setParameter("now", now)
-        .getSingleResult() > 0;
+    try {
+      final long count = em.createQuery(AuthSession.class)
+          .where("user_id", user.getId())
+          .where("revoked", false)
+          .where("expires_at", ">", now)
+          .count();
+
+      return count > 0;
+    } catch (final Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 } // AuthSessionRepository final class

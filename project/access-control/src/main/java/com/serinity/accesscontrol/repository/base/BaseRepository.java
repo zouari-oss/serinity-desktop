@@ -23,12 +23,13 @@ package com.serinity.accesscontrol.repository.base;
 import java.util.List;
 import java.util.Optional;
 
-// `jakarta` import(s)
-import jakarta.persistence.EntityManager;
+// `zouarioss` import(s)
+import org.zouarioss.skinnedratorm.core.EntityManager;
+import org.zouarioss.skinnedratorm.engine.QueryBuilder;
 
 public abstract class BaseRepository<T, ID> {
-  private final EntityManager em;
-  private final Class<T> entityClass;
+  protected final EntityManager em;
+  protected final Class<T> entityClass;
 
   public BaseRepository(final EntityManager em, final Class<T> entityClass) {
     this.em = em;
@@ -36,15 +37,28 @@ public abstract class BaseRepository<T, ID> {
   }
 
   public void save(final T entity) {
-    em.persist(entity);
+    try {
+      em.persist(entity);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public Optional<T> findById(final ID id) {
-    return Optional.ofNullable(em.find(entityClass, id));
+    try {
+      return Optional.ofNullable(em.findById(entityClass, id));
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
   }
 
   public void delete(final T entity) {
-    em.remove(entity);
+    try {
+      em.delete(entity);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public void deleteById(final ID id) {
@@ -52,8 +66,12 @@ public abstract class BaseRepository<T, ID> {
   }
 
   public List<T> findAll() {
-    return em.createQuery(
-        "SELECT e FROM " + entityClass.getSimpleName() + " e", entityClass)
-        .getResultList();
+    try {
+      return new QueryBuilder<>(entityClass, em.getConnection())
+          .getResultList();
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
   }
 } // BaseRepository abstract class
