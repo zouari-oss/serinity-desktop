@@ -24,6 +24,9 @@
 // `UserService` pckage name
 package com.serinity.accesscontrol.service;
 
+import org.zouarioss.skinnedratorm.core.EntityManager;
+
+import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
 // `serinity` import(s)
 import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.Profile;
@@ -33,24 +36,28 @@ import com.serinity.accesscontrol.repository.UserRepository;
 import com.serinity.accesscontrol.util.PasswordEncoder;
 
 public final class UserService {
-  public void register(final String email, final String password, final UserRole role) {
+  public void signUp(final String email, final String password, final UserRole role) {
     final User user = new User();
     user.setEmail(email);
     user.setPasswordHash(PasswordEncoder.encode(password));
     user.setRole(role); // default role
 
     final Profile profile = new Profile();
-    profile.setUser(user); // bidirectional link
-    user.setProfile(profile);
+    profile.setUser(user);
 
-    UserRepository.save(user);
+    EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    UserRepository userRepo = new UserRepository(em);
+    userRepo.save(user);
+    ProfileRepository profileRepo = new ProfileRepository(em);
+    profileRepo.save(profile);
   }
 
-  public User login(final String username, final String password) {
-    final Profile profile = ProfileRepository.findByUsername(username);
-    if (profile == null)
-      return null;
-    User user = profile.getUser();
-    return user.getPasswordHash().equals(password) ? user : null;
+  public User signIn(final String usernameOrEmail, final String password) {
+    // final Profile profile = ProfileRepository.findByUsername(usernameOrEmail);
+    // if (profile == null)
+    // return null;
+    // User user = profile.getUser();
+    // return user.getPasswordHash().equals(password) ? user : null;
+    return null; // TODO
   }
 } // UserService final class

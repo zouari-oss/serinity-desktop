@@ -14,8 +14,8 @@
  *   <li>{@code updatedAt} – the timestamp of the last update to the entity; automatically updated on modification.</li>
  * </ul>
  *
- * <p>Note: Hibernate annotations {@link org.hibernate.annotations.CreationTimestamp} and
- * {@link org.hibernate.annotations.UpdateTimestamp} are used to manage timestamps automatically.</p>
+ * <p>Note: Hibernate annotations {@link org.zouarioss.skinnedratorm.annotations.CreationTimestamp} and
+ * {@link org.zouarioss.skinnedratorm.annotations.UpdateTimestamp} are used to manage timestamps automatically.</p>
  *
  * @author  @ZouariOmar <zouariomar20@gmail.com>
  * @version 1.0
@@ -31,24 +31,22 @@
 // `TimestampedEntity` pckage name
 package com.serinity.accesscontrol.model.base;
 
-// `jakarta` import(s)
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Column;
-
 // `java` import(s)
 import java.time.Instant;
 
-// `hibernate` import(s)
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+// `zouarioss` import(s)
+import org.zouarioss.skinnedratorm.annotations.Column;
+import org.zouarioss.skinnedratorm.annotations.CreationTimestamp;
+import org.zouarioss.skinnedratorm.annotations.MappedSuperclass;
+import org.zouarioss.skinnedratorm.annotations.UpdateTimestamp;
 
 @MappedSuperclass
 public abstract class TimestampedEntity extends IdentifiableEntity {
   @CreationTimestamp
-  @Column(nullable = false, updatable = false)
+  @Column(name = "created_at", nullable = false, updatable = false)
   protected Instant createdAt;
 
   @UpdateTimestamp
-  @Column(nullable = false)
+  @Column(name = "updated_at", nullable = false)
   protected Instant updatedAt;
 } // TimestampedEntity abstract class

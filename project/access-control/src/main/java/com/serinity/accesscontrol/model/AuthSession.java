@@ -46,28 +46,27 @@ import java.time.Instant;
 // `serinity` import(s)
 import com.serinity.accesscontrol.model.base.IdentifiableEntity;
 
-// `jakarta` import(s)
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+// `zouarioss` import(s)
+import org.zouarioss.skinnedratorm.annotations.Column;
+import org.zouarioss.skinnedratorm.annotations.Entity;
+import org.zouarioss.skinnedratorm.annotations.Index;
+import org.zouarioss.skinnedratorm.annotations.JoinColumn;
+import org.zouarioss.skinnedratorm.annotations.ManyToOne;
+import org.zouarioss.skinnedratorm.annotations.PrePersist;
+import org.zouarioss.skinnedratorm.annotations.Table;
 
 @Entity
-@Table(name = "auth_sessions", indexes = {
-    @Index(name = "idx_session_token", columnList = "refresh_token"),
-    @Index(name = "idx_session_user", columnList = "user_id")
-})
+@Table(name = "auth_sessions")
+@Index(name = "idx_session_token", columnList = "refresh_token")
+@Index(name = "idx_session_user", columnList = "user_id")
 public final class AuthSession extends IdentifiableEntity {
   @Column(name = "refresh_token", nullable = false, unique = true, length = 255)
   private String refreshToken;
 
-  @Column(nullable = false, updatable = false)
+  @Column(name = "created_at", nullable = false, updatable = false)
   private Instant createdAt; // Pre-persist
 
-  @Column(nullable = false, updatable = false)
+  @Column(name = "expires_at", nullable = false, updatable = false)
   private Instant expiresAt;
 
   @Column(nullable = false)

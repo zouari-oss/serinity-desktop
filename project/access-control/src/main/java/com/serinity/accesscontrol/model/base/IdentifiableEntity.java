@@ -28,10 +28,10 @@ package com.serinity.accesscontrol.model.base;
 import java.util.UUID;
 
 // `jakarta` import(s)
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import org.zouarioss.skinnedratorm.annotations.GeneratedValue;
+import org.zouarioss.skinnedratorm.annotations.GenerationType;
+import org.zouarioss.skinnedratorm.annotations.Id;
+import org.zouarioss.skinnedratorm.annotations.MappedSuperclass;
 
 @MappedSuperclass
 public abstract class IdentifiableEntity {

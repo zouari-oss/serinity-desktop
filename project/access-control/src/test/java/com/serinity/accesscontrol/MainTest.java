@@ -29,14 +29,14 @@
 // `MainTest` package name
 package com.serinity.accesscontrol;
 
+// `junit` static import(s)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 // `junit` packages
 import org.junit.jupiter.api.Test;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.util.SystemInfo;
-
-// `junit` import(s)
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class MainTest {
   @Test
@@ -48,4 +48,4 @@ public final class MainTest {
   public void testJavafxVersion() {
     assertEquals("25.0.2", SystemInfo.getJavafxVersion());
   }
-} // MainTest final class
+} // MainTest final test class

@@ -21,6 +21,8 @@
  *   <li>{@code user}      - The {@link com.serinity.accesscontrol.model.User} who performed the action.</li>
  * </ul>
  *
+ * <p>Note: This class is declared {@code final} to prevent inheritance and ensure session integrity.</p>
+ *
  * @author  @ZouariOmar <zouariomar20@gmail.com>
  * @version 1.0
  * @since   2026-02-03
@@ -39,25 +41,24 @@ package com.serinity.accesscontrol.model;
 /// `java` import(s)
 import java.time.Instant;
 
+// `zouarioss` import(s)
+import org.zouarioss.skinnedratorm.annotations.Column;
+import org.zouarioss.skinnedratorm.annotations.Entity;
+import org.zouarioss.skinnedratorm.annotations.FetchType;
+import org.zouarioss.skinnedratorm.annotations.Index;
+import org.zouarioss.skinnedratorm.annotations.JoinColumn;
+import org.zouarioss.skinnedratorm.annotations.ManyToOne;
+import org.zouarioss.skinnedratorm.annotations.PrePersist;
+import org.zouarioss.skinnedratorm.annotations.Table;
+
 // `serinity` import(s)
 import com.serinity.accesscontrol.model.base.IdentifiableEntity;
 import com.serinity.accesscontrol.util.SystemInfo;
 
-// `jakarta` import(s)
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
-
 @Entity
-@Table(name = "audit_logs", indexes = {
-    @Index(name = "idx_audit_user", columnList = "user_id"),
-    @Index(name = "idx_audit_created", columnList = "created_at")
-})
+@Table(name = "audit_logs")
+@Index(name = "idx_audit_user", columnList = "user_id")
+@Index(name = "idx_audit_created", columnList = "created_at")
 public final class AuditLog extends IdentifiableEntity {
   @Column(nullable = false, length = 100)
   private String action;

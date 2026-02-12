@@ -23,6 +23,8 @@
  * <p><b>Note:</b> The {@code username} field is generated automatically when the profile is
  * created and cannot be modified manually. This ensures uniqueness across the system.</p>
  *
+ * <p>Note: This class is declared {@code final} to prevent inheritance and ensure session integrity.</p>
+ *
  * @author  @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since   2026-02-03
@@ -43,21 +45,21 @@ import com.serinity.accesscontrol.flag.Gender;
 import com.serinity.accesscontrol.model.base.TimestampedEntity;
 import com.serinity.accesscontrol.util.UsernameGenerator;
 
-// `jakarta` import(s)
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import org.zouarioss.skinnedratorm.annotations.CascadeType;
+// `zouarioss` import(s)
+import org.zouarioss.skinnedratorm.annotations.Column;
+import org.zouarioss.skinnedratorm.annotations.Entity;
+import org.zouarioss.skinnedratorm.annotations.EnumType;
+import org.zouarioss.skinnedratorm.annotations.Enumerated;
+import org.zouarioss.skinnedratorm.annotations.JoinColumn;
+import org.zouarioss.skinnedratorm.annotations.OneToOne;
+import org.zouarioss.skinnedratorm.annotations.PrePersist;
+import org.zouarioss.skinnedratorm.annotations.Table;
+import org.zouarioss.skinnedratorm.annotations.UniqueConstraint;
 
 @Entity
-@Table(name = "profiles", uniqueConstraints = {
-    @UniqueConstraint(name = "uk_profile_username", columnNames = "username")
-})
+@Table(name = "profiles")
+@UniqueConstraint(name = "uk_profile_username", columnNames = "username")
 public final class Profile extends TimestampedEntity {
   @Column(nullable = false, length = 50, updatable = false)
   private String username; // Pre-persist
@@ -87,7 +89,7 @@ public final class Profile extends TimestampedEntity {
   @Column(length = 500, nullable = true)
   private String aboutMe;
 
-  @OneToOne
+  @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "user_id", nullable = false, unique = true)
   private User user;
 

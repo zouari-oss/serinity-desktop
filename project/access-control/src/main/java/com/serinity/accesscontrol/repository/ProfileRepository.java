@@ -19,40 +19,28 @@
 // `ProfileRepository` package name
 package com.serinity.accesscontrol.repository;
 
-// `hibernate` import(s)
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
+// `zouarioss` import(s)
+import org.zouarioss.skinnedratorm.core.EntityManager;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.model.Profile;
+import com.serinity.accesscontrol.repository.base.BaseRepository;
 
-public final class ProfileRepository {
-  private static final SessionFactory sessionFactory = com.serinity.accesscontrol.config.HibernateConfig
-      .getSessionFactory();
+public final class ProfileRepository extends BaseRepository<Profile, Long> {
 
-  public static Profile findByUsername(final String username) {
-    try (Session session = sessionFactory.openSession()) {
-      final String hql = "FROM Profile p WHERE p.username = :username";
-      final Query<Profile> query = session.createQuery(hql, Profile.class);
-      query.setParameter("username", username);
-      return query.uniqueResult();
-    }
+  public ProfileRepository(final EntityManager em) {
+    super(em, Profile.class);
   }
 
-  public static void save(final Profile profile) {
-    try (Session session = sessionFactory.openSession()) {
-      final var tx = session.beginTransaction();
-      session.persist(profile);
-      tx.commit();
-    }
-  }
+  public Profile findByUsername(final String username) {
+    try {
+      return em.createQuery(Profile.class)
+          .where("username", username)
+          .getSingleResult();
 
-  public static void delete(final Profile profile) {
-    try (Session session = sessionFactory.openSession()) {
-      final var tx = session.beginTransaction();
-      session.remove(profile);
-      tx.commit();
+    } catch (final Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
     }
   }
 } // ProfileRepository final class

@@ -1,10 +1,11 @@
 /**
  * User.java
  *
- * <p>
  * Represents a system user within the Access Control application.
- * This entity is mapped to the {@code users} database table
- * </p>
+ *
+ * <p>This entity is mapped to the {@code users} database table</p>
+ *
+ * <p>Note: This class is declared {@code final} to prevent inheritance and ensure session integrity.</p>
  *
  * @author  @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
@@ -26,15 +27,15 @@ import com.serinity.accesscontrol.flag.PresenceStatus;
 import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.base.TimestampedEntity;
 
-// `jakarta` import(s)
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+// `zouarioss` import(s)
+import org.zouarioss.skinnedratorm.annotations.CascadeType;
+import org.zouarioss.skinnedratorm.annotations.Column;
+import org.zouarioss.skinnedratorm.annotations.Entity;
+import org.zouarioss.skinnedratorm.annotations.EnumType;
+import org.zouarioss.skinnedratorm.annotations.Enumerated;
+import org.zouarioss.skinnedratorm.annotations.OneToOne;
+import org.zouarioss.skinnedratorm.annotations.PrePersist;
+import org.zouarioss.skinnedratorm.annotations.Table;
 
 @Entity
 @Table(name = "users")
@@ -54,7 +55,7 @@ public final class User extends TimestampedEntity {
   private PresenceStatus presenceStatus; // Pre-persist
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
+  @Column(name = "account_status", nullable = false)
   private AccountStatus accountStatus; // Pre-persist
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, optional = false) // User must have a profile
@@ -98,14 +99,6 @@ public final class User extends TimestampedEntity {
 
   public AccountStatus getAccountStatus() {
     return accountStatus;
-  }
-
-  public Profile getProfile() {
-    return profile;
-  }
-
-  public void setProfile(Profile profile) {
-    this.profile = profile;
   }
 
   // #############################
