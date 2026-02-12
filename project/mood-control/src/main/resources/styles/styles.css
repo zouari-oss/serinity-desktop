@@ -35,13 +35,7 @@
 /* =========================
    TOP BAR (Template.fxml)
    ========================= */
-.topbar {
-    -fx-background-color: linear-gradient(
-            from 0% 0% to 0% 100%,
-            derive(-ser-primary, 8%),
-            -ser-primary
-    );
-}
+.topbar { -fx-background-color: -ser-primary; }
 
 
 

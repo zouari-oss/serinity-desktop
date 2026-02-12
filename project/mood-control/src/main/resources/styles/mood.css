@@ -373,7 +373,10 @@
     -fx-background-color: rgba(31, 41, 51, 0.10);
 }
 
-.icon-btn-edit { }
+.icon-btn-edit:hover {
+    -fx-background-color: rgba(47,127,122,0.12);
+    -fx-text-fill: #2F7F7A;
+}
 
 .icon-btn-delete {
     -fx-background-color: rgba(217, 83, 79, 0.12);
