@@ -9,471 +9,382 @@ import javafx.scene.Parent;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-
-import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.text.Normalizer;
 
 public class MoodHistoryController {
 
-  private static class MoodCardVM {
-    final long id;
-    final LocalDateTime dateTime;
-    final String momentType; // "MOMENT"/"DAY"
-    final int moodLevel;
-    final List<String> emotions; // CODES
-    final List<String> influences; // CODES
-
-    MoodCardVM(final long id, final LocalDateTime dateTime, final String momentType, final int moodLevel,
-        final List<String> emotions, final List<String> influences) {
-      this.id = id;
-      this.dateTime = dateTime;
-      this.momentType = momentType;
-      this.moodLevel = moodLevel;
-      this.emotions = emotions == null ? new ArrayList<String>() : emotions;
-      this.influences = influences == null ? new ArrayList<String>() : influences;
-    }
-  }
-
-  private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
-  @FXML
-  private VBox timelineBox;
-
-  @FXML
-  private ComboBox<String> rangeBox;
-
-  @FXML
-  private ComboBox<String> typeBox;
-
-  @FXML
-  private ResourceBundle resources;
-
-  // Host injected by MoodHomeController
-  private StackPane moodHost;
-
-  // Keep current items for UI delete (we’ll make DB delete next step)
-  private List<MoodCardVM> currentItems = new ArrayList<MoodCardVM>();
-
-  @FXML
-  public void initialize() {
-    if (resources == null) {
-      throw new IllegalStateException(
-          "ResourceBundle not injected in MoodHistoryController. Load MoodHistory.fxml with bundle.");
-    }
-
-    // Range options (localized labels, but we map them to numeric days)
-    rangeBox.getItems().setAll(
-        t("history.range.all"),
-        t("history.range.last30"),
-        t("history.range.last7"));
-    rangeBox.getSelectionModel().select(0);
-
-    // Type options (localized labels, but we map them to ALL/MOMENT/DAY codes)
-    typeBox.getItems().setAll(
-        t("history.type.all"),
-        t("history.type.moment"),
-        t("history.type.day"));
-    typeBox.getSelectionModel().select(0);
-
-    rangeBox.setOnAction(e -> loadAndRenderFromDb());
-    typeBox.setOnAction(e -> loadAndRenderFromDb());
-
-    loadAndRenderFromDb();
-  }
-
-  public void setMoodHost(final StackPane moodHost) {
-    this.moodHost = moodHost;
-  }
-
-  @FXML
-  private void onRefresh() {
-    loadAndRenderFromDb();
-  }
-
-  @FXML
-  private void onLogNew() {
-    try {
-      final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/Wizard.fxml"), resources);
-      final Parent wizard = loader.load();
-
-      //  inject host so Finish can navigate to history
-      final StateOfMindWizardController wiz = loader.getController();
-      wiz.setMoodHost(moodHost);
-
-      moodHost.getChildren().setAll(wizard);
-    } catch (final IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  // ---------- Rendering ----------
-
-  private void loadAndRenderFromDb() {
-    try {
-      final long userId = 1L; // TEMP until user integration
-
-      Integer lastDays = null;
-
-      final String range = rangeBox.getValue();
-      if (t("history.range.last7").equals(range)) {
-        lastDays = Integer.valueOf(7);
-      } else if (t("history.range.last30").equals(range)) {
-        lastDays = Integer.valueOf(30);
-      } else {
-        lastDays = null; // All
-      }
-
-      // Map localized label -> CODE expected by DAO
-      final String typeFilter = toTypeCode(typeBox.getValue()); // ALL/MOMENT/DAY
-
-      final List<MoodHistoryItem> data = new MoodEntryDao().findHistory(userId, lastDays, typeFilter);
-
-      final List<MoodCardVM> vms = new ArrayList<MoodCardVM>();
-      for (final MoodHistoryItem it : data) {
-        vms.add(new MoodCardVM(
-            it.getId(),
-            it.getDateTime(),
-            it.getMomentType(), // "MOMENT"/"DAY"
-            it.getMoodLevel(),
-            it.getEmotions(), // CODES
-            it.getInfluences() // CODES
-        ));
-      }
-
-      currentItems = vms;
-      renderTimeline(currentItems);
-
-    } catch (final Exception e) {
-      e.printStackTrace();
-      currentItems = new ArrayList<MoodCardVM>();
-      renderTimeline(currentItems);
-    }
-  }
-
-  private void renderTimeline(final List<MoodCardVM> items) {
-    timelineBox.getChildren().clear();
-
-    final List<MoodCardVM> sorted = new ArrayList<MoodCardVM>(items);
-    sorted.sort(new Comparator<MoodCardVM>() {
-      @Override
-      public int compare(final MoodCardVM a, final MoodCardVM b) {
-        return b.dateTime.compareTo(a.dateTime);
-      }
-    });
-
-    final Map<LocalDate, List<MoodCardVM>> grouped = new LinkedHashMap<LocalDate, List<MoodCardVM>>();
-    for (final MoodCardVM m : sorted) {
-      final LocalDate d = m.dateTime.toLocalDate();
-      if (!grouped.containsKey(d))
-        grouped.put(d, new ArrayList<MoodCardVM>());
-      grouped.get(d).add(m);
-    }
-
-    for (final Map.Entry<LocalDate, List<MoodCardVM>> entry : grouped.entrySet()) {
-      final LocalDate date = entry.getKey();
-      timelineBox.getChildren().add(dateHeader(date));
-
-      for (final MoodCardVM m : entry.getValue()) {
-        timelineBox.getChildren().add(moodCard(m));
-      }
-    }
-  }
-
-  private Node dateHeader(final LocalDate date) {
-    String title;
-    final LocalDate today = LocalDate.now();
-
-    if (date.equals(today))
-      title = t("history.today");
-    else if (date.equals(today.minusDays(1)))
-      title = t("history.yesterday");
-    else
-      title = date.toString();
-
-    final Label lbl = new Label(title);
-    lbl.getStyleClass().add("history-date");
-    return lbl;
-  }
-
-  private Node moodCard(final MoodCardVM m) {
-    final VBox card = new VBox(10);
-    card.getStyleClass().add("history-card");
-
-    final HBox top = new HBox(12);
-    top.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-
-    final Circle c = new Circle(16);
-    c.getStyleClass().add("mood-dot");
-    c.setFill(colorForMood(m.moodLevel));
-
-    final VBox main = new VBox(4);
-
-    final String type = "DAY".equals(m.momentType) ? t("history.type.day") : t("history.type.moment");
-    final String time = "DAY".equals(m.momentType) ? "" : (" • " + TIME_FMT.format(m.dateTime));
-    final Label title = new Label(type + time);
-    title.getStyleClass().add("history-card-title");
-
-    final Label sub = new Label(t("history.mood.prefix") + " " + moodLabel(m.moodLevel));
-    sub.getStyleClass().add("history-card-sub");
-
-    main.getChildren().addAll(title, sub);
-
-    final Region spacer = new Region();
-    HBox.setHgrow(spacer, Priority.ALWAYS);
-
-    // Actions (Edit / Delete)
-    final HBox actions = new HBox(8);
-    actions.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
-
-      final javafx.scene.control.Button btnEdit = new javafx.scene.control.Button("✎"); // edit
-      btnEdit.getStyleClass().addAll("icon-btn", "icon-btn-edit", "ms-icon");
-      btnEdit.setOnAction(e -> {
-      e.consume();
-      onEdit(m);
-    });
-
-      final javafx.scene.control.Button btnDelete = new javafx.scene.control.Button("\uD83D\uDDD1"); // delete
-      btnDelete.getStyleClass().addAll("icon-btn", "icon-btn-delete", "ms-icon");
-      btnDelete.setOnAction(e -> {
-      e.consume();
-      onDelete(m);
-    });
-
-    actions.getChildren().addAll(btnEdit, btnDelete);
-
-    final Label chevron = new Label("⌄");
-    chevron.getStyleClass().add("history-chevron");
-
-    top.getChildren().addAll(c, main, spacer, actions, chevron);
-
-    final FlowPane preview = new FlowPane(8, 8);
-    preview.getStyleClass().add("history-tags");
-
-    addPreviewTags(preview, m.emotions, 3, "emotion-tag", "emotion.");
-    addPreviewTags(preview, m.influences, 2, "influence-tag", "influence.");
-
-    final VBox details = new VBox(10);
-    details.getStyleClass().add("history-details");
-
-    details.getChildren().addAll(
-        fullTagBlock(t("history.details.emotions"), m.emotions, "emotion-tag", "emotion."),
-        fullTagBlock(t("history.details.influences"), m.influences, "influence-tag", "influence."));
-
-    collapse(details);
-
-    card.setOnMouseClicked(e -> {
-      final boolean isCollapsed = !details.isVisible();
-      if (isCollapsed) {
-        chevron.setText("⌃");
-        expandAnimated(details);
-      } else {
-        chevron.setText("⌄");
-        collapseAnimated(details);
-      }
-    });
-
-    card.getChildren().addAll(top, preview, details);
-    return card;
-  }
-
-  private void addPreviewTags(final FlowPane pane, final List<String> items, final int max, final String styleClass,
-      final String keyPrefix) {
-    int count = 0;
-    for (final String s : items) {
-      if (count >= max)
-        break;
-      final Label tag = new Label(t(keyPrefix + s));
-      tag.getStyleClass().addAll("tag", styleClass);
-      pane.getChildren().add(tag);
-      count++;
-    }
-    final int remaining = items.size() - max;
-    if (remaining > 0) {
-      final Label more = new Label("+" + remaining);
-      more.getStyleClass().addAll("tag", "tag-more");
-      pane.getChildren().add(more);
-    }
-  }
-
-  // ---------- Expand / Collapse (smooth) ----------
-
-  private Node fullTagBlock(final String title, final List<String> items, final String styleClass,
-      final String keyPrefix) {
-    final VBox box = new VBox(8);
-
-    final Label t = new Label(title);
-    t.getStyleClass().add("history-details-title");
-
-    final FlowPane tags = new FlowPane(8, 8);
-    for (final String s : items) {
-      final Label tag = new Label(t(keyPrefix + s));
-      tag.getStyleClass().addAll("tag", styleClass);
-      tags.getChildren().add(tag);
-    }
-
-    box.getChildren().addAll(t, tags);
-    return box;
-  }
-
-  private void collapse(final Node n) {
-    n.setVisible(false);
-    n.setManaged(false);
-    n.setOpacity(0);
-
-    if (n instanceof Region) {
-      final Region r = (Region) n;
-      r.setMaxHeight(0);
-    }
-  }
-
-  private void expandAnimated(final Node n) {
-    n.setVisible(true);
-    n.setManaged(true);
-
-    final Region r = (Region) n;
-    r.setMaxHeight(0);
-    n.applyCss();
-    n.autosize();
-
-    final double target = Math.max(120, r.prefHeight(-1));
-
-    final Timeline height = new Timeline(
-        new KeyFrame(Duration.millis(200),
-            new KeyValue(r.maxHeightProperty(), target, Interpolator.EASE_OUT),
-            new KeyValue(n.opacityProperty(), 1, Interpolator.EASE_OUT)));
-    n.setOpacity(0);
-    height.play();
-  }
-
-  // ---------- Mood helpers ----------
-
-  private void collapseAnimated(final Node n) {
-    final Region r = (Region) n;
-
-    final Timeline height = new Timeline(
-        new KeyFrame(Duration.millis(160),
-            new KeyValue(r.maxHeightProperty(), 0, Interpolator.EASE_IN),
-            new KeyValue(n.opacityProperty(), 0, Interpolator.EASE_IN)));
-
-    height.setOnFinished(e -> collapse(n));
-    height.play();
-  }
-
-  private Color colorForMood(final int level) {
-    switch (level) {
-      case 1:
-        return Color.web("#6B7C93");
-      case 2:
-        return Color.web("#4F8FB8");
-      case 3:
-        return Color.web("#7A8C8C");
-      case 4:
-        return Color.web("#62B48F");
-      case 5:
-        return Color.web("#B9C56A");
-      default:
-        return Color.web("#7A8C8C");
-    }
-  }
-
-  // ---------- Actions ----------
-
-  private String moodLabel(final int level) {
-    return t("mood.level." + level);
-  }
-
-  private void onEdit(final MoodCardVM m) {
-    try {
-      final long userId = 1L;
-
-      final MoodEntryDao dao = new MoodEntryDao();
-      final MoodHistoryItem it = dao.findById(m.id, userId);
-      if (it == null)
-        return;
-
-      final com.serinity.moodcontrol.model.MoodEntry entry = new com.serinity.moodcontrol.model.MoodEntry();
-      entry.setId(it.getId());
-      entry.setUserId(userId);
-      entry.setMomentType(it.getMomentType());
-      entry.setMoodLevel(it.getMoodLevel());
-      entry.setEmotions(new ArrayList<String>(it.getEmotions())); // CODES
-      entry.setInfluences(new ArrayList<String>(it.getInfluences())); // CODES
-
-      final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/Wizard.fxml"), resources);
-      final Parent wizard = loader.load();
-
-      final StateOfMindWizardController wiz = loader.getController();
-      wiz.setMoodHost(moodHost); // ✅ IMPORTANT: inject host so Finish can navigate
-      wiz.startEdit(entry);
-
-      wiz.setOnFinish(new Runnable() {
-        @Override
-        public void run() {
-          loadAndRenderFromDb();
+    // ---- Card VM UI-shaped data ----
+    static class MoodCardVM { // package-private so MoodHistoryCardController can use it
+        final long id;
+        final LocalDateTime dateTime;
+        final String momentType; // "MOMENT"/"DAY" (FILTER ONLY, NOT SEARCHED)
+        final int moodLevel;
+        final List<String> emotions;   // CODES
+        final List<String> influences; // CODES
+
+        MoodCardVM(final long id,
+                   final LocalDateTime dateTime,
+                   final String momentType,
+                   final int moodLevel,
+                   final List<String> emotions,
+                   final List<String> influences) {
+            this.id = id;
+            this.dateTime = dateTime;
+            this.momentType = momentType;
+            this.moodLevel = moodLevel;
+            this.emotions = emotions == null ? new ArrayList<String>() : emotions;
+            this.influences = influences == null ? new ArrayList<String>() : influences;
         }
-      });
-
-      moodHost.getChildren().setAll(wizard);
-
-    } catch (final Exception e) {
-      e.printStackTrace();
     }
-  }
 
-  // ---------- Helpers ----------
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
 
-  private void onDelete(final MoodCardVM m) {
-    final javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-        javafx.scene.control.Alert.AlertType.CONFIRMATION);
+    @FXML private VBox timelineBox;
+    @FXML private ComboBox<String> rangeBox;
+    @FXML private ComboBox<String> typeBox;
+    @FXML private TextField searchField; // <-- add in FXML next to typeBox
+    @FXML private ResourceBundle resources;
 
-    alert.setTitle(t("history.delete.title"));
-    alert.setHeaderText(t("history.delete.header"));
-    alert.setContentText(t("history.delete.body"));
+    // Host injected by MoodHomeController
+    private StackPane moodHost;
 
-    final Optional<javafx.scene.control.ButtonType> res = alert.showAndWait();
-    if (res.isPresent() && res.get() == javafx.scene.control.ButtonType.OK) {
+    // Master cache loaded once
+    private List<MoodCardVM> masterItems = new ArrayList<MoodCardVM>();
+
+    // Current view after filters
+    private List<MoodCardVM> currentItems = new ArrayList<MoodCardVM>();
+
+    @FXML
+    public void initialize() {
+        if (resources == null) {
+            throw new IllegalStateException(
+                    "ResourceBundle not injected in MoodHistoryController. Load MoodHistory.fxml with bundle.");
+        }
+
+        // Range options (localized labels)
+        rangeBox.getItems().setAll(
+                t("history.range.all"),
+                t("history.range.last30"),
+                t("history.range.last7"));
+        rangeBox.getSelectionModel().select(0);
+
+        // Type options (localized labels)
+        typeBox.getItems().setAll(
+                t("history.type.all"),
+                t("history.type.moment"),
+                t("history.type.day"));
+        typeBox.getSelectionModel().select(0);
+
+        // Filters only re-render locally (NO DB call)
+        rangeBox.setOnAction(e -> applyFiltersAndRender());
+        typeBox.setOnAction(e -> applyFiltersAndRender());
+
+        // Search (local, no SQL)
+        if (searchField != null) {
+            searchField.textProperty().addListener((obs, oldV, newV) -> applyFiltersAndRender());
+        }
+
+        // One DB call on page load
+        reloadMasterFromDb();
+        applyFiltersAndRender();
+    }
+
+    public void setMoodHost(final StackPane moodHost) {
+        this.moodHost = moodHost;
+    }
+
+    @FXML
+    private void onRefresh() {
+        // DB call + local filtering
+        reloadMasterFromDb();
+        applyFiltersAndRender();
+    }
+
+    @FXML
+    private void onLogNew() {
         try {
-            final long userId = 1L; // TEMP
-            final boolean ok = new MoodEntryDao().delete(m.id, userId);
+            final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/Wizard.fxml"), resources);
+            final Parent wizard = loader.load();
 
-            if (ok) {
-                loadAndRenderFromDb(); // reload from DB so UI is always truthful
+            final StateOfMindWizardController wiz = loader.getController();
+            wiz.setMoodHost(moodHost);
+
+            moodHost.getChildren().setAll(wizard);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // ---------------- DB LOAD (MASTER) ----------------
+
+    private void reloadMasterFromDb() {
+        try {
+            final long userId = 1L; // TEMP until user integration
+
+            // Load everything
+            final List<MoodHistoryItem> data = new MoodEntryDao().findHistory(userId, null, "ALL");
+
+            final List<MoodCardVM> vms = new ArrayList<MoodCardVM>();
+            for (final MoodHistoryItem it : data) {
+                vms.add(new MoodCardVM(
+                        it.getId(),
+                        it.getDateTime(),
+                        it.getMomentType(),
+                        it.getMoodLevel(),
+                        it.getEmotions(),    // CODES
+                        it.getInfluences()   // CODES
+                ));
             }
-        } catch (final Exception ex) {
-            ex.printStackTrace();
+
+            masterItems = vms;
+
+        } catch (final Exception e) {
+            e.printStackTrace();
+            masterItems = new ArrayList<MoodCardVM>();
+        }
+    }
+
+    // ---------------- LOCAL FILTERING (+ SEARCH) ----------------
+
+    private void applyFiltersAndRender() {
+        final String rangeLabel = rangeBox.getValue();
+        final String typeCode = toTypeCode(typeBox.getValue()); // ALL/MOMENT/DAY
+
+        Integer lastDays = null;
+        if (t("history.range.last7").equals(rangeLabel)) lastDays = Integer.valueOf(7);
+        else if (t("history.range.last30").equals(rangeLabel)) lastDays = Integer.valueOf(30);
+
+        final LocalDateTime cutoff =
+                (lastDays == null) ? null : LocalDate.now().minusDays(lastDays.intValue()).atStartOfDay();
+
+        final String q = (searchField == null) ? "" : normalize(searchField.getText());
+        final boolean hasQuery = q != null && q.trim().length() > 0;
+
+        final List<MoodCardVM> filtered = new ArrayList<MoodCardVM>();
+        for (final MoodCardVM m : masterItems) {
+
+            // 1) range filter
+            if (cutoff != null && m.dateTime.isBefore(cutoff)) continue;
+
+            // 2) type filter (momentType)
+            if (!"ALL".equalsIgnoreCase(typeCode)) {
+                final String mt = (m.momentType == null) ? "" : m.momentType.trim().toUpperCase(Locale.ROOT);
+                if (!typeCode.equals(mt)) continue;
+            }
+
+            // 3) search filter (NOT searching type/momentType)
+            if (hasQuery) {
+                final String hay = buildSearchText(m);
+                if (!hay.contains(q)) continue;
+            }
+
+            filtered.add(m);
         }
 
+        currentItems = filtered;
+        renderTimeline(currentItems);
     }
-  }
 
-  private String t(final String key) {
-    try {
-      return resources.getString(key);
-    } catch (final MissingResourceException e) {
-      return key;
+    /**
+     * Build a search string that includes:
+     * - mood level LABEL (localized)
+     * - emotion labels (localized)
+     * - influence labels (localized)
+     * - date/time text
+     *
+     * DOES NOT include momentType (because you said: not Type / not moment type).
+     */
+    private String buildSearchText(final MoodCardVM m) {
+        final StringBuilder sb = new StringBuilder(160);
+
+        // date/time
+        if (m.dateTime != null) {
+            sb.append(DATE_FMT.format(m.dateTime)).append(' ');
+            sb.append(TIME_FMT.format(m.dateTime)).append(' ');
+        }
+
+        // mood label by level
+        sb.append(t("mood.level." + m.moodLevel)).append(' ');
+
+        // emotions labels
+        for (final String code : m.emotions) {
+            if (code == null) continue;
+            sb.append(t("emotion." + code)).append(' ');
+        }
+
+        // influences labels
+        for (final String code : m.influences) {
+            if (code == null) continue;
+            sb.append(t("influence." + code)).append(' ');
+        }
+
+        return normalize(sb.toString());
     }
-  }
 
-  // ---------- VM ----------
+    private String normalize(final String s) {
+        if (s == null) return "";
+        String x = s.toLowerCase(Locale.ROOT).trim();
+        // remove accents to make search forgiving (é == e)
+        x = Normalizer.normalize(x, Normalizer.Form.NFD).replaceAll("\\p{M}+", "");
+        // collapse spaces
+        x = x.replaceAll("\\s+", " ");
+        return x;
+    }
 
-  private String toTypeCode(final String label) {
-    if (label == null)
-      return "ALL";
-    if (label.equals(t("history.type.moment")))
-      return "MOMENT";
-    if (label.equals(t("history.type.day")))
-      return "DAY";
-    return "ALL";
-  }
-} // MoodHistoryController
+    // ---------------- RENDERING ----------------
+
+    private void renderTimeline(final List<MoodCardVM> items) {
+        timelineBox.getChildren().clear();
+
+        final List<MoodCardVM> sorted = new ArrayList<MoodCardVM>(items);
+        sorted.sort(new Comparator<MoodCardVM>() {
+            @Override
+            public int compare(final MoodCardVM a, final MoodCardVM b) {
+                return b.dateTime.compareTo(a.dateTime);
+            }
+        });
+
+        final Map<LocalDate, List<MoodCardVM>> grouped = new LinkedHashMap<LocalDate, List<MoodCardVM>>();
+        for (final MoodCardVM m : sorted) {
+            final LocalDate d = m.dateTime.toLocalDate();
+            if (!grouped.containsKey(d)) grouped.put(d, new ArrayList<MoodCardVM>());
+            grouped.get(d).add(m);
+        }
+
+        for (final Map.Entry<LocalDate, List<MoodCardVM>> entry : grouped.entrySet()) {
+            final LocalDate date = entry.getKey();
+            timelineBox.getChildren().add(dateHeader(date));
+
+            for (final MoodCardVM m : entry.getValue()) {
+                timelineBox.getChildren().add(moodCard(m)); // FXML component
+            }
+        }
+    }
+
+    private Node dateHeader(final LocalDate date) {
+        String title;
+        final LocalDate today = LocalDate.now();
+
+        if (date.equals(today)) title = t("history.today");
+        else if (date.equals(today.minusDays(1))) title = t("history.yesterday");
+        else title = date.toString();
+
+        final Label lbl = new Label(title);
+        lbl.getStyleClass().add("history-date");
+        return lbl;
+    }
+
+    private Node moodCard(final MoodCardVM m) {
+        try {
+            final FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/mood/components/MoodHistoryCard.fxml"),
+                    resources
+            );
+            final Node card = loader.load();
+
+            final MoodHistoryCardController c = loader.getController();
+            c.setData(
+                    m,
+                    resources,
+                    vm -> onEdit(vm),
+                    vm -> onDelete(vm)
+            );
+
+            return card;
+
+        } catch (final IOException e) {
+            throw new RuntimeException("Failed to load MoodHistoryCard.fxml", e);
+        }
+    }
+
+    // ---------------- Actions (Edit / Delete) ----------------
+
+    private void onEdit(final MoodCardVM m) {
+        try {
+            final long userId = 1L;
+
+            final MoodEntryDao dao = new MoodEntryDao();
+            final MoodHistoryItem it = dao.findById(m.id, userId);
+            if (it == null) return;
+
+            final com.serinity.moodcontrol.model.MoodEntry entry = new com.serinity.moodcontrol.model.MoodEntry();
+            entry.setId(it.getId());
+            entry.setUserId(userId);
+            entry.setMomentType(it.getMomentType());
+            entry.setMoodLevel(it.getMoodLevel());
+            entry.setEmotions(new ArrayList<String>(it.getEmotions()));      // CODES
+            entry.setInfluences(new ArrayList<String>(it.getInfluences())); // CODES
+
+            final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/mood/Wizard.fxml"), resources);
+            final Parent wizard = loader.load();
+
+            final StateOfMindWizardController wiz = loader.getController();
+            wiz.setMoodHost(moodHost);
+            wiz.startEdit(entry);
+
+            wiz.setOnFinish(new Runnable() {
+                @Override
+                public void run() {
+                    reloadMasterFromDb();
+                    applyFiltersAndRender();
+                }
+            });
+
+            moodHost.getChildren().setAll(wizard);
+
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void onDelete(final MoodCardVM m) {
+        final javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                javafx.scene.control.Alert.AlertType.CONFIRMATION);
+
+        alert.setTitle(t("history.delete.title"));
+        alert.setHeaderText(t("history.delete.header"));
+        alert.setContentText(t("history.delete.body"));
+
+        final Optional<javafx.scene.control.ButtonType> res = alert.showAndWait();
+        if (res.isPresent() && res.get() == javafx.scene.control.ButtonType.OK) {
+            try {
+                final long userId = 1L;
+                final boolean ok = new MoodEntryDao().delete(m.id, userId);
+
+                if (ok) {
+                    reloadMasterFromDb();
+                    applyFiltersAndRender();
+                }
+            } catch (final Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    // ---------------- Helpers ----------------
+
+    private String t(final String key) {
+        try {
+            return resources.getString(key);
+        } catch (final MissingResourceException e) {
+            return key;
+        }
+    }
+
+    private String toTypeCode(final String label) {
+        if (label == null) return "ALL";
+        if (label.equals(t("history.type.moment"))) return "MOMENT";
+        if (label.equals(t("history.type.day"))) return "DAY";
+        return "ALL";
+    }
+}

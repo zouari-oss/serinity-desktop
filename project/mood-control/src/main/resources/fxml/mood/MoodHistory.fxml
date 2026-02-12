@@ -10,10 +10,11 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.TextField?>
 <BorderPane xmlns="http://javafx.com/javafx/21"
-  xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="com.serinity.moodcontrol.controller.MoodHistoryController"
-  styleClass="mood-root">
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.moodcontrol.controller.MoodHistoryController"
+            styleClass="mood-root">
 
   <top>
     <VBox spacing="12" styleClass="history-top">
@@ -37,7 +38,13 @@
         <Label text="%history.type" styleClass="filter-label" />
         <ComboBox fx:id="typeBox" prefWidth="140" styleClass="filter-box" />
 
-        <Region HBox.hgrow="ALWAYS" />
+          <TextField fx:id="searchField"
+                     promptText="%history.search"
+                     prefWidth="220"
+                     styleClass="filter-search" />
+
+
+          <Region HBox.hgrow="ALWAYS" />
         <Button fx:id="btnRefresh"
           text="%history.refresh"
           styleClass="btn-ghost"
