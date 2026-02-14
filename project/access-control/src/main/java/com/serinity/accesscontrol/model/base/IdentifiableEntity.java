@@ -29,9 +29,9 @@ import java.util.UUID;
 
 // `jakarta` import(s)
 import org.zouarioss.skinnedratorm.annotations.GeneratedValue;
-import org.zouarioss.skinnedratorm.annotations.GenerationType;
 import org.zouarioss.skinnedratorm.annotations.Id;
 import org.zouarioss.skinnedratorm.annotations.MappedSuperclass;
+import org.zouarioss.skinnedratorm.flag.GenerationType;
 
 @MappedSuperclass
 public abstract class IdentifiableEntity {

@@ -25,7 +25,7 @@ module com.serinity.accesscontrol {
   // --- Persistence & database dependencies ---
   requires java.sql;
   requires java.naming;
-  requires skinnedratorm;
+  requires org.zouarioss.skinnedratorm;
 
   // --- Configuration dependencies ---
   requires io.github.cdimascio.dotenv.java;
@@ -35,6 +35,6 @@ module com.serinity.accesscontrol {
 
   // --- Reflection access (opens) ---
   opens com.serinity.accesscontrol.controller to javafx.fxml;
-  opens com.serinity.accesscontrol.model to skinnedratorm;
-  opens com.serinity.accesscontrol.model.base to skinnedratorm;
+  opens com.serinity.accesscontrol.model to org.zouarioss.skinnedratorm;
+  opens com.serinity.accesscontrol.model.base to org.zouarioss.skinnedratorm;
 } // `com.serinity.accesscontrol` module

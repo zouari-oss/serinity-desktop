@@ -40,22 +40,22 @@
 // `User` package name
 package com.serinity.accesscontrol.model;
 
-// `serinity` import(s)
-import com.serinity.accesscontrol.flag.Gender;
-import com.serinity.accesscontrol.model.base.TimestampedEntity;
-import com.serinity.accesscontrol.util.UsernameGenerator;
-
-import org.zouarioss.skinnedratorm.annotations.CascadeType;
 // `zouarioss` import(s)
 import org.zouarioss.skinnedratorm.annotations.Column;
 import org.zouarioss.skinnedratorm.annotations.Entity;
-import org.zouarioss.skinnedratorm.annotations.EnumType;
 import org.zouarioss.skinnedratorm.annotations.Enumerated;
 import org.zouarioss.skinnedratorm.annotations.JoinColumn;
 import org.zouarioss.skinnedratorm.annotations.OneToOne;
 import org.zouarioss.skinnedratorm.annotations.PrePersist;
 import org.zouarioss.skinnedratorm.annotations.Table;
 import org.zouarioss.skinnedratorm.annotations.UniqueConstraint;
+import org.zouarioss.skinnedratorm.flag.CascadeType;
+import org.zouarioss.skinnedratorm.flag.EnumType;
+
+// `serinity` import(s)
+import com.serinity.accesscontrol.flag.Gender;
+import com.serinity.accesscontrol.model.base.TimestampedEntity;
+import com.serinity.accesscontrol.util.UsernameGenerator;
 
 @Entity
 @Table(name = "profiles")

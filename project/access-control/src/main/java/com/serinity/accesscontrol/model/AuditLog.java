@@ -9,7 +9,6 @@
  *
  * <p>The table {@code audit_logs} has the following indexes for performance optimization:</p>
  * <ul>
- *   <li>{@code idx_audit_user}    - Indexed on {@code user_id} for quick lookup by user.</li>
  *   <li>{@code idx_audit_created} - Indexed on {@code created_at} to speed up time-based queries.</li>
  * </ul>
  *
@@ -43,13 +42,14 @@ import java.time.Instant;
 
 // `zouarioss` import(s)
 import org.zouarioss.skinnedratorm.annotations.Column;
+import org.zouarioss.skinnedratorm.annotations.CreationTimestamp;
 import org.zouarioss.skinnedratorm.annotations.Entity;
-import org.zouarioss.skinnedratorm.annotations.FetchType;
 import org.zouarioss.skinnedratorm.annotations.Index;
 import org.zouarioss.skinnedratorm.annotations.JoinColumn;
 import org.zouarioss.skinnedratorm.annotations.ManyToOne;
 import org.zouarioss.skinnedratorm.annotations.PrePersist;
 import org.zouarioss.skinnedratorm.annotations.Table;
+import org.zouarioss.skinnedratorm.flag.FetchType;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.model.base.IdentifiableEntity;
@@ -57,8 +57,7 @@ import com.serinity.accesscontrol.util.SystemInfo;
 
 @Entity
 @Table(name = "audit_logs")
-@Index(name = "idx_audit_user", columnList = "user_id")
-@Index(name = "idx_audit_created", columnList = "created_at")
+@Index(name = "id_audit_created", columnList = "created_at")
 public final class AuditLog extends IdentifiableEntity {
   @Column(nullable = false, length = 100)
   private String action;
@@ -78,11 +77,12 @@ public final class AuditLog extends IdentifiableEntity {
   @Column(length = 255, nullable = true)
   private String location; // Pre-persist - From system property
 
+  @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
-  private Instant createdAt; // Pre-persist - Pre-persist
+  private Instant createdAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "auth_session_id", nullable = true)
+  @JoinColumn(name = "auth_session_id", nullable = false)
   private AuthSession session;
 
   // #########################
@@ -135,8 +135,6 @@ public final class AuditLog extends IdentifiableEntity {
 
   @PrePersist
   protected void onCreate() {
-    this.createdAt = Instant.now();
-
     if (this.hostname == null) {
       try {
         this.hostname = java.net.InetAddress.getLocalHost().getHostName();

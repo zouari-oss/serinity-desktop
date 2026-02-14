@@ -21,21 +21,21 @@
 // `User` package name
 package com.serinity.accesscontrol.model;
 
+// `zouarioss` import(s)
+import org.zouarioss.skinnedratorm.annotations.Column;
+import org.zouarioss.skinnedratorm.annotations.Entity;
+import org.zouarioss.skinnedratorm.annotations.Enumerated;
+import org.zouarioss.skinnedratorm.annotations.OneToOne;
+import org.zouarioss.skinnedratorm.annotations.PrePersist;
+import org.zouarioss.skinnedratorm.annotations.Table;
+import org.zouarioss.skinnedratorm.flag.CascadeType;
+import org.zouarioss.skinnedratorm.flag.EnumType;
+
 // `serinity` import(s)
 import com.serinity.accesscontrol.flag.AccountStatus;
 import com.serinity.accesscontrol.flag.PresenceStatus;
 import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.base.TimestampedEntity;
-
-// `zouarioss` import(s)
-import org.zouarioss.skinnedratorm.annotations.CascadeType;
-import org.zouarioss.skinnedratorm.annotations.Column;
-import org.zouarioss.skinnedratorm.annotations.Entity;
-import org.zouarioss.skinnedratorm.annotations.EnumType;
-import org.zouarioss.skinnedratorm.annotations.Enumerated;
-import org.zouarioss.skinnedratorm.annotations.OneToOne;
-import org.zouarioss.skinnedratorm.annotations.PrePersist;
-import org.zouarioss.skinnedratorm.annotations.Table;
 
 @Entity
 @Table(name = "users")
@@ -69,7 +69,7 @@ public final class User extends TimestampedEntity {
     return email;
   }
 
-  public void setEmail(String email) {
+  public void setEmail(final String email) {
     this.email = email;
   }
 
@@ -77,7 +77,7 @@ public final class User extends TimestampedEntity {
     return passwordHash;
   }
 
-  public void setPasswordHash(String passwordHash) {
+  public void setPasswordHash(final String passwordHash) {
     this.passwordHash = passwordHash;
   }
 
@@ -85,7 +85,7 @@ public final class User extends TimestampedEntity {
     return role;
   }
 
-  public void setRole(UserRole role) {
+  public void setRole(final UserRole role) {
     this.role = role;
   }
 
@@ -93,7 +93,7 @@ public final class User extends TimestampedEntity {
     return presenceStatus;
   }
 
-  public void setPresenceStatus(PresenceStatus presenceStatus) {
+  public void setPresenceStatus(final PresenceStatus presenceStatus) {
     this.presenceStatus = presenceStatus;
   }
 
