@@ -21,6 +21,7 @@ package com.serinity.accesscontrol;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.flag.ResourceFile;
+// import com.serinity.accesscontrol.migration.SkinnedRatOrmMigrator; // TO_MIGRATE
 import com.serinity.accesscontrol.util.FXMLLoaderUtil;
 import com.serinity.accesscontrol.util.I18nUtil;
 

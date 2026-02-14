@@ -43,17 +43,18 @@ import java.time.Duration;
 // `java` import(s)
 import java.time.Instant;
 
-// `serinity` import(s)
-import com.serinity.accesscontrol.model.base.IdentifiableEntity;
-
 // `zouarioss` import(s)
 import org.zouarioss.skinnedratorm.annotations.Column;
+import org.zouarioss.skinnedratorm.annotations.CreationTimestamp;
 import org.zouarioss.skinnedratorm.annotations.Entity;
 import org.zouarioss.skinnedratorm.annotations.Index;
 import org.zouarioss.skinnedratorm.annotations.JoinColumn;
 import org.zouarioss.skinnedratorm.annotations.ManyToOne;
 import org.zouarioss.skinnedratorm.annotations.PrePersist;
 import org.zouarioss.skinnedratorm.annotations.Table;
+
+// `serinity` import(s)
+import com.serinity.accesscontrol.model.base.IdentifiableEntity;
 
 @Entity
 @Table(name = "auth_sessions")
@@ -63,8 +64,9 @@ public final class AuthSession extends IdentifiableEntity {
   @Column(name = "refresh_token", nullable = false, unique = true, length = 255)
   private String refreshToken;
 
+  @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
-  private Instant createdAt; // Pre-persist
+  private Instant createdAt;
 
   @Column(name = "expires_at", nullable = false, updatable = false)
   private Instant expiresAt;
@@ -122,7 +124,6 @@ public final class AuthSession extends IdentifiableEntity {
 
   @PrePersist
   protected void onCreate() {
-    this.createdAt = Instant.now();
     this.expiresAt = Instant.now().plus(Duration.ofDays(7));
   }
 } // AuthSession final class
