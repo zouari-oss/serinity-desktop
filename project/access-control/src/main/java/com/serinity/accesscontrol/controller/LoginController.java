@@ -1,21 +1,3 @@
-/**
- * LoginController.java
- *
- * `login.fxml` controller class
- *
- * <p>none</p>
- *
- * @author @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since 2026-02-02
- *
- * <a
- * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/controller/LoginController.java" 
- * target="_blank">
- * LoginController.java
- * </a>
- */
-
 // `LoginController` package name
 package com.serinity.accesscontrol.controller;
 
@@ -26,6 +8,7 @@ import java.util.ResourceBundle;
 // `serinity` import(s)
 import com.serinity.accesscontrol.flag.ResourceFile;
 import com.serinity.accesscontrol.flag.SupportedLanguage;
+import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.util.FXMLAnimationUtil;
 import com.serinity.accesscontrol.util.FXMLLoaderUtil;
 import com.serinity.accesscontrol.util.I18nUtil;
@@ -46,6 +29,19 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
+/**
+ * `login.fxml` controller class
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-02
+ *
+ *        <a
+ *        href=
+ *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/controller/LoginController.java">
+ *        LoginController.java
+ *        </a>
+ */
 public class LoginController {
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;
@@ -101,6 +97,9 @@ public class LoginController {
   @FXML // fx:id="singnUpEmailTextField"
   private TextField singnUpEmailTextField; // Value injected by FXMLLoader
 
+  @FXML // fx:id="signUpUserRoleComboBox"
+  private ComboBox<UserRole> signUpUserRoleComboBox; // Value injected by FXMLLoader
+
   @FXML // fx:id="usernameOrEmail"
   private TextField usernameOrEmail; // Value injected by FXMLLoader
 
@@ -154,36 +153,11 @@ public class LoginController {
         true);
   }
 
-  // ################################
-  // ### INITIALIZATION FUNCTIONS ###
-  // ################################
-  private void languageComboBoxInit() {
-    languageComboBox.getItems()
-        .addAll((ObservableList<String>) FXCollections.observableArrayList(
-            I18nUtil.getSupportedLanguagesToString()));
-    languageComboBox.setValue(I18nUtil.getLocale().getLanguage());
-  }
-
-  private void loginSideWebViewInit() {
-    URL url = getClass().getResource(ResourceFile.LOGIN_SIDE_HTML.getFileName());
-
-    if (url == null) {
-      throw new IllegalStateException("Resource not found: "
-          + ResourceFile.LOGIN_SIDE_HTML.getFileName());
-    }
-
-    loginSideWebView.getEngine().load(url.toExternalForm());
-  }
-
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {
     assert faceIdImageView != null : "fx:id=\"faceIdImageView\" was not injected: check your FXML file 'login.fxml'.";
     assert footerLabel != null : "fx:id=\"footerLabel\" was not injected: check your FXML file 'login.fxml'.";
     assert languageComboBox != null : "fx:id=\"languageComboBox\" was not injected: check your FXML file 'login.fxml'.";
-    assert loginIconImageView != null
-        : "fx:id=\"loginIconImageView\" was not injected: check your FXML file 'login.fxml'.";
-    assert loginIconImageView1 != null
-        : "fx:id=\"loginIconImageView1\" was not injected: check your FXML file 'login.fxml'.";
     assert loginInterface != null : "fx:id=\"loginInterface\" was not injected: check your FXML file 'login.fxml'.";
     assert loginSideWebView != null : "fx:id=\"loginSideWebView\" was not injected: check your FXML file 'login.fxml'.";
     assert loginWelcomeLabel1 != null
@@ -199,10 +173,42 @@ public class LoginController {
         : "fx:id=\"signUpPasswordField\" was not injected: check your FXML file 'login.fxml'.";
     assert singnUpEmailTextField != null
         : "fx:id=\"singnUpEmailTextField\" was not injected: check your FXML file 'login.fxml'.";
+    assert signUpUserRoleComboBox != null
+        : "fx:id=\"userRoleComboBox\" was not injected: check your FXML file 'login.fxml'.";
     assert usernameOrEmail != null : "fx:id=\"usernameOrEmail\" was not injected: check your FXML file 'login.fxml'.";
 
     // Custom initialization
     languageComboBoxInit();
+    signUpUserRoleComboBoxInit();
     loginSideWebViewInit();
+  }
+
+  // #########################################
+  // ### CUSTOM INITIALIZATION FUNCTION(S) ###
+  // #########################################
+
+  private void languageComboBoxInit() {
+    languageComboBox.getItems()
+        .addAll((ObservableList<String>) FXCollections.observableArrayList(
+            I18nUtil.getSupportedLanguagesToString()));
+    languageComboBox.setValue(I18nUtil.getLocale().getLanguage());
+  }
+
+  private void signUpUserRoleComboBoxInit() {
+    signUpUserRoleComboBox.getItems().addAll(
+        UserRole.PATIENT, // Patient
+        UserRole.THERAPIST // Therapist
+    );
+  }
+
+  private void loginSideWebViewInit() {
+    URL url = getClass().getResource(ResourceFile.LOGIN_SIDE_HTML.getFileName());
+
+    if (url == null) {
+      throw new IllegalStateException("Resource not found: "
+          + ResourceFile.LOGIN_SIDE_HTML.getFileName());
+    }
+
+    loginSideWebView.getEngine().load(url.toExternalForm());
   }
 } // LoginController class

@@ -21,6 +21,60 @@
   xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="com.serinity.accesscontrol.controller.LoginController">
   <children>
+    <Pane prefHeight="561.0" prefWidth="394.0" styleClass="signinPane" AnchorPane.bottomAnchor="0.0"
+      AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+        <Group layoutX="14.0" layoutY="32.0">
+          <children>
+            <Label fx:id="loginWelcomeLabel1" layoutY="-5.0" prefHeight="67.0" prefWidth="345.0"
+              styleClass="heroLabel" text="%sign.up.label.signup" />
+            <Label layoutX="5.0" layoutY="62.0" prefHeight="18.0" prefWidth="345.0"
+              styleClass="detailsLabel" text="%sign.up.label.details" />
+            <Separator layoutY="83.0" prefHeight="5.0" prefWidth="336.0" />
+          </children>
+        </Group>
+        <Group layoutX="14.0" layoutY="174.0">
+          <children>
+            <TextField fx:id="singnUpEmailTextField" prefHeight="40.0" prefWidth="360.0"
+              promptText="%sign.up.text_field.email" />
+            <PasswordField fx:id="signUpPasswordField" layoutY="45.0" prefHeight="40.0"
+              prefWidth="360.0" promptText="%login.text_field.password" />
+            <PasswordField fx:id="signUpConfirmPasswordField" layoutY="91.0" prefHeight="40.0"
+              prefWidth="360.0" promptText="%sign.up.text_field.confirm_password" />
+            <ComboBox fx:id="signUpUserRoleComboBox" layoutX="212.0" layoutY="137.0"
+              prefHeight="26.0" prefWidth="148.0" promptText="%user.role.therapist" />
+          </children>
+        </Group>
+        <Group layoutX="102.0" layoutY="358.0">
+          <children>
+            <Button fx:id="signUpButton" defaultButton="true" layoutX="30.0" layoutY="14.0"
+              mnemonicParsing="false" onAction="#onSignUpButtonAction" prefHeight="40.0"
+              prefWidth="140.0" text="%sign.up.button.signup" textAlignment="CENTER">
+              <cursor>
+                <Cursor fx:constant="CLOSED_HAND" />
+              </cursor>
+              <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"
+                  styleClass="loginIconImageView">
+                  <image>
+                    <Image url="@../assets/login/icons8-login-30.png" />
+                  </image>
+                </ImageView>
+              </graphic>
+            </Button>
+            <Separator layoutX="-12.0" layoutY="64.0" prefHeight="2.0" prefWidth="224.0" />
+          </children>
+        </Group>
+        <Group layoutX="98.0" layoutY="461.0" />
+        <Label layoutX="6.0" layoutY="535.0" prefHeight="25.0" prefWidth="345.0"
+          styleClass="normalLabel" text="%login.label.terms_privacy" />
+        <Label alignment="CENTER" layoutX="89.0" layoutY="425.0" prefHeight="25.0" prefWidth="224.0"
+          styleClass="normalLabel" text="%sign.up.label.to_signin" />
+        <Hyperlink fx:id="signInHyperlink" alignment="CENTER" layoutX="146.0" layoutY="450.0"
+          minHeight="-Infinity" minWidth="-Infinity" onAction="#onSignInHyperlinkAction"
+          prefHeight="25.0" prefWidth="112.0" text="%sign.up.hyperlink.to_signin" />
+      </children>
+    </Pane>
     <Pane layoutX="406.0" layoutY="41.0" prefHeight="561.0" prefWidth="394.0"
       styleClass="signinPane" AnchorPane.bottomAnchor="39.0" AnchorPane.rightAnchor="0.0"
       AnchorPane.topAnchor="0.0">
@@ -88,58 +142,6 @@
         </Group>
         <Label layoutX="6.0" layoutY="535.0" prefHeight="25.0" prefWidth="345.0"
           styleClass="normalLabel" text="%login.label.terms_privacy" />
-      </children>
-    </Pane>
-    <Pane prefHeight="561.0" prefWidth="394.0" styleClass="signinPane" AnchorPane.bottomAnchor="0.0"
-      AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <children>
-        <Group layoutX="14.0" layoutY="32.0">
-          <children>
-            <Label fx:id="loginWelcomeLabel1" layoutY="-5.0" prefHeight="67.0" prefWidth="345.0"
-              styleClass="heroLabel" text="%sign.up.label.signup" />
-            <Label layoutX="5.0" layoutY="62.0" prefHeight="18.0" prefWidth="345.0"
-              styleClass="detailsLabel" text="%sign.up.label.details" />
-            <Separator layoutY="83.0" prefHeight="5.0" prefWidth="336.0" />
-          </children>
-        </Group>
-        <Group layoutX="14.0" layoutY="174.0">
-          <children>
-            <TextField fx:id="singnUpEmailTextField" prefHeight="40.0" prefWidth="360.0"
-              promptText="%sign.up.text_field.email" />
-            <PasswordField fx:id="signUpPasswordField" layoutY="45.0" prefHeight="40.0"
-              prefWidth="360.0" promptText="%login.text_field.password" />
-            <PasswordField fx:id="signUpConfirmPasswordField" layoutY="91.0" prefHeight="40.0"
-              prefWidth="360.0" promptText="%sign.up.text_field.confirm_password" />
-          </children>
-        </Group>
-        <Group layoutX="102.0" layoutY="337.0">
-          <children>
-            <Button fx:id="signUpButton" defaultButton="true" layoutX="30.0" layoutY="14.0"
-              mnemonicParsing="false" onAction="#onSignUpButtonAction" prefHeight="40.0"
-              prefWidth="140.0" text="%sign.up.button.signup" textAlignment="CENTER">
-              <cursor>
-                <Cursor fx:constant="CLOSED_HAND" />
-              </cursor>
-              <graphic>
-                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"
-                  styleClass="loginIconImageView">
-                  <image>
-                    <Image url="@../assets/login/icons8-login-30.png" />
-                  </image>
-                </ImageView>
-              </graphic>
-            </Button>
-            <Separator layoutX="-12.0" layoutY="64.0" prefHeight="2.0" prefWidth="224.0" />
-          </children>
-        </Group>
-        <Group layoutX="98.0" layoutY="461.0" />
-        <Label layoutX="6.0" layoutY="535.0" prefHeight="25.0" prefWidth="345.0"
-          styleClass="normalLabel" text="%login.label.terms_privacy" />
-        <Label alignment="CENTER" layoutX="89.0" layoutY="404.0" prefHeight="25.0" prefWidth="224.0"
-          styleClass="normalLabel" text="%sign.up.label.to_signin" />
-        <Hyperlink fx:id="signInHyperlink" alignment="CENTER" layoutX="146.0" layoutY="429.0"
-          minHeight="-Infinity" minWidth="-Infinity" onAction="#onSignInHyperlinkAction"
-          prefHeight="25.0" prefWidth="112.0" text="%sign.up.hyperlink.to_signin" />
       </children>
     </Pane>
     <WebView fx:id="loginSideWebView" layoutY="41.0" prefHeight="561.0" prefWidth="405.0"
