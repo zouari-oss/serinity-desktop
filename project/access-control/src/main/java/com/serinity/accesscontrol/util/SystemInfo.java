@@ -1,30 +1,33 @@
+// `SystemInfo` package name
+package com.serinity.accesscontrol.util;
+
 /**
- * SystemInfo.java
- *
  * System information class
  *
- * <p>Funcionalies:</p>
+ * <p>
+ * Funcionalies:
+ * </p>
  * <ul>
- *   <li>{@link com.serinity.accesscontrol.util.SystemInfo#getJavafxVersion}    - Return the current javafx version</li>
- *   <li>{@link com.serinity.accesscontrol.util.SystemInfo#getJavaVersion}      - Return the current java version</li>
- *   <li>{@link com.serinity.accesscontrol.util.SystemInfo#getPrivateIpAddress} - Return user up interface private ip address (not localhost)</li>
- *   <li>{@link com.serinity.accesscontrol.util.SystemInfo#getMacAddress}       - Return user up interface mac address</li>
+ * <li>{@link com.serinity.accesscontrol.util.SystemInfo#getJavafxVersion} -
+ * Return the current javafx version</li>
+ * <li>{@link com.serinity.accesscontrol.util.SystemInfo#getJavaVersion} -
+ * Return the current java version</li>
+ * <li>{@link com.serinity.accesscontrol.util.SystemInfo#getPrivateIpAddress} -
+ * Return user up interface private ip address (not localhost)</li>
+ * <li>{@link com.serinity.accesscontrol.util.SystemInfo#getMacAddress} - Return
+ * user up interface mac address</li>
  * </ul>
  *
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 2026-01-28
  *
- * <a
- * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/SystemInfo.java"
- * target="_blank">
- * SystemInfo.java
- * </a>
+ *        <a
+ *        href=
+ *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/SystemInfo.java">
+ *        SystemInfo.java
+ *        </a>
  */
-
-// `SystemInfo` package name
-package com.serinity.accesscontrol.util;
-
 public final class SystemInfo {
   public static String getJavaVersion() {
     return System.getProperty("java.version");
@@ -93,4 +96,4 @@ public final class SystemInfo {
 
   private SystemInfo() {
   }
-} // SystemInfo
+} // SystemInfo final class

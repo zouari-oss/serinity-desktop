@@ -1,27 +1,3 @@
-/**
- * I18nUtil.java
- *
- * Utility class for application internationalization (i18n).
- *
- * <p>
- * Provides helper methods to manage the current {@link java.util.Locale},
- * load message {@link java.util.ResourceBundle ResourceBundles} based on
- * {@link com.serinity.accesscontrol.flag.PropertyBundle}, retrieve
- * localized messages, and ensure that the active locale is one of the
- * configured supported languages.
- * </p>
- *
- * @author @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since 2026-01-29
- *
- * <a
- * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/util/I18nUtil.java"
- * target="_blank">
- * I18nUtil.java
- * </a>
- */
-
 // `I18nUtil` package name
 package com.serinity.accesscontrol.util;
 
@@ -36,7 +12,7 @@ import com.serinity.accesscontrol.flag.MessageKey;
 import com.serinity.accesscontrol.flag.PropertyBundle;
 
 /**
- * Internationalization app manager
+ * Utility class for application internationalization (i18n)
  *
  * <p>
  * Provides helper methods to manage the current {@link java.util.Locale},
@@ -50,16 +26,28 @@ import com.serinity.accesscontrol.flag.PropertyBundle;
  * {@code
  * I18nUtil.applySupportedLocale();
  * }</pre>
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-01-29
+ *
+ *        <a
+ *        href=
+ *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/util/I18nUtil.java">
+ *        I18nUtil.java
+ *        </a>
  */
 public final class I18nUtil {
-  // NOTE: Make `currentLocale` and `bundle` volatile to ensure thread-safe
-  // visibility.
-  // See
-  // <a
-  // href="https://github.com/zouari-oss/serinity-desktop/pull/1#discussion_r2741228161"
-  // target="_blank">
-  // discussion_r2741228161
-  // </a>
+  /*
+   * NOTE: Make `currentLocale` and `bundle` volatile to ensure thread-safe
+   * visibility.
+   *
+   * <a
+   * href=
+   * "https://github.com/zouari-oss/serinity-desktop/pull/1#discussion_r2741228161">
+   * discussion_r2741228161
+   * </a>
+   */
   private static volatile Locale currentLocale = Locale.getDefault();
   private static volatile ResourceBundle bundle = ResourceBundle.getBundle(
       PropertyBundle.DEFAULT_MESSAGES_BUNDLE.getBaseName(),
@@ -68,7 +56,7 @@ public final class I18nUtil {
   private I18nUtil() {
   }
 
-  public static String get(String key) {
+  public static String getValue(String key) {
     return bundle.getString(key);
   }
 
@@ -107,13 +95,12 @@ public final class I18nUtil {
         .collect(Collectors.toList());
   }
 
-  // INFO:
-  // See
-  // <a href=
-  // "https://github.com/zouari-oss/serinity-desktop/pull/1#discussion_r2741228244"
-  // target="_blank">
-  // discussion_r2741228244
-  // </a>
+  /*
+   * <a href=
+   * "https://github.com/zouari-oss/serinity-desktop/pull/1#discussion_r2741228244">
+   * discussion_r2741228244
+   * </a>
+   */
   public static void applySupportedLocale() {
     List<Locale> supportedLocales = getSupportedLanguages();
 
@@ -130,8 +117,5 @@ public final class I18nUtil {
         return;
       }
     }
-
-    // Fallback to the configured default supported language.
-    // setLocale(SupportedLanguage.DEFAULT.getLocale());
   }
 } // I18nUtil class

@@ -1,21 +1,3 @@
-/**
- * module-info.java
- *
- * Module declaration for the `access-controle` module
- *
- * <p>
- * Defines module dependencies, exported packages, and reflective access
- * </p>
- *
- * @author @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since 2026-02-02
- *
- *        <a href=
- *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/module-info.java"
- *        target="_blank">module-info.java</a>
- */
-
 module com.serinity.accesscontrol {
   // --- Javafx dependencies ---
   requires transitive javafx.controls;

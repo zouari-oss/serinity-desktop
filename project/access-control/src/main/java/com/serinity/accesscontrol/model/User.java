@@ -1,23 +1,3 @@
-/**
- * User.java
- *
- * Represents a system user within the Access Control application.
- *
- * <p>This entity is mapped to the {@code users} database table</p>
- *
- * <p>Note: This class is declared {@code final} to prevent inheritance and ensure session integrity.</p>
- *
- * @author  @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since   2026-02-02
- *
- * <a
- * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/model/User.java"
- * target="_blank">
- * User.java
- * </a>
- */
-
 // `User` package name
 package com.serinity.accesscontrol.model;
 
@@ -37,6 +17,28 @@ import com.serinity.accesscontrol.flag.PresenceStatus;
 import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.base.TimestampedEntity;
 
+/**
+ * Represents a system user within the Access Control application.
+ *
+ * <p>
+ * This entity is mapped to the {@code users} database table
+ * </p>
+ *
+ * <p>
+ * Note: This class is declared {@code final} to prevent inheritance and ensure
+ * session integrity.
+ * </p>
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-02
+ *
+ *        <a
+ *        href=
+ *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/model/User.java">
+ *        User.java
+ *        </a>
+ */
 @Entity
 @Table(name = "users")
 public final class User extends TimestampedEntity {

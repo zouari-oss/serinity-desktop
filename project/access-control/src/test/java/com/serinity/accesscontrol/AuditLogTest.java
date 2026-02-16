@@ -1,40 +1,3 @@
-/**
- * AuditLogTest.java
- *
- * JUnit test class for audit log operations related to 
- * {@link com.serinity.accesscontrol.model.AuditLog} entity.
- *
- * <p>This class tests audit logging functionality including action tracking,
- * system information capture, and session association.</p>
- *
- * <p>Test coverage includes:</p>
- * <ul>
- *   <li>{@link #testCreateAuditLog()}           - Verifies audit log creation with action.</li>
- *   <li>{@link #testAuditLogAutoFields()}       - Ensures system info is auto-captured.</li>
- *   <li>{@link #testAuditLogWithSession()}      - Tests association with auth session.</li>
- *   <li>{@link #testMultipleAuditLogs()}        - Validates multiple logs per session.</li>
- *   <li>{@link #testAuditLogTimestamp()}        - Checks timestamp auto-generation.</li>
- * </ul>
- *
- * <p>Uses SOLID principles:</p>
- * <ul>
- *   <li>Single Responsibility - Separate test data builders for different entities.</li>
- *   <li>Dependency Inversion  - Dependencies injected through constructors.</li>
- *   <li>Open/Closed           - Builder methods can be extended without modification.</li>
- * </ul>
- *
- * @author  @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since   2026-02-12
- * @see     com.serinity.accesscontrol.model.AuditLog
- * @see     com.serinity.accesscontrol.model.AuthSession
- *
- * <a href="https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/AuditLogTest.java"
- * target="_blank">
- * AuditLogTest.java
- * </a>
- */
-
 // `AuditLogTest` package name
 package com.serinity.accesscontrol;
 
@@ -63,6 +26,51 @@ import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.ProfileRepository;
 
+/**
+ * JUnit test class for audit log operations related to
+ * {@link com.serinity.accesscontrol.model.AuditLog} entity.
+ *
+ * <p>
+ * This class tests audit logging functionality including action tracking,
+ * system information capture, and session association.
+ * </p>
+ *
+ * <p>
+ * Test coverage includes:
+ * </p>
+ * <ul>
+ * <li>{@link #testCreateAuditLog()} - Verifies audit log creation with
+ * action.</li>
+ * <li>{@link #testAuditLogAutoFields()} - Ensures system info is
+ * auto-captured.</li>
+ * <li>{@link #testAuditLogWithSession()} - Tests association with auth
+ * session.</li>
+ * <li>{@link #testMultipleAuditLogs()} - Validates multiple logs per
+ * session.</li>
+ * <li>{@link #testAuditLogTimestamp()} - Checks timestamp auto-generation.</li>
+ * </ul>
+ *
+ * <p>
+ * Uses SOLID principles:
+ * </p>
+ * <ul>
+ * <li>Single Responsibility - Separate test data builders for different
+ * entities.</li>
+ * <li>Dependency Inversion - Dependencies injected through constructors.</li>
+ * <li>Open/Closed - Builder methods can be extended without modification.</li>
+ * </ul>
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-12
+ * @see com.serinity.accesscontrol.model.AuditLog
+ * @see com.serinity.accesscontrol.model.AuthSession
+ *
+ *      <a href=
+ *      "https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/AuditLogTest.java">
+ *      AuditLogTest.java
+ *      </a>
+ */
 public final class AuditLogTest {
   private EntityManager em;
   private ProfileRepository profileRepo;

@@ -1,39 +1,3 @@
-/**
- * AuditLog.java
- *
- * Represents an audit log entry in the system. Used to record actions performed by users,
- * along with metadata such as the IP address and timestamp of the action.
- *
- * <p>This entity extends {@link IdentifiableEntity}, which provides a unique {@code id} for
- * each log entry.</p>
- *
- * <p>The table {@code audit_logs} has the following indexes for performance optimization:</p>
- * <ul>
- *   <li>{@code idx_audit_created} - Indexed on {@code created_at} to speed up time-based queries.</li>
- * </ul>
- *
- * <p>Fields include:</p>
- * <ul>
- *   <li>{@code action}    - A description of the action performed.</li>
- *   <li>{@code ipAddress} - IP address of the user who performed the action.</li>
- *   <li>{@code createdAt} - Timestamp when the action was performed.</li>
- *   <li>{@code user}      - The {@link com.serinity.accesscontrol.model.User} who performed the action.</li>
- * </ul>
- *
- * <p>Note: This class is declared {@code final} to prevent inheritance and ensure session integrity.</p>
- *
- * @author  @ZouariOmar <zouariomar20@gmail.com>
- * @version 1.0
- * @since   2026-02-03
- * @see     com.serinity.accesscontrol.model.User
- *
- * <a
- * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/model/AuditLog.java"
- * target="_blank">
- * AuditLog.java
- * </a>
- */
-
 // `AuditLog` package name
 package com.serinity.accesscontrol.model;
 
@@ -55,9 +19,56 @@ import org.zouarioss.skinnedratorm.flag.FetchType;
 import com.serinity.accesscontrol.model.base.IdentifiableEntity;
 import com.serinity.accesscontrol.util.SystemInfo;
 
+/**
+ * Represents an audit log entry in the system. Used to record actions performed
+ * by users,
+ * along with metadata such as the IP address and timestamp of the action.
+ *
+ * <p>
+ * This entity extends {@link IdentifiableEntity}, which provides a unique
+ * {@code id} for
+ * each log entry.
+ * </p>
+ *
+ * <p>
+ * The table {@code audit_logs} has the following indexes for performance
+ * optimization:
+ * </p>
+ * <ul>
+ * <li>{@code idx_audit_created} - Indexed on {@code created_at} to speed up
+ * time-based queries.</li>
+ * </ul>
+ *
+ * <p>
+ * Fields include:
+ * </p>
+ * <ul>
+ * <li>{@code action} - A description of the action performed.</li>
+ * <li>{@code ipAddress} - IP address of the user who performed the action.</li>
+ * <li>{@code createdAt} - Timestamp when the action was performed.</li>
+ * <li>{@code user} - The {@link com.serinity.accesscontrol.model.User} who
+ * performed the action.</li>
+ * </ul>
+ *
+ * <p>
+ * Note: This class is declared {@code final} to prevent inheritance and ensure
+ * session integrity.
+ * </p>
+ *
+ * @author @ZouariOmar <zouariomar20@gmail.com>
+ * @version 1.0
+ * @since 2026-02-03
+ * @see com.serinity.accesscontrol.model.User
+ *
+ *      <a
+ *      href=
+ *      "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/model/AuditLog.java">
+ *      AuditLog.java
+ *      </a>
+ */
 @Entity
 @Table(name = "audit_logs")
-@Index(name = "id_audit_created", columnList = "created_at")
+@Index(name = "idx_audit_created", columnList = "created_at")
 public final class AuditLog extends IdentifiableEntity {
   @Column(nullable = false, length = 100)
   private String action;
@@ -134,7 +145,7 @@ public final class AuditLog extends IdentifiableEntity {
   // #############################
 
   @PrePersist
-  protected void onCreate() {
+  private void onCreate() {
     if (this.hostname == null) {
       try {
         this.hostname = java.net.InetAddress.getLocalHost().getHostName();

@@ -1,21 +1,3 @@
-/**
- * RefreshTokenGenerator.java
- *
- * We use this class to generate new refrech token for the current session
- *
- * <p>none</p>
- *
- * @author  @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since   2026-02-04
- *
- * <a
- * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/util/RefreshTokenGenerator.java"
- * target="_blank">
- * RefreshTokenGenerator.java
- * </a>
- */
-
 // `RefreshTokenGenerator` package name
 package com.serinity.accesscontrol.util;
 
@@ -23,6 +5,19 @@ package com.serinity.accesscontrol.util;
 import java.security.SecureRandom;
 import java.util.Base64;
 
+/**
+ * We use this class to generate new refrech token for the current session
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-04
+ *
+ *        <a
+ *        href=
+ *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/util/RefreshTokenGenerator.java">
+ *        RefreshTokenGenerator.java
+ *        </a>
+ */
 public final class RefreshTokenGenerator {
   private static final SecureRandom RANDOM = new SecureRandom();
 

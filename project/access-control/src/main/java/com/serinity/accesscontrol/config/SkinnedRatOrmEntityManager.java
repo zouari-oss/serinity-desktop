@@ -7,6 +7,47 @@ import org.zouarioss.skinnedratorm.core.EntityManager;
 // `java` import(s)
 import java.sql.*;
 
+/**
+ * Configuration utility class responsible for providing database connections
+ * and initializing the SkinnedRat ORM {@link EntityManager}.
+ *
+ * <p>
+ * This class centralizes the creation and configuration of JDBC connections
+ * using environment variables loaded via {@link EnvironmentVariableLoader}.
+ * It ensures that the appropriate JDBC driver is loaded before creating
+ * the ORM {@link EntityManager}.
+ * </p>
+ *
+ * <p>
+ * Responsibilities:
+ * </p>
+ * <ul>
+ * <li>Establishing a JDBC {@link java.sql.Connection}</li>
+ * <li>Enabling auto-commit mode for database transactions</li>
+ * <li>Loading the configured JDBC driver class</li>
+ * <li>Providing a fully initialized {@link EntityManager}</li>
+ * </ul>
+ *
+ * <p>
+ * If a database connection cannot be established or the JDBC driver
+ * cannot be found, the underlying exception is wrapped and rethrown
+ * as a {@link RuntimeException}.
+ * </p>
+ *
+ * <p>
+ * This class uses static factory methods and does not require instantiation.
+ * </p>
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-16
+ *
+ *        <a
+ *        href=
+ *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/config/SkinnedRatOrmEntityManager.java">
+ *        SkinnedRatOrmEntityManager.java
+ *        </a>
+ */
 public class SkinnedRatOrmEntityManager {
   public static Connection getConnection() {
     try {

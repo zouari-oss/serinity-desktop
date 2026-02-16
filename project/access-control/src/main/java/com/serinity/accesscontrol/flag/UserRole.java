@@ -1,6 +1,7 @@
 // `UserRole` package name
 package com.serinity.accesscontrol.flag;
 
+// `serinity` import(s)
 import com.serinity.accesscontrol.util.I18nUtil;
 
 /**

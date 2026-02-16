@@ -1,29 +1,3 @@
-/**
- * ProfileTest.java
- *
- * JUnit test class for {@link com.serinity.accesscontrol.model.Profile} entity operations.
- *
- * <p>This class tests Profile-specific functionality including CRUD operations and profile data validation.</p>
- *
- * <p>Test coverage includes:</p>
- * <ul>
- *   <li>{@link #testFindProfileByUsername()}          - Verifies profile retrieval by username.</li>
- *   <li>{@link #testUpdateProfile()}                  - Checks profile update operations.</li>
- *   <li>{@link #testProfileWithCompleteInformation()} - Validates complete profile data persistence.</li>
- * </ul>
- *
- * @author  @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since   2026-02-12
- * @see     com.serinity.accesscontrol.model.Profile
- * @see     com.serinity.accesscontrol.repository.ProfileRepository
- *
- * <a href="https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/ProfileTest.java"
- * target="_blank">
- * ProfileTest.java
- * </a>
- */
-
 // `ProfileTest` package name
 package com.serinity.accesscontrol;
 
@@ -49,6 +23,37 @@ import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.ProfileRepository;
 
+/**
+ * JUnit test class for {@link com.serinity.accesscontrol.model.Profile} entity
+ * operations.
+ *
+ * <p>
+ * This class tests Profile-specific functionality including CRUD operations and
+ * profile data validation.
+ * </p>
+ *
+ * <p>
+ * Test coverage includes:
+ * </p>
+ * <ul>
+ * <li>{@link #testFindProfileByUsername()} - Verifies profile retrieval by
+ * username.</li>
+ * <li>{@link #testUpdateProfile()} - Checks profile update operations.</li>
+ * <li>{@link #testProfileWithCompleteInformation()} - Validates complete
+ * profile data persistence.</li>
+ * </ul>
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-12
+ * @see com.serinity.accesscontrol.model.Profile
+ * @see com.serinity.accesscontrol.repository.ProfileRepository
+ *
+ *      <a href=
+ *      "https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/ProfileTest.java">
+ *      ProfileTest.java
+ *      </a>
+ */
 public final class ProfileTest {
   private EntityManager em;
   private ProfileRepository profileRepo;

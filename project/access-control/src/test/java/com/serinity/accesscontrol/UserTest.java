@@ -1,28 +1,3 @@
-/**
- * UserTest.java
- *
- * JUnit test class for {@link com.serinity.accesscontrol.model.User} entity operations.
- *
- * <p>This class tests User-specific functionality including roles, statuses, and user management.</p>
- *
- * <p>Test coverage includes:</p>
- * <ul>
- *   <li>{@link #testUserWithDifferentRoles()} - Verifies users can be created with different roles.</li>
- *   <li>{@link #testUserDefaultStatus()}      - Checks default status values are properly set.</li>
- * </ul>
- *
- * @author  @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since   2026-02-12
- * @see     com.serinity.accesscontrol.model.User
- * @see     com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager
- *
- * <a href="https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/UserTest.java"
- * target="_blank">
- * UserTest.java
- * </a>
- */
-
 // `UserTest` package name
 package com.serinity.accesscontrol;
 
@@ -49,6 +24,36 @@ import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.ProfileRepository;
 
+/**
+ * JUnit test class for {@link com.serinity.accesscontrol.model.User} entity
+ * operations.
+ *
+ * <p>
+ * This class tests User-specific functionality including roles, statuses, and
+ * user management.
+ * </p>
+ *
+ * <p>
+ * Test coverage includes:
+ * </p>
+ * <ul>
+ * <li>{@link #testUserWithDifferentRoles()} - Verifies users can be created
+ * with different roles.</li>
+ * <li>{@link #testUserDefaultStatus()} - Checks default status values are
+ * properly set.</li>
+ * </ul>
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-12
+ * @see com.serinity.accesscontrol.model.User
+ * @see com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager
+ *
+ *      <a href=
+ *      "https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/UserTest.java">
+ *      UserTest.java
+ *      </a>
+ */
 public final class UserTest {
   private EntityManager em;
   private ProfileRepository profileRepo;
