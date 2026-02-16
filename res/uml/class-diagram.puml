@@ -1,0 +1,238 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+' =======================
+'  `access-control` Package
+' =======================
+package "access-control" {
+
+  abstract class IdentifiableEntity {
+    +id: UUID
+  }
+
+  abstract class TimestampedEntity {
+    +createdAt: Instant
+    +updatedAt: Instant
+  }
+
+  IdentifiableEntity <|-- TimestampedEntity
+
+  class User {
+    +email: String
+    +passwordHash: String
+    +role: Role
+    +createdAt: Instant
+    +updatedAt: Instant
+  }
+
+  TimestampedEntity <|-- User
+
+  enum Role {
+    ADMIN
+    THERAPIST
+    PATIENT
+  }
+
+  class Profile {
+    +firstName: String
+    +lastName: String
+    +phone: String
+    +country: String
+    +state: String
+    +aboutMe: String
+    +profileImageUrl: String
+    +createdAt: Instant
+    +updatedAt: Instant
+  }
+
+  TimestampedEntity <|-- Profile
+
+  class AuthSession {
+    +refreshToken: String
+    +createdAt: Instant
+    +expiresAt: Instant
+    +revoked: boolean
+  }
+
+  class AuditLog {
+    +action: String
+    +ipAddress: String
+    +createdAt: Instant
+  }
+
+  User "1" -- "1" Profile : owns
+  User "1" -- "*" AuthSession : sessions
+  User "1" -- "*" AuditLog : audit logs
+}
+
+' =======================
+' Mood & Journal Package
+' =======================
+package "Mood & Journal" {
+
+  class Mood {
+    +id: Long
+    +emotion: String
+    +intensity: int
+    +date: Date
+  }
+
+  class Journal {
+    +id: Long
+    +content: Text
+    +createdAt: DateTime
+  }
+
+  class Question {
+    +id: Long
+    +label: String
+  }
+
+  class Choice {
+    +id: Long
+    +value: String
+  }
+
+  User "1" -- "*" Mood
+  User "1" -- "*" Journal
+  Question "1" -- "*" Choice
+}
+
+' =======================
+' Sleep Management Package
+' =======================
+package "Sleep Management" {
+
+  class Cycle {
+    +id: Long
+    +startTime: DateTime
+    +endTime: DateTime
+    +quality: int
+  }
+
+  class Dream {
+    +id: Long
+    +emotion: String
+    +intensity: int
+    +description: Text
+  }
+
+  User "1" -- "*" Cycle
+  Cycle "1" -- "*" Dream
+}
+
+' =======================
+' Exercises & Resources Package
+' =======================
+package "Exercises & Resources" {
+
+  class Exercise {
+    +id: Long
+    +title: String
+    +level: String
+    +duration: int
+  }
+
+  class Resource {
+    +id: Long
+    +title: String
+    +type: ResourceType
+    +url: String
+  }
+
+  class ExerciseSession {
+    +id: Long
+    +status: String
+    +feedback: Text
+  }
+
+  class Favorite {
+    +id: Long
+  }
+
+  Exercise "1" -- "*" ExerciseSession
+  User "1" -- "*" ExerciseSession
+  User "1" -- "*" Favorite
+  Favorite "*" -- "1" Exercise
+  Favorite "*" -- "1" Resource
+}
+
+' =======================
+' Appointment & Consultation Package
+' =======================
+package "Appointments & Consultations" {
+
+  class Appointment {
+    +id: Long
+    +dateTime: DateTime
+    +status: AppointmentStatus
+  }
+
+  class Consultation {
+    +id: Long
+    +startTime: DateTime
+    +endTime: DateTime
+    +summary: Text
+  }
+
+  class Availability {
+    +id: Long
+    +startTime: DateTime
+    +endTime: DateTime
+  }
+
+  Patient "1" -- "*" Appointment : books
+  Therapist "1" -- "*" Appointment : attends
+  Appointment "1" -- "1" Consultation
+  Therapist "1" -- "*" Availability
+}
+
+' =======================
+' Community Package
+' =======================
+package "Community / Forum" {
+
+  class Post {
+    +id: Long
+    +content: Text
+    +createdAt: DateTime
+  }
+
+  class Comment {
+    +id: Long
+    +content: Text
+    +createdAt: DateTime
+  }
+
+  User "1" -- "*" Post
+  Post "1" -- "*" Comment
+  User "1" -- "*" Comment
+}
+
+' =======================
+' AI Services (Logical Layer)
+' =======================
+package "AI Services" {
+
+  class EmotionAnalyzer {
+    +analyzeJournal()
+    +detectMood()
+  }
+
+  class RecommendationEngine {
+    +recommendExercises()
+    +recommendAppointments()
+  }
+
+  class SessionSummarizer {
+    +summarize()
+  }
+}
+
+Journal ..> EmotionAnalyzer : uses
+Mood ..> EmotionAnalyzer : uses
+User ..> RecommendationEngine : uses
+Consultation ..> SessionSummarizer : uses
+
+@enduml

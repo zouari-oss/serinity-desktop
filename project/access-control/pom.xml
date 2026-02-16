@@ -1,0 +1,114 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>jar</packaging>
+
+  <!-- Super & Child GAV properties -->
+  <parent>
+    <groupId>com.serinity</groupId>
+    <artifactId>serinity</artifactId>
+    <version>1.0.0</version>
+  </parent>
+  <artifactId>access-control</artifactId>
+  <!-- !Super & Child GAV properties -->
+
+  <!-- Module properties -->
+  <name>access-control</name>
+  <url>http://serinity.dev</url>
+  <!-- !Module properties -->
+
+  <dependencies>
+    <!-- org.openjfx.javafx-controls -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+    </dependency>
+    <!-- !org.openjfx.javafx-controls -->
+
+    <!-- org.openjfx.javafx-fxml -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+    </dependency>
+    <!-- !org.openjfx.javafx-fxml -->
+
+    <!-- org.openjfx.javafx-web -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-web</artifactId>
+    </dependency>
+    <!-- !org.openjfx.javafx-web -->
+
+    <!-- org.junit.jupiter.junit-jupiter-engine -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- !org.junit.jupiter.junit-jupiter-engine -->
+
+    <!-- io.github.cdimascio.dotenv-java -->
+    <dependency>
+      <groupId>io.github.cdimascio</groupId>
+      <artifactId>dotenv-java</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !io.github.cdimascio.dotenv-java -->
+
+    <!-- org.mariadb.jdbc.mariadb-java-client -->
+    <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+    </dependency>
+    <!-- !org.mariadb.jdbc.mariadb-java-client -->
+
+    <!-- org.zouarioss.skinnedratorm -->
+    <dependency>
+      <groupId>org.zouarioss</groupId>
+      <artifactId>skinnedratorm</artifactId>
+    </dependency>
+    <!-- !org.zouarioss.skinnedratorm -->
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- org.apache.maven.plugins.maven-surefire-plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <javafx.version>${javafx.version}</javafx.version> <!-- To include javaFx version to test -->
+          </systemPropertyVariables>
+          <useModulePath>true</useModulePath>
+        </configuration>
+      </plugin>
+      <!-- !org.apache.maven.plugins.maven-surefire-plugin -->
+
+      <!-- org.apache.maven.plugins.maven-compiler-plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <!-- !org.apache.maven.plugins.maven-compiler-plugin -->
+
+      <!-- org.openjfx.javafx-maven-plugin -->
+      <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <!-- Default configuration for running -->
+            <!-- Usage: mvn clean javafx:run -->
+            <id>default-cli</id>
+            <configuration>
+              <mainClass>com.serinity.accesscontrol.App</mainClass>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- !org.openjfx.javafx-maven-plugin -->
+    </plugins>
+  </build>
+</project>

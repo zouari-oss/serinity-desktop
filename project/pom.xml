@@ -1,0 +1,175 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>pom</packaging>
+
+  <!-- GAV properties -->
+  <groupId>com.serinity</groupId>
+  <artifactId>serinity</artifactId>
+  <version>1.0.0</version>
+  <!-- !GAV properties -->
+
+  <!-- Project properties -->
+  <name>serinity</name>
+  <url>http://serinity.dev</url>
+  <!-- !Project properties -->
+
+  <!-- Project licenses -->
+  <licenses>
+    <license>
+      <name>GPL3.0</name>
+      <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+    </license>
+  </licenses>
+  <!-- !Project licenses -->
+
+  <!-- Developers properties -->
+  <developers>
+    <developer>
+      <id>ZouariOmar</id>
+      <name>Zouari Omar</name>
+      <email>zouariomar20@gmail.com</email>
+      <url>https://github.com/ZouariOmar</url>
+      <organization>Esprit</organization>
+      <organizationUrl>https://www.esprit.tn</organizationUrl>
+      <timezone>GMT+1</timezone>
+    </developer>
+    <developer>
+      <id>Gl3diator</id>
+      <name>Ghaith Ben Salah</name>
+      <email>ghaithbensalah1999@gmail.com</email>
+      <organization>Esprit</organization>
+      <organizationUrl>https://www.esprit.tn</organizationUrl>
+      <timezone>GMT+1</timezone>
+    </developer>
+  </developers>
+  <!-- !Developers properties -->
+
+  <!-- Custom properties -->
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>25</maven.compiler.source>
+    <maven.compiler.target>25</maven.compiler.target>
+    <maven.compiler.release>25</maven.compiler.release>
+    <javafx.version>25.0.2</javafx.version>
+    <junit.jupiter.version>5.14.2</junit.jupiter.version>
+    <mariadb.version>3.5.2</mariadb.version>
+    <dotenv-java.version>3.2.0</dotenv-java.version>
+    <skinnedratorm.version>1.0.2</skinnedratorm.version>
+  </properties>
+  <!-- !Custom properties -->
+
+  <!-- Modules properties -->
+  <modules>
+    <module>mood-control</module>
+    <module>access-control</module>
+  </modules>
+  <!-- !Modules properties -->
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- org.openjfx.javafx-controls -->
+      <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-controls</artifactId>
+        <version>${javafx.version}</version>
+      </dependency>
+      <!-- !org.openjfx.javafx-controls -->
+
+      <!-- org.openjfx.javafx-fxml -->
+      <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-fxml</artifactId>
+        <version>${javafx.version}</version>
+      </dependency>
+      <!-- !org.openjfx.javafx-fxml -->
+
+      <!-- org.openjfx.javafx-web -->
+      <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-web</artifactId>
+        <version>${javafx.version}</version>
+      </dependency>
+      <!-- !org.openjfx.javafx-web -->
+
+      <!-- org.junit.jupiter.junit-jupiter-engine -->
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit.jupiter.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <!-- !org.junit.jupiter.junit-jupiter-engine -->
+
+      <!-- org.mariadb.jdbc.mariadb-java-client -->
+      <dependency>
+        <groupId>org.mariadb.jdbc</groupId>
+        <artifactId>mariadb-java-client</artifactId>
+        <version>${mariadb.version}</version>
+      </dependency>
+      <!-- !org.mariadb.jdbc.mariadb-java-client -->
+
+      <!-- io.github.cdimascio.dotenv-java -->
+      <dependency>
+        <groupId>io.github.cdimascio</groupId>
+        <artifactId>dotenv-java</artifactId>
+        <version>${dotenv-java.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <!-- !io.github.cdimascio.dotenv-java -->
+
+      <!-- org.zouarioss.skinnedratorm -->
+      <dependency>
+        <groupId>org.zouarioss</groupId>
+        <artifactId>skinnedratorm</artifactId>
+        <version>${skinnedratorm.version}</version>
+      </dependency>
+      <!-- !org.zouarioss.skinnedratorm -->
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- org.apache.maven.plugins.maven-compiler-plugin -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.13.0</version>
+          <configuration>
+            <release>${maven.compiler.release}</release>
+          </configuration>
+        </plugin>
+        <!-- !org.apache.maven.plugins.maven-compiler-plugin -->
+
+        <!-- org.apache.maven.plugins.maven-surefire-plugin -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.5.4</version>
+          <configuration>
+            <useModulePath>true</useModulePath>
+          </configuration>
+        </plugin>
+        <!-- !org.apache.maven.plugins.maven-surefire-plugin -->
+
+        <!-- org.openjfx.javafx-maven-plugin -->
+        <plugin>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-maven-plugin</artifactId>
+          <version>0.0.8</version>
+        </plugin>
+        <!-- !org.openjfx.javafx-maven-plugin -->
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/zouari-oss/skinned-rat-orm</url>
+    </repository>
+  </repositories>
+</project>
