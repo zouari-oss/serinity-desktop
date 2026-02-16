@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.serinity.forumcontrol.Controllers.AddCategoryController"
+      spacing="15" style="-fx-background-color: #f5f5f5;">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label fx:id="headerLabel" text="Create New Category"
+               style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Form Container -->
+    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 5;">
+
+        <!-- Title Field -->
+        <VBox spacing="5">
+            <Label text="Name *" style="-fx-font-weight: bold;">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+            <TextField fx:id="nameField" promptText="Enter category name..."
+                       style="-fx-font-size: 14;">
+                <padding>
+                    <Insets top="8" right="10" bottom="8" left="10"/>
+                </padding>
+            </TextField>
+        </VBox>
+        <VBox spacing="5">
+            <Label text="Slug *" style="-fx-font-weight: bold;">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+            <TextField fx:id="slugField" promptText="Enter category slug..."
+                       style="-fx-font-size: 14;">
+                <padding>
+                    <Insets top="8" right="10" bottom="8" left="10"/>
+                </padding>
+            </TextField>
+        </VBox>
+
+        <!-- Category Dropdown -->
+        <VBox spacing="5">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Parent Category *" style="-fx-font-weight: bold;">
+                    <font>
+                        <Font size="14"/>
+                    </font>
+                </Label>
+                <Button text="🔄 Refresh" onAction="#refreshCategories"
+                        style="-fx-font-size: 10; -fx-padding: 2 8 2 8;"/>
+            </HBox>
+            <ComboBox fx:id="categoryBox" promptText="Select a category..."
+                      maxWidth="Infinity" prefWidth="Infinity"
+                      style="-fx-font-size: 14;"/>
+        </VBox>
+
+        <!-- Content Area -->
+        <VBox spacing="5" VBox.vgrow="ALWAYS">
+            <Label text="Description *" style="-fx-font-weight: bold;">
+                <font>
+                    <Font size="14"/>
+                </font>
+            </Label>
+            <TextArea fx:id="descriptionArea" promptText="Write your category description here..."
+                      wrapText="true" prefRowCount="8"
+                      style="-fx-font-size: 14;">
+                <padding>
+                    <Insets top="8" right="10" bottom="8" left="10"/>
+                </padding>
+            </TextArea>
+        </VBox>
+
+
+        <Separator/>
+
+        <!-- Action Buttons -->
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button text="Cancel" onAction="#cancel"
+                    style="-fx-background-color: #f0f0f0; -fx-text-fill: #333; -fx-font-size: 14; -fx-padding: 10 20 10 20; -fx-background-radius: 5;"/>
+            <Button fx:id="publishButton" text="Publish Category" onAction="#publish"
+                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold; -fx-padding: 10 20 10 20; -fx-background-radius: 5;"/>
+        </HBox>
+
+    </VBox>
+
+    <!-- Footer Note -->
+    <Label text="* Required fields" style="-fx-text-fill: #888; -fx-font-size: 12;"/>
+
+</VBox>

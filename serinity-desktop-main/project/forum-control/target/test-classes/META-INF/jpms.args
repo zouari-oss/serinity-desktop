@@ -1,0 +1,4 @@
+--patch-module
+com.serinity=_
+--add-reads
+com.serinity=ALL-UNNAMED
