@@ -53,13 +53,11 @@
 
     </BorderPane>
 
-    <!-- overlay -->
     <StackPane fx:id="overlay"
                styleClass="overlay-dim"
                visible="false"
                managed="false"/>
 
-    <!-- editor host -->
     <StackPane fx:id="editorHost"
                visible="false"
                managed="false"/>
