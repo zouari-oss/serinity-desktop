@@ -7,14 +7,12 @@
 
 <BorderPane minHeight="500.0" minWidth="800.0" prefHeight="650.0" prefWidth="1000.0" styleClass="main-container" stylesheets="/view/styles/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.sleepcontrol.controller.MainTemplateController">
 
-    <!-- TOP BAR -->
     <top>
         <HBox fx:id="topBar" alignment="CENTER_LEFT" prefHeight="64.0" spacing="14.0" style="-fx-background-color: #1f5f63;" styleClass="top-bar" BorderPane.alignment="CENTER_LEFT">
             <padding>
                 <Insets bottom="10" left="16" right="16" top="10" />
             </padding>
 
-            <!-- Brand -->
             <HBox fx:id="brandBox" alignment="CENTER_LEFT" spacing="10.0">
                 <ImageView fx:id="logoImg" fitHeight="55.0" fitWidth="52.0" preserveRatio="true">
                     <Image url="@../../assets/logo2.png" />
@@ -22,7 +20,6 @@
                 <Label style="-fx-font-weight: bold; -fx-font-size: 15;" styleClass="brand-label" text="Gestion de sommeil" textFill="WHITE" />
             </HBox>
 
-            <!-- Navigation -->
             <HBox fx:id="navBox" alignment="CENTER_LEFT" spacing="10.0">
                 <Button fx:id="btnSleep" onAction="#onNavClick" prefHeight="36.0" prefWidth="139.0" styleClass="nav-button" text="Sommeil" textAlignment="CENTER">
                     <HBox.margin>
@@ -39,7 +36,6 @@
 
             <Region HBox.hgrow="ALWAYS" />
 
-            <!-- User Info -->
             <HBox fx:id="rightTools" alignment="CENTER_RIGHT" spacing="12.0">
                 <HBox fx:id="userBox" alignment="CENTER_RIGHT" spacing="10.0">
                     <Label fx:id="userNameLabel" styleClass="user-name-label" />

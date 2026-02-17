@@ -8,9 +8,7 @@ import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Tests unitaires pour le modèle Sommeil
- */
+
 @DisplayName("Tests unitaires - Sommeil")
 class SommeilTest {
 

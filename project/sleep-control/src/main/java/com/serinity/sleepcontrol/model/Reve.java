@@ -6,35 +6,25 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * Entité Reve représentant un rêve
- * Relation ManyToOne avec Sommeil
- */
 public class Reve {
 
-    // Attributs principaux
     private int id;
     private String titre;
     private String description;
-    private String humeur; // Joyeux, Triste, Anxieux, Neutre, Excité
-    private String typeReve; // Normal, Cauchemar, Lucide, Récurrent
+    private String humeur;
+    private String typeReve;
 
-    // Nouveaux attributs
-    private int intensite; // 1-10
-    private boolean couleur; // Rêve en couleur ou noir & blanc
-    private String emotions; // Liste séparée par virgules
-    private String symboles; // Symboles présents dans le rêve
-    private boolean recurrent; // Si le rêve se répète
+    private int intensite;
+    private boolean couleur;
+    private String emotions;
+    private String symboles;
+    private boolean recurrent;
 
-    // Relation ManyToOne avec Sommeil
     private Sommeil sommeil;
-    private int sommeilId; // Foreign Key
+    private int sommeilId;
 
-    // Métadonnées
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    // ==================== CONSTRUCTEURS ====================
 
     public Reve() {
         this.couleur = true;
@@ -67,25 +57,14 @@ public class Reve {
         setSommeil(sommeil);
     }
 
-    // ==================== MÉTHODES MÉTIER ====================
-
-    /**
-     * Vérifie si le rêve est un cauchemar
-     */
     public boolean estCauchemar() {
         return "Cauchemar".equalsIgnoreCase(typeReve);
     }
 
-    /**
-     * Vérifie si le rêve est lucide
-     */
     public boolean estLucide() {
         return "Lucide".equalsIgnoreCase(typeReve);
     }
 
-    /**
-     * Évalue le niveau d'anxiété du rêve (0-10)
-     */
     public int calculerNiveauAnxiete() {
         int niveau = 0;
 
@@ -108,9 +87,6 @@ public class Reve {
         return Math.min(10, niveau);
     }
 
-    /**
-     * Retourne la liste des émotions sous forme de List
-     */
     public List<String> getEmotionsList() {
         if (emotions == null || emotions.trim().isEmpty()) {
             return List.of();
@@ -120,9 +96,6 @@ public class Reve {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Retourne la liste des symboles sous forme de List
-     */
     public List<String> getSymbolesList() {
         if (symboles == null || symboles.trim().isEmpty()) {
             return List.of();
@@ -132,9 +105,6 @@ public class Reve {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Ajoute une émotion à la liste
-     */
     public void ajouterEmotion(String emotion) {
         if (emotion != null && !emotion.trim().isEmpty()) {
             if (this.emotions == null || this.emotions.isEmpty()) {
@@ -145,9 +115,6 @@ public class Reve {
         }
     }
 
-    /**
-     * Ajoute un symbole à la liste
-     */
     public void ajouterSymbole(String symbole) {
         if (symbole != null && !symbole.trim().isEmpty()) {
             if (this.symboles == null || this.symboles.isEmpty()) {
@@ -158,9 +125,6 @@ public class Reve {
         }
     }
 
-    /**
-     * Génère un résumé court du rêve
-     */
     public String genererResume() {
         String resume = titre != null ? titre : "Sans titre";
         resume += " (" + typeReve + ")";
@@ -172,9 +136,6 @@ public class Reve {
         return resume;
     }
 
-    /**
-     * Génère un rapport détaillé du rêve
-     */
     public String genererRapportDetaille() {
         StringBuilder rapport = new StringBuilder();
         rapport.append("=== Rapport de Rêve ===\n");
@@ -199,17 +160,12 @@ public class Reve {
         return rapport.toString();
     }
 
-    /**
-     * Valide les données du rêve
-     */
     public boolean estValide() {
         return titre != null && !titre.trim().isEmpty() &&
                 description != null && !description.trim().isEmpty() &&
                 intensite >= 1 && intensite <= 10 &&
                 typeReve != null && !typeReve.trim().isEmpty();
     }
-
-    // ==================== GETTERS & SETTERS ====================
 
     public int getId() {
         return id;
@@ -299,7 +255,6 @@ public class Reve {
     }
 
     public void setSommeil(Sommeil sommeil) {
-        // Retirer de l'ancien sommeil si existant
         if (this.sommeil != null && this.sommeil != sommeil) {
             this.sommeil.retirerReve(this);
         }
@@ -308,7 +263,6 @@ public class Reve {
 
         if (sommeil != null) {
             this.sommeilId = sommeil.getId();
-            // Ajouter au nouveau sommeil
             if (!sommeil.getReves().contains(this)) {
                 sommeil.ajouterReve(this);
             }
@@ -340,8 +294,6 @@ public class Reve {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    // ==================== EQUALS, HASHCODE, TOSTRING ====================
 
     @Override
     public boolean equals(Object o) {

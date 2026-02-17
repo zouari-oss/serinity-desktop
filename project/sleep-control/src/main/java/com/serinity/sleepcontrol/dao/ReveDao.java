@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface ReveDao {
 
-    // CRUD Operations
     void ajouter(Reve reve) throws SQLException;
 
     List<Reve> listerTous() throws SQLException;
@@ -19,12 +18,10 @@ public interface ReveDao {
 
     void supprimer(int id) throws SQLException;
 
-    // Recherche et filtres
     List<Reve> rechercher(String critere) throws SQLException;
 
     List<Reve> filtrerParType(String type) throws SQLException;
 
-    // Statistiques
     List<Object[]> statistiquesParType() throws SQLException;
 
     double calculerIntensiteMoyenne() throws SQLException;

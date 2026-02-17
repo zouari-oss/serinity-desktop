@@ -16,7 +16,6 @@
         <Insets top="18" right="18" bottom="18" left="18" />
     </padding>
 
-    <!-- En-tête -->
     <HBox alignment="CENTER_LEFT" spacing="12.0">
         <Label text="Gestion du Sommeil" styleClass="page-header" />
         <Region HBox.hgrow="ALWAYS" />
@@ -30,7 +29,6 @@
                 onAction="#rafraichir" />
     </HBox>
 
-    <!-- Filtres et recherche -->
     <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="filter-container">
         <padding>
             <Insets top="12" right="12" bottom="12" left="12" />
@@ -54,7 +52,6 @@
                   styleClass="combo-box" />
     </HBox>
 
-    <!-- Statistiques -->
     <HBox spacing="2.0" styleClass="stats-container">
         <padding>
             <Insets top="12" right="12" bottom="12" left="12" />
@@ -64,7 +61,6 @@
                styleClass="stats-label" />
     </HBox>
 
-    <!-- Zone de cards -->
     <ScrollPane fitToWidth="true"
                 styleClass="cards-scroll-pane"
                 VBox.vgrow="ALWAYS">

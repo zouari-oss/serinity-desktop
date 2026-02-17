@@ -85,21 +85,6 @@ public class TestConnection {
             System.out.println("\n4. Test d'insertion (desactive par defaut)");
             System.out.println("   Decommentez le code pour tester l'insertion");
 
-            /*
-            // Decommentez pour tester l'insertion
-            String insertSQL = "INSERT INTO sommeil (date_nuit, heure_coucher, heure_reveil, " +
-                              "qualite, duree_sommeil, interruptions, humeur_reveil, " +
-                              "environnement, temperature, bruit_niveau, commentaire) " +
-                              "VALUES ('2026-02-16', '22:00:00', '07:00:00', 'Bonne', 9.0, 0, " +
-                              "'Repose', 'Calme', 20.0, 'Silencieux', 'Test connexion')";
-
-            int result = stmt.executeUpdate(insertSQL);
-            System.out.println("✅ Insertion reussie: " + result + " ligne(s) affectee(s)");
-
-            // Supprimer le test
-            stmt.executeUpdate("DELETE FROM sommeil WHERE commentaire = 'Test connexion'");
-            System.out.println("✅ Donnee de test supprimee");
-            */
 
             stmt.close();
 
