@@ -8,7 +8,6 @@ import java.time.Instant;
 import org.zouarioss.skinnedratorm.core.EntityManager;
 
 // `serinity` import(s)
-import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
 import com.serinity.accesscontrol.model.AuthSession;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.base.BaseRepository;
@@ -31,8 +30,8 @@ import com.serinity.accesscontrol.repository.base.BaseRepository;
 public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
   private EntityManager em;
 
-  public AuthSessionRepository() {
-    super(SkinnedRatOrmEntityManager.getEntityManager(), AuthSession.class);
+  public AuthSessionRepository(final EntityManager em) {
+    super(em, AuthSession.class);
   }
 
   public AuthSession findByRefreshToken(final String refreshToken) {

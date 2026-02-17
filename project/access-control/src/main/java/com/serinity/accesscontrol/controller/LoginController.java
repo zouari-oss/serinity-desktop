@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import com.serinity.accesscontrol.flag.ResourceFile;
 import com.serinity.accesscontrol.flag.SupportedLanguage;
 import com.serinity.accesscontrol.flag.UserRole;
+import com.serinity.accesscontrol.service.UserService;
 import com.serinity.accesscontrol.util.FXMLAnimationUtil;
 import com.serinity.accesscontrol.util.FXMLLoaderUtil;
 import com.serinity.accesscontrol.util.I18nUtil;
@@ -139,7 +140,11 @@ public class LoginController {
 
   @FXML
   void onSignUpButtonAction(ActionEvent event) {
-
+    UserService.signUp(
+        singnUpEmailTextField.getText(),
+        signUpPasswordField.getText(),
+        signUpConfirmPasswordField.getText(),
+        signUpUserRoleComboBox.getValue());
   }
 
   @FXML
@@ -199,6 +204,7 @@ public class LoginController {
         UserRole.PATIENT, // Patient
         UserRole.THERAPIST // Therapist
     );
+    signUpUserRoleComboBox.setValue(UserRole.PATIENT); // Default Value: Patient
   }
 
   private void loginSideWebViewInit() {

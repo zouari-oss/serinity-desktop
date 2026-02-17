@@ -46,7 +46,7 @@ public final class User extends TimestampedEntity {
   private String email;
 
   @Column(name = "password", nullable = false)
-  private String passwordHash;
+  private String password;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
@@ -75,12 +75,12 @@ public final class User extends TimestampedEntity {
     this.email = email;
   }
 
-  public String getPasswordHash() {
-    return passwordHash;
+  public String getPassword() {
+    return password;
   }
 
   public void setPasswordHash(final String passwordHash) {
-    this.passwordHash = passwordHash;
+    this.password = passwordHash;
   }
 
   public UserRole getRole() {

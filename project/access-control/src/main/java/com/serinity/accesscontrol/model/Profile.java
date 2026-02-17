@@ -76,7 +76,7 @@ import com.serinity.accesscontrol.util.UsernameGenerator;
 @Table(name = "profiles")
 @UniqueConstraint(name = "uk_profile_username", columnNames = "username")
 public final class Profile extends TimestampedEntity {
-  @Column(nullable = false, length = 50, updatable = false)
+  @Column(nullable = false, updatable = false)
   private String username; // Pre-persist
 
   @Column(nullable = true)

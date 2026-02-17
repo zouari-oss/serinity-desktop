@@ -34,6 +34,7 @@ public class App extends Application {
 
   @Override
   public void start(final Stage stage) throws Exception {
+    // TEST:
     SkinnedRatOrmMigrator.migrate();
     I18nUtil.applySupportedLocale();
     stage.setScene(FXMLLoaderUtil.loadScene(

@@ -15,8 +15,11 @@ import org.zouarioss.skinnedratorm.annotations.ManyToOne;
 import org.zouarioss.skinnedratorm.annotations.PrePersist;
 import org.zouarioss.skinnedratorm.annotations.Table;
 
+import com.serinity.accesscontrol.flag.SessionDuration;
+import com.serinity.accesscontrol.flag.UserRole;
 // `serinity` import(s)
 import com.serinity.accesscontrol.model.base.IdentifiableEntity;
+import com.serinity.accesscontrol.util.RefreshTokenGenerator;
 
 /**
  * Represents an authentication session for a user. Used to manage user login
@@ -76,14 +79,15 @@ import com.serinity.accesscontrol.model.base.IdentifiableEntity;
 @Index(name = "idx_session_user", columnList = "user_id")
 public final class AuthSession extends IdentifiableEntity {
   @Column(name = "refresh_token", nullable = false, unique = true, length = 255)
-  private String refreshToken;
+  private String refreshToken; // Pre-persist - From `RefreshTokenGenerator`
 
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
   private Instant createdAt;
 
-  @CreationTimestamp
-  @Column(name = "expires_at", nullable = false, updatable = false)
+  // In MySQL before 5.6, TIMESTAMP columns cannot have NULL or non-current
+  // defaults if NOT NULL is set.
+  @Column(name = "expires_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT current_timestamp()")
   private Instant expiresAt;
 
   @Column(nullable = false)
@@ -96,13 +100,8 @@ public final class AuthSession extends IdentifiableEntity {
   // #########################
   // ### GETTERS & SETTERS ###
   // #########################
-
   public String getRefreshToken() {
     return refreshToken;
-  }
-
-  public void setRefreshToken(String refreshToken) {
-    this.refreshToken = refreshToken;
   }
 
   public Instant getCreatedAt() {
@@ -136,11 +135,17 @@ public final class AuthSession extends IdentifiableEntity {
   // #############################
   // ### PRE_PERSIST METHOD(S) ###
   // #############################
-
   @PrePersist
   private void onCreate() {
+    System.out.println(expiresAt);
     if (this.expiresAt == null) {
-      this.expiresAt = Instant.now().plus(Duration.ofDays(7));
+      this.expiresAt = Instant.now().plus(Duration.ofDays(
+          getUser().getRole().equals(UserRole.ADMIN)
+              ? SessionDuration.ADMIN_SESSION.getDuration()
+              : SessionDuration.USER_SESSION.getDuration()));
     }
+
+    if (this.refreshToken == null)
+      this.refreshToken = RefreshTokenGenerator.generate();
   }
 } // AuthSession final class
