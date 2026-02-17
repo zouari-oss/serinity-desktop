@@ -1,0 +1,9 @@
+com\serinity\accesscontrol\flag\PropertyBundle.class
+com\serinity\accesscontrol\flag\MessageKey.class
+module-info.class
+com\serinity\accesscontrol\App.class
+com\serinity\accesscontrol\util\I18nUtil.class
+com\serinity\accesscontrol\SystemInfo.class
+com\serinity\accesscontrol\util\FXMLLoaderUtil.class
+com\serinity\accesscontrol\flag\FXMLFile.class
+com\serinity\accesscontrol\flag\SupportedLanguage.class
