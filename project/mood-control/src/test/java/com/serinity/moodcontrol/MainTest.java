@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MainTest {
   @Test
   public void testJavaVesion() {
-    assertEquals("25.0.1", SystemInfo.javaVersion());
+    assertEquals("25.0.2", SystemInfo.javaVersion());
   }
 
   @Test
