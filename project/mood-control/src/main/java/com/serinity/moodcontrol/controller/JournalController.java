@@ -141,25 +141,26 @@ public class JournalController {
                 : journalService.update(USER_ID, editing, title, d.a1, d.a2, d.a3);
 
         if (err != null) {
-            if (err != null) {
-                final javafx.scene.control.Alert alert =
-                        new javafx.scene.control.Alert(Alert.AlertType.WARNING);
+            // err format: "journal.field.title|journal.validation.empty"
+            String[] parts = err.split("\\|", 2);
+            String fieldKey = parts.length > 0 ? parts[0] : err;
+            String ruleKey  = parts.length > 1 ? parts[1] : "journal.validation.invalid";
 
-                alert.setTitle("Invalid input");
-                alert.setHeaderText(null);
-                alert.setContentText(err);
+            final javafx.scene.control.Alert alert =
+                    new javafx.scene.control.Alert(Alert.AlertType.WARNING);
 
-                alert.getButtonTypes().setAll(javafx.scene.control.ButtonType.OK);
+            alert.setTitle(t("journal.validation.title"));
+            alert.setHeaderText(null);
+            alert.setContentText(t(fieldKey) + " " + t(ruleKey));
 
-                alert.getDialogPane().getStylesheets().add(
-                        getClass().getResource("/styles/styles.css").toExternalForm()
-                );
-                alert.getDialogPane().getStyleClass().add("app-dialog");
+            alert.getButtonTypes().setAll(javafx.scene.control.ButtonType.OK);
 
+            alert.getDialogPane().getStylesheets().add(
+                    getClass().getResource("/styles/styles.css").toExternalForm()
+            );
+            alert.getDialogPane().getStyleClass().add("app-dialog");
 
-                alert.showAndWait();
-                return;
-            }
+            alert.showAndWait();
             return;
         }
 

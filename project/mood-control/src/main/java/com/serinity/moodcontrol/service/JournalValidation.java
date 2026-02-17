@@ -10,26 +10,37 @@ public final class JournalValidation {
 
     public static String validateNewOrEdit(String title, String a1, String a2, String a3) {
         String err;
-        err = validateField(title, "Title", 80);     if (err != null) return err;
-        err = validateField(a1, "Answer 1", 500);   if (err != null) return err;
-        err = validateField(a2, "Answer 2", 500);   if (err != null) return err;
-        err = validateField(a3, "Answer 3", 500);   if (err != null) return err;
+
+        err = validateField(title, "journal.field.title", 80);
+        if (err != null) return err;
+
+        err = validateField(a1, "journal.field.a1", 500);
+        if (err != null) return err;
+
+        err = validateField(a2, "journal.field.a2", 500);
+        if (err != null) return err;
+
+        err = validateField(a3, "journal.field.a3", 500);
+        if (err != null) return err;
+
         return null;
     }
 
-    private static String validateField(String value, String name, int maxLen) {
-        if (value == null) return name + " is required.";
+
+    private static String validateField(String value, String fieldKey, int maxLen) {
+        if (value == null) return fieldKey + "|journal.validation.required";
 
         String v = value.trim();
-        if (v.isEmpty()) return name + " cannot be empty.";
+        if (v.isEmpty()) return fieldKey + "|journal.validation.empty";
 
         v = v.replace("\r\n", "\n");
-        if (v.length() > maxLen) return name + " must be ≤ " + maxLen + " characters.";
+        if (v.length() > maxLen) return fieldKey + "|journal.validation.max_len";
 
         for (int i = 0; i < v.length(); i++) {
             char c = v.charAt(i);
-            if (FORBIDDEN.contains(c)) return name + " contains forbidden character: '" + c + "'.";
+            if (FORBIDDEN.contains(c)) return fieldKey + "|journal.validation.forbidden";
         }
         return null;
     }
+
 }
