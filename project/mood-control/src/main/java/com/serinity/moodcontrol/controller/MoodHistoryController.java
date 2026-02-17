@@ -371,7 +371,7 @@ public class MoodHistoryController {
         }
     }
 
-    // ---------------- Helpers ----------------
+    //Helpers
 
     private String t(final String key) {
         try {

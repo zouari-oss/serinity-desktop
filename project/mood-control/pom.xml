@@ -10,7 +10,7 @@
     <artifactId>serinity</artifactId>
     <version>1.0.0</version>
   </parent>
-  <artifactId>mood-controll</artifactId>
+  <artifactId>mood-control</artifactId>
   <!-- !Super & Child GAV properties -->
 
   <!-- Module properties -->
