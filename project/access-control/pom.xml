@@ -4,14 +4,14 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
 
-  <!-- Super & Child GAV properties -->
+  <!-- Parent & Child GAV properties -->
   <parent>
     <groupId>com.serinity</groupId>
     <artifactId>serinity</artifactId>
     <version>1.0.0</version>
   </parent>
   <artifactId>access-control</artifactId>
-  <!-- !Super & Child GAV properties -->
+  <!-- !Parent & Child GAV properties -->
 
   <!-- Module properties -->
   <name>access-control</name>
@@ -33,79 +33,14 @@
     </dependency>
     <!-- !org.openjfx.javafx-fxml -->
 
-    <!-- org.openjfx.javafx-web -->
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-web</artifactId>
-    </dependency>
-    <!-- !org.openjfx.javafx-web -->
-
     <!-- org.junit.jupiter.junit-jupiter-engine -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- !org.junit.jupiter.junit-jupiter-engine -->
-
-    <!-- io.github.cdimascio.dotenv-java -->
-    <dependency>
-      <groupId>io.github.cdimascio</groupId>
-      <artifactId>dotenv-java</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <!-- !io.github.cdimascio.dotenv-java -->
-
-    <!-- org.mariadb.jdbc.mariadb-java-client -->
-    <dependency>
-      <groupId>org.mariadb.jdbc</groupId>
-      <artifactId>mariadb-java-client</artifactId>
-    </dependency>
-    <!-- !org.mariadb.jdbc.mariadb-java-client -->
-
-    <!-- org.zouarioss.skinnedratorm -->
-    <dependency>
-      <groupId>org.zouarioss</groupId>
-      <artifactId>skinnedratorm</artifactId>
-    </dependency>
-    <!-- !org.zouarioss.skinnedratorm -->
-
-    <!-- org.simplejavamail.simple-java-mail -->
-    <!-- Source: https://mvnrepository.com/artifact/org.simplejavamail/simple-java-mail -->
-    <dependency>
-      <groupId>org.simplejavamail</groupId>
-      <artifactId>simple-java-mail</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <!-- !org.simplejavamail.simple-java-mail -->
-
-    <!-- org.apache.logging.log4j.log4j-core -->
-    <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>compile</scope>
-      <!-- !org.apache.logging.log4j.log4j-core -->
-    </dependency>
-
-    <!-- com.github.ben-manes.caffeine.caffeine -->
-    <!-- Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
-    <dependency>
-      <groupId>com.github.ben-manes.caffeine</groupId>
-      <artifactId>caffeine</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <!-- !com.github.ben-manes.caffeine.caffeine -->
-
-    <!-- org.springframework.security.spring-security-crypto -->
-    <!-- Source:
-    https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-crypto</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <!-- !org.springframework.security.spring-security-crypto -->
   </dependencies>
 
   <build>
@@ -127,6 +62,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <release>11</release>
+        </configuration>
       </plugin>
       <!-- !org.apache.maven.plugins.maven-compiler-plugin -->
 
@@ -140,11 +78,7 @@
             <!-- Usage: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>com.serinity.accesscontrol/com.serinity.accesscontrol.App</mainClass>
-              <options>
-                <option>--enable-native-access=javafx.graphics</option>
-                <option>--enable-native-access=javafx.web</option>
-              </options>
+              <mainClass>com.serinity.accesscontrol.App</mainClass>
             </configuration>
           </execution>
         </executions>

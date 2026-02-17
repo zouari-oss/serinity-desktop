@@ -4,17 +4,17 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
 
-  <!-- Super & Child GAV properties -->
+  <!-- Parent & Child GAV properties -->
   <parent>
     <groupId>com.serinity</groupId>
     <artifactId>serinity</artifactId>
     <version>1.0.0</version>
   </parent>
-  <artifactId>mood-control</artifactId>
-  <!-- !Super & Child GAV properties -->
+  <artifactId>mood-controll</artifactId>
+  <!-- !Parent & Child GAV properties -->
 
   <!-- Module properties -->
-  <name>mood-control</name>
+  <name>modd-control</name>
   <url>http://serinity.dev</url>
   <!-- !Module properties -->
 
@@ -41,30 +41,11 @@
       <scope>test</scope>
     </dependency>
     <!-- !org.junit.jupiter.junit-jupiter-engine -->
-
-    <!-- org.mariadb.jdbc.mariadb-java-client -->
-    <dependency>
-      <groupId>org.mariadb.jdbc</groupId>
-      <artifactId>mariadb-java-client</artifactId>
-    </dependency>
-    <!-- !org.mariadb.jdbc.mariadb-java-client -->
-
-    <!-- io.github.cdimascio.dotenv-java -->
-    <dependency>
-      <groupId>io.github.cdimascio</groupId>
-      <artifactId>dotenv-java</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <!-- !io.github.cdimascio.dotenv-java -->
-
-      <!-- com.fasterxml.jackson.core.jackson-databind -->
       <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-          <version>2.17.2</version>
+          <groupId>org.mariadb.jdbc</groupId>
+          <artifactId>mariadb-java-client</artifactId>
+          <version>3.5.2</version>
       </dependency>
-      <!-- com.fasterxml.jackson.core.jackson-databind -->
-
   </dependencies>
 
   <build>

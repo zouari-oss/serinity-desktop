@@ -1,22 +1,18 @@
 package com.serinity.moodcontrol.controller;
 
-import com.serinity.moodcontrol.App;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class MainTemplateController {
 
@@ -28,13 +24,12 @@ public class MainTemplateController {
     @FXML private Button btnAppointments;
 
     @FXML private Label userNameLabel;
-    @FXML private StackPane contentHost;
-    @FXML private Label footerLabel;
+    @FXML private ImageView avatarImg;
 
-    // Footer language menu (Template.fxml)
-    @FXML private MenuButton langMenu;
-    @FXML private MenuItem langEN;
-    @FXML private MenuItem langFR;
+    @FXML private StackPane contentHost;
+    @FXML private TextField searchField;
+
+    @FXML private Label footerLabel;
 
     // Injected automatically when Template.fxml is loaded with a bundle
     @FXML private ResourceBundle resources;
@@ -52,53 +47,28 @@ public class MainTemplateController {
                 btnSupport, btnExercises, btnAppointments
         );
 
+        // Footer text from bundle
         footerLabel.setText(resources.getString("footer.text"));
 
+        // Placeholder username (replace later with real user session)
         userNameLabel.setText(resources.getString("user.name.placeholder"));
 
-        initLanguageMenu();
-
-        // Default landing
+        // Default landing (template: always load blank)
         setActiveNav(btnMood);
-        loadIntoHost("/fxml/mood/MoodHome.fxml");
-    }
-
-    private void initLanguageMenu() {
-        Locale current = resources.getLocale();
-        langMenu.setText("fr".equals(current.getLanguage()) ? "FR" : "EN");
-
-        langEN.setOnAction(e -> switchLang(Locale.ENGLISH));
-        langFR.setOnAction(e -> switchLang(Locale.FRENCH));
-    }
-
-    private void switchLang(Locale target) {
-        if (resources.getLocale().getLanguage().equals(target.getLanguage())) return;
-
-        try {
-            App.setForcedLocale(target);
-
-            // Reload Template.fxml with the new bundle
-            Stage stage = (Stage) contentHost.getScene().getWindow();
-            new App().start(stage);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to switch language.", e);
-        }
+        loadIntoHost("/fxml/Blank.fxml");
     }
 
     @FXML
-    private void onNavClick(final ActionEvent event) {
-        final Button clicked = (Button) event.getSource();
+    private void onNavClick(ActionEvent event) {
+        Button clicked = (Button) event.getSource();
         setActiveNav(clicked);
 
-        if (clicked == btnMood) {
-            loadIntoHost("/fxml/mood/MoodHome.fxml");
-        } else {
-            loadIntoHost("/fxml/pages/Blank.fxml");
-        }
+        // Template behavior: always load blank for all tabs
+        loadIntoHost("/fxml/Blank.fxml");
     }
 
-    private void setActiveNav(final Button activeBtn) {
-        for (final Button b : navButtons) {
+    private void setActiveNav(Button activeBtn) {
+        for (Button b : navButtons) {
             if (!b.getStyleClass().contains("nav-btn")) {
                 b.getStyleClass().add("nav-btn");
             }
@@ -109,12 +79,12 @@ public class MainTemplateController {
         }
     }
 
-    private void loadIntoHost(final String fxmlPath) {
+    private void loadIntoHost(String fxmlPath) {
         try {
-            final FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath), resources);
-            final Parent page = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath), resources);
+            Parent page = loader.load();
             contentHost.getChildren().setAll(page);
-        } catch (final IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Failed to load: " + fxmlPath, e);
         }
     }
