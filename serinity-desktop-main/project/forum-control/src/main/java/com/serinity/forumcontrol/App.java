@@ -1,23 +1,17 @@
 package com.serinity.forumcontrol;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class App extends Application {
-
-    // use system default
     private static Locale forcedLocale = null;
-
     public static void setForcedLocale(Locale locale) {
         forcedLocale = locale;
     }
-
     public static Locale getEffectiveLocale() {
         return (forcedLocale != null) ? forcedLocale : Locale.getDefault();
     }

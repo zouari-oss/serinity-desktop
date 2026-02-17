@@ -31,7 +31,7 @@ public class AddThreadController {
     private FakeUser user;
     private final ServiceThread threadService = new ServiceThread();
     private final ServiceCategory categoryService = new ServiceCategory();
-
+    private int red;
     private boolean isEditMode = false;
     private Thread threadToEdit = null;
     @FXML
@@ -191,7 +191,14 @@ public class AddThreadController {
 
     @FXML
     private void publish() {
-        if (!validateForm()) return;
+        if (!validateForm()) {
+            if(red==3){alert("Please select a category!", Alert.AlertType.WARNING);return;}
+            if(red==4){alert("Please select a thread type!", Alert.AlertType.WARNING);return;}
+            if(red==1){showError(titleField, "Title is required");return;}
+            if(red==11){showError(titleField, "Title must be at least 5 characters");return;}
+            if(red==2){showError(contentArea, "Content is required");return;}
+            if(red==22){showError(contentArea, "Content too short (min 20 chars)");return;}
+        }
 
         try {
             if (isEditMode) {
@@ -326,30 +333,30 @@ public class AddThreadController {
         String content = contentArea.getText().trim();
 
         if (title.isEmpty()) {
-            showError(titleField, "Title is required");
+            red=1;
             return false;
         }
         if (title.length() < 5) {
-            showError(titleField, "Title must be at least 5 characters");
+            red=11;
             return false;
         }
 
         if (content.isEmpty()) {
-            showError(contentArea, "Content is required");
+            red=2;
             return false;
         }
         if (content.length() < 20) {
-            showError(contentArea, "Content too short (min 20 chars)");
+            red=22;
             return false;
         }
 
         if (categoryBox.getValue() == null) {
-            alert("Please select a category!", Alert.AlertType.WARNING);
+            red=3;
             return false;
         }
 
         if (typeBox.getValue() == null) {
-            alert("Please select a thread type!", Alert.AlertType.WARNING);
+            red=4;
             return false;
         }
 

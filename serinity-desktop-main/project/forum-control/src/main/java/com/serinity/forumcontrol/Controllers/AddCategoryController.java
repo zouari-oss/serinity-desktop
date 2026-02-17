@@ -20,7 +20,7 @@ public class AddCategoryController {
     @FXML private Button publishButton;
 
     private final ServiceCategory categoryService = new ServiceCategory();
-
+    private int alert;
     private boolean isEditMode = false;
     private Category categoryToEdit = null;
     @FXML
@@ -60,10 +60,10 @@ public class AddCategoryController {
         slugField.setText(category.getSlug());
 
         descriptionArea.setText(category.getDescription());
-
-        Category parentCategory = categoryService.getById(category.getParentId());
-        if (parentCategory != null) {
-            categoryBox.setValue(parentCategory);
+        if(category.getParentId()!=null)
+        {Category parentCategory = categoryService.getById(category.getParentId());
+        categoryBox.setValue(parentCategory);
+        } else{categoryBox.setValue(null);
         }
 
     }
@@ -116,8 +116,16 @@ public class AddCategoryController {
 
     @FXML
     private void publish() {
-        if (!validateForm()) return;
-
+        if (!validateForm()){ if(alert==1){showError(nameField, "Name is required");
+            return;}
+            if(alert==2){showError(nameField, "Name must be at least 3 characters");return;}
+            if(alert==3){showError(nameField, "Name must contain only letters");return;}
+            if(alert==4){showError(slugField, "Slug is required");return;}
+            if(alert==5){showError(slugField, "Slug must be lowercase (a-z,-)");return;}
+            if(alert==6){showError(descriptionArea, "Description is required");return;}
+            if(alert==7){showError(descriptionArea, "Description too short");return;}
+            if(alert==8){alert("Category cannot be its own parent!", Alert.AlertType.WARNING);return;}
+    }
         try {
             if (isEditMode) {
                 updateCategory();
@@ -162,6 +170,7 @@ public class AddCategoryController {
         else{alert("Slug should be unique", Alert.AlertType.WARNING);return;}
         categoryToEdit.setDescription(descriptionArea.getText().trim());
         if (categoryBox.getValue() != null){categoryToEdit.setParentId(categoryBox.getValue().getId());}
+        else{categoryToEdit.setParentId(null);}
 
 
         System.out.println("Updating thread ID: " + categoryToEdit.getId());
@@ -239,39 +248,39 @@ public class AddCategoryController {
         String description = descriptionArea.getText().trim();
 
         if (name.isEmpty()) {
-            showError(nameField, "Name is required");
+            alert=1;
             return false;
         }
         if (name.length() < 3) {
-            showError(nameField, "Name must be at least 3 characters");
+            alert=2;
             return false;
         }
         if (!name.matches("[a-zA-Z ]+")) {
-            showError(nameField, "Name must contain only letters");
+            alert=3;
             return false;
         }
 
         if (slug.isEmpty()) {
-            showError(slugField, "Slug is required");
+            alert=4;
             return false;
         }
         if (!slug.matches("^[a-z-]+$")) {
-            showError(slugField, "Slug must be lowercase (a-z,-)");
+            alert=5;
             return false;
         }
 
         if (description.isEmpty()) {
-            showError(descriptionArea, "Description is required");
+            alert=6;
             return false;
         }
         if (description.length() < 10) {
-            showError(descriptionArea, "Description too short");
+            alert=7;
             return false;
         }
 
         if (isEditMode && categoryBox.getValue() != null) {
             if (categoryBox.getValue().getId() == categoryToEdit.getId()) {
-                alert("Category cannot be its own parent!", Alert.AlertType.WARNING);
+                alert=8;
                 return false;
             }
         }

@@ -141,33 +141,6 @@ public class ServiceReply implements Services<Reply> {
         return null;
     }
 
-    /**
-     * Get all replies for a specific thread
-     */
-    public List<Reply> getByThread(long threadId) {
-        List<Reply> replies = new ArrayList<>();
-        String req = "SELECT * FROM `replies` WHERE `thread_id` = ? ORDER BY `created_at` ASC";
-
-        try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
-            pstm.setLong(1, threadId);
-            ResultSet rs = pstm.executeQuery();
-
-            while (rs.next()) {
-                Reply reply = mapResultSetToReply(rs);
-                replies.add(reply);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error retrieving replies by thread: " + e.getMessage());
-        }
-
-        return replies;
-    }
-
-    /**
-     * Get replies by user (String userId)
-     */
     public List<Reply> getByUser(String userId) {
         List<Reply> replies = new ArrayList<>();
         String req = "SELECT * FROM `replies` WHERE `user_id` = ? ORDER BY `created_at` DESC";
@@ -189,38 +162,6 @@ public class ServiceReply implements Services<Reply> {
         return replies;
     }
 
-    /**
-     * Get replies by current user (using Sessiontest)
-     */
-    public List<Reply> getByCurrentUser() {
-        return getByUser(String.valueOf(FakeUser.getCurrentUserId()));
-    }
-
-    /**
-     * Count replies by user
-     */
-    public int countRepliesByUser(String userId) {
-        String req = "SELECT COUNT(*) FROM `replies` WHERE `user_id` = ?";
-
-        try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
-            pstm.setString(1, userId);
-            ResultSet rs = pstm.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error counting replies by user: " + e.getMessage());
-        }
-
-        return 0;
-    }
-
-    /**
-     * Get all top-level replies for a thread (parent_id IS NULL)
-     */
     public List<Reply> getTopLevelReplies(long threadId) {
         List<Reply> replies = new ArrayList<>();
         String req = "SELECT * FROM `replies` WHERE `thread_id` = ? AND `parent_id` IS NULL ORDER BY `created_at` ASC";
@@ -242,9 +183,6 @@ public class ServiceReply implements Services<Reply> {
         return replies;
     }
 
-    /**
-     * Get all nested replies (replies to a specific reply)
-     */
     public List<Reply> getNestedReplies(long parentId) {
         List<Reply> replies = new ArrayList<>();
         String req = "SELECT * FROM `replies` WHERE `parent_id` = ? ORDER BY `created_at` ASC";
@@ -266,53 +204,6 @@ public class ServiceReply implements Services<Reply> {
         return replies;
     }
 
-    /**
-     * Count total replies for a thread
-     */
-    public int countRepliesByThread(long threadId) {
-        String req = "SELECT COUNT(*) FROM `replies` WHERE `thread_id` = ?";
-
-        try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
-            pstm.setLong(1, threadId);
-            ResultSet rs = pstm.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error counting replies: " + e.getMessage());
-        }
-
-        return 0;
-    }
-
-    /**
-     * Count nested replies for a specific reply
-     */
-    public int countNestedReplies(long parentId) {
-        String req = "SELECT COUNT(*) FROM `replies` WHERE `parent_id` = ?";
-
-        try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
-            pstm.setLong(1, parentId);
-            ResultSet rs = pstm.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error counting nested replies: " + e.getMessage());
-        }
-
-        return 0;
-    }
-
-    /**
-     * Delete all replies for a thread (useful when deleting a thread)
-     */
     public void deleteByThread(long threadId) {
         String req = "DELETE FROM `replies` WHERE `thread_id` = ?";
 
@@ -328,9 +219,6 @@ public class ServiceReply implements Services<Reply> {
         }
     }
 
-    /**
-     * Delete all nested replies (when deleting a parent reply)
-     */
     public void deleteNestedReplies(long parentId) {
         String req = "DELETE FROM `replies` WHERE `parent_id` = ?";
 
@@ -346,71 +234,6 @@ public class ServiceReply implements Services<Reply> {
         }
     }
 
-    /**
-     * Delete a reply and all its nested replies (cascade delete)
-     */
-    public void deleteWithNested(long replyId) {
-        // First delete all nested replies
-        deleteNestedReplies(replyId);
-
-        // Then delete the reply itself
-        Reply reply = getById(replyId);
-        if (reply != null) {
-            delete(reply);
-        }
-    }
-
-    /**
-     * Search replies by content
-     */
-    public List<Reply> searchByContent(String keyword) {
-        List<Reply> replies = new ArrayList<>();
-        String req = "SELECT * FROM `replies` WHERE `content` LIKE ? ORDER BY `created_at` DESC";
-
-        try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
-            pstm.setString(1, "%" + keyword + "%");
-            ResultSet rs = pstm.executeQuery();
-
-            while (rs.next()) {
-                Reply reply = mapResultSetToReply(rs);
-                replies.add(reply);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error searching replies: " + e.getMessage());
-        }
-
-        return replies;
-    }
-
-    /**
-     * Get recent replies (last N replies)
-     */
-    public List<Reply> getRecentReplies(int limit) {
-        List<Reply> replies = new ArrayList<>();
-        String req = "SELECT * FROM `replies` ORDER BY `created_at` DESC LIMIT ?";
-
-        try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
-            pstm.setInt(1, limit);
-            ResultSet rs = pstm.executeQuery();
-
-            while (rs.next()) {
-                Reply reply = mapResultSetToReply(rs);
-                replies.add(reply);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error retrieving recent replies: " + e.getMessage());
-        }
-
-        return replies;
-    }
-
-    /**
-     * Update reply content only (most common update operation)
-     */
     public void updateContent(long replyId, String newContent) {
         String req = "UPDATE `replies` SET `content` = ? WHERE `id` = ?";
 
@@ -431,52 +254,6 @@ public class ServiceReply implements Services<Reply> {
         }
     }
 
-    /**
-     * Check if user owns the reply
-     */
-    public boolean isOwner(long replyId, String userId) {
-        Reply reply = getById(replyId);
-        return reply != null && reply.getUserId().equals(userId);
-    }
-
-    /**
-     * Check if current user owns the reply
-     */
-    public boolean isCurrentUserOwner(long replyId) {
-        return isOwner(replyId, String.valueOf(FakeUser.getCurrentUserId()));
-    }
-
-    /**
-     * Get the author (user_id) of a reply
-     */
-    public String getAuthor(long replyId) {
-        Reply reply = getById(replyId);
-        if (reply != null) {
-            return reply.getUserId();
-        }
-        return null; // Return null if reply not found
-    }
-
-    /**
-     * Get reply tree (parent with all its nested replies)
-     * Returns a formatted string showing the hierarchy
-     */
-    public String getReplyTree(long parentId, int level) {
-        StringBuilder tree = new StringBuilder();
-        String indent = "  ".repeat(level);
-
-        Reply parent = getById(parentId);
-        if (parent != null) {
-            tree.append(indent).append("└─ ").append(parent.getContent().substring(0, Math.min(50, parent.getContent().length()))).append("...\n");
-
-            List<Reply> children = getNestedReplies(parentId);
-            for (Reply child : children) {
-                tree.append(getReplyTree(child.getId(), level + 1));
-            }
-        }
-
-        return tree.toString();
-    }
     public String getReplyAuthor(String userId) {
 
         String sql =
@@ -500,9 +277,6 @@ public class ServiceReply implements Services<Reply> {
         return "User#" + userId;
     }
 
-    /**
-     * Helper method to map ResultSet to Reply object
-     */
     private Reply mapResultSetToReply(ResultSet rs) throws SQLException {
         Reply reply = new Reply();
         reply.setId(rs.getLong("id"));

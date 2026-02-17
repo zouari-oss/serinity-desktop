@@ -148,14 +148,13 @@
 
                         <Region HBox.hgrow="ALWAYS"/>
                         <Label fx:id="repliescountLabel"
-                               text="0 points"
+                               text="0 comments"
                                style="-fx-font-size: 14;
                                       -fx-font-weight: bold;
                                       -fx-text-fill: #051261;
                                       -fx-padding: 8 15;"/>
 
                         <Region HBox.hgrow="ALWAYS"/>
-
                         <!-- Follow Button -->
                         <Button fx:id="followButton"
                                 text="⭐ Follow"

@@ -21,7 +21,6 @@ public class ServiceThread implements Services<Thread> {
 
     @Override
     public void add(Thread thread) {
-        // Automatically set the current user ID (convert int to String)
         thread.setUserId(String.valueOf(FakeUser.getCurrentUserId()));
 
         String req = "INSERT INTO `threads` (`category_id`, `user_id`, `title`, `content`, `type`, `status`, `is_pinned`) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -131,27 +130,6 @@ public class ServiceThread implements Services<Thread> {
         return null;
     }
 
-    public List<Thread> getByUser(String userId) {
-        List<Thread> threads = new ArrayList<>();
-        String req = "SELECT * FROM `threads` WHERE `user_id` = ? ORDER BY `created_at` DESC";
-
-        try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
-            pstm.setString(1, userId);
-            ResultSet rs = pstm.executeQuery();
-
-            while (rs.next()) {
-                Thread thread = mapResultSetToThread(rs);
-                threads.add(thread);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error retrieving threads by user: " + e.getMessage());
-        }
-
-        return threads;
-    }
-
     public void updateStatus(long threadId, ThreadStatus status) {
         String req = "UPDATE `threads` SET `status` = ? WHERE `id` = ?";
 
@@ -257,7 +235,7 @@ public class ServiceThread implements Services<Thread> {
         return "unknown";
     }
     public void updateThreadCommentCount(long threadId, int change) {
-        String sql = "UPDATE `threads` SET `commentcount` = `commentcount` + ? WHERE `id` = ?";
+        String sql = "UPDATE `threads` SET `repliescount` = `repliescount` + ? WHERE `id` = ?";
 
         try {
             PreparedStatement stmt = cnx.prepareStatement(sql);
@@ -324,7 +302,6 @@ public class ServiceThread implements Services<Thread> {
                 followChange = -1;
             }
 
-            // Only update if there's a change
             if (followChange != 0) {
                 PreparedStatement stmt = cnx.prepareStatement(sql);
                 stmt.setInt(1, followChange);
