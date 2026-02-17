@@ -54,7 +54,7 @@ public class SkinnedRatOrmEntityManager {
       Connection connection = DriverManager.getConnection(
           EnvironmentVariableLoader.getDatabaseUrl(),
           EnvironmentVariableLoader.getDatabaseUsername(),
-          EnvironmentVariableLoader.getDatabasePASSWORD());
+          EnvironmentVariableLoader.getDatabasePassword());
       connection.setAutoCommit(true);
       return connection;
     } catch (Exception e) {

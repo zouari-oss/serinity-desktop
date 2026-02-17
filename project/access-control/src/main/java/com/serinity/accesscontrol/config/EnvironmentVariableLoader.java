@@ -69,7 +69,7 @@ public class EnvironmentVariableLoader {
     return dotenv.get("DATABASE_USERNAME").toString();
   }
 
-  public final static String getDatabasePASSWORD() {
+  public final static String getDatabasePassword() {
     return dotenv.get("DATABASE_PASSWORD").toString();
   }
 

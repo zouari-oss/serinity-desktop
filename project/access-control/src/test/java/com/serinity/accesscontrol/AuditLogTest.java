@@ -15,6 +15,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.zouarioss.skinnedratorm.core.EntityManager;
 
 // `serinity` imports
@@ -24,7 +25,11 @@ import com.serinity.accesscontrol.model.AuditLog;
 import com.serinity.accesscontrol.model.AuthSession;
 import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
+import com.serinity.accesscontrol.repository.AuditLogRepository;
+import com.serinity.accesscontrol.repository.AuthSessionRepository;
 import com.serinity.accesscontrol.repository.ProfileRepository;
+import com.serinity.accesscontrol.repository.UserRepository;
+import com.serinity.accesscontrol.util.PasswordEncoder;
 
 /**
  * JUnit test class for audit log operations related to
@@ -39,15 +44,18 @@ import com.serinity.accesscontrol.repository.ProfileRepository;
  * Test coverage includes:
  * </p>
  * <ul>
- * <li>{@link #testCreateAuditLog()} - Verifies audit log creation with
- * action.</li>
- * <li>{@link #testAuditLogAutoFields()} - Ensures system info is
- * auto-captured.</li>
- * <li>{@link #testAuditLogWithSession()} - Tests association with auth
- * session.</li>
- * <li>{@link #testMultipleAuditLogs()} - Validates multiple logs per
- * session.</li>
- * <li>{@link #testAuditLogTimestamp()} - Checks timestamp auto-generation.</li>
+ * <li>{@link #testCreateAuditLog()} - Verifies audit log creation and action
+ * value.</li>
+ * <li>{@link #testAuditLogAutoFields()} - Ensures system information (IP, OS,
+ * hostname) is auto-captured.</li>
+ * <li>{@link #testAuditLogWithSession()} - Tests association between audit log
+ * and authentication session.</li>
+ * <li>{@link #testMultipleAuditLogs()} - Validates multiple audit logs can be
+ * created for the same session.</li>
+ * <li>{@link #testAuditLogTimestamp()} - Checks automatic timestamp
+ * generation.</li>
+ * <li>{@link #testAuditLogActionTypes()} - Verifies support for multiple audit
+ * action types.</li>
  * </ul>
  *
  * <p>
@@ -72,159 +80,146 @@ import com.serinity.accesscontrol.repository.ProfileRepository;
  *      </a>
  */
 public final class AuditLogTest {
+  // Entity manager
   private EntityManager em;
-  private ProfileRepository profileRepo;
+
+  // Respositories
+  private UserRepository userRepository;
+  private AuthSessionRepository authSessionRepository;
+  private AuditLogRepository auditLogRepository;
+
+  // Entities
   private User testUser;
-  private Profile testProfile;
   private AuthSession testSession;
   private AuditLog testAuditLog;
 
-  @Test
-  @Order(1)
-  public void testCreateAuditLog() {
-    assertNotNull(testAuditLog.getId(), "Audit log ID should be generated");
-    assertEquals("USER_LOGIN", testAuditLog.getAction(), "Action should match");
-  }
-
-  @Test
-  @Order(2)
-  public void testAuditLogAutoFields() {
-    assertNotNull(testAuditLog.getPrivateIpAddress(), "IP address should be auto-captured");
-    assertNotNull(testAuditLog.getOsName(), "OS name should be auto-captured");
-    assertNotNull(testAuditLog.getHostname(), "Hostname should be auto-captured");
-  }
-
-  @Test
-  @Order(3)
-  public void testAuditLogWithSession() throws Exception {
-    final AuditLog logWithSession = createTestAuditLog("PASSWORD_CHANGE");
-    logWithSession.setSession(testSession);
-    em.persist(logWithSession);
-
-    assertNotNull(logWithSession.getSession(), "Session should be associated");
-    assertEquals(testSession.getId(), logWithSession.getSession().getId(), "Session ID should match");
-
-    em.delete(logWithSession);
-  }
-
-  @Test
-  @Order(4)
-  public void testMultipleAuditLogs() throws Exception {
-    final AuditLog secondLog = createTestAuditLog("PROFILE_UPDATE");
-    final AuditLog thirdLog = createTestAuditLog("USER_LOGOUT");
-
-    em.persist(secondLog);
-    em.persist(thirdLog);
-
-    assertNotNull(secondLog.getId(), "Second log should be created");
-    assertNotNull(thirdLog.getId(), "Third log should be created");
-
-    em.delete(secondLog);
-    em.delete(thirdLog);
-  }
-
-  @Test
-  @Order(5)
-  public void testAuditLogTimestamp() {
-    assertNotNull(testAuditLog.getCreatedAt(), "Timestamp should be auto-generated");
-    assertTrue(testAuditLog.getCreatedAt().isBefore(Instant.now().plusSeconds(1)),
-        "Timestamp should be recent");
-  }
-
-  @Test
-  @Order(6)
-  public void testAuditLogActionTypes() throws Exception {
-    final String[] actions = { "USER_LOGIN", "USER_LOGOUT", "PASSWORD_RESET", "PROFILE_UPDATE", "EMAIL_CHANGE" };
-
-    for (final String action : actions) {
-      final AuditLog log = createTestAuditLog(action);
-      em.persist(log);
-      assertEquals(action, log.getAction(), "Action should match: " + action);
-      em.delete(log);
-    }
-  }
-
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     em = SkinnedRatOrmEntityManager.getEntityManager();
-    profileRepo = new ProfileRepository(em);
 
+    userRepository = new UserRepository(em);
+    authSessionRepository = new AuthSessionRepository(em);
+    auditLogRepository = new AuditLogRepository(em);
+
+    // Persist user
     testUser = createTestUser();
-    testProfile = createTestProfile(testUser);
-    profileRepo.save(testProfile);
+    userRepository.save(testUser);
 
+    // Persist session
     testSession = createTestAuthSession(testUser);
-    em.persist(testSession);
+    authSessionRepository.save(testSession);
 
+    // Persist audit log
     testAuditLog = createTestAuditLog("USER_LOGIN");
-    em.persist(testAuditLog);
+    testAuditLog.setSession(testSession);
+    auditLogRepository.save(testAuditLog);
   }
 
   @AfterEach
   void tearDown() throws Exception {
-    em.delete(testAuditLog);
-    em.delete(testSession);
-    em.delete(testUser);
-    em.delete(testProfile);
+    if (testAuditLog != null) {
+      em.delete(testAuditLog);
+    }
+
+    if (testSession != null) {
+      em.delete(testSession);
+    }
+
+    if (testUser != null) {
+      em.delete(testUser);
+    }
   }
 
-  // ##########################
-  // ### TEST DATA BUILDERS ###
-  // ##########################
+  // ======================
+  // ======= TESTS ========
+  // ======================
 
-  /**
-   * Creates a test user with default values.
-   * Follows Single Responsibility Principle.
-   */
+  @Test
+  void testCreateAuditLog() {
+    assertNotNull(testAuditLog.getId());
+    assertEquals("USER_LOGIN", testAuditLog.getAction());
+  }
+
+  @Test
+  void testAuditLogAutoFields() {
+    assertNotNull(testAuditLog.getPrivateIpAddress());
+    assertNotNull(testAuditLog.getOsName());
+    assertNotNull(testAuditLog.getHostname());
+  }
+
+  @Test
+  void testAuditLogWithSession() {
+
+    final AuditLog log = createTestAuditLog("PASSWORD_CHANGE");
+    log.setSession(testSession);
+    auditLogRepository.save(log);
+
+    assertNotNull(log.getSession());
+    assertEquals(testSession.getId(), log.getSession().getId());
+  }
+
+  @Test
+  void testMultipleAuditLogs() {
+
+    final AuditLog secondLog = createTestAuditLog("PROFILE_UPDATE");
+    secondLog.setSession(testSession);
+
+    final AuditLog thirdLog = createTestAuditLog("USER_LOGOUT");
+    thirdLog.setSession(testSession);
+
+    auditLogRepository.save(secondLog);
+    auditLogRepository.save(thirdLog);
+
+    assertNotNull(secondLog.getId());
+    assertNotNull(thirdLog.getId());
+  }
+
+  @Test
+  void testAuditLogTimestamp() {
+    assertNotNull(testAuditLog.getCreatedAt());
+    assertTrue(testAuditLog.getCreatedAt().isBefore(Instant.now().plusSeconds(1)));
+  }
+
+  @Test
+  void testAuditLogActionTypes() {
+    final String[] actions = {
+        "USER_LOGIN",
+        "USER_LOGOUT",
+        "PASSWORD_RESET",
+        "PROFILE_UPDATE",
+        "EMAIL_CHANGE"
+    };
+
+    for (final String action : actions) {
+      final AuditLog log = createTestAuditLog(action);
+      log.setSession(testSession);
+      auditLogRepository.save(log);
+
+      assertEquals(action, log.getAction());
+    }
+  }
+
+  // ======================
+  // ==== BUILDERS ========
+  // ======================
+
   private User createTestUser() {
     final User user = new User();
-    user.setEmail(generateUniqueEmail());
-    user.setPasswordHash("hashedPassword123");
+    user.setEmail("email_" + UUID.randomUUID() + "@example.com");
+    user.setPasswordHash(PasswordEncoder.encode("hashedPassword123"));
     user.setRole(UserRole.PATIENT);
     return user;
   }
 
-  /**
-   * Creates a test profile for the given user.
-   * Follows Dependency Inversion Principle.
-   */
-  private Profile createTestProfile(final User user) {
-    final Profile profile = new Profile();
-    profile.setUsername(generateUniqueUsername());
-    profile.setUser(user);
-    return profile;
-  }
-
-  /**
-   * Creates a test auth session for the given user.
-   * Follows Single Responsibility Principle.
-   */
   private AuthSession createTestAuthSession(final User user) {
     final AuthSession session = new AuthSession();
-    session.setRefreshToken(generateUniqueToken());
     session.setUser(user);
     return session;
   }
 
-  /**
-   * Creates a test audit log with the specified action.
-   * Follows Open/Closed Principle - can be extended for different log types.
-   */
   private AuditLog createTestAuditLog(final String action) {
     final AuditLog log = new AuditLog();
     log.setAction(action);
     return log;
-  }
-
-  private String generateUniqueEmail() {
-    return "email_" + UUID.randomUUID() + "@example.com";
-  }
-
-  private String generateUniqueUsername() {
-    return "user_" + UUID.randomUUID();
-  }
-
-  private String generateUniqueToken() {
-    return "token_" + UUID.randomUUID();
   }
 } // AuditLogTest test class

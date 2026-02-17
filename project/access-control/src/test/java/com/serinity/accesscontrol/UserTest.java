@@ -55,14 +55,21 @@ import com.serinity.accesscontrol.repository.ProfileRepository;
  *      </a>
  */
 public final class UserTest {
+  // Entity manager
   private EntityManager em;
+
+  // Respositories
   private ProfileRepository profileRepo;
+
+  // Entities
+  User therapistUser;
+  Profile therapistProfile;
 
   @Test
   @Order(1)
   public void testUserWithDifferentRoles() throws Exception {
-    final User therapistUser = createTestUserWithRole(UserRole.THERAPIST);
-    final Profile therapistProfile = createTestProfile(therapistUser);
+    therapistUser = createTestUserWithRole(UserRole.THERAPIST);
+    therapistProfile = createTestProfile(therapistUser);
 
     profileRepo.save(therapistProfile);
 
@@ -78,26 +85,21 @@ public final class UserTest {
   public void testUserDefaultStatus() throws Exception {
     final User user = createTestUser();
     final Profile profile = createTestProfile(user);
-
     profileRepo.save(profile);
-
     final Profile retrievedProfile = profileRepo.findByUsername(profile.getUsername());
+
     assertNotNull(retrievedProfile.getUser().getPresenceStatus(), "Presence status should be auto-set");
     assertNotNull(retrievedProfile.getUser().getAccountStatus(), "Account status should be auto-set");
-
-    em.delete(user);
-    em.delete(profile);
   }
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     em = SkinnedRatOrmEntityManager.getEntityManager();
     profileRepo = new ProfileRepository(em);
   }
 
   @AfterEach
   void tearDown() throws Exception {
-    // Cleanup is handled in individual tests
   }
 
   // ##########################

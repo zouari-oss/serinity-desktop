@@ -56,7 +56,7 @@ public final class DatabaseTest {
   }
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     em = SkinnedRatOrmEntityManager.getEntityManager();
   }
 } // DatabaseTest test class

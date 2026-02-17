@@ -3,8 +3,7 @@ package com.serinity.accesscontrol;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.flag.ResourceFile;
-import com.serinity.accesscontrol.migration.SkinnedRatOrmMigrator;
-// import com.serinity.accesscontrol.migration.SkinnedRatOrmMigrator; // TO_MIGRATE
+import com.serinity.accesscontrol.migration.SkinnedRatOrmMigrator; // TEST: Migration mode
 import com.serinity.accesscontrol.util.FXMLLoaderUtil;
 import com.serinity.accesscontrol.util.I18nUtil;
 
@@ -33,8 +32,8 @@ public class App extends Application {
   }
 
   @Override
-  public void start(final Stage stage) throws Exception {
-    // TEST:
+  public void start(final Stage stage) {
+    // TEST: Migration mode
     SkinnedRatOrmMigrator.migrate();
     I18nUtil.applySupportedLocale();
     stage.setScene(FXMLLoaderUtil.loadScene(

@@ -28,8 +28,6 @@ import com.serinity.accesscontrol.repository.base.BaseRepository;
  *      </a>
  */
 public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
-  private EntityManager em;
-
   public AuthSessionRepository(final EntityManager em) {
     super(em, AuthSession.class);
   }
@@ -56,15 +54,25 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
     }
   }
 
-  public boolean existsActiveSession(final User user, final Instant now) {
+  public AuthSession findActiveSession(final User user) {
     try {
-      final long count = em.createQuery(AuthSession.class)
+      return em.createQuery(AuthSession.class)
           .where("user_id", user.getId())
           .where("revoked", false)
-          .where("expires_at", ">", now)
-          .count();
+          .where("expires_at", ">", Instant.now())
+          .getSingleResult();
+    } catch (final Exception e) {
+      return null;
+    }
+  }
 
-      return count > 0;
+  public boolean existsActiveSession(final User user) {
+    try {
+      return em.createQuery(AuthSession.class)
+          .where("user_id", user.getId())
+          .where("revoked", false)
+          .where("expires_at", ">", Instant.now())
+          .count() > 0;
     } catch (final Exception e) {
       throw new RuntimeException(e);
     }

@@ -44,4 +44,15 @@ public final class UserRepository extends BaseRepository<User, Long> {
   public UserRepository(final EntityManager em) {
     super(em, User.class);
   }
+
+  public User findUserByEmail(final String email) {
+    try {
+      return em.createQuery(User.class)
+          .where("email", email)
+          .getSingleResult();
+    } catch (final Exception e) {
+      return null;
+    }
+  }
+
 } // UserRepository final class

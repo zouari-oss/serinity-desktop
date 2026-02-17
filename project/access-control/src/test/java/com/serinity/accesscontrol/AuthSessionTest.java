@@ -119,7 +119,6 @@ public final class AuthSessionTest {
     assertFalse(testSession.isRevoked(), "Session should not be revoked initially");
 
     // Simulate revocation (in real app, this would be via a service method)
-    testSession.setRefreshToken(testSession.getRefreshToken()); // trigger update
     em.update(testSession);
 
     assertNotNull(testSession.getRefreshToken(), "Refresh token should still exist");
@@ -178,7 +177,6 @@ public final class AuthSessionTest {
    */
   private AuthSession createTestAuthSession(final User user) {
     final AuthSession session = new AuthSession();
-    session.setRefreshToken(generateUniqueToken());
     session.setUser(user);
     return session;
   }

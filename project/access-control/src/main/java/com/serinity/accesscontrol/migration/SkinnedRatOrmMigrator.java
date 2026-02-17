@@ -61,19 +61,26 @@ import com.serinity.accesscontrol.model.User;
  *        </a>
  */
 public final class SkinnedRatOrmMigrator {
-  public static void migrate() throws Exception {
-    final SchemaGenerator generator = new SchemaGenerator(SkinnedRatOrmEntityManager.getConnection(), SQLDialect.MYSQL);
+  private static final SchemaGenerator generator = new SchemaGenerator(
+      SkinnedRatOrmEntityManager.getConnection(),
+      SQLDialect.MYSQL);
 
-    // Drop old tables
-    generator.dropTable(AuditLog.class);
-    generator.dropTable(Profile.class);
-    generator.dropTable(AuthSession.class);
-    generator.dropTable(User.class);
+  public static void migrate() {
+    try {
+      // Drop old tables
+      generator.dropTable(AuditLog.class);
+      generator.dropTable(Profile.class);
+      generator.dropTable(AuthSession.class);
+      generator.dropTable(User.class);
 
-    // Create tables
-    generator.createTable(User.class);
-    generator.createTable(AuthSession.class);
-    generator.createTable(Profile.class);
-    generator.createTable(AuditLog.class);
+      // Create tables
+      generator.createTable(User.class);
+      generator.createTable(AuthSession.class);
+      generator.createTable(Profile.class);
+      generator.createTable(AuditLog.class);
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
   }
 } // SkinnedRatOrmEntityManager class

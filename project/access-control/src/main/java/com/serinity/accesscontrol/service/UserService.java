@@ -3,9 +3,9 @@ package com.serinity.accesscontrol.service;
 
 import org.zouarioss.skinnedratorm.core.EntityManager;
 
+// `serinity` import(s)
 import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
 import com.serinity.accesscontrol.flag.AuditAction;
-// `serinity` import(s)
 import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.AuditLog;
 import com.serinity.accesscontrol.model.AuthSession;
@@ -76,34 +76,47 @@ public final class UserService {
     final Profile profile = new Profile();
     profile.setUser(user);
 
-    AuthSession authSession = new AuthSession();
+    final AuthSession authSession = new AuthSession();
     authSession.setUser(user);
 
-    AuditLog auditLog = new AuditLog();
+    final AuditLog auditLog = new AuditLog();
     auditLog.setAction(AuditAction.USER_SIGN_UP.getValue());
     auditLog.setSession(authSession);
 
     // ================
     // == Persisting ==
     // ================
-    EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
-    UserRepository userRepository = new UserRepository(em);
+    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    final UserRepository userRepository = new UserRepository(em);
     userRepository.save(user);
 
-    ProfileRepository profileRepository = new ProfileRepository(em);
+    final ProfileRepository profileRepository = new ProfileRepository(em);
     profileRepository.save(profile);
 
-    AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
+    final AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
     authSessionRepository.save(authSession);
 
-    AuditLogRepository auditLogRepository = new AuditLogRepository(em);
+    final AuditLogRepository auditLogRepository = new AuditLogRepository(em);
     auditLogRepository.save(auditLog);
 
     System.out.println("DONE");
   }
 
-  public User signIn(final String usernameOrEmail, final String password) {
+  public static User signIn(final String usernameOrEmail, final String password) {
+    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    final AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
+    final UserRepository userRepository = new UserRepository(em);
 
+    // =====================
+    // == Data Validation ==
+    // =====================
+    if (!RegexValidator.isValidEmail(usernameOrEmail)) {
+      return null;
+    }
+
+    final User user = userRepository.findUserByEmail(usernameOrEmail);
+
+    authSessionRepository.findActiveSession(user);
     return null;
   }
 } // UserService final class
