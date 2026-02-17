@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="esprit.tn.oussema_javafx.controllers.rdv.RdvFormController"
+      spacing="20" styleClass="content">
+    <HBox alignment="CENTER_LEFT" spacing="12">
+
+        <Button text="← Retour"
+                onAction="#back"
+                styleClass="secondary-btn"/>
+
+
+    </HBox>
+    <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
+
+    <Label text="Prendre Rendez-vous" styleClass="page-title"/>
+
+    <VBox spacing="14" styleClass="rdv-card">
+
+        <Label text="Motif de consultation"/>
+        <TextField fx:id="motifField" promptText="Ex: Douleur dentaire, contrôle..." styleClass="input"/>
+
+        <Label text="Décrire votre problème"/>
+        <TextArea fx:id="descriptionArea" prefRowCount="4"
+                  promptText="Décrivez vos symptômes..."
+                  styleClass="input"/>
+
+        <Label text="Date souhaitée"/>
+        <DatePicker fx:id="datePicker"/>
+
+        <Label text="Heure souhaitée"/>
+        <TextField fx:id="timeField" promptText="HH:mm" styleClass="input"/>
+
+        <Button text="Confirmer le rendez-vous"
+                onAction="#save"
+                styleClass="primary-btn"/>
+
+    </VBox>
+
+</VBox>

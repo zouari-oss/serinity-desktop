@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="esprit.tn.oussema_javafx.controllers.rdv.RdvShowController"
+      spacing="20"
+      styleClass="content">
+
+    <padding>
+        <Insets top="22" right="26" bottom="22" left="26"/>
+    </padding>
+
+    <!-- ===== HEADER ===== -->
+    <HBox alignment="CENTER_LEFT" spacing="12">
+
+        <Button text="← Retour"
+                onAction="#back"
+                styleClass="secondary-btn"/>
+
+        <Label fx:id="titleLabel"
+               text="Rendez-vous"
+               styleClass="page-title"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="editBtn"
+                text="✏ Modifier"
+                onAction="#edit"
+                styleClass="primary-btn"/>
+    </HBox>
+
+    <!-- ===== MAIN CARD ===== -->
+    <VBox spacing="18" styleClass="doctor-profile-card">
+
+        <!-- DOCTOR -->
+        <HBox spacing="14" alignment="CENTER_LEFT">
+
+            <StackPane>
+                <Circle radius="30" styleClass="doctor-avatar"/>
+                <Label text="👨‍⚕️" styleClass="doctor-avatar-icon"/>
+            </StackPane>
+
+            <VBox spacing="4">
+                <Label fx:id="doctorLabel" styleClass="doctor-profile-name"/>
+                <Label fx:id="patientLabel" styleClass="subtitle"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label fx:id="statusLabel" styleClass="rdv-status"/>
+        </HBox>
+
+        <Separator/>
+
+        <!-- DATE -->
+        <HBox spacing="10">
+            <Label text="📅" />
+            <Label fx:id="dateLabel" styleClass="contact-text"/>
+        </HBox>
+
+        <!-- MOTIF -->
+        <VBox spacing="6">
+            <Label text="Motif de consultation" styleClass="section-title"/>
+            <Label fx:id="motifLabel" wrapText="true" styleClass="card"/>
+        </VBox>
+
+        <!-- PROPOSITION -->
+        <VBox fx:id="proposedBox" spacing="6" visible="false">
+            <Label text="Nouvel horaire proposé par le médecin"
+                   styleClass="section-title"/>
+            <Label fx:id="proposedLabel" styleClass="status-modified"/>
+        </VBox>
+
+
+    </VBox>
+
+</VBox>

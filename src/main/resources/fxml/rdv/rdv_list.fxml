@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="esprit.tn.oussema_javafx.controllers.rdv.RdvListController"
+      spacing="20"
+      styleClass="content">
+
+    <padding>
+        <Insets top="22" right="26" bottom="22" left="26"/>
+    </padding>
+
+    <!-- ===== HEADER ===== -->
+    <!-- HEADER -->
+    <HBox alignment="CENTER_LEFT" spacing="14" styleClass="header-card">
+
+        <VBox spacing="4">
+            <Label text="Mes Rendez-vous" styleClass="page-title"/>
+            <Label text="Suivez vos demandes et l'état de validation du médecin"
+                   styleClass="subtitle"/>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- GO TO DOCTORS -->
+        <Button text="🔎 Trouver un médecin"
+                onAction="#goDoctors"
+                styleClass="secondary-btn"/>
+
+        <!-- NEW RDV -->
+        <Button text="📅 Nouveau RDV"
+                onAction="#goNew"
+                styleClass="primary-btn"/>
+
+    </HBox>
+
+
+    <!-- ===== SEARCH + FILTER BAR ===== -->
+    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="toolbar">
+
+        <Label text="Rechercher :" styleClass="label"/>
+
+        <TextField fx:id="searchField"
+                   promptText="Nom du médecin, motif..."
+                   styleClass="search-field"
+                   prefWidth="320"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button text="Actualiser"
+                onAction="#refresh"
+                styleClass="secondary-btn"/>
+    </HBox>
+
+    <!-- ===== LIST AREA ===== -->
+    <StackPane VBox.vgrow="ALWAYS">
+
+        <ScrollPane fitToWidth="true"
+                    style="-fx-background-color:transparent;"
+                    VBox.vgrow="ALWAYS">
+
+            <content>
+                <FlowPane fx:id="cardsPane"
+                          hgap="18"
+                          vgap="18"
+                          prefWrapLength="980"/>
+            </content>
+
+        </ScrollPane>
+
+        <!-- EMPTY STATE -->
+        <VBox fx:id="emptyBox"
+              alignment="CENTER"
+              spacing="10"
+              visible="false">
+
+            <Label text="Aucun rendez-vous pour le moment"
+                   styleClass="empty-title"/>
+
+            <Label text="Prenez votre premier rendez-vous avec un médecin"
+                   styleClass="empty-subtitle"/>
+
+            <Button text="Prendre un rendez-vous"
+                    onAction="#goNew"
+                    styleClass="primary-btn"/>
+        </VBox>
+
+    </StackPane>
+
+</VBox>

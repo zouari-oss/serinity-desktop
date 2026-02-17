@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="esprit.tn.oussema_javafx.controllers.doctor.DoctorListController"
+      spacing="20"
+      styleClass="content">
+
+    <padding>
+        <Insets top="22" right="26" bottom="22" left="26"/>
+    </padding>
+
+    <!-- HEADER -->
+    <!-- HEADER -->
+    <HBox alignment="CENTER_LEFT" spacing="14" styleClass="header-card">
+
+        <VBox spacing="4">
+            <Label text="Trouver un médecin" styleClass="page-title"/>
+            <Label text="Prenez rendez-vous facilement avec un spécialiste"
+                   styleClass="subtitle"/>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- MES RDV BUTTON -->
+        <Button text="📅 Mes rendez-vous"
+                onAction="#goMyAppointments"
+                styleClass="nav-rdv-btn"/>
+
+        <Label text="🏥 TheDoctor" styleClass="brand-title"/>
+    </HBox>
+
+
+    <!-- SEARCH BAR -->
+    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="toolbar">
+
+        <Label text="Recherche :" styleClass="label"/>
+
+        <TextField fx:id="searchField"
+                   promptText="Nom du médecin ou spécialité..."
+                   prefWidth="340"
+                   styleClass="search-field"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button text="Actualiser"
+                onAction="#refresh"
+                styleClass="secondary-btn"/>
+    </HBox>
+
+    <!-- DOCTOR LIST -->
+    <StackPane VBox.vgrow="ALWAYS">
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                    style="-fx-background-color:transparent;">
+
+            <content>
+                <FlowPane fx:id="cardsPane"
+                          hgap="20"
+                          vgap="20"
+                          prefWrapLength="1000"/>
+            </content>
+
+        </ScrollPane>
+
+        <!-- EMPTY -->
+        <VBox fx:id="emptyBox"
+              alignment="CENTER"
+              spacing="10"
+              visible="false">
+
+            <Label text="Aucun médecin trouvé"
+                   styleClass="empty-title"/>
+
+            <Label text="Essayez une autre spécialité"
+                   styleClass="empty-subtitle"/>
+
+        </VBox>
+
+    </StackPane>
+
+</VBox>
