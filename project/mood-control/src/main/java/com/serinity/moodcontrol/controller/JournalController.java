@@ -2,6 +2,7 @@ package com.serinity.moodcontrol.controller;
 
 import com.serinity.moodcontrol.dao.JournalEntryDao;
 import com.serinity.moodcontrol.model.JournalEntry;
+import com.serinity.moodcontrol.service.JournalService;
 
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.ArrayList;
 
+
 public class JournalController {
 
     // kima Journal.fxml prefWidth
@@ -46,6 +48,10 @@ public class JournalController {
 
     // DB
     private final JournalEntryDao dao = new JournalEntryDao();
+
+    private final JournalService journalService =
+            new JournalService(dao, this::serializeGuided);
+
 
     // current data
     private List<JournalEntry> items = new ArrayList<JournalEntry>();
@@ -129,40 +135,40 @@ public class JournalController {
 
     private void onEditorSave(final JournalEditorController.JournalDraft d) {
         String title = safe(d.title);
-        if (title.isEmpty()) title = t("journal.untitled");
 
-        final String content = serializeGuided(d.a1, d.a2, d.a3);
+        String err = (editing == null)
+                ? journalService.create(USER_ID, title, d.a1, d.a2, d.a3)
+                : journalService.update(USER_ID, editing, title, d.a1, d.a2, d.a3);
 
-        try {
-            if (editing == null) {
-                // NEW
-                JournalEntry e = new JournalEntry();
-                e.setUserId(USER_ID);
-                e.setTitle(title);
-                e.setContent(content);
+        if (err != null) {
+            if (err != null) {
+                final javafx.scene.control.Alert alert =
+                        new javafx.scene.control.Alert(Alert.AlertType.WARNING);
 
-                dao.insert(e);
+                alert.setTitle("Invalid input");
+                alert.setHeaderText(null);
+                alert.setContentText(err);
 
-            } else {
-                // EDIT
-                JournalEntry e = new JournalEntry();
-                e.setId(editing.getId());
-                e.setUserId(USER_ID);
-                e.setTitle(title);
-                e.setContent(content);
+                alert.getButtonTypes().setAll(javafx.scene.control.ButtonType.OK);
 
-                dao.update(e);
+                alert.getDialogPane().getStylesheets().add(
+                        getClass().getResource("/styles/styles.css").toExternalForm()
+                );
+                alert.getDialogPane().getStyleClass().add("app-dialog");
+
+
+                alert.showAndWait();
+                return;
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            return;
         }
 
-        //  reload from DB
         editing = null;
         reloadFromDb();
         render();
         closeEditor();
     }
+
 
     private void openEdit(final JournalEntry entry) {
         editing = entry;

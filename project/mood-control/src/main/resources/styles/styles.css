@@ -136,3 +136,44 @@
     -fx-font-weight: 800;
     -fx-text-fill: rgba(255, 255, 255, 0.75);
 }
+
+
+.dialog-pane.app-dialog {
+     -fx-background-color: white;
+     -fx-background-radius: 14;
+     -fx-border-radius: 14;
+     -fx-border-width: 1;
+     -fx-border-color: rgba(31, 41, 51, 0.10);
+     -fx-padding: 14;
+ }
+
+
+.dialog-pane.app-dialog .content.label {
+    -fx-text-fill: -ser-text;
+    -fx-font-size: 13px;
+    -fx-wrap-text: true;
+}
+
+/* Buttons: match your btn-ghost and btn-primary feel */
+.dialog-pane.app-dialog .button-bar .button {
+    -fx-padding: 8 14;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+
+    -fx-background-color: #EFF4F4;
+    -fx-text-fill: -ser-text;
+    -fx-border-width: 1;
+    -fx-border-color: rgba(31, 41, 51, 0.10);
+}
+
+.dialog-pane.app-dialog .button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+    -fx-text-fill: white;}
+
+.dialog-pane.app-dialog .button-bar .button:default {
+    -fx-background-color: -ser-primary;
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+}
