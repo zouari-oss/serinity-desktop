@@ -1,13 +1,14 @@
 module com.serinity {
+
+  requires javafx.graphics;
   requires transitive javafx.controls;
-    requires javafx.fxml;
+  requires javafx.fxml;
 
-    requires java.sql;
-    requires org.mariadb.jdbc;
+  requires java.sql;
+  requires java.desktop;
 
+  opens com.serinity.exercicecontrol.controller to javafx.fxml;
+  opens com.serinity.exercicecontrol.model to javafx.base;
 
-    opens com.serinity.exercicecontrol.controller to javafx.fxml;
-
-
-    exports com.serinity.exercicecontrol;
+  exports com.serinity.exercicecontrol;
 }

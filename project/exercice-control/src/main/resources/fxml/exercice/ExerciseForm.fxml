@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.exercicecontrol.controller.ExerciseFormController"
+      spacing="14"
+      styleClass="page-root">
+
+    <padding>
+        <Insets top="18" right="18" bottom="18" left="18"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label fx:id="lblHeader" text="Ajouter un exercice" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Retour" onAction="#onBack" styleClass="secondary-btn"/>
+    </HBox>
+
+    <!-- Card -->
+    <VBox spacing="12" styleClass="card">
+
+        <GridPane hgap="12" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints minWidth="140"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <Label text="Titre :" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtTitle" promptText="Ex: Respiration guidée"
+                       GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Type :" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="cbType" prefWidth="220"
+                      promptText="Choisir un type"
+                      GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Niveau (1..5) :" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="cbLevel" prefWidth="120"
+                      promptText="Niveau"
+                      GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label text="Durée (min) :" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtDuration" promptText="Ex: 5"
+                       GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+            <Label text="Description :" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.valignment="TOP"/>
+            <TextArea fx:id="txtDescription" prefRowCount="5" wrapText="true"
+                      promptText="Décris l'exercice..."
+                      GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+        </GridPane>
+
+        <Separator/>
+
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <Button fx:id="btnSave" text="Enregistrer" onAction="#onSave" styleClass="primary-btn"/>
+        </HBox>
+
+    </VBox>
+
+</VBox>

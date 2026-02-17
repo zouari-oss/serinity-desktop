@@ -1,95 +1,84 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
-  <packaging>jar</packaging>
 
-  <!-- Parent & Child GAV properties -->
-  <parent>
-    <groupId>com.serinity</groupId>
-    <artifactId>serinity</artifactId>
-    <version>1.0.0</version>
-  </parent>
-
+  <groupId>com.serinity</groupId>
   <artifactId>exercice-control</artifactId>
-  <!-- !Parent & Child GAV properties -->
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>exercice-control</name>
 
-  <!-- Module properties -->
-  <name>modd-control</name>
-  <url>http://serinity.dev</url>
-  <!-- !Module properties -->
+  <!-- ===================== -->
+  <!-- PROPERTIES -->
+  <!-- ===================== -->
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <javafx.version>17.0.10</javafx.version>
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
+  </properties>
 
+  <!-- ===================== -->
+  <!-- DEPENDENCIES -->
+  <!-- ===================== -->
   <dependencies>
-    <!-- org.openjfx.javafx-controls -->
+
+    <!-- JavaFX -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
+      <version>${javafx.version}</version>
     </dependency>
-    <!-- !org.openjfx.javafx-controls -->
 
-    <!-- org.openjfx.javafx-fxml -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
+      <version>${javafx.version}</version>
     </dependency>
-    <!-- !org.openjfx.javafx-fxml -->
 
-    <!-- org.junit.jupiter.junit-jupiter-engine -->
+    <!-- MariaDB JDBC Driver (CORRECT for jdbc:mariadb://) -->
+    <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+      <version>3.4.1</version>
+    </dependency>
+
+    <!-- JUnit 5 -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- !org.junit.jupiter.junit-jupiter-engine -->
-      <dependency>
-          <groupId>org.mariadb.jdbc</groupId>
-          <artifactId>mariadb-java-client</artifactId>
-          <version>3.5.2</version>
-      </dependency>
+
   </dependencies>
 
+  <!-- ===================== -->
+  <!-- BUILD -->
+  <!-- ===================== -->
   <build>
     <plugins>
-      <!-- org.apache.maven.plugins.maven-surefire-plugin -->
+
+      <!-- Surefire (important for module-info + JUnit) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
         <configuration>
-          <systemPropertyVariables>
-            <javafx.version>${javafx.version}</javafx.version> <!-- To include javaFx version to test -->
-          </systemPropertyVariables>
-          <useModulePath>true</useModulePath>
+          <useModulePath>false</useModulePath>
         </configuration>
       </plugin>
-      <!-- !org.apache.maven.plugins.maven-surefire-plugin -->
 
-      <!-- org.apache.maven.plugins.maven-compiler-plugin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <release>11</release>
-        </configuration>
-      </plugin>
-      <!-- !org.apache.maven.plugins.maven-compiler-plugin -->
-
-      <!-- org.openjfx.javafx-maven-plugin -->
-      <plugin>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <!-- Default configuration for running -->
-            <!-- Usage: mvn clean javafx:run -->
-            <id>default-cli</id>
-            <configuration>
-              <mainClass>com.serinity.exercicecontrol.App</mainClass>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- !org.openjfx.javafx-maven-plugin -->
     </plugins>
   </build>
+
 </project>

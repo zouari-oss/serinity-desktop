@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.exercicecontrol.controller.ResourceFormController"
+      spacing="12"
+      styleClass="page-root">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label fx:id="lblHeader" text="Ajouter une ressource" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Retour" onAction="#onBack" styleClass="secondary-btn"/>
+    </HBox>
+
+    <VBox spacing="10" styleClass="card">
+
+        <Label text="Titre"/>
+        <TextField fx:id="txtTitle" promptText="Ex: Audio respiration guidée"/>
+
+        <Label text="Type média"/>
+        <ComboBox fx:id="cbMediaType" promptText="VIDEO / AUDIO / TEXTE" />
+
+        <Label text="URL (optionnel)"/>
+        <TextField fx:id="txtUrl" promptText="https://..."/>
+
+        <Label text="Contenu texte (optionnel)"/>
+        <TextArea fx:id="txtContent" promptText="Texte de la ressource..." wrapText="true" prefHeight="140"/>
+
+        <Label text="Durée (secondes)"/>
+        <TextField fx:id="txtDurationSeconds" promptText="Ex: 120"/>
+
+        <HBox spacing="10">
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnSave" text="Enregistrer" onAction="#onSave" styleClass="primary-btn"/>
+        </HBox>
+
+    </VBox>
+
+</VBox>

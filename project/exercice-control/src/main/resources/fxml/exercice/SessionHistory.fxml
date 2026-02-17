@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.exercicecontrol.controller.SessionHistoryController"
+      spacing="16"
+      styleClass="page-root">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Button text="← Retour" onAction="#onBack" styleClass="secondary-btn"/>
+        <Label fx:id="lblTitle" text="Historique" styleClass="page-title"/>
+        <Label fx:id="lblCount" text="(0)" styleClass="muted-text"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Actualiser" onAction="#onRefresh" styleClass="secondary-btn"/>
+    </HBox>
+
+    <!-- Modern table card -->
+    <VBox styleClass="table-card">
+        <TableView fx:id="table" styleClass="modern-table" prefHeight="560">
+            <columns>
+                <TableColumn fx:id="colId" text="ID" prefWidth="70"/>
+                <TableColumn fx:id="colStatus" text="Statut" prefWidth="140"/>
+                <TableColumn fx:id="colStarted" text="Début" prefWidth="200"/>
+                <TableColumn fx:id="colCompleted" text="Fin" prefWidth="200"/>
+                <TableColumn fx:id="colFeedback" text="Feedback" prefWidth="420"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>

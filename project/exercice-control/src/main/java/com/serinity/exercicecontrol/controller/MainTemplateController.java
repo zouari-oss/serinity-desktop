@@ -6,15 +6,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class MainTemplateController {
+
+    @FXML private StackPane contentHost;
 
     @FXML private Button btnDashboard;
     @FXML private Button btnSleep;
@@ -23,69 +25,77 @@ public class MainTemplateController {
     @FXML private Button btnExercises;
     @FXML private Button btnAppointments;
 
-    @FXML private Label userNameLabel;
-    @FXML private ImageView avatarImg;
-
-    @FXML private StackPane contentHost;
-    @FXML private TextField searchField;
-
     @FXML private Label footerLabel;
+    @FXML private Label userNameLabel;
 
-    // Injected automatically when Template.fxml is loaded with a bundle
-    @FXML private ResourceBundle resources;
-
-    private List<Button> navButtons;
+    // ✅ same bundle as App.java
+    private final ResourceBundle bundle =
+            ResourceBundle.getBundle("i18n.messages", Locale.getDefault());
 
     @FXML
     public void initialize() {
-        if (resources == null) {
-            throw new IllegalStateException("ResourceBundle not injected. Make sure Template.fxml is loaded with a bundle.");
-        }
+        userNameLabel.setText("User");
 
-        navButtons = List.of(
-                btnDashboard, btnSleep, btnMood,
-                btnSupport, btnExercises, btnAppointments
-        );
+        updateFooter();
+        setActive(btnExercises);
 
-        // Footer text from bundle
-        footerLabel.setText(resources.getString("footer.text"));
-
-        // Placeholder username (replace later with real user session)
-        userNameLabel.setText(resources.getString("user.name.placeholder"));
-
-        // Default landing (template: always load blank)
-        setActiveNav(btnMood);
-        loadIntoHost("/fxml/Blank.fxml");
+        // Default page on launch
+        loadPage("exercice/ExerciseList.fxml");
     }
 
     @FXML
-    private void onNavClick(ActionEvent event) {
-        Button clicked = (Button) event.getSource();
-        setActiveNav(clicked);
+    public void onNavClick(ActionEvent event) {
+        Object src = event.getSource();
 
-        // Template behavior: always load blank for all tabs
-        loadIntoHost("/fxml/Blank.fxml");
+        if (src == btnDashboard) {
+            setActive(btnDashboard);
+            loadPage("Blank.fxml");
+        } else if (src == btnSleep) {
+            setActive(btnSleep);
+            loadPage("Blank.fxml");
+        } else if (src == btnMood) {
+            setActive(btnMood);
+            loadPage("Blank.fxml");
+        } else if (src == btnSupport) {
+            setActive(btnSupport);
+            loadPage("Blank.fxml");
+        } else if (src == btnExercises) {
+            setActive(btnExercises);
+            loadPage("exercice/ExerciseList.fxml");
+        } else if (src == btnAppointments) {
+            setActive(btnAppointments);
+            loadPage("Blank.fxml");
+        }
+
+        updateFooter();
     }
 
-    private void setActiveNav(Button activeBtn) {
-        for (Button b : navButtons) {
-            if (!b.getStyleClass().contains("nav-btn")) {
-                b.getStyleClass().add("nav-btn");
-            }
-            b.getStyleClass().remove("nav-btn-active");
-        }
-        if (!activeBtn.getStyleClass().contains("nav-btn-active")) {
-            activeBtn.getStyleClass().add("nav-btn-active");
-        }
-    }
-
-    private void loadIntoHost(String fxmlPath) {
+    private void loadPage(String fxmlRelativePath) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath), resources);
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/" + fxmlRelativePath),
+                    bundle
+            );
             Parent page = loader.load();
             contentHost.getChildren().setAll(page);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load: " + fxmlPath, e);
+            e.printStackTrace();
         }
+    }
+
+    private void setActive(Button active) {
+        clearActive(btnDashboard, btnSleep, btnMood, btnSupport, btnExercises, btnAppointments);
+        active.getStyleClass().add("nav-btn-active");
+    }
+
+    private void clearActive(Button... buttons) {
+        for (Button b : buttons) {
+            b.getStyleClass().remove("nav-btn-active");
+        }
+    }
+
+    private void updateFooter() {
+        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        footerLabel.setText("Serinity — Exercice Module • " + time);
     }
 }

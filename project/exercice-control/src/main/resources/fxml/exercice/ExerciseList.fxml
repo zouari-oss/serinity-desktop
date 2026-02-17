@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.exercicecontrol.controller.ExerciseListController"
+      spacing="12"
+      styleClass="page-root">
+
+    <padding>
+        <Insets top="16" right="16" bottom="16" left="16"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="Exercices" styleClass="page-title"/>
+        <Label fx:id="lblCount" text="(0)" styleClass="muted-text"/>
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button text="Ajouter" onAction="#onAddExercise" styleClass="primary-btn"/>
+        <Button text="Actualiser" onAction="#onRefresh" styleClass="secondary-btn"/>
+    </HBox>
+
+    <!-- Filters -->
+    <VBox spacing="10" styleClass="card">
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Type :" />
+            <ComboBox fx:id="cbType" prefWidth="180" promptText="Tous"/>
+
+            <Label text="Niveau :" />
+            <ComboBox fx:id="cbLevel" prefWidth="120" promptText="Tous"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="Appliquer" onAction="#onApplyFilters" styleClass="primary-btn"/>
+            <Button text="Effacer" onAction="#onClearFilters" styleClass="secondary-btn"/>
+        </HBox>
+    </VBox>
+
+    <!-- Cards -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="transparent-scroll">
+        <content>
+            <FlowPane fx:id="cardsPane"
+                      hgap="18" vgap="18"
+                      prefWrapLength="1100">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+            </FlowPane>
+        </content>
+    </ScrollPane>
+
+</VBox>

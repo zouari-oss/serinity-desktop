@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.exercicecontrol.controller.ExerciseDetailsController"
+      spacing="15"
+      styleClass="page-root">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- ================= HEADER ================= -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label fx:id="lblTitle" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button text="Modifier l'exercice"
+                onAction="#onEditExercise"
+                styleClass="secondary-btn"/>
+
+        <Button text="Supprimer"
+                onAction="#onDeleteExercise"
+                styleClass="danger-btn"/>
+    </HBox>
+
+    <!-- ================= INFO CARD ================= -->
+    <VBox spacing="10" styleClass="card">
+        <Label fx:id="lblType"/>
+        <Label fx:id="lblLevel"/>
+        <Label fx:id="lblDuration"/>
+
+        <Label text="Description :" style="-fx-font-weight: 800;"/>
+        <TextArea fx:id="txtDescription"
+                  editable="false"
+                  wrapText="true"
+                  prefHeight="120"
+                  focusTraversable="false"/>
+    </VBox>
+
+    <!-- ================= RESOURCES CARD ================= -->
+    <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS">
+
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="Ressources" style="-fx-font-weight: 900; -fx-font-size: 14px;"/>
+            <Label fx:id="lblResourcesInfo" text="(0)" styleClass="muted-text"/>
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="Ajouter une ressource"
+                    onAction="#onAddResource"
+                    styleClass="primary-btn"/>
+
+            <Button text="Actualiser"
+                    onAction="#onRefreshResources"
+                    styleClass="secondary-btn"/>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" styleClass="transparent-scroll">
+            <padding>
+                <Insets top="6" right="2" bottom="2" left="2"/>
+            </padding>
+            <content>
+                <TilePane fx:id="resourcesPane"
+                          hgap="18" vgap="18"
+                          prefColumns="3"
+                          tileAlignment="TOP_LEFT"
+                          prefTileWidth="280"
+                          prefTileHeight="160"/>
+            </content>
+        </ScrollPane>
+
+    </VBox>
+
+    <!-- ================= ACTIONS ================= -->
+    <HBox spacing="10">
+        <Button fx:id="btnStart"
+                text="Démarrer l'exercice"
+                styleClass="primary-btn"
+                onAction="#onStart"/>
+
+        <Button text="Voir historique"
+                styleClass="secondary-btn"
+                onAction="#onOpenHistory"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="btnBack"
+                text="Retour"
+                styleClass="secondary-btn"
+                onAction="#onBack"/>
+    </HBox>
+
+</VBox>

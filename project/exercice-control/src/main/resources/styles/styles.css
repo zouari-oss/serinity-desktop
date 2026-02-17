@@ -1,6 +1,5 @@
 /* =========================
-   SERINITY — Template CSS
-   (kept ONLY what Template.fxml + Blank.fxml use)
+   SERINITY — Global Theme
    ========================= */
 
 .root {
@@ -19,7 +18,9 @@
     -ser-error: #D9534F;
 }
 
-.app-bg { -fx-background-color: -ser-bg; }
+.app-bg {
+    -fx-background-color: -ser-bg;
+}
 
 /* =========================
    TOP BAR
@@ -55,25 +56,20 @@
     -fx-text-fill: white;
 }
 
-.nav-btn:pressed { -fx-background-color: rgba(255,255,255,0.20); }
-
 .nav-btn-active {
     -fx-background-color: rgba(255,255,255,0.22);
     -fx-text-fill: white;
 }
 
 /* =========================
-   SEARCH BOX
+   SEARCH
    ========================= */
 
 .search {
     -fx-background-color: rgba(255,255,255,0.18);
     -fx-background-radius: 12;
     -fx-padding: 6 10;
-    -fx-alignment: center-left;
 }
-
-.search-icon { -fx-text-fill: rgba(255,255,255,0.92); }
 
 .search-field {
     -fx-background-color: transparent;
@@ -83,69 +79,204 @@
 }
 
 /* =========================
-   USER
-   ========================= */
-
-.user-name {
-    -fx-text-fill: rgba(255,255,255,0.92);
-    -fx-font-size: 13px;
-    -fx-font-weight: 600;
-}
-
-.avatar {
-    -fx-background-radius: 999;
-    -fx-border-radius: 999;
-    -fx-border-color: rgba(255,255,255,0.35);
-    -fx-border-width: 1;
-}
-
-/* =========================
-   CONTENT HOST
-   ========================= */
-
-.content-host {
-    -fx-background-color: transparent;
-}
-
-/* =========================
-   BLANK PAGE
-   ========================= */
-
-.blank-page {
-    -fx-background-color: transparent;
-}
-
-.blank-title {
-    -fx-text-fill: -ser-text;
-    -fx-font-size: 18px;
-    -fx-font-weight: 900;
-}
-
-.blank-subtitle {
-    -fx-text-fill: -ser-text2;
-    -fx-font-size: 13px;
-    -fx-font-weight: 600;
-}
-
-/* =========================
-   FOOTER (Serinity style)
+   FOOTER
    ========================= */
 
 .footer-bar {
-    -fx-padding: 10 20 10 20;
-
-    -fx-background-color: linear-gradient(
-            to right,
-            #2f6f6d,
-            #3b8f8b
-    );
-
-    -fx-border-width: 1 0 0 0;
-    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-padding: 10 20;
+    -fx-background-color: linear-gradient(to right, #2f6f6d, #3b8f8b);
 }
 
 .footer-bar Label {
     -fx-font-size: 12px;
     -fx-font-weight: 800;
-    -fx-text-fill: rgba(255, 255, 255, 0.75);
+    -fx-text-fill: rgba(255,255,255,0.75);
+}
+
+/* =========================
+   PAGE
+   ========================= */
+
+.page-root {
+    -fx-background-color: transparent;
+}
+
+.page-title {
+    -fx-text-fill: -ser-text;
+    -fx-font-size: 22px;
+    -fx-font-weight: 900;
+}
+
+.muted-text {
+    -fx-text-fill: -ser-text2;
+    -fx-font-weight: 600;
+}
+
+/* =========================
+   CARD STYLE
+   ========================= */
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 16;
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 18, 0.18, 0, 6);
+}
+
+/* =========================
+   EXERCISE CARD
+   ========================= */
+
+.exercise-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(0,0,0,0.06);
+    -fx-border-width: 1;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 18, 0.25, 0, 6);
+}
+
+.exercise-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-text-fill: -ser-text;
+}
+
+.exercise-meta {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -ser-text2;
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+.primary-btn {
+    -fx-background-color: -ser-primary;
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-background-radius: 12;
+    -fx-padding: 8 14;
+    -fx-cursor: hand;
+}
+
+.primary-btn:hover {
+    -fx-background-color: derive(-ser-primary, 8%);
+}
+
+.secondary-btn {
+    -fx-background-color: rgba(47,111,109,0.12);
+    -fx-text-fill: -ser-primary;
+    -fx-font-weight: 800;
+    -fx-background-radius: 12;
+    -fx-padding: 8 14;
+    -fx-cursor: hand;
+}
+
+.danger-btn {
+    -fx-background-color: -ser-error;
+    -fx-text-fill: white;
+    -fx-font-weight: 800;
+    -fx-background-radius: 12;
+    -fx-padding: 8 14;
+    -fx-cursor: hand;
+}
+
+/* =========================
+   BADGES
+   ========================= */
+
+.badge {
+    -fx-background-color: -ser-secondary;
+    -fx-background-radius: 999;
+    -fx-padding: 4 10;
+    -fx-text-fill: -ser-primary;
+    -fx-font-weight: 800;
+    -fx-font-size: 12px;
+}
+
+/* =========================
+   MODERN TABLE
+   ========================= */
+
+.table-card {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(0,0,0,0.06);
+    -fx-padding: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 18, 0.18, 0, 6);
+}
+
+.table-view.modern-table {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-view.modern-table .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.table-view.modern-table .column-header {
+    -fx-background-color: #F3F6F6;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: rgba(0,0,0,0.04);
+    -fx-padding: 10;
+}
+
+.table-view.modern-table .column-header .label {
+    -fx-text-fill: -ser-text;
+    -fx-font-weight: 900;
+    -fx-font-size: 12px;
+}
+
+.table-view.modern-table .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view.modern-table .table-row-cell:filled:hover {
+    -fx-background-color: rgba(47,111,109,0.06);
+}
+
+.table-view.modern-table .table-row-cell:filled:selected {
+    -fx-background-color: rgba(47,111,109,0.12);
+}
+
+.table-view.modern-table .table-cell {
+    -fx-padding: 10;
+    -fx-text-fill: -ser-text;
+    -fx-font-size: 13px;
+}
+
+/* =========================
+   STATUS PILLS
+   ========================= */
+
+.pill {
+    -fx-background-radius: 999;
+    -fx-padding: 4 10;
+    -fx-font-weight: 900;
+    -fx-font-size: 12px;
+}
+
+.pill-success {
+    -fx-background-color: rgba(76,175,80,0.18);
+    -fx-text-fill: #2E7D32;
+}
+
+.pill-info {
+    -fx-background-color: rgba(47,111,109,0.14);
+    -fx-text-fill: -ser-primary;
+}
+
+.pill-warn {
+    -fx-background-color: rgba(244,180,0,0.18);
+    -fx-text-fill: #8A6A00;
 }
