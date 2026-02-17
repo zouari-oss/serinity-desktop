@@ -7,9 +7,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Tests unitaires pour le modèle Reve
- */
+
 @DisplayName("Tests unitaires - Reve")
 class ReveTest {
 

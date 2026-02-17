@@ -16,42 +16,34 @@
     <packaging>jar</packaging>
     <name>sleep-control</name>
 
-    <!-- Pas besoin de redéfinir les properties, elles sont héritées du parent -->
-
     <dependencies>
-        <!-- JavaFX Controls (version héritée du parent) -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
         </dependency>
 
-        <!-- JavaFX FXML (version héritée du parent) -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
         </dependency>
 
-        <!-- MySQL Connector (version héritée du parent) -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
 
-        <!-- JUnit 5 API (pour écrire les tests) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- JUnit 5 Engine (pour exécuter les tests) -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- AssertJ (optionnel mais recommandé pour les assertions) -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -61,7 +53,6 @@
 
     <build>
         <plugins>
-            <!-- Plugin JavaFX -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -70,7 +61,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Plugin Surefire pour les tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

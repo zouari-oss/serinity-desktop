@@ -14,9 +14,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Contrôleur pour le formulaire de rêve avec validation complète
- */
 public class ReveFormController {
 
     @FXML private ComboBox<Sommeil> sommeilCombo;
@@ -41,11 +38,9 @@ public class ReveFormController {
     @FXML
     public void initialize() {
         try {
-            // Connexion à la base de données
             Connection connection = MyDataBase.getInstance().getConnection();
             sommeilService = new SommeilService(connection);
 
-            // Initialiser les ComboBox
             typeCombo.setItems(FXCollections.observableArrayList(
                     "Normal", "Cauchemar", "Lucide", "Récurrent"
             ));
@@ -56,10 +51,8 @@ public class ReveFormController {
             ));
             humeurCombo.setPromptText("Sélectionner...");
 
-            // Charger les sommeils disponibles
             chargerSommeils();
 
-            // Configuration du Slider intensité
             intensiteSlider.setMin(1);
             intensiteSlider.setMax(10);
             intensiteSlider.setValue(5);
@@ -75,10 +68,8 @@ public class ReveFormController {
 
             intensiteLabel.setText("5");
 
-            // Valeurs par défaut
             couleurCheck.setSelected(true);
 
-            // **VALIDATION EN TEMPS RÉEL**
             setupValidation();
 
         } catch (Exception e) {
@@ -87,38 +78,18 @@ public class ReveFormController {
         }
     }
 
-    /**
-     * Configure la validation en temps réel
-     */
     private void setupValidation() {
-        // Sommeil
         sommeilCombo.valueProperty().addListener((obs, old, newVal) -> validateSommeil());
-
-        // Titre
         titreField.textProperty().addListener((obs, old, newVal) -> validateTitre());
-
-        // Description
         descriptionArea.textProperty().addListener((obs, old, newVal) -> validateDescription());
-
-        // Type
         typeCombo.valueProperty().addListener((obs, old, newVal) -> validateComboBox(typeCombo));
-
-        // Humeur
         humeurCombo.valueProperty().addListener((obs, old, newVal) -> validateComboBox(humeurCombo));
-
-        // Emotions (4 lettres minimum si rempli)
         emotionsField.textProperty().addListener((obs, old, newVal) -> validateEmotions());
-
-        // Symboles (4 lettres minimum si rempli)
         symbolesField.textProperty().addListener((obs, old, newVal) -> validateSymboles());
 
-        // Validation initiale
         validateSommeil();
     }
 
-    /**
-     * Compte le nombre de lettres (alphabétiques) dans un texte
-     */
     private int compterLettres(String texte) {
         if (texte == null) return 0;
 
@@ -131,9 +102,6 @@ public class ReveFormController {
         return count;
     }
 
-    /**
-     * Valide le sommeil sélectionné
-     */
     private void validateSommeil() {
         if (sommeilCombo.getValue() == null) {
             sommeilCombo.setStyle("-fx-border-color: red; -fx-border-width: 2;");
@@ -142,9 +110,6 @@ public class ReveFormController {
         }
     }
 
-    /**
-     * Valide le titre (au moins 3 lettres)
-     */
     private void validateTitre() {
         String text = titreField.getText();
 
@@ -163,9 +128,6 @@ public class ReveFormController {
         }
     }
 
-    /**
-     * Valide la description (au moins 5 lettres)
-     */
     private void validateDescription() {
         String text = descriptionArea.getText();
 
@@ -184,9 +146,6 @@ public class ReveFormController {
         }
     }
 
-    /**
-     * Valide un ComboBox
-     */
     private void validateComboBox(ComboBox<String> combo) {
         if (combo.getValue() == null) {
             combo.setStyle("-fx-border-color: red; -fx-border-width: 2;");
@@ -195,14 +154,10 @@ public class ReveFormController {
         }
     }
 
-    /**
-     * Valide les émotions (4 lettres minimum si rempli)
-     */
     private void validateEmotions() {
         String text = emotionsField.getText();
 
         if (text == null || text.trim().isEmpty()) {
-            // Optionnel, pas de bordure rouge
             emotionsField.setStyle("");
         } else {
             int nbLettres = compterLettres(text.trim());
@@ -217,14 +172,10 @@ public class ReveFormController {
         }
     }
 
-    /**
-     * Valide les symboles (4 lettres minimum si rempli)
-     */
     private void validateSymboles() {
         String text = symbolesField.getText();
 
         if (text == null || text.trim().isEmpty()) {
-            // Optionnel, pas de bordure rouge
             symbolesField.setStyle("");
         } else {
             int nbLettres = compterLettres(text.trim());
@@ -239,15 +190,11 @@ public class ReveFormController {
         }
     }
 
-    /**
-     * Charge la liste des sommeils
-     */
     private void chargerSommeils() throws SQLException {
         List<Sommeil> sommeils = sommeilService.listerTous();
 
         sommeilCombo.setItems(FXCollections.observableArrayList(sommeils));
 
-        // Convertisseur pour affichage
         sommeilCombo.setConverter(new javafx.util.StringConverter<Sommeil>() {
             @Override
             public String toString(Sommeil sommeil) {
@@ -277,9 +224,6 @@ public class ReveFormController {
         this.parentController = parent;
     }
 
-    /**
-     * Charge les données pour modification
-     */
     public void setReve(Reve reve) {
         this.reve = reve;
 
@@ -293,7 +237,6 @@ public class ReveFormController {
         emotionsField.setText(reve.getEmotions());
         symbolesField.setText(reve.getSymboles());
 
-        // Sélectionner le sommeil correspondant
         try {
             Sommeil sommeil = sommeilService.trouverParId(reve.getSommeilId());
             if (sommeil != null) {
@@ -304,9 +247,6 @@ public class ReveFormController {
         }
     }
 
-    /**
-     * Sauvegarde le rêve
-     */
     @FXML
     private void sauvegarder() {
         if (!validerFormulaire()) {
@@ -328,14 +268,12 @@ public class ReveFormController {
             reve.setCouleur(couleurCheck.isSelected());
             reve.setRecurrent(recurrentCheck.isSelected());
 
-            // Emotions et symboles : sauvegarder seulement si remplis
             String emotions = emotionsField.getText().trim();
             reve.setEmotions(emotions.isEmpty() ? null : emotions);
 
             String symboles = symbolesField.getText().trim();
             reve.setSymboles(symboles.isEmpty() ? null : symboles);
 
-            // Sauvegarder
             if (reve.getId() == 0) {
                 reveService.creer(reve);
                 showSuccess("Rêve ajouté avec succès!");
@@ -344,7 +282,6 @@ public class ReveFormController {
                 showSuccess("Rêve modifié avec succès!");
             }
 
-            // Rafraîchir la liste parente
             if (parentController != null) {
                 parentController.loadAllReves();
             }
@@ -360,18 +297,13 @@ public class ReveFormController {
         }
     }
 
-    /**
-     * Validation complète avec messages détaillés
-     */
     private boolean validerFormulaire() {
         StringBuilder errors = new StringBuilder();
 
-        // **1. Sommeil associé**
         if (sommeilCombo.getValue() == null) {
             errors.append("- Vous devez sélectionner un sommeil\n");
         }
 
-        // **2. Titre (au moins 3 lettres)**
         String titre = titreField.getText();
         if (titre == null || titre.trim().isEmpty()) {
             errors.append("- Le titre est obligatoire\n");
@@ -384,7 +316,6 @@ public class ReveFormController {
             }
         }
 
-        // **3. Description (au moins 5 lettres)**
         String description = descriptionArea.getText();
         if (description == null || description.trim().isEmpty()) {
             errors.append("- La description est obligatoire\n");
@@ -397,23 +328,19 @@ public class ReveFormController {
             }
         }
 
-        // **4. Type**
         if (typeCombo.getValue() == null) {
             errors.append("- Le type de rêve est obligatoire\n");
         }
 
-        // **5. Humeur**
         if (humeurCombo.getValue() == null) {
             errors.append("- L'humeur ressentie est obligatoire\n");
         }
 
-        // **6. Intensité**
         int intensite = (int) intensiteSlider.getValue();
         if (intensite < 1 || intensite > 10) {
             errors.append("- L'intensité doit être entre 1 et 10\n");
         }
 
-        // **7. Émotions (optionnel mais 4 lettres minimum si rempli)**
         String emotions = emotionsField.getText();
         if (emotions != null && !emotions.trim().isEmpty()) {
             int nbLettres = compterLettres(emotions.trim());
@@ -424,7 +351,6 @@ public class ReveFormController {
             }
         }
 
-        // **8. Symboles (optionnel mais 4 lettres minimum si rempli)**
         String symboles = symbolesField.getText();
         if (symboles != null && !symboles.trim().isEmpty()) {
             int nbLettres = compterLettres(symboles.trim());
@@ -435,7 +361,6 @@ public class ReveFormController {
             }
         }
 
-        // **Afficher les erreurs**
         if (errors.length() > 0) {
             showError("Formulaire invalide", "Veuillez corriger les erreurs suivantes :\n\n" + errors.toString());
             return false;
@@ -444,17 +369,11 @@ public class ReveFormController {
         return true;
     }
 
-    /**
-     * Annule et ferme
-     */
     @FXML
     private void annuler() {
         fermer();
     }
 
-    /**
-     * Ferme la fenêtre
-     */
     private void fermer() {
         Stage stage = (Stage) btnCancel.getScene().getWindow();
         stage.close();

@@ -12,9 +12,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-/**
- * Contrôleur pour le formulaire de sommeil avec validation complète
- */
 public class SommeilFormController {
 
     @FXML private DatePicker dateNuitPicker;
@@ -38,7 +35,6 @@ public class SommeilFormController {
 
     @FXML
     public void initialize() {
-        // Initialiser les ComboBox
         qualiteCombo.setItems(FXCollections.observableArrayList(
                 "Excellente", "Bonne", "Moyenne", "Mauvaise"
         ));
@@ -59,7 +55,6 @@ public class SommeilFormController {
         ));
         bruitCombo.setPromptText("Sélectionner...");
 
-        // Initialiser les Spinners
         heureCoucherHeure.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 22));
         heureCoucherMinute.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0, 15));
 
@@ -70,13 +65,10 @@ public class SommeilFormController {
 
         temperatureSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(10.0, 35.0, 20.0, 0.5));
 
-        // Date par défaut: hier
         dateNuitPicker.setValue(LocalDate.now().minusDays(1));
 
-        // Bloquer les dates futures dans le calendrier
         configurerDatePicker();
 
-        // Rendre les Spinners éditables
         heureCoucherHeure.setEditable(true);
         heureCoucherMinute.setEditable(true);
         heureReveilHeure.setEditable(true);
@@ -84,13 +76,9 @@ public class SommeilFormController {
         interruptionsSpinner.setEditable(true);
         temperatureSpinner.setEditable(true);
 
-        // Validation en temps réel
         setupValidation();
     }
 
-    /**
-     * Configure le DatePicker pour bloquer les dates futures
-     */
     private void configurerDatePicker() {
         dateNuitPicker.setDayCellFactory(new Callback<DatePicker, DateCell>() {
             @Override
@@ -100,7 +88,6 @@ public class SommeilFormController {
                     public void updateItem(LocalDate date, boolean empty) {
                         super.updateItem(date, empty);
 
-                        // Désactiver toutes les dates après aujourd'hui
                         if (date.isAfter(LocalDate.now())) {
                             setDisable(true);
                             getStyleClass().add("date-cell-disabled");
@@ -111,30 +98,20 @@ public class SommeilFormController {
         });
     }
 
-    /**
-     * Configure la validation en temps réel
-     */
     private void setupValidation() {
-        // Date
         dateNuitPicker.valueProperty().addListener((obs, old, newVal) -> validateDate());
 
-        // ComboBox
         qualiteCombo.valueProperty().addListener((obs, old, newVal) -> validateComboBox(qualiteCombo));
         humeurCombo.valueProperty().addListener((obs, old, newVal) -> validateComboBox(humeurCombo));
         environnementCombo.valueProperty().addListener((obs, old, newVal) -> validateComboBox(environnementCombo));
         bruitCombo.valueProperty().addListener((obs, old, newVal) -> validateComboBox(bruitCombo));
 
-        // Validation initiale
         validateDate();
     }
 
-    /**
-     * Valide la date
-     */
     private void validateDate() {
         LocalDate date = dateNuitPicker.getValue();
 
-        // Retirer les classes d'erreur
         dateNuitPicker.getStyleClass().removeAll("date-picker-error");
 
         if (date == null || date.isAfter(LocalDate.now())) {
@@ -142,11 +119,7 @@ public class SommeilFormController {
         }
     }
 
-    /**
-     * Valide un ComboBox
-     */
     private void validateComboBox(ComboBox<String> combo) {
-        // Retirer les classes d'erreur
         combo.getStyleClass().removeAll("combo-box-error");
 
         if (combo.getValue() == null) {
@@ -162,9 +135,6 @@ public class SommeilFormController {
         this.parentController = parent;
     }
 
-    /**
-     * Charge les données pour modification
-     */
     public void setSommeil(Sommeil sommeil) {
         this.sommeil = sommeil;
 
@@ -185,9 +155,6 @@ public class SommeilFormController {
         bruitCombo.setValue(sommeil.getNiveauBruit());
     }
 
-    /**
-     * Sauvegarde le sommeil
-     */
     @FXML
     private void sauvegarder() {
         if (!validerFormulaire()) {
@@ -199,7 +166,6 @@ public class SommeilFormController {
                 sommeil = new Sommeil();
             }
 
-            // Récupération des valeurs
             LocalDate date = dateNuitPicker.getValue();
             LocalTime heureCoucher = LocalTime.of(
                     heureCoucherHeure.getValue(),
@@ -221,7 +187,6 @@ public class SommeilFormController {
             sommeil.setTemperature(temperatureSpinner.getValue());
             sommeil.setNiveauBruit(bruitCombo.getValue());
 
-            // Sauvegarder
             if (sommeil.getId() == 0) {
                 sommeilService.creer(sommeil);
                 showSuccess("Sommeil ajouté avec succès!");
@@ -245,13 +210,9 @@ public class SommeilFormController {
         }
     }
 
-    /**
-     * Valide le formulaire avec messages détaillés
-     */
     private boolean validerFormulaire() {
         StringBuilder errors = new StringBuilder();
 
-        // 1. Date
         LocalDate date = dateNuitPicker.getValue();
         if (date == null) {
             errors.append("- La date de nuit est obligatoire\n");
@@ -259,7 +220,6 @@ public class SommeilFormController {
             errors.append("- La date ne peut pas être dans le futur\n");
         }
 
-        // 2. Heures
         LocalTime heureCoucher = null;
         LocalTime heureReveil = null;
 
@@ -281,16 +241,13 @@ public class SommeilFormController {
             errors.append("- L'heure de réveil est invalide\n");
         }
 
-        // 3. Validation logique des heures
         if (heureCoucher != null && heureReveil != null) {
             if (heureCoucher.equals(heureReveil)) {
                 errors.append("- L'heure de coucher et de réveil ne peuvent pas être identiques\n");
             }
 
-            // Vérification de durée raisonnable
             long minutes;
             if (heureReveil.isBefore(heureCoucher)) {
-                // Nuit à cheval (ex: coucher 23h, réveil 6h)
                 minutes = java.time.Duration.between(heureCoucher, LocalTime.MAX).toMinutes()
                         + java.time.Duration.between(LocalTime.MIN, heureReveil).toMinutes();
             } else {
@@ -305,45 +262,37 @@ public class SommeilFormController {
             }
         }
 
-        // 4. Qualité
         if (qualiteCombo.getValue() == null) {
             errors.append("- La qualité du sommeil est obligatoire\n");
         }
 
-        // 5. Humeur
         if (humeurCombo.getValue() == null) {
             errors.append("- L'humeur au réveil est obligatoire\n");
         }
 
-        // 6. Environnement
         if (environnementCombo.getValue() == null) {
             errors.append("- L'environnement est obligatoire\n");
         }
 
-        // 7. Niveau de bruit
         if (bruitCombo.getValue() == null) {
             errors.append("- Le niveau de bruit est obligatoire\n");
         }
 
-        // 8. Interruptions
         int interruptions = interruptionsSpinner.getValue();
         if (interruptions < 0 || interruptions > 20) {
             errors.append("- Le nombre d'interruptions doit être entre 0 et 20\n");
         }
 
-        // 9. Température
         double temperature = temperatureSpinner.getValue();
         if (temperature < 10 || temperature > 35) {
             errors.append("- La température doit être entre 10 et 35 degrés Celsius\n");
         }
 
-        // 10. Commentaire (optionnel mais limite de longueur)
         String commentaire = commentaireArea.getText();
         if (commentaire != null && commentaire.length() > 500) {
             errors.append("- Le commentaire ne doit pas dépasser 500 caractères\n");
         }
 
-        // Afficher les erreurs
         if (errors.length() > 0) {
             showError("Formulaire invalide", "Veuillez corriger les erreurs suivantes :\n\n" + errors.toString());
             return false;
@@ -352,17 +301,11 @@ public class SommeilFormController {
         return true;
     }
 
-    /**
-     * Annule et ferme
-     */
     @FXML
     private void annuler() {
         fermer();
     }
 
-    /**
-     * Ferme la fenêtre
-     */
     private void fermer() {
         Stage stage = (Stage) btnCancel.getScene().getWindow();
         stage.close();

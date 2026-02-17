@@ -4,9 +4,6 @@ import com.serinity.sleepcontrol.model.Reve;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-/**
- * Contrôleur pour la carte d'affichage d'un rêve
- */
 public class ReveCardController {
 
     @FXML private Label titreLabel;
@@ -36,39 +33,32 @@ public class ReveCardController {
     }
 
     private void afficherDonnees() {
-        // Titre - COULEUR FORCÉE
         titreLabel.setText(reve.getTitre());
         titreLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
 
-        // Type avec couleur
         typeLabel.setText(reve.getTypeReve());
         typeLabel.setStyle("-fx-font-size: 13px; -fx-padding: 4 10; -fx-background-radius: 5; " +
                 getTypeColor(reve.getTypeReve()));
 
-        // Description - COULEUR FORCÉE
         String descCourte = reve.getDescription().length() > 100
                 ? reve.getDescription().substring(0, 100) + "..."
                 : reve.getDescription();
         descriptionLabel.setText(descCourte);
         descriptionLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #555;");
 
-        // Humeur - COULEUR FORCÉE
         humeurLabel.setText("Humeur: " +
                 (reve.getHumeur() != null ? reve.getHumeur() : "Non specifie"));
         humeurLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
 
-        // Intensité
         intensiteBar.setProgress(reve.getIntensite() / 10.0);
         intensiteBar.setStyle(getIntensiteStyle(reve.getIntensite()));
         intensiteValue.setText(reve.getIntensite() + "/10");
         intensiteValue.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
 
-        // Anxiété
         int anxiete = reve.calculerNiveauAnxiete();
         anxieteLabel.setText(String.format("Anxiete: %d/10", anxiete));
         anxieteLabel.setStyle("-fx-font-size: 12px; " + getAnxieteStyle(anxiete));
 
-        // Badges
         couleurBadge.setVisible(reve.isCouleur());
         couleurBadge.setManaged(reve.isCouleur());
         if (reve.isCouleur()) {
@@ -87,7 +77,6 @@ public class ReveCardController {
             lucideBadge.setStyle("-fx-background-color: #C5E1A5; -fx-text-fill: #2E7D32; -fx-padding: 3 8; -fx-background-radius: 3; -fx-font-size: 11px;");
         }
 
-        // Émotions
         if (reve.getEmotions() != null && !reve.getEmotions().isEmpty()) {
             emotionsLabel.setText("Emotions: " + reve.getEmotions());
             emotionsLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #666; -fx-font-style: italic;");

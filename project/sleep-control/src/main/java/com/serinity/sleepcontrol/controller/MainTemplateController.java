@@ -19,10 +19,8 @@ public class MainTemplateController {
 
     @FXML
     public void initialize() {
-        // Définir le nom d'utilisateur
         userNameLabel.setText("Utilisateur");
 
-        // Charger la page Sommeil par défaut
         currentActiveButton = btnSleep;
         btnSleep.getStyleClass().add("nav-btn-active");
         loadPage("/view/fxml/sleep-page.fxml");
@@ -32,32 +30,24 @@ public class MainTemplateController {
     private void onNavClick(javafx.event.ActionEvent event) {
         Button clickedButton = (Button) event.getSource();
 
-        // Retirer la classe active de l'ancien bouton
         if (currentActiveButton != null) {
             currentActiveButton.getStyleClass().remove("nav-btn-active");
         }
 
-        // Ajouter la classe active au nouveau bouton
         clickedButton.getStyleClass().add("nav-btn-active");
         currentActiveButton = clickedButton;
 
-        // Charger la page correspondante
         if (clickedButton == btnSleep) {
             loadPage("/view/fxml/sleep-page.fxml");
         } else if (clickedButton == btnReve) {
             loadPage("/view/fxml/reve-page.fxml");
         } else {
-            // Pages non implémentées
             showInfoPage("Page en construction");
         }
     }
 
-    /**
-     * Charge une page FXML dans le contentHost
-     */
     private void loadPage(String fxmlPath) {
         try {
-            // Obtenir l'URL de la ressource
             URL url = getClass().getResource(fxmlPath);
 
             if (url == null) {
@@ -66,11 +56,9 @@ public class MainTemplateController {
                 return;
             }
 
-            // Charger le FXML
             FXMLLoader loader = new FXMLLoader(url);
             Parent page = loader.load();
 
-            // Afficher dans le contentHost
             contentHost.getChildren().clear();
             contentHost.getChildren().add(page);
 
@@ -81,21 +69,15 @@ public class MainTemplateController {
         }
     }
 
-    /**
-     * Affiche une page d'erreur
-     */
     private void showErrorPage(String message) {
-        Label errorLabel = new Label("❌ " + message);
+        Label errorLabel = new Label(message);
         errorLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #f44336;");
         contentHost.getChildren().clear();
         contentHost.getChildren().add(errorLabel);
     }
 
-    /**
-     * Affiche une page d'info
-     */
     private void showInfoPage(String message) {
-        Label infoLabel = new Label("ℹ️ " + message);
+        Label infoLabel = new Label(message);
         infoLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #666;");
         contentHost.getChildren().clear();
         contentHost.getChildren().add(infoLabel);

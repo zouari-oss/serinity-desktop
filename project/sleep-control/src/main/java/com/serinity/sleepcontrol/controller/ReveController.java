@@ -19,9 +19,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Contrôleur principal pour la gestion des rêves
- */
 public class ReveController {
 
     @FXML private VBox mainContainer;
@@ -54,9 +51,6 @@ public class ReveController {
         }
     }
 
-    /**
-     * Initialise les filtres et options de tri
-     */
     private void initializeFilters() {
         filterType.setItems(FXCollections.observableArrayList(
                 "Tous", "Normal", "Cauchemar", "Lucide", "Recurrent"
@@ -72,9 +66,6 @@ public class ReveController {
         sortComboBox.setValue("Plus recent");
     }
 
-    /**
-     * Configure les listeners pour la recherche et les filtres
-     */
     private void setupListeners() {
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
             rechercherReves(newVal);
@@ -85,9 +76,6 @@ public class ReveController {
         sortComboBox.setOnAction(e -> appliquerTri());
     }
 
-    /**
-     * Charge tous les rêves depuis la base de données
-     */
     @FXML
     public void loadAllReves() {
         try {
@@ -100,9 +88,6 @@ public class ReveController {
         }
     }
 
-    /**
-     * Affiche les cartes de rêves dans le conteneur
-     */
     private void afficherCards() {
         cardsContainer.getChildren().clear();
 
@@ -115,13 +100,11 @@ public class ReveController {
 
         for (Reve reve : currentReves) {
             try {
-                // Charger la carte depuis le FXML
                 FXMLLoader loader = new FXMLLoader(
                         getClass().getResource("/view/fxml/reve-card.fxml")
                 );
                 VBox card = loader.load();
 
-                // Récupérer le contrôleur et initialiser les données
                 ReveCardController cardController = loader.getController();
                 cardController.setData(reve, this);
 
@@ -134,9 +117,6 @@ public class ReveController {
         }
     }
 
-    /**
-     * Recherche des rêves selon un critère
-     */
     private void rechercherReves(String critere) {
         try {
             if (critere == null || critere.trim().isEmpty()) {
@@ -151,9 +131,6 @@ public class ReveController {
         }
     }
 
-    /**
-     * Applique les filtres sélectionnés
-     */
     @FXML
     private void appliquerFiltres() {
         try {
@@ -187,9 +164,6 @@ public class ReveController {
         }
     }
 
-    /**
-     * Applique le tri sélectionné
-     */
     @FXML
     private void appliquerTri() {
         try {
@@ -230,30 +204,17 @@ public class ReveController {
         }
     }
 
-    // ==================== MÉTHODES PUBLIQUES POUR ReveCardController ====================
-
-    /**
-     * Affiche les détails d'un rêve
-     */
     public void voirDetailsPublic(Reve reve) {
         voirDetails(reve);
     }
 
-    /**
-     * Modifie un rêve
-     */
     public void modifierRevePublic(Reve reve) {
         modifierReve(reve);
     }
 
-    /**
-     * Supprime un rêve
-     */
     public void supprimerRevePublic(Reve reve) {
         supprimerReve(reve);
     }
-
-    // ==================== MÉTHODES PRIVÉES ====================
 
     private void voirDetails(Reve reve) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

@@ -193,7 +193,6 @@ public class ReveDaoJdbc implements ReveDao {
         return 0;
     }
 
-    // Méthode privée pour mapper ResultSet
     private Reve mapResultSetToReve(ResultSet rs) throws SQLException {
         Reve reve = new Reve();
         reve.setId(rs.getInt("id"));

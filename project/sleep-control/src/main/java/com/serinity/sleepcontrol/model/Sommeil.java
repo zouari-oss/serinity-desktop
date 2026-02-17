@@ -8,32 +8,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Entité Sommeil représentant une nuit de sommeil
- * Relation OneToMany avec Reve
- */
 public class Sommeil {
 
-    // Attributs principaux
     private int id;
     private LocalDate dateNuit;
     private LocalTime heureCoucher;
     private LocalTime heureReveil;
-    private String qualite; // Excellente, Bonne, Moyenne, Mauvaise
+    private String qualite;
     private String commentaire;
 
-    // Nouveaux attributs
-    private double dureeSommeil; // en heures
+    private double dureeSommeil;
     private int interruptions;
-    private String humeurReveil; // Énergisé, Reposé, Fatigué, Épuisé
-    private String environnement; // Calme, Bruyant, Confortable, Inconfortable
-    private double temperature; // en degrés Celsius
-    private String niveauBruit; // Silencieux, Léger, Modéré, Fort
+    private String humeurReveil;
+    private String environnement;
+    private double temperature;
+    private String niveauBruit;
 
-    // Relation OneToMany avec Reve
     private List<Reve> reves;
-
-    // ==================== CONSTRUCTEURS ====================
 
     public Sommeil() {
         this.reves = new ArrayList<>();
@@ -69,17 +60,10 @@ public class Sommeil {
         this.dureeSommeil = calculerDuree();
     }
 
-    // ==================== MÉTHODES MÉTIER ====================
-
-    /**
-     * Calcul automatique de la durée du sommeil
-     * Gère le cas où le réveil est le lendemain
-     */
     public double calculerDuree() {
         if (heureCoucher != null && heureReveil != null) {
             Duration duration;
             if (heureReveil.isBefore(heureCoucher)) {
-                // Le réveil est le lendemain
                 duration = Duration.between(heureCoucher, heureReveil.plusHours(24));
             } else {
                 duration = Duration.between(heureCoucher, heureReveil);
@@ -89,10 +73,6 @@ public class Sommeil {
         return 0;
     }
 
-    /**
-     * Ajoute un rêve à cette nuit de sommeil
-     * Maintient la bidirectionnalité de la relation
-     */
     public void ajouterReve(Reve reve) {
         if (reve != null && !reves.contains(reve)) {
             reves.add(reve);
@@ -100,9 +80,6 @@ public class Sommeil {
         }
     }
 
-    /**
-     * Retire un rêve de cette nuit de sommeil
-     */
     public void retirerReve(Reve reve) {
         if (reve != null && reves.contains(reve)) {
             reves.remove(reve);
@@ -110,27 +87,17 @@ public class Sommeil {
         }
     }
 
-    /**
-     * Calcule le nombre total de rêves pour cette nuit
-     */
     public int getNombreReves() {
         return reves.size();
     }
 
-    /**
-     * Vérifie si la durée de sommeil est dans la plage recommandée (7-9h)
-     */
     public boolean estDureeOptimale() {
         return dureeSommeil >= 7.0 && dureeSommeil <= 9.0;
     }
 
-    /**
-     * Évalue le score de qualité du sommeil (0-100)
-     */
     public int calculerScoreQualite() {
-        int score = 50; // Base
+        int score = 50;
 
-        // Durée optimale
         if (dureeSommeil >= 7 && dureeSommeil <= 9) {
             score += 20;
         } else if (dureeSommeil >= 6 && dureeSommeil < 7) {
@@ -139,7 +106,6 @@ public class Sommeil {
             score -= 20;
         }
 
-        // Interruptions
         if (interruptions == 0) {
             score += 15;
         } else if (interruptions <= 2) {
@@ -148,7 +114,6 @@ public class Sommeil {
             score -= interruptions * 3;
         }
 
-        // Qualité déclarée
         switch (qualite.toLowerCase()) {
             case "excellente":
                 score += 15;
@@ -167,9 +132,6 @@ public class Sommeil {
         return Math.max(0, Math.min(100, score));
     }
 
-    /**
-     * Génère un rapport textuel du sommeil
-     */
     public String genererRapport() {
         StringBuilder rapport = new StringBuilder();
         rapport.append("=== Rapport de Sommeil ===\n");
@@ -182,8 +144,6 @@ public class Sommeil {
         rapport.append("Nombre de rêves: ").append(getNombreReves()).append("\n");
         return rapport.toString();
     }
-
-    // ==================== GETTERS & SETTERS ====================
 
     public int getId() {
         return id;
@@ -284,20 +244,17 @@ public class Sommeil {
     }
 
     public List<Reve> getReves() {
-        return new ArrayList<>(reves); // Retourne une copie pour l'immutabilité
+        return new ArrayList<>(reves);
     }
 
     public void setReves(List<Reve> reves) {
         this.reves = reves != null ? new ArrayList<>(reves) : new ArrayList<>();
-        // Maintenir la bidirectionnalité
         for (Reve reve : this.reves) {
             if (reve.getSommeil() != this) {
                 reve.setSommeil(this);
             }
         }
     }
-
-    // ==================== EQUALS, HASHCODE, TOSTRING ====================
 
     @Override
     public boolean equals(Object o) {

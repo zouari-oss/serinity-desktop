@@ -32,42 +32,34 @@ public class SommeilCardController {
     }
 
     private void afficherDonnees() {
-        // Date - COULEUR FORCÉE
         dateLabel.setText(
                 sommeil.getDateNuit().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         );
         dateLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
 
-        // Qualité avec couleur
         qualiteLabel.setText(sommeil.getQualite());
         qualiteLabel.setStyle("-fx-font-size: 13px; -fx-padding: 4 10; -fx-background-radius: 5; " +
                 getQualiteColor(sommeil.getQualite()));
 
-        // Heures - COULEUR FORCÉE
         heuresLabel.setText(String.format("Heures: %s -> %s",
                 sommeil.getHeureCoucher(), sommeil.getHeureReveil()));
         heuresLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
 
-        // Durée - COULEUR FORCÉE
         dureeLabel.setText(String.format("Duree: %.2f heures",
                 sommeil.getDureeSommeil()));
         dureeLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
 
-        // Interruptions - COULEUR FORCÉE
         interruptionsLabel.setText(String.format("Interruptions: %d",
                 sommeil.getInterruptions()));
         interruptionsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
 
-        // Humeur - COULEUR FORCÉE
         humeurLabel.setText("Humeur: " +
                 (sommeil.getHumeurReveil() != null ? sommeil.getHumeurReveil() : "Non specifie"));
         humeurLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
 
-        // Nombre de rêves - COULEUR FORCÉE
         revesLabel.setText(String.format("%d reve(s)", sommeil.getNombreReves()));
         revesLabel.setStyle("-fx-font-size: 12px; -fx-font-style: italic; -fx-text-fill: #666;");
 
-        // Score
         int score = sommeil.calculerScoreQualite();
         scoreLabel.setText("Score: " + score + "/100");
         scoreLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; " + getScoreColor(score));
