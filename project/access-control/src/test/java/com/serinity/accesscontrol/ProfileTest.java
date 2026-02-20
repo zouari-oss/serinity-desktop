@@ -1,29 +1,3 @@
-/**
- * ProfileTest.java
- *
- * JUnit test class for {@link com.serinity.accesscontrol.model.Profile} entity operations.
- *
- * <p>This class tests Profile-specific functionality including CRUD operations and profile data validation.</p>
- *
- * <p>Test coverage includes:</p>
- * <ul>
- *   <li>{@link #testFindProfileByUsername()}          - Verifies profile retrieval by username.</li>
- *   <li>{@link #testUpdateProfile()}                  - Checks profile update operations.</li>
- *   <li>{@link #testProfileWithCompleteInformation()} - Validates complete profile data persistence.</li>
- * </ul>
- *
- * @author  @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since   2026-02-12
- * @see     com.serinity.accesscontrol.model.Profile
- * @see     com.serinity.accesscontrol.repository.ProfileRepository
- *
- * <a href="https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/ProfileTest.java"
- * target="_blank">
- * ProfileTest.java
- * </a>
- */
-
 // `ProfileTest` package name
 package com.serinity.accesscontrol;
 
@@ -48,12 +22,66 @@ import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.ProfileRepository;
+import com.serinity.accesscontrol.util.PasswordEncoder;
 
+/**
+ * JUnit test class for {@link com.serinity.accesscontrol.model.Profile} entity
+ * operations.
+ *
+ * <p>
+ * This class tests Profile-specific functionality including CRUD operations and
+ * profile data validation.
+ * </p>
+ *
+ * <p>
+ * Test coverage includes:
+ * </p>
+ * <ul>
+ * <li>{@link #testFindProfileByUsername()} - Verifies profile retrieval by
+ * username.</li>
+ * <li>{@link #testUpdateProfile()} - Checks profile update operations.</li>
+ * <li>{@link #testProfileWithCompleteInformation()} - Validates complete
+ * profile data persistence.</li>
+ * </ul>
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-12
+ * @see com.serinity.accesscontrol.model.Profile
+ * @see com.serinity.accesscontrol.repository.ProfileRepository
+ *
+ *      <a href=
+ *      "https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/ProfileTest.java">
+ *      ProfileTest.java
+ *      </a>
+ */
 public final class ProfileTest {
+  // Entity manager
   private EntityManager em;
+
+  // Respositories
   private ProfileRepository profileRepo;
+
+  // Entities
   private User testUser;
   private Profile testProfile;
+
+  @BeforeEach
+  void setUp() throws Exception {
+    em = SkinnedRatOrmEntityManager.getEntityManager();
+    profileRepo = new ProfileRepository(em);
+
+    testUser = createTestUser();
+    testProfile = createTestProfile(testUser);
+
+    profileRepo.save(testProfile);
+  }
+
+  @AfterEach
+  void tearDown() throws Exception {
+    em.delete(testUser);
+    em.delete(testProfile);
+  }
 
   @Test
   @Order(1)
@@ -99,26 +127,9 @@ public final class ProfileTest {
     em.delete(profile);
   }
 
-  @BeforeEach
-  void setUp() throws Exception {
-    em = SkinnedRatOrmEntityManager.getEntityManager();
-    profileRepo = new ProfileRepository(em);
-
-    testUser = createTestUser();
-    testProfile = createTestProfile(testUser);
-
-    profileRepo.save(testProfile);
-  }
-
-  @AfterEach
-  void tearDown() throws Exception {
-    em.delete(testUser);
-    em.delete(testProfile);
-  }
-
-  // ##########################
-  // ### TEST DATA BUILDERS ###
-  // ##########################
+  // ======================
+  // ==== BUILDERS ========
+  // ======================
 
   private User createTestUser() {
     return createTestUserWithRole(UserRole.PATIENT);
@@ -127,22 +138,21 @@ public final class ProfileTest {
   private User createTestUserWithRole(final UserRole role) {
     final User user = new User();
     user.setEmail(generateUniqueEmail());
-    user.setPasswordHash("test");
+    user.setPasswordHash(PasswordEncoder.encode("test"));
     user.setRole(role);
     return user;
   }
 
   private Profile createTestProfile(final User user) {
     final Profile profile = new Profile();
-    profile.setUsername(generateUniqueUsername());
     profile.setUser(user);
     return profile;
   }
 
   private Profile createCompleteProfile(final User user) {
     final Profile profile = createTestProfile(user);
-    profile.setFirstName("Jane");
-    profile.setLastName("Smith");
+    profile.setFirstName("Hamida");
+    profile.setLastName("Elouze");
     profile.setPhone("+1234567890");
     profile.setCountry("Tunisia");
     profile.setState("Sfax");
@@ -153,9 +163,5 @@ public final class ProfileTest {
 
   private String generateUniqueEmail() {
     return "email_" + UUID.randomUUID() + "@example.com";
-  }
-
-  private String generateUniqueUsername() {
-    return "user_" + UUID.randomUUID();
   }
 } // ProfileTest test class

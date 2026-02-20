@@ -1,39 +1,3 @@
-/**
- * AuthSessionTest.java
- *
- * JUnit test class for authentication session operations related to 
- * {@link com.serinity.accesscontrol.model.AuthSession} entity.
- *
- * <p>This class tests session creation, validation, expiration, and revocation
- * functionality for user authentication sessions.</p>
- *
- * <p>Test coverage includes:</p>
- * <ul>
- *   <li>{@link #testCreateAuthSession()}        - Verifies session creation with valid refresh token.</li>
- *   <li>{@link #testSessionAutoTimestamp()}     - Ensures timestamps are auto-generated on persist.</li>
- *   <li>{@link #testSessionExpiration()}        - Validates expiration date is properly set.</li>
- *   <li>{@link #testMultipleSessionsPerUser()}  - Checks that a user can have multiple active sessions.</li>
- *   <li>{@link #testRevokeSession()}            - Tests session revocation functionality.</li>
- * </ul>
- *
- * <p>Uses SOLID principles:</p>
- * <ul>
- *   <li>Single Responsibility - Separate test data builders.</li>
- *   <li>Dependency Inversion  - Injected EntityManager and repositories.</li>
- * </ul>
- *
- * @author  @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since   2026-02-12
- * @see     com.serinity.accesscontrol.model.AuthSession
- * @see     com.serinity.accesscontrol.model.User
- *
- * <a href="https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/AuthSessionTest.java"
- * target="_blank">
- * AuthSessionTest.java
- * </a>
- */
-
 // `AuthSessionTest` package name
 package com.serinity.accesscontrol;
 
@@ -61,6 +25,50 @@ import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.ProfileRepository;
 
+/**
+ * JUnit test class for authentication session operations related to
+ * {@link com.serinity.accesscontrol.model.AuthSession} entity.
+ *
+ * <p>
+ * This class tests session creation, validation, expiration, and revocation
+ * functionality for user authentication sessions.
+ * </p>
+ *
+ * <p>
+ * Test coverage includes:
+ * </p>
+ * <ul>
+ * <li>{@link #testCreateAuthSession()} - Verifies session creation with valid
+ * refresh token.</li>
+ * <li>{@link #testSessionAutoTimestamp()} - Ensures timestamps are
+ * auto-generated on persist.</li>
+ * <li>{@link #testSessionExpiration()} - Validates expiration date is properly
+ * set.</li>
+ * <li>{@link #testMultipleSessionsPerUser()} - Checks that a user can have
+ * multiple active sessions.</li>
+ * <li>{@link #testRevokeSession()} - Tests session revocation
+ * functionality.</li>
+ * </ul>
+ *
+ * <p>
+ * Uses SOLID principles:
+ * </p>
+ * <ul>
+ * <li>Single Responsibility - Separate test data builders.</li>
+ * <li>Dependency Inversion - Injected EntityManager and repositories.</li>
+ * </ul>
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-12
+ * @see com.serinity.accesscontrol.model.AuthSession
+ * @see com.serinity.accesscontrol.model.User
+ *
+ *      <a href=
+ *      "https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/AuthSessionTest.java">
+ *      AuthSessionTest.java
+ *      </a>
+ */
 public final class AuthSessionTest {
   private EntityManager em;
   private ProfileRepository profileRepo;
@@ -111,7 +119,6 @@ public final class AuthSessionTest {
     assertFalse(testSession.isRevoked(), "Session should not be revoked initially");
 
     // Simulate revocation (in real app, this would be via a service method)
-    testSession.setRefreshToken(testSession.getRefreshToken()); // trigger update
     em.update(testSession);
 
     assertNotNull(testSession.getRefreshToken(), "Refresh token should still exist");
@@ -170,7 +177,6 @@ public final class AuthSessionTest {
    */
   private AuthSession createTestAuthSession(final User user) {
     final AuthSession session = new AuthSession();
-    session.setRefreshToken(generateUniqueToken());
     session.setUser(user);
     return session;
   }

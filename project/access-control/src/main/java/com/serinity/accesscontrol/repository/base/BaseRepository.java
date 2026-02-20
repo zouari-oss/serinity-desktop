@@ -1,21 +1,3 @@
-/**
- * BaseRepository.java
- *
- * A base repository that support the common crud actions
- *
- * <p>none</p>
- *
- * @author  @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since   2026-02-04
- *
- * <a
- * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/repository/base/BaseRepository.java"
- * target="_blank">
- * BaseRepository.java
- * </a>
- */
-
 // `serinity` package name
 package com.serinity.accesscontrol.repository.base;
 
@@ -27,6 +9,19 @@ import java.util.Optional;
 import org.zouarioss.skinnedratorm.core.EntityManager;
 import org.zouarioss.skinnedratorm.engine.QueryBuilder;
 
+/**
+ * A base repository that support the common crud actions
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-04
+ *
+ *        <a
+ *        href=
+ *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/repository/base/BaseRepository.java">
+ *        BaseRepository.java
+ *        </a>
+ */
 public abstract class BaseRepository<T, ID> {
   protected final EntityManager em;
   protected final Class<T> entityClass;
@@ -39,7 +34,7 @@ public abstract class BaseRepository<T, ID> {
   public void save(final T entity) {
     try {
       em.persist(entity);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
     }
   }
@@ -47,7 +42,7 @@ public abstract class BaseRepository<T, ID> {
   public Optional<T> findById(final ID id) {
     try {
       return Optional.ofNullable(em.findById(entityClass, id));
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
       throw new RuntimeException(e);
     }
@@ -56,7 +51,7 @@ public abstract class BaseRepository<T, ID> {
   public void delete(final T entity) {
     try {
       em.delete(entity);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
     }
   }
@@ -69,7 +64,7 @@ public abstract class BaseRepository<T, ID> {
     try {
       return new QueryBuilder<>(entityClass, em.getConnection())
           .getResultList();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
       throw new RuntimeException(e);
     }

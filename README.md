@@ -2,7 +2,7 @@
 
 [![Contributors](https://img.shields.io/badge/CONTRIBUTORS-02-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/graphs/contributors)
 [![Forks](https://img.shields.io/badge/FORKS-00-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/network/members)
-[![Stargazers](https://img.shields.io/badge/STARS-01-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/stargazers)
+[![Stargazers](https://img.shields.io/badge/STARS-03-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/stargazers)
 [![Issues](https://img.shields.io/badge/ISSUES-00-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/issues)
 [![GPL3.0 License](https://img.shields.io/badge/LICENSE-GPL3.0-blue?style=plastic)](LICENSE)
 

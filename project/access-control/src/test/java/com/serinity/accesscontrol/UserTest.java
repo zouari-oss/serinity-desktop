@@ -1,28 +1,3 @@
-/**
- * UserTest.java
- *
- * JUnit test class for {@link com.serinity.accesscontrol.model.User} entity operations.
- *
- * <p>This class tests User-specific functionality including roles, statuses, and user management.</p>
- *
- * <p>Test coverage includes:</p>
- * <ul>
- *   <li>{@link #testUserWithDifferentRoles()} - Verifies users can be created with different roles.</li>
- *   <li>{@link #testUserDefaultStatus()}      - Checks default status values are properly set.</li>
- * </ul>
- *
- * @author  @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since   2026-02-12
- * @see     com.serinity.accesscontrol.model.User
- * @see     com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager
- *
- * <a href="https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/UserTest.java"
- * target="_blank">
- * UserTest.java
- * </a>
- */
-
 // `UserTest` package name
 package com.serinity.accesscontrol;
 
@@ -49,15 +24,52 @@ import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.ProfileRepository;
 
+/**
+ * JUnit test class for {@link com.serinity.accesscontrol.model.User} entity
+ * operations.
+ *
+ * <p>
+ * This class tests User-specific functionality including roles, statuses, and
+ * user management.
+ * </p>
+ *
+ * <p>
+ * Test coverage includes:
+ * </p>
+ * <ul>
+ * <li>{@link #testUserWithDifferentRoles()} - Verifies users can be created
+ * with different roles.</li>
+ * <li>{@link #testUserDefaultStatus()} - Checks default status values are
+ * properly set.</li>
+ * </ul>
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-12
+ * @see com.serinity.accesscontrol.model.User
+ * @see com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager
+ *
+ *      <a href=
+ *      "https://github.com/zouari-oss/serinity-desktop/blob/main/project/access-control/src/test/java/com/serinity/accesscontrol/UserTest.java">
+ *      UserTest.java
+ *      </a>
+ */
 public final class UserTest {
+  // Entity manager
   private EntityManager em;
+
+  // Respositories
   private ProfileRepository profileRepo;
+
+  // Entities
+  User therapistUser;
+  Profile therapistProfile;
 
   @Test
   @Order(1)
   public void testUserWithDifferentRoles() throws Exception {
-    final User therapistUser = createTestUserWithRole(UserRole.THERAPIST);
-    final Profile therapistProfile = createTestProfile(therapistUser);
+    therapistUser = createTestUserWithRole(UserRole.THERAPIST);
+    therapistProfile = createTestProfile(therapistUser);
 
     profileRepo.save(therapistProfile);
 
@@ -73,26 +85,21 @@ public final class UserTest {
   public void testUserDefaultStatus() throws Exception {
     final User user = createTestUser();
     final Profile profile = createTestProfile(user);
-
     profileRepo.save(profile);
-
     final Profile retrievedProfile = profileRepo.findByUsername(profile.getUsername());
+
     assertNotNull(retrievedProfile.getUser().getPresenceStatus(), "Presence status should be auto-set");
     assertNotNull(retrievedProfile.getUser().getAccountStatus(), "Account status should be auto-set");
-
-    em.delete(user);
-    em.delete(profile);
   }
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     em = SkinnedRatOrmEntityManager.getEntityManager();
     profileRepo = new ProfileRepository(em);
   }
 
   @AfterEach
   void tearDown() throws Exception {
-    // Cleanup is handled in individual tests
   }
 
   // ##########################

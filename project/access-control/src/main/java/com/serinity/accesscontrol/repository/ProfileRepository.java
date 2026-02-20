@@ -1,20 +1,3 @@
-/**
- * ProfileRepository.java
- *
- * Repository class for performing CRUD operations on {@link com.serinity.accesscontrol.model.Profile} entities.
- *
- * @author  @ZouariOmar (zouariomar20@gmail.com)
- * @version 1.0
- * @since   2026-02-03
- * @see     com.serinity.accesscontrol.model.Profile
- * @see     com.serinity.accesscontrol.repository.UserRepository
- *
- * <a
- * href="https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/repository/ProfileRepository.java"
- * target="_blank">
- * ProfileRepository.java
- * </a>
- */
 
 // `ProfileRepository` package name
 package com.serinity.accesscontrol.repository;
@@ -26,8 +9,23 @@ import org.zouarioss.skinnedratorm.core.EntityManager;
 import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.repository.base.BaseRepository;
 
+/**
+ * Repository class for performing CRUD operations on
+ * {@link com.serinity.accesscontrol.model.Profile} entities.
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-03
+ * @see com.serinity.accesscontrol.model.Profile
+ * @see com.serinity.accesscontrol.repository.UserRepository
+ *
+ *      <a
+ *      href=
+ *      "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/repository/ProfileRepository.java">
+ *      ProfileRepository.java
+ *      </a>
+ */
 public final class ProfileRepository extends BaseRepository<Profile, Long> {
-
   public ProfileRepository(final EntityManager em) {
     super(em, Profile.class);
   }

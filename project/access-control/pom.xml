@@ -103,7 +103,11 @@
             <!-- Usage: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>com.serinity.accesscontrol.App</mainClass>
+              <mainClass>com.serinity.accesscontrol/com.serinity.accesscontrol.App</mainClass>
+              <options>
+                <option>--enable-native-access=javafx.graphics</option>
+                <option>--enable-native-access=javafx.web</option>
+              </options>
             </configuration>
           </execution>
         </executions>
