@@ -3,7 +3,6 @@ package com.serinity.accesscontrol;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.flag.ResourceFile;
-import com.serinity.accesscontrol.migration.SkinnedRatOrmMigrator; // TEST: Migration mode
 import com.serinity.accesscontrol.util.FXMLLoaderUtil;
 import com.serinity.accesscontrol.util.I18nUtil;
 
@@ -27,19 +26,21 @@ import javafx.stage.Stage;
  *        </a>
  */
 public class App extends Application {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(App.class);
+
   public static void main(final String[] args) {
     launch();
   }
 
   @Override
   public void start(final Stage stage) {
-    // TEST: Migration mode
-    SkinnedRatOrmMigrator.migrate();
     I18nUtil.applySupportedLocale();
     stage.setScene(FXMLLoaderUtil.loadScene(
         this.getClass(),
         ResourceFile.LOGIN_FXML.getFileName(),
         I18nUtil.getBundle()));
     stage.show();
+    _LOGGER.info("App Launched successfully!");
   }
 } // App class

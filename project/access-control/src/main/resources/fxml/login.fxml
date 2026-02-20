@@ -94,8 +94,9 @@
               promptText="%sign.in.text_field.username_or_email" />
             <PasswordField fx:id="password" layoutY="45.0" prefHeight="40.0" prefWidth="360.0"
               promptText="%login.text_field.password" />
-            <Hyperlink alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="212.0"
-              layoutY="87.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0"
+            <Hyperlink fx:id="forgetPasswordHyperlink" alignment="CENTER_RIGHT"
+              contentDisplay="RIGHT" layoutX="212.0" layoutY="87.0" minHeight="-Infinity"
+              minWidth="-Infinity" onAction="#onForgetPasswordHyperlinkAction" prefHeight="25.0"
               prefWidth="148.0" text="%sign.in.hyperlink.forget-password" />
           </children>
         </Group>

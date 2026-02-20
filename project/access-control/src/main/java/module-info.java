@@ -10,6 +10,7 @@ module com.serinity.accesscontrol {
   requires org.zouarioss.skinnedratorm;
   requires org.simplejavamail;
   requires org.simplejavamail.core;
+  requires org.apache.logging.log4j;
 
   // --- Configuration dependencies ---
   requires io.github.cdimascio.dotenv.java;

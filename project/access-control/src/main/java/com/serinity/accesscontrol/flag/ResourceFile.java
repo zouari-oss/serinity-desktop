@@ -26,6 +26,7 @@ package com.serinity.accesscontrol.flag;
 public enum ResourceFile {
   LOGIN_FXML("/fxml/login.fxml"),
   DASHBOARD_FXML("/fxml/dashboard.fxml"),
+  RESET_PASSWORD_FXML("/fxml/reset-password.fxml"),
   LOGIN_SIDE_HTML("/html/login-side.html"),
   FORGET_PASSWORD_HTML("/html/forgot-password.html");
 

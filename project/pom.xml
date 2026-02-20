@@ -58,6 +58,7 @@
     <dotenv-java.version>3.2.0</dotenv-java.version>
     <skinnedratorm.version>1.0.2</skinnedratorm.version>
     <simple-java-mail.version>8.12.6</simple-java-mail.version>
+    <log4j.version>3.0.0-beta3</log4j.version>
   </properties>
   <!-- !Custom properties -->
 
@@ -137,6 +138,16 @@
         <scope>compile</scope>
       </dependency>
       <!-- !org.simplejavamail.simple-java-mail -->
+
+      <!-- org.apache.logging.log4j.log4j-core -->
+      <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${log4j.version}</version>
+        <scope>compile</scope>
+        <!-- !org.apache.logging.log4j.log4j-core -->
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

@@ -75,12 +75,14 @@ import com.serinity.accesscontrol.flag.ResourceFile;
  * @author @ZouariOmar (zouariomar20@gmail.com)
  */
 public final class MailSenderService {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(MailSenderService.class);
 
   /**
    * Sends an HTML email to a specific recipient using SMTP configuration
    * loaded from environment variables.
    *
-   * @param to       The recipient's email address.
+   * @param toEmail  The recipient's email address.
    * @param subject  The subject line of the email.
    * @param htmlText The HTML content of the email.
    */
@@ -106,11 +108,11 @@ public final class MailSenderService {
                   .withHTMLText(htmlText)
                   .buildEmail() // Building the Email
           );
+      _LOGGER.info("Email send it successfully! - {}, {}", toEmail, subject);
     } catch (final MailException e) {
       e.printStackTrace();
+      _LOGGER.warn("Email sending error! - {}, {}", toEmail, subject);
       throw new RuntimeException(e);
-      // _LOGGER.warn("com.mycompany.hirelog.service.MailSenderService#send - Email
-      // sending error!");
     }
   }
 
@@ -128,6 +130,7 @@ public final class MailSenderService {
         .replace("{{email}}", toEmail)
         .replace("{{generated-code}}", generatedCode);
     send(toEmail, "Reset Your Password", htmlContent);
+    _LOGGER.info("Password reset email send it successfully! - {}, {}, {}", username, toEmail, generatedCode);
   }
 
   /**
@@ -139,10 +142,12 @@ public final class MailSenderService {
   private static String loadHtmlTemplate(final ResourceFile resourceFile) {
     try (InputStream is = MailSenderService.class.getResourceAsStream(resourceFile.getFileName())) {
       if (is == null) {
+        _LOGGER.warn("Resource not found: " + resourceFile);
         throw new RuntimeException("Resource not found: " + resourceFile);
       }
       return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     } catch (final IOException e) {
+      _LOGGER.error("Failed to load resource - {}, {}" + resourceFile, e);
       throw new RuntimeException("Failed to load resource: " + resourceFile, e);
     }
   }
