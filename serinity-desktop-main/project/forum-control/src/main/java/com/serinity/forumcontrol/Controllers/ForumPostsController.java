@@ -53,6 +53,7 @@ public class ForumPostsController {
     private List<Thread> currentThreads = new ArrayList<>();
     private Map<Long, CheckBox> categoryCheckBoxes = new HashMap<>();
     private Map<Long, VBox> subcategoryContainers = new HashMap<>();
+
     private Button currentActiveButton;
 
 
@@ -64,10 +65,6 @@ public class ForumPostsController {
         loadCheckboxCategories();
         configureCategory();
         setActiveNavButton(homeButton);
-        if (sortByComboBox != null) {
-            sortByComboBox.setValue("Newest First");
-            currentSortOption = SortOption.NEWEST_FIRST;
-        }
     }
     private void configureSearch() {
         if (searchField != null) {
@@ -277,7 +274,7 @@ public class ForumPostsController {
         try {
             cardsContainer.getChildren().clear();
             ServiceThread service = new ServiceThread();
-            List<Thread> threads = service.getAll().stream().filter(t-> t.getStatus()!= ThreadStatus.ARCHIVED).toList();
+            List<Thread> threads = service.getAll(user.getCurrentUserId()).stream().filter(t-> t.getStatus()!= ThreadStatus.ARCHIVED).toList();
             currentThreads = threads;
             displayThreads(threads);
         } catch (Exception e) {
@@ -387,9 +384,6 @@ public class ForumPostsController {
 
                 cardsContainer.getChildren().add(card);
             }
-
-            System.out.println("Displayed " + threads.size() + " threads");
-
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to display threads: " + e.getMessage(), Alert.AlertType.ERROR);

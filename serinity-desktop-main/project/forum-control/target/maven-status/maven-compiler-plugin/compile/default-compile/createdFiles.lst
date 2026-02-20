@@ -3,7 +3,6 @@ com\serinity\forumcontrol\Models\ThreadType.class
 com\serinity\forumcontrol\Controllers\ForumPostsController.class
 com\serinity\forumcontrol\Controllers\ThreadDetailController.class
 com\serinity\forumcontrol\Models\Reply.class
-com\serinity\forumcontrol\Services\ServicePostInteraction$VoteCounts.class
 com\serinity\forumcontrol\Interfaces\Services.class
 com\serinity\forumcontrol\Services\ServiceThread.class
 com\serinity\forumcontrol\Controllers\AddThreadController$4.class

@@ -44,6 +44,7 @@ public class ServiceThread implements Services<Thread> {
 
     @Override
     public List<Thread> getAll() {
+
         List<Thread> threads = new ArrayList<>();
         String req = "SELECT * FROM `threads` ORDER BY `is_pinned` DESC, `created_at` DESC";
 
@@ -56,6 +57,95 @@ public class ServiceThread implements Services<Thread> {
                 threads.add(thread);
             }
 
+        } catch (SQLException e) {
+            System.out.println("Error retrieving threads: " + e.getMessage());
+        }
+
+        return threads;
+    }
+
+    public List<Thread> getAll(String currentUserId) {
+        List<Thread> threads = new ArrayList<>();
+
+        String req = """
+    SELECT t.*,
+        COALESCE(cat_score.category_interaction_score, 0) AS category_score,
+        COALESCE(owner_score.owner_interaction_score, 0) AS owner_score,
+        CASE WHEN (
+            EXISTS (SELECT 1 FROM postinteraction pi0 WHERE pi0.thread_id = t.id AND pi0.user_id = ?)
+            OR EXISTS (SELECT 1 FROM replies r0 WHERE r0.thread_id = t.id AND r0.user_id = ?)
+        ) THEN 1 ELSE 0 END AS already_interacted
+
+    FROM threads t
+
+    LEFT JOIN (
+        SELECT t2.category_id,
+            SUM(
+                ABS(pi.vote) +
+                pi.follow +
+                COALESCE(reply_count.cnt, 0)
+            ) AS category_interaction_score
+        FROM postinteraction pi
+        JOIN threads t2 ON pi.thread_id = t2.id
+        LEFT JOIN (
+            SELECT thread_id, COUNT(*) AS cnt
+            FROM replies
+            WHERE user_id = ?
+            GROUP BY thread_id
+        ) reply_count ON reply_count.thread_id = pi.thread_id
+        WHERE pi.user_id = ?
+        -- Exclude interactions on the thread itself to avoid self-boosting
+        AND pi.thread_id NOT IN (
+            SELECT pi_exclude.thread_id FROM postinteraction pi_exclude WHERE pi_exclude.user_id = ?
+        )
+        GROUP BY t2.category_id
+    ) cat_score ON cat_score.category_id = t.category_id
+
+    LEFT JOIN (
+        SELECT t3.user_id AS owner_id,
+            SUM(
+                ABS(pi2.vote) +
+                pi2.follow +
+                COALESCE(reply_count2.cnt, 0)
+            ) AS owner_interaction_score
+        FROM postinteraction pi2
+        JOIN threads t3 ON pi2.thread_id = t3.id
+        LEFT JOIN (
+            SELECT thread_id, COUNT(*) AS cnt
+            FROM replies
+            WHERE user_id = ?
+            GROUP BY thread_id
+        ) reply_count2 ON reply_count2.thread_id = pi2.thread_id
+        WHERE pi2.user_id = ?
+        -- Exclude interactions on the thread itself to avoid self-boosting
+        AND pi2.thread_id NOT IN (
+            SELECT pi_exclude2.thread_id FROM postinteraction pi_exclude2 WHERE pi_exclude2.user_id = ?
+        )
+        GROUP BY t3.user_id
+    ) owner_score ON owner_score.owner_id = t.user_id
+
+    ORDER BY
+        t.is_pinned DESC,
+        already_interacted ASC,
+        (COALESCE(cat_score.category_interaction_score, 0) + COALESCE(owner_score.owner_interaction_score, 0)) DESC
+""";
+
+        try {
+            PreparedStatement stm = this.cnx.prepareStatement(req);
+            stm.setString(1, currentUserId);  // already_interacted EXISTS postinteraction
+            stm.setString(2, currentUserId);  // already_interacted EXISTS replies
+            stm.setString(3, currentUserId);  // reply_count in cat_score
+            stm.setString(4, currentUserId);  // pi.user_id in cat_score
+            stm.setString(5, currentUserId);  // exclusion in cat_score
+            stm.setString(6, currentUserId);  // reply_count2 in owner_score
+            stm.setString(7, currentUserId);  // pi2.user_id in owner_score
+            stm.setString(8, currentUserId);  // exclusion in owner_score
+
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Thread thread = mapResultSetToThread(rs);
+                threads.add(thread);
+            }
         } catch (SQLException e) {
             System.out.println("Error retrieving threads: " + e.getMessage());
         }
