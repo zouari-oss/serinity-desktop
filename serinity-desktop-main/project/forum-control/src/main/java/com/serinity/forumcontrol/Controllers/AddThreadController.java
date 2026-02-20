@@ -4,16 +4,21 @@ import com.serinity.forumcontrol.HardcodedUser.FakeUser;
 import com.serinity.forumcontrol.Models.Category;
 import com.serinity.forumcontrol.Models.ThreadType;
 import com.serinity.forumcontrol.Models.ThreadStatus;
+import com.serinity.forumcontrol.Services.ServiceImgBB;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import com.serinity.forumcontrol.Models.Thread;
 import com.serinity.forumcontrol.Services.ServiceThread;
 import com.serinity.forumcontrol.Services.ServiceCategory;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,13 +32,20 @@ public class AddThreadController {
     @FXML private CheckBox pinnedCheck;
     @FXML private Label headerLabel;
     @FXML private Button publishButton;
+    @FXML private ImageView imagePreview;
+    @FXML private Button uploadImageButton;
+    @FXML private Button removeImageButton;
+    @FXML private Label imageStatusLabel;
 
     private FakeUser user;
     private final ServiceThread threadService = new ServiceThread();
     private final ServiceCategory categoryService = new ServiceCategory();
+    private final ServiceImgBB imgbbService = new ServiceImgBB();
     private int red;
     private boolean isEditMode = false;
     private Thread threadToEdit = null;
+    private File selectedImageFile;
+    private String uploadedImageUrl;
     @FXML
     public void initialize() {
         setAddMode();
@@ -45,6 +57,23 @@ public class AddThreadController {
 
         typeBox.setValue(ThreadType.DISCUSSION);
         checkAdminAndSetPinnedVisibility();
+        initializeImageUpload();
+    }
+    private void initializeImageUpload() {
+        if (removeImageButton != null) {
+            removeImageButton.setVisible(false);
+            removeImageButton.setManaged(false);
+        }
+        if (!imgbbService.isApiKeyConfigured()) {
+            if (uploadImageButton != null) {
+                uploadImageButton.setDisable(true);
+                uploadImageButton.setText("⚠️ API Key Not Configured");
+            }
+            if (imageStatusLabel != null) {
+                imageStatusLabel.setText("ImgBB API key not configured in ServiceImgBB.java");
+                imageStatusLabel.setStyle("-fx-text-fill: red;");
+            }
+        }
     }
     public void setAddMode() {
         isEditMode = false;
@@ -86,6 +115,26 @@ public class AddThreadController {
 
         if (pinnedCheck != null && pinnedCheck.isVisible()) {
             pinnedCheck.setSelected(thread.isPinned());
+        }
+        if (thread.getImageUrl() != null && !thread.getImageUrl().isEmpty()) {
+            try {
+                uploadedImageUrl = thread.getImageUrl();
+                Image image = new Image(thread.getImageUrl(), true);
+                if (imagePreview != null) {
+                    imagePreview.setImage(image);
+                    imagePreview.setVisible(true);
+                }
+                if (imageStatusLabel != null) {
+                    imageStatusLabel.setText("Existing image loaded");
+                    imageStatusLabel.setStyle("-fx-text-fill: green;");
+                }
+                if (removeImageButton != null) {
+                    removeImageButton.setVisible(true);
+                    removeImageButton.setManaged(true);
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to load existing image: " + e.getMessage());
+            }
         }
     }
     private void checkAdminAndSetPinnedVisibility() {
@@ -188,7 +237,105 @@ public class AddThreadController {
             }
         });
     }
+    @FXML
+    private void onUploadImage() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Image");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files",
+                        "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp", "*.webp")
+        );
 
+        File file = fileChooser.showOpenDialog(uploadImageButton.getScene().getWindow());
+
+        if (file != null) {
+            // Validate image
+            if (!imgbbService.isValidImage(file)) {
+                alert("Please select a valid image file (max 32MB)", Alert.AlertType.ERROR);
+                return;
+            }
+
+            selectedImageFile = file;
+
+            // Show preview
+            try {
+                Image image = new Image(file.toURI().toString(), true);
+                if (imagePreview != null) {
+                    imagePreview.setImage(image);
+                    imagePreview.setVisible(true);
+                }
+
+                if (imageStatusLabel != null) {
+                    imageStatusLabel.setText("Image selected: " + file.getName());
+                    imageStatusLabel.setStyle("-fx-text-fill: green;");
+                }
+
+                if (removeImageButton != null) {
+                    removeImageButton.setVisible(true);
+                    removeImageButton.setManaged(true);
+                }
+
+            } catch (Exception e) {
+                alert("Failed to load image preview: " + e.getMessage(), Alert.AlertType.ERROR);
+            }
+        }
+    }
+
+    // NEW METHOD: Handle remove image
+    @FXML
+    private void onRemoveImage() {
+        selectedImageFile = null;
+        uploadedImageUrl = null;
+
+        if (imagePreview != null) {
+            imagePreview.setImage(null);
+            imagePreview.setVisible(false);
+        }
+
+        if (imageStatusLabel != null) {
+            imageStatusLabel.setText("");
+        }
+
+        if (removeImageButton != null) {
+            removeImageButton.setVisible(false);
+            removeImageButton.setManaged(false);
+        }
+    }
+
+    // NEW METHOD: Upload image to ImgBB
+    private boolean uploadImageToImgBB() {
+        if (selectedImageFile == null) {
+            return true; // No image to upload
+        }
+
+        try {
+            if (imageStatusLabel != null) {
+                imageStatusLabel.setText("Uploading image...");
+                imageStatusLabel.setStyle("-fx-text-fill: blue;");
+            }
+
+            // Upload and get URL
+            uploadedImageUrl = imgbbService.uploadImage(selectedImageFile);
+
+            if (uploadedImageUrl != null) {
+                if (imageStatusLabel != null) {
+                    imageStatusLabel.setText("Image uploaded successfully!");
+                    imageStatusLabel.setStyle("-fx-text-fill: green;");
+                }
+                return true;
+            } else {
+                if (imageStatusLabel != null) {
+                    imageStatusLabel.setText("Upload failed");
+                    imageStatusLabel.setStyle("-fx-text-fill: red;");
+                }
+                return false;
+            }
+
+        } catch (IOException e) {
+            alert("Failed to upload image: " + e.getMessage(), Alert.AlertType.ERROR);
+            return false;
+        }
+    }
     @FXML
     private void publish() {
         if (!validateForm()) {
@@ -199,8 +346,21 @@ public class AddThreadController {
             if(red==2){showError(contentArea, "Content is required");return;}
             if(red==22){showError(contentArea, "Content too short (min 20 chars)");return;}
         }
-
         try {
+            if (selectedImageFile != null && !isEditMode) {
+                if (!uploadImageToImgBB()) {
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirm.setTitle("Image Upload Failed");
+                    confirm.setHeaderText(null);
+                    confirm.setContentText("Failed to upload image. Continue without image?");
+
+                    if (confirm.showAndWait().get() != ButtonType.OK) {
+                        return;
+                    }
+                    uploadedImageUrl = null;
+                }
+            }
+
             if (isEditMode) {
                 updateThread();
             } else {
@@ -220,6 +380,7 @@ public class AddThreadController {
         thread.setCategoryId(categoryBox.getValue().getId());
         thread.setType(typeBox.getValue());
         thread.setStatus(ThreadStatus.OPEN);
+        thread.setImageUrl(uploadedImageUrl);
 
 
         boolean isPinned = false;
@@ -251,6 +412,7 @@ public class AddThreadController {
         threadToEdit.setContent(contentArea.getText().trim());
         threadToEdit.setCategoryId(categoryBox.getValue().getId());
         threadToEdit.setType(typeBox.getValue());
+        threadToEdit.setImageUrl(uploadedImageUrl);
 
         if (pinnedCheck != null && pinnedCheck.isVisible()) {
             threadToEdit.setPinned(pinnedCheck.isSelected());
@@ -315,8 +477,21 @@ public class AddThreadController {
         titleField.clear();
         contentArea.clear();
         categoryBox.setValue(null);
-        typeBox.setValue(ThreadType.DISCUSSION);  // Reset to default
+        typeBox.setValue(ThreadType.DISCUSSION);
         pinnedCheck.setSelected(false);
+        selectedImageFile = null;
+        uploadedImageUrl = null;
+        if (imagePreview != null) {
+            imagePreview.setImage(null);
+            imagePreview.setVisible(false);
+        }
+        if (imageStatusLabel != null) {
+            imageStatusLabel.setText("");
+        }
+        if (removeImageButton != null) {
+            removeImageButton.setVisible(false);
+            removeImageButton.setManaged(false);
+        }
     }
 
     private void alert(String msg, Alert.AlertType type) {

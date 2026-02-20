@@ -9,6 +9,7 @@ module com.serinity {
   requires javafx.graphics;
     requires java.desktop;
     requires javafx.base;
+    requires org.json;
 
 
     opens com.serinity.forumcontrol.Controllers to javafx.fxml;

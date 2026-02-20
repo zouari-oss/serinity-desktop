@@ -15,9 +15,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import com.serinity.forumcontrol.Models.Thread;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import java.io.IOException;
 import java.util.List;
@@ -29,6 +31,7 @@ public class ThreadDetailController {
     @FXML private Label lfoukLabel;
     @FXML private Label Category;
     @FXML private TextArea contentArea;
+    @FXML private ImageView threadImageView;
     @FXML private VBox repliesBox;
     @FXML private TextArea replyArea;
     @FXML private Button upvoteButton;
@@ -62,7 +65,21 @@ public class ThreadDetailController {
         Category.setText("  C/" + service.getCategory(t.getCategoryId()));
         metaLabel.setText("Status: " + t.getStatus());
         contentArea.setText(t.getContent());
-
+        if (t.getImageUrl() != null && !t.getImageUrl().isEmpty()) {
+            try {
+                Image image = new Image(t.getImageUrl(), true);
+                threadImageView.setImage(image);
+                threadImageView.setVisible(true);
+                threadImageView.setManaged(true);
+            } catch (Exception e) {
+                System.err.println("Failed to load thread image: " + e.getMessage());
+                threadImageView.setVisible(false);
+                threadImageView.setManaged(false);
+            }
+        } else {
+            threadImageView.setVisible(false);
+            threadImageView.setManaged(false);
+        }
         loadInteractions();
         loadReplies();
     }
@@ -150,22 +167,33 @@ public class ThreadDetailController {
     @FXML
     private void goBack() {
         try {
-            FXMLLoader loader =
-                    new FXMLLoader(getClass()
-                            .getResource("/fxml/forum/ForumPostsView.fxml"));
-
+            FXMLLoader loader = new FXMLLoader(getClass()
+                    .getResource("/fxml/forum/ForumPostsView.fxml"));
             Parent page = loader.load();
 
-            StackPane host =
-                    (StackPane) titleLabel
-                            .getScene()
-                            .lookup("#contentHost");
-
-            host.getChildren().setAll(page);
+            BorderPane borderPane = findBorderPane();
+            if (borderPane != null) {
+                borderPane.setCenter(page);
+            } else {
+                System.err.println("Could not find BorderPane to go back");
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private javafx.scene.layout.BorderPane findBorderPane() {
+        if (titleLabel != null && titleLabel.getScene() != null) {
+            javafx.scene.Node node = titleLabel.getScene().getRoot();
+            while (node != null) {
+                if (node instanceof javafx.scene.layout.BorderPane) {
+                    return (javafx.scene.layout.BorderPane) node;
+                }
+                node = node.getParent();
+            }
+        }
+        return null;
     }
 
     public Thread getThread() {

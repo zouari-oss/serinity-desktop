@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.image.ImageView?>
 <VBox xmlns="http://javafx.com/javafx/17.0.12"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.serinity.forumcontrol.Controllers.ThreadDetailController"
@@ -84,7 +85,7 @@
                     <TextArea fx:id="contentArea"
                               editable="false"
                               wrapText="true"
-                              prefHeight="300"
+                              prefHeight="100"
                               style="-fx-background-color: #fafafa;
                                      -fx-border-color: transparent;
                                      -fx-font-size: 14;
@@ -94,7 +95,17 @@
                                      -fx-control-inner-background: #fafafa;"/>
 
                     <Separator style="-fx-background-color: #f0f0f0;"/>
+                    <ImageView fx:id="threadImageView"
+                               fitWidth="600"
+                               preserveRatio="true"
+                               visible="false"
+                               managed="false"
+                               style="-fx-border-color: #e0e0e0;
+                                     -fx-border-width: 1;
+                                     -fx-border-radius: 5;
+                                     -fx-background-radius: 5;"/>
 
+                    <Separator style="-fx-background-color: #f0f0f0;"/>
                     <!-- Interaction Buttons -->
                     <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10 0 0 0;">
 

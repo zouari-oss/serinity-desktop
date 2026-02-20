@@ -22,6 +22,9 @@ public class Thread {
     private int dislikecount;
     private int followcount;
     private int repliescount;
+    private String imageUrl;
+
+
 
     // Associations
     private PostInteraction interactions;
@@ -144,6 +147,13 @@ public class Thread {
     public void setCategory(Category category) {
         this.category = category;
     }
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public List<Reply> getReplies() {
         return replies;
@@ -153,7 +163,6 @@ public class Thread {
         this.replies = replies;
     }
 
-    // Association helper methods
     public void addReply(Reply reply) {
         if (!this.replies.contains(reply)) {
             this.replies.add(reply);

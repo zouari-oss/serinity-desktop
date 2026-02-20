@@ -80,13 +80,13 @@ public class ThreadCardController {
 
             controller.setThread(thread);
 
-            // find Template contentHost
-            StackPane host =
-                    (StackPane) titleLabel
-                            .getScene()
-                            .lookup("#contentHost");
+            BorderPane borderPane = findBorderPane();
+            if (borderPane != null) {
+                borderPane.setCenter(page);
+            } else {
+                System.err.println("Could not find BorderPane to open thread detail");
+            }
 
-            host.getChildren().setAll(page);
 
         } catch (Exception e) {
             e.printStackTrace();

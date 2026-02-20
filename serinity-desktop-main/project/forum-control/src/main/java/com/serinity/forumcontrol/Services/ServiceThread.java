@@ -23,7 +23,7 @@ public class ServiceThread implements Services<Thread> {
     public void add(Thread thread) {
         thread.setUserId(String.valueOf(FakeUser.getCurrentUserId()));
 
-        String req = "INSERT INTO `threads` (`category_id`, `user_id`, `title`, `content`, `type`, `status`, `is_pinned`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String req = "INSERT INTO `threads` (`category_id`, `user_id`, `title`, `content`,`image_url`, `type`, `status`, `is_pinned`) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
 
         try {
             PreparedStatement pstm = this.cnx.prepareStatement(req);
@@ -31,9 +31,11 @@ public class ServiceThread implements Services<Thread> {
             pstm.setString(2, thread.getUserId());
             pstm.setString(3, thread.getTitle());
             pstm.setString(4, thread.getContent());
-            pstm.setString(5, thread.getType().getValue());
-            pstm.setString(6, thread.getStatus().getValue());
-            pstm.setBoolean(7, thread.isPinned());
+            pstm.setString(5, thread.getImageUrl());
+            pstm.setString(6, thread.getType().getValue());
+            pstm.setString(7, thread.getStatus().getValue());
+            pstm.setBoolean(8, thread.isPinned());
+
 
             pstm.executeUpdate();
             System.out.println("Thread added successfully by user " + thread.getUserId());
@@ -117,7 +119,6 @@ public class ServiceThread implements Services<Thread> {
             GROUP BY thread_id
         ) reply_count2 ON reply_count2.thread_id = pi2.thread_id
         WHERE pi2.user_id = ?
-        -- Exclude interactions on the thread itself to avoid self-boosting
         AND pi2.thread_id NOT IN (
             SELECT pi_exclude2.thread_id FROM postinteraction pi_exclude2 WHERE pi_exclude2.user_id = ?
         )
@@ -139,7 +140,8 @@ public class ServiceThread implements Services<Thread> {
             stm.setString(5, currentUserId);  // exclusion in cat_score
             stm.setString(6, currentUserId);  // reply_count2 in owner_score
             stm.setString(7, currentUserId);  // pi2.user_id in owner_score
-            stm.setString(8, currentUserId);  // exclusion in owner_score
+            stm.setString(8, currentUserId);
+
 
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
@@ -155,7 +157,7 @@ public class ServiceThread implements Services<Thread> {
 
     @Override
     public void update(Thread thread) {
-        String req = "UPDATE `threads` SET `category_id` = ?, `user_id` = ?, `title` = ?, `content` = ?, `type` = ?, `status` = ?, `is_pinned` = ? WHERE `id` = ?";
+        String req = "UPDATE `threads` SET `category_id` = ?, `user_id` = ?, `title` = ?, `content` = ?,`content` = ?, `type` = ?, `status` = ?, `is_pinned` = ? WHERE `id` = ?";
 
         try {
             PreparedStatement pstm = this.cnx.prepareStatement(req);
@@ -163,10 +165,11 @@ public class ServiceThread implements Services<Thread> {
             pstm.setString(2, thread.getUserId());
             pstm.setString(3, thread.getTitle());
             pstm.setString(4, thread.getContent());
-            pstm.setString(5, thread.getType().getValue());
-            pstm.setString(6, thread.getStatus().getValue());
-            pstm.setBoolean(7, thread.isPinned());
-            pstm.setLong(8, thread.getId());
+            pstm.setString(5, thread.getImageUrl());
+            pstm.setString(6, thread.getType().getValue());
+            pstm.setString(7, thread.getStatus().getValue());
+            pstm.setBoolean(8, thread.isPinned());
+            pstm.setLong(9, thread.getId());
 
             int rowsAffected = pstm.executeUpdate();
             if (rowsAffected > 0) {
@@ -425,6 +428,7 @@ public class ServiceThread implements Services<Thread> {
         thread.setDislikecount(rs.getInt("dislikecount"));
         thread.setFollowcount(rs.getInt("followcount"));
         thread.setRepliescount(rs.getInt("repliescount"));
+        thread.setImageUrl(rs.getString("image_url"));
 
         return thread;
     }
