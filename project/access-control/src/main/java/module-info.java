@@ -8,6 +8,8 @@ module com.serinity.accesscontrol {
   requires java.sql;
   requires java.naming;
   requires org.zouarioss.skinnedratorm;
+  requires org.simplejavamail;
+  requires org.simplejavamail.core;
 
   // --- Configuration dependencies ---
   requires io.github.cdimascio.dotenv.java;

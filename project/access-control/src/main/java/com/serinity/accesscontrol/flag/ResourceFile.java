@@ -26,7 +26,8 @@ package com.serinity.accesscontrol.flag;
 public enum ResourceFile {
   LOGIN_FXML("/fxml/login.fxml"),
   DASHBOARD_FXML("/fxml/dashboard.fxml"),
-  LOGIN_SIDE_HTML("/html/login-side.html");
+  LOGIN_SIDE_HTML("/html/login-side.html"),
+  FORGET_PASSWORD_HTML("/html/forgot-password.html");
 
   private final String fileName;
 
@@ -35,6 +36,11 @@ public enum ResourceFile {
   }
 
   public final String getFileName() {
+    return fileName;
+  }
+
+  @Override
+  public String toString() {
     return fileName;
   }
 } // ResourceFile enum
