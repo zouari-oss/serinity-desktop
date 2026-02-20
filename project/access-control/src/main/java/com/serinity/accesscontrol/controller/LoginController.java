@@ -124,7 +124,9 @@ public class LoginController {
 
   @FXML
   void onSignInButtonAction(ActionEvent event) {
-
+    UserService.signIn(
+        usernameOrEmail.getText(),
+        password.getText());
   }
 
   @FXML
@@ -140,11 +142,18 @@ public class LoginController {
 
   @FXML
   void onSignUpButtonAction(ActionEvent event) {
-    UserService.signUp(
+    UserService.signUp( // TODO: I need to return a message from `signUp`
         singnUpEmailTextField.getText(),
         signUpPasswordField.getText(),
         signUpConfirmPasswordField.getText(),
         signUpUserRoleComboBox.getValue());
+
+    // Sign-up success
+    Stage stage = (Stage) signUpUserRoleComboBox.getScene().getWindow();
+    stage.setScene(FXMLLoaderUtil.loadScene(
+        this.getClass(),
+        ResourceFile.DASHBOARD_FXML.getFileName(),
+        I18nUtil.getBundle()));
   }
 
   @FXML
