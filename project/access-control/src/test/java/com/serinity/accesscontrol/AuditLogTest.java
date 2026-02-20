@@ -194,7 +194,6 @@ public final class AuditLogTest {
       final AuditLog log = createTestAuditLog(action);
       log.setSession(testSession);
       auditLogRepository.save(log);
-
       assertEquals(action, log.getAction());
     }
   }

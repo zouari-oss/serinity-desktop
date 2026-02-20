@@ -28,6 +28,7 @@ import io.github.cdimascio.dotenv.DotenvException;
  * <li>{@code DATABASE_USERNAME} – Database authentication username</li>
  * <li>{@code DATABASE_PASSWORD} – Database authentication password</li>
  * <li>{@code JDBC_DRIVER} – Fully qualified JDBC driver class name</li>
+ * <li>more..</li>
  * </ul>
  *
  * <p>
@@ -52,7 +53,7 @@ public class EnvironmentVariableLoader {
   static {
     try {
       dotenv = Dotenv.configure()
-          .filename(".env.development")
+          .filename(".env")
           .ignoreIfMissing()
           .load();
     } catch (final DotenvException e) {
@@ -62,18 +63,42 @@ public class EnvironmentVariableLoader {
   }
 
   public final static String getDatabaseUrl() {
-    return dotenv.get("DATABASE_URL").toString();
+    return dotenv.get("DATABASE_URL");
   }
 
   public final static String getDatabaseUsername() {
-    return dotenv.get("DATABASE_USERNAME").toString();
+    return dotenv.get("DATABASE_USERNAME");
   }
 
   public final static String getDatabasePassword() {
-    return dotenv.get("DATABASE_PASSWORD").toString();
+    return dotenv.get("DATABASE_PASSWORD");
   }
 
   public final static String getJdbcDriver() {
-    return dotenv.get("JDBC_DRIVER").toString();
+    return dotenv.get("JDBC_DRIVER");
+  }
+
+  public final static String getSmtpHost() {
+    return dotenv.get("SMTP_HOST");
+  }
+
+  public final static int getSmtpPort() {
+    return Integer.parseInt(dotenv.get("SMTP_PORT"));
+  }
+
+  public final static String getSmtpPassword() {
+    return dotenv.get("SMTP_PASSWORD");
+  }
+
+  public final static String getSmtpUsername() {
+    return dotenv.get("SMTP_USERNAME");
+  }
+
+  public final static String getSmtpFromName() {
+    return dotenv.get("SMTP_FROM_NAME");
+  }
+
+  public final static boolean isSmptTls() {
+    return dotenv.get("SMTP_USE_TLS").equals("true");
   }
 } // EnvironmentVariableLoader class
