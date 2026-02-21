@@ -1,6 +1,10 @@
 // `UserService` pckage name
 package com.serinity.accesscontrol.service;
 
+// `java` import(s)
+import java.util.Optional;
+
+// `zouarioss` import(s)
 import org.zouarioss.skinnedratorm.core.EntityManager;
 
 // `serinity` import(s)
@@ -41,14 +45,18 @@ import com.serinity.accesscontrol.util.RegexValidator;
  *      </a>
  */
 public final class UserService {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(MailSenderService.class);
+
   public static void signUp(
       final String email,
       final String password,
       final String confirmPassword,
       final UserRole role) {
-    // =====================
-    // == Data Validation ==
-    // =====================
+
+    // #####################
+    // ## Data Validation ##
+    // #####################
     if (!RegexValidator.isValidEmail(email)) {
       return;
     }
@@ -65,9 +73,9 @@ public final class UserService {
       return;
     }
 
-    // ===========
-    // == Setup ==
-    // ===========
+    // ###########
+    // ## Setup ##
+    // ###########
     final User user = new User();
     user.setEmail(email);
     user.setPasswordHash(PasswordEncoder.encode(password));
@@ -83,9 +91,9 @@ public final class UserService {
     auditLog.setAction(AuditAction.USER_SIGN_UP.getValue());
     auditLog.setSession(authSession);
 
-    // ================
-    // == Persisting ==
-    // ================
+    // ################
+    // ## Persisting ##
+    // ################
     final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
     final UserRepository userRepository = new UserRepository(em);
     userRepository.save(user);
@@ -99,7 +107,7 @@ public final class UserService {
     final AuditLogRepository auditLogRepository = new AuditLogRepository(em);
     auditLogRepository.save(auditLog);
 
-    System.out.println("DONE");
+    _LOGGER.info("User: {}, {} sign-in!", email, role);
   }
 
   public static User signIn(final String usernameOrEmail, final String password) {
@@ -107,9 +115,9 @@ public final class UserService {
     final AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
     final UserRepository userRepository = new UserRepository(em);
 
-    // =====================
-    // == Data Validation ==
-    // =====================
+    // #####################
+    // ## Data Validation ##
+    // #####################
     if (!RegexValidator.isValidEmail(usernameOrEmail)) {
       return null;
     }
@@ -117,6 +125,19 @@ public final class UserService {
     final User user = userRepository.findUserByEmail(usernameOrEmail);
 
     authSessionRepository.findActiveSession(user);
-    return null;
+    return null; // TODO
   }
+
+  public static Optional<String> resetPassword(final String email) {
+    return null; // TODO
+  }
+
+  public static Optional<String> resetPassword(
+      final String email,
+      final String accualCode,
+      final String inputCode,
+      final String newPassword) {
+    return null; // TODO
+  }
+
 } // UserService final class

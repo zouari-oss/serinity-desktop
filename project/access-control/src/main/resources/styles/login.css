@@ -1,5 +1,4 @@
 @import "styles.css";
-@import "footer.css";
 
 .signinPane {
   -fx-background-color: -color-secondary;
@@ -9,19 +8,11 @@
   transition: -fx-translate-x 0.2s linear;
 }
 
-#signInButton:hover {
+.rootButton:hover {
   -fx-text-fill: rgba(0, 0, 0, 0);
 }
 
-#signUpButton:hover {
-  -fx-text-fill: rgba(0, 0, 0, 0);
-}
-
-#signInButton:hover .loginIconImageView {
-  -fx-translate-x: 60;
-}
-
-#signUpButton:hover .loginIconImageView {
+.rootButton:hover .loginIconImageView {
   -fx-translate-x: 60;
 }
 

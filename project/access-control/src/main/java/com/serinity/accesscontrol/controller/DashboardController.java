@@ -15,40 +15,49 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
 
-public class DashboardController {
+/**
+ * `dashboard.fxml` controller class
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-02-21
+ *
+ *        <a
+ *        href=
+ *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/controller/DashboardController.java">
+ *        DashboardController.java
+ *        </a>
+ */
+public final class DashboardController {
   @FXML
   private Button btnDashboard;
+
   @FXML
   private Button btnSleep;
+
   @FXML
   private Button btnMood;
+
   @FXML
   private Button btnSupport;
+
   @FXML
   private Button btnExercises;
+
   @FXML
   private Button btnAppointments;
 
   @FXML
   private Label userNameLabel;
+
   @FXML
   private StackPane contentHost;
+
   @FXML
   private Label footerLabel;
 
-  // Footer language menu (Template.fxml)
-  @FXML
-  private MenuButton langMenu;
-  @FXML
-  private MenuItem langEN;
-  @FXML
-  private MenuItem langFR;
-
-  // Injected automatically when Template.fxml is loaded with a bundle
   @FXML
   private ResourceBundle resources;
 
@@ -64,19 +73,9 @@ public class DashboardController {
 
     // userNameLabel.setText(resources.getString("user.name.placeholder"));
 
-    initLanguageMenu();
-
     // Default landing
     setActiveNav(btnMood);
     // loadIntoHost("/fxml/mood/MoodHome.fxml");
-  }
-
-  private void initLanguageMenu() {
-    final Locale current = resources.getLocale();
-    langMenu.setText("fr".equals(current.getLanguage()) ? "FR" : "EN");
-
-    langEN.setOnAction(e -> switchLang(Locale.ENGLISH));
-    langFR.setOnAction(e -> switchLang(Locale.FRENCH));
   }
 
   private void switchLang(final Locale target) {
@@ -117,4 +116,4 @@ public class DashboardController {
       throw new RuntimeException("Failed to load: " + fxmlPath, e);
     }
   }
-}
+} // DashboardController final class

@@ -5,8 +5,6 @@ package com.serinity.accesscontrol.util;
 import java.util.UUID;
 
 /**
- * UsernameGenerator.java
- *
  * Utility class for generating unique, sanitized usernames based on email
  * addresses.
  *

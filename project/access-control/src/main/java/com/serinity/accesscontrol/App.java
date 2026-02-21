@@ -38,7 +38,7 @@ public class App extends Application {
     I18nUtil.applySupportedLocale();
     stage.setScene(FXMLLoaderUtil.loadScene(
         this.getClass(),
-        ResourceFile.LOGIN_FXML.getFileName(),
+        ResourceFile.ROOT_FXML.getFileName(),
         I18nUtil.getBundle()));
     stage.show();
     _LOGGER.info("App Launched successfully!");

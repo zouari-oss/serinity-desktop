@@ -15,13 +15,13 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane fx:id="loginInterface" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-  minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="app-bg"
+
+<AnchorPane fx:id="loginInterface" prefHeight="600.0" prefWidth="800.0"
   stylesheets="@../styles/login.css" xmlns="http://javafx.com/javafx/25"
   xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="com.serinity.accesscontrol.controller.LoginController">
   <children>
-    <Pane prefHeight="561.0" prefWidth="394.0" styleClass="signinPane" AnchorPane.bottomAnchor="0.0"
+    <Pane prefHeight="600.0" prefWidth="400.0" styleClass="signinPane" AnchorPane.bottomAnchor="0.0"
       AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
         <Group layoutX="14.0" layoutY="32.0">
@@ -49,7 +49,8 @@
           <children>
             <Button fx:id="signUpButton" defaultButton="true" layoutX="30.0" layoutY="14.0"
               mnemonicParsing="false" onAction="#onSignUpButtonAction" prefHeight="40.0"
-              prefWidth="140.0" text="%sign.up.button.signup" textAlignment="CENTER">
+              prefWidth="140.0" styleClass="rootButton" text="%sign.up.button.signup"
+              textAlignment="CENTER">
               <cursor>
                 <Cursor fx:constant="CLOSED_HAND" />
               </cursor>
@@ -63,21 +64,20 @@
               </graphic>
             </Button>
             <Separator layoutX="-12.0" layoutY="64.0" prefHeight="2.0" prefWidth="224.0" />
+            <Label alignment="CENTER" layoutX="-9.0" layoutY="68.0" prefHeight="25.0"
+              prefWidth="224.0" styleClass="normalLabel" text="%sign.up.label.to_signin" />
+            <Hyperlink fx:id="signInHyperlink" alignment="CENTER" layoutX="47.0" layoutY="92.0"
+              minHeight="-Infinity" minWidth="-Infinity" onAction="#onSignInHyperlinkAction"
+              prefHeight="25.0" prefWidth="112.0" text="%sign.up.hyperlink.to_signin" />
           </children>
         </Group>
-        <Group layoutX="98.0" layoutY="461.0" />
-        <Label layoutX="6.0" layoutY="535.0" prefHeight="25.0" prefWidth="345.0"
-          styleClass="normalLabel" text="%login.label.terms_privacy" />
-        <Label alignment="CENTER" layoutX="89.0" layoutY="425.0" prefHeight="25.0" prefWidth="224.0"
-          styleClass="normalLabel" text="%sign.up.label.to_signin" />
-        <Hyperlink fx:id="signInHyperlink" alignment="CENTER" layoutX="146.0" layoutY="450.0"
-          minHeight="-Infinity" minWidth="-Infinity" onAction="#onSignInHyperlinkAction"
-          prefHeight="25.0" prefWidth="112.0" text="%sign.up.hyperlink.to_signin" />
+        <Label layoutX="8.0" layoutY="535.0" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="25.0" prefWidth="345.0" styleClass="normalLabel"
+          text="%login.label.terms_privacy" />
       </children>
     </Pane>
-    <Pane layoutX="406.0" layoutY="41.0" prefHeight="561.0" prefWidth="394.0"
-      styleClass="signinPane" AnchorPane.bottomAnchor="39.0" AnchorPane.rightAnchor="0.0"
-      AnchorPane.topAnchor="0.0">
+    <Pane layoutX="400.0" prefHeight="600.0" prefWidth="400.0" styleClass="signinPane"
+      AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
         <Group layoutX="14.0" layoutY="32.0">
           <children>
@@ -117,7 +117,7 @@
               text="%sign.in.label.or_login_with" textAlignment="CENTER" />
             <Button fx:id="signInButton" defaultButton="true" layoutX="31.0" mnemonicParsing="false"
               onAction="#onSignInButtonAction" prefHeight="40.0" prefWidth="140.0"
-              text="%sign.in.button.login" textAlignment="CENTER">
+              styleClass="rootButton" text="%sign.in.button.login" textAlignment="CENTER">
               <cursor>
                 <Cursor fx:constant="CLOSED_HAND" />
               </cursor>
@@ -141,18 +141,11 @@
               prefWidth="69.0" text="%sign.in.hyperlink.to_signup" />
           </children>
         </Group>
-        <Label layoutX="6.0" layoutY="535.0" prefHeight="25.0" prefWidth="345.0"
+        <Label layoutX="8.0" layoutY="535.0" prefHeight="25.0" prefWidth="345.0"
           styleClass="normalLabel" text="%login.label.terms_privacy" />
       </children>
     </Pane>
-    <WebView fx:id="loginSideWebView" layoutY="41.0" prefHeight="561.0" prefWidth="405.0"
-      AnchorPane.bottomAnchor="39.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="395.0"
-      AnchorPane.topAnchor="0.0" />
-    <Label fx:id="footerLabel" layoutY="560.0" prefHeight="26.0" prefWidth="800.0"
-      styleClass="footer-bar" text="%footer.label.text" AnchorPane.bottomAnchor="0.0"
-      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-    <ComboBox fx:id="languageComboBox" layoutX="718.0" layoutY="568.0"
-      onAction="#onLanguageComboBoxAction" prefHeight="18.0" prefWidth="68.0"
-      AnchorPane.bottomAnchor="6.0" AnchorPane.rightAnchor="14.0" />
+    <WebView fx:id="loginSideWebView" prefWidth="400.0" AnchorPane.bottomAnchor="0.0"
+      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="0.0" />
   </children>
 </AnchorPane>
