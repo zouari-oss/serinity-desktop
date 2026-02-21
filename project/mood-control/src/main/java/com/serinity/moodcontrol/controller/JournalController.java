@@ -1,7 +1,9 @@
 package com.serinity.moodcontrol.controller;
 
 import com.serinity.moodcontrol.dao.JournalEntryDao;
+import com.serinity.moodcontrol.interfaces.IJournalEntryService;
 import com.serinity.moodcontrol.model.JournalEntry;
+import com.serinity.moodcontrol.service.JournalEntryService;
 import com.serinity.moodcontrol.service.JournalService;
 
 import javafx.animation.TranslateTransition;
@@ -9,10 +11,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -20,20 +22,19 @@ import javafx.util.Duration;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.ArrayList;
-
 
 public class JournalController {
 
     // kima Journal.fxml prefWidth
     private static final double EDITOR_WIDTH = 430.0;
 
-    // TEMP until users module
-    private static final long USER_ID = 1L;
-    // TODO(USER-ID): migrate user_id from BIGINT (long) to CHAR (String) .
+    // TEMP until users module (UUID CHAR(36))
+    private static final String USER_ID = "6affa2df-dda9-442d-99ee-d2a3c1e78c64";
+    // TODO(USER-ID): replace USER_ID with authenticated id from access-control integration.
 
     @FXML private VBox journalBox;
 
@@ -47,14 +48,16 @@ public class JournalController {
     // DB
     private final JournalEntryDao dao = new JournalEntryDao();
 
-    private final JournalService journalService =
-            new JournalService(dao, this::serializeGuided);
+    // CRUD wrapper service (workshop interface style)
+    private final IJournalEntryService journalEntryService = new JournalEntryService(dao);
 
+    // Business logic service (validation + guided serialization)
+    private final JournalService journalService = new JournalService(dao, this::serializeGuided);
 
     // current data
-    private List<JournalEntry> items = new ArrayList<JournalEntry>();
+    private List<JournalEntry> items = new ArrayList<>();
 
-    // tracki current "edit context"
+    // track current "edit context"
     private JournalEntry editing = null;
 
     @FXML
@@ -71,9 +74,7 @@ public class JournalController {
         closeEditorInstant();
     }
 
-
-    //  editor component
-
+    // editor component
     private void loadEditor() {
         try {
             final FXMLLoader loader = new FXMLLoader(
@@ -84,7 +85,7 @@ public class JournalController {
             final Parent view = loader.load();
             editor = loader.getController();
 
-            editor.setOnSave(draft -> onEditorSave(draft));
+            editor.setOnSave(this::onEditorSave);
             editor.setOnCancel(new Runnable() {
                 @Override public void run() { closeEditor(); }
             });
@@ -96,9 +97,7 @@ public class JournalController {
         }
     }
 
-    //  actions
-
-
+    // actions
     @FXML
     private void onNew() {
         editing = null;
@@ -118,19 +117,16 @@ public class JournalController {
     }
 
     // DB load
-
-
     private void reloadFromDb() {
         try {
-            items = dao.findAll(USER_ID);
+            items = journalEntryService.getAll(USER_ID);
         } catch (SQLException e) {
             e.printStackTrace();
-            items = new ArrayList<JournalEntry>();
+            items = new ArrayList<>();
         }
     }
 
-    // Editor
-
+    // Editor save
     private void onEditorSave(final JournalEditorController.JournalDraft d) {
         String title = safe(d.title);
 
@@ -144,14 +140,13 @@ public class JournalController {
             String fieldKey = parts.length > 0 ? parts[0] : err;
             String ruleKey  = parts.length > 1 ? parts[1] : "journal.validation.invalid";
 
-            final javafx.scene.control.Alert alert =
-                    new javafx.scene.control.Alert(Alert.AlertType.WARNING);
+            final Alert alert = new Alert(Alert.AlertType.WARNING);
 
             alert.setTitle(t("journal.validation.title"));
             alert.setHeaderText(null);
             alert.setContentText(t(fieldKey) + " " + t(ruleKey));
 
-            alert.getButtonTypes().setAll(javafx.scene.control.ButtonType.OK);
+            alert.getButtonTypes().setAll(ButtonType.OK);
 
             alert.getDialogPane().getStylesheets().add(
                     getClass().getResource("/styles/styles.css").toExternalForm()
@@ -167,7 +162,6 @@ public class JournalController {
         render();
         closeEditor();
     }
-
 
     private void openEdit(final JournalEntry entry) {
         editing = entry;
@@ -185,7 +179,6 @@ public class JournalController {
     }
 
     // Rendering
-
     private void render() {
         journalBox.getChildren().clear();
 
@@ -205,7 +198,7 @@ public class JournalController {
                 journalBox.getChildren().add(dateHeader(d));
             }
 
-            journalBox.getChildren().add(journalCard(e, dt)); // <-- component now
+            journalBox.getChildren().add(journalCard(e, dt));
         }
     }
 
@@ -254,8 +247,8 @@ public class JournalController {
                     entry,
                     dt,
                     resources,
-                    e -> openEdit(e),
-                    e -> onDelete(e)
+                    this::openEdit,
+                    this::onDelete
             );
 
             return card;
@@ -275,7 +268,7 @@ public class JournalController {
         final Optional<ButtonType> res = alert.showAndWait();
         if (res.isPresent() && res.get() == ButtonType.OK) {
             try {
-                dao.delete(entry.getId(), USER_ID);
+                journalEntryService.delete(entry.getId(), USER_ID);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -285,7 +278,6 @@ public class JournalController {
     }
 
     // Overlay open/close
-
     private void showEditor() {
         overlay.setManaged(true);
         overlay.setVisible(true);
@@ -316,10 +308,7 @@ public class JournalController {
         tt.play();
     }
 
-
-    // partie serialisation, el QnA lkol fi string
-
-
+    // guided serialization
     private static class Parsed {
         final String a1;
         final String a2;
@@ -359,8 +348,6 @@ public class JournalController {
         final String part = (next >= 0) ? content.substring(start, next) : content.substring(start);
         return part.trim();
     }
-
-    // DB insert trim
 
     private String safe(final String s) {
         return s == null ? "" : s.trim();

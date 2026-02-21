@@ -16,7 +16,7 @@ public class MoodEntryDao {
         try {
             final long entryId = insertMoodEntry(cn, entry);
 
-            // entry.getEmotions() CODE
+            // entry.getEmotions() CODES
             final List<Integer> emotionIds = idsByCodes(cn, "emotion", entry.getEmotions());
             linkMany(cn, "mood_entry_emotion", "emotion_id", entryId, emotionIds);
 
@@ -37,7 +37,7 @@ public class MoodEntryDao {
     }
 
     // HISTORY
-    public List<MoodHistoryItem> findHistory(final long userId, final Integer lastDays, final String typeFilter)
+    public List<MoodHistoryItem> findHistory(final String userId, final Integer lastDays, final String typeFilter)
             throws SQLException {
 
         final StringBuilder sql = new StringBuilder(
@@ -45,7 +45,7 @@ public class MoodEntryDao {
                         "FROM mood_entry WHERE user_id = ? ");
 
         final List<Object> params = new ArrayList<Object>();
-        params.add(Long.valueOf(userId));
+        params.add(userId);
 
         if (lastDays != null) {
             sql.append(" AND entry_date >= (NOW() - INTERVAL ? DAY) ");
@@ -70,9 +70,7 @@ public class MoodEntryDao {
 
             for (int i = 0; i < params.size(); i++) {
                 final Object p = params.get(i);
-                if (p instanceof Long)
-                    ps.setLong(i + 1, ((Long) p).longValue());
-                else if (p instanceof Integer)
+                if (p instanceof Integer)
                     ps.setInt(i + 1, ((Integer) p).intValue());
                 else
                     ps.setString(i + 1, String.valueOf(p));
@@ -81,7 +79,8 @@ public class MoodEntryDao {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     final long id = rs.getLong("id");
-                    final LocalDateTime dt = rs.getTimestamp("entry_date").toLocalDateTime();
+                    final Timestamp ts = rs.getTimestamp("entry_date");
+                    final LocalDateTime dt = (ts == null) ? null : ts.toLocalDateTime();
                     final String momentType = rs.getString("moment_type");
                     final int moodLevel = rs.getInt("mood_level");
 
@@ -100,7 +99,7 @@ public class MoodEntryDao {
     }
 
     // READ ONE (FOR EDIT)
-    public MoodHistoryItem findById(final long moodEntryId, final long userId) throws SQLException {
+    public MoodHistoryItem findById(final long moodEntryId, final String userId) throws SQLException {
 
         final String sql = "SELECT id, entry_date, moment_type, mood_level " +
                 "FROM mood_entry " +
@@ -112,12 +111,13 @@ public class MoodEntryDao {
         try (PreparedStatement ps = cn.prepareStatement(sql)) {
 
             ps.setLong(1, moodEntryId);
-            ps.setLong(2, userId);
+            ps.setString(2, userId);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     final long id = rs.getLong("id");
-                    final LocalDateTime dt = rs.getTimestamp("entry_date").toLocalDateTime();
+                    final Timestamp ts = rs.getTimestamp("entry_date");
+                    final LocalDateTime dt = (ts == null) ? null : ts.toLocalDateTime();
                     final String momentType = rs.getString("moment_type");
                     final int moodLevel = rs.getInt("mood_level");
 
@@ -135,13 +135,13 @@ public class MoodEntryDao {
         return map.values().iterator().next();
     }
 
-    //UPDATE (REAL)
+    // UPDATE (REAL)
     public void update(final MoodEntry entry) throws SQLException {
         if (entry == null)
             throw new IllegalArgumentException("entry is null");
         if (entry.getId() <= 0)
             throw new IllegalArgumentException("entry id is missing");
-        if (entry.getUserId() <= 0)
+        if (entry.getUserId() == null || entry.getUserId().trim().isEmpty())
             throw new IllegalArgumentException("user id is missing");
 
         final Connection cn = DbConnection.getConnection();
@@ -156,7 +156,7 @@ public class MoodEntryDao {
                 ps.setString(1, entry.getMomentType());
                 ps.setInt(2, entry.getMoodLevel());
                 ps.setLong(3, entry.getId());
-                ps.setLong(4, entry.getUserId());
+                ps.setString(4, entry.getUserId());
 
                 final int rows = ps.executeUpdate();
                 if (rows == 0) {
@@ -184,7 +184,7 @@ public class MoodEntryDao {
     }
 
     // DELETE
-    public boolean delete(final long moodEntryId, final long userId) throws SQLException {
+    public boolean delete(final long moodEntryId, final String userId) throws SQLException {
         final Connection cn = DbConnection.getConnection();
         cn.setAutoCommit(false);
 
@@ -198,7 +198,7 @@ public class MoodEntryDao {
             int rows;
             try (PreparedStatement ps = cn.prepareStatement(sql)) {
                 ps.setLong(1, moodEntryId);
-                ps.setLong(2, userId);
+                ps.setString(2, userId);
                 rows = ps.executeUpdate();
             }
 
@@ -214,10 +214,15 @@ public class MoodEntryDao {
     }
 
     private long insertMoodEntry(final Connection cn, final MoodEntry entry) throws SQLException {
+        if (entry == null)
+            throw new IllegalArgumentException("entry is null");
+        if (entry.getUserId() == null || entry.getUserId().trim().isEmpty())
+            throw new IllegalArgumentException("user id is missing");
+
         final String sql = "INSERT INTO mood_entry (user_id, moment_type, mood_level) VALUES (?, ?, ?)";
 
         try (PreparedStatement ps = cn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setLong(1, entry.getUserId());
+            ps.setString(1, entry.getUserId());
             ps.setString(2, entry.getMomentType()); // MOMENT / DAY
             ps.setInt(3, entry.getMoodLevel());
             ps.executeUpdate();
@@ -229,7 +234,6 @@ public class MoodEntryDao {
             }
         }
     }
-
 
     // key/value
     private List<Integer> idsByCodes(final Connection cn, final String table, final List<String> codes)

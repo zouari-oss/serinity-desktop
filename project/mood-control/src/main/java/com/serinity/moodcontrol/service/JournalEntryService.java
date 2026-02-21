@@ -27,12 +27,14 @@ public class JournalEntryService implements IJournalEntryService {
     }
 
     @Override
-    public List<JournalEntry> getAll(long userId) throws SQLException {
+    public List<JournalEntry> getAll(String userId) throws SQLException {
+        Objects.requireNonNull(userId, "userId");
         return dao.findAll(userId);
     }
 
     @Override
-    public JournalEntry getByID(long id, long userId) throws SQLException {
+    public JournalEntry getByID(long id, String userId) throws SQLException {
+        Objects.requireNonNull(userId, "userId");
         return dao.findById(id, userId);
     }
 
@@ -43,7 +45,8 @@ public class JournalEntryService implements IJournalEntryService {
     }
 
     @Override
-    public boolean delete(long id, long userId) throws SQLException {
+    public boolean delete(long id, String userId) throws SQLException {
+        Objects.requireNonNull(userId, "userId");
         return dao.delete(id, userId);
     }
 }

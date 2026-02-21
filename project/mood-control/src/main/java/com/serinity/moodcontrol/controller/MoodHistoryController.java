@@ -22,6 +22,10 @@ import java.text.Normalizer;
 
 public class MoodHistoryController {
 
+    // TEMP until users module (UUID CHAR(36))
+    private static final String USER_ID = "6affa2df-dda9-442d-99ee-d2a3c1e78c64";
+    // TODO(USER-ID): replace with authenticated id from access-control integration.
+
     // ---- Card VM UI-shaped data ----
     static class MoodCardVM { // package-private so MoodHistoryCardController can use it
         final long id;
@@ -129,11 +133,9 @@ public class MoodHistoryController {
 
     private void reloadMasterFromDb() {
         try {
-            final long userId = 1L; // TEMP until user integration
-            // TODO(USER-ID): migrate user_id from BIGINT (long) to CHAR (String) .
 
             // Load everything
-            final List<MoodHistoryItem> data = new MoodEntryDao().findHistory(userId, null, "ALL");
+            final List<MoodHistoryItem> data = new MoodEntryDao().findHistory(USER_ID, null, "ALL");
 
             final List<MoodCardVM> vms = new ArrayList<MoodCardVM>();
             for (final MoodHistoryItem it : data) {
@@ -312,15 +314,13 @@ public class MoodHistoryController {
 
     private void onEdit(final MoodCardVM m) {
         try {
-            final long userId = 1L;
-
             final MoodEntryDao dao = new MoodEntryDao();
-            final MoodHistoryItem it = dao.findById(m.id, userId);
+            final MoodHistoryItem it = dao.findById(m.id, USER_ID);
             if (it == null) return;
 
             final com.serinity.moodcontrol.model.MoodEntry entry = new com.serinity.moodcontrol.model.MoodEntry();
             entry.setId(it.getId());
-            entry.setUserId(userId);
+            entry.setUserId(USER_ID);
             entry.setMomentType(it.getMomentType());
             entry.setMoodLevel(it.getMoodLevel());
             entry.setEmotions(new ArrayList<String>(it.getEmotions()));      // CODES
@@ -359,10 +359,7 @@ public class MoodHistoryController {
         final Optional<javafx.scene.control.ButtonType> res = alert.showAndWait();
         if (res.isPresent() && res.get() == javafx.scene.control.ButtonType.OK) {
             try {
-                final long userId = 1L;
-                // TODO(USER-ID): migrate user_id from BIGINT (long) to CHAR (String) .
-
-                final boolean ok = new MoodEntryDao().delete(m.id, userId);
+                final boolean ok = new MoodEntryDao().delete(m.id, USER_ID);
 
                 if (ok) {
                     reloadMasterFromDb();
@@ -374,7 +371,7 @@ public class MoodHistoryController {
         }
     }
 
-    //Helpers
+    // Helpers
 
     private String t(final String key) {
         try {

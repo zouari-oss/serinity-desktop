@@ -21,8 +21,8 @@ public class JournalService {
     }
 
     /** @return null if OK, otherwise an error message */
-    public String create(long userId, String title, String a1, String a2, String a3) {
-        if (userId <= 0) return "Invalid user.";
+    public String create(String userId, String title, String a1, String a2, String a3) {
+        if (userId == null || userId.isBlank()) return "Invalid user.";
 
         String err = JournalValidation.validateNewOrEdit(title, a1, a2, a3);
         if (err != null) return err;
@@ -41,11 +41,11 @@ public class JournalService {
         }
     }
 
-    /** Edit must be dirty AND pass same rules as entry. */
-    public String update(long userId, JournalEntry editing, String title, String a1, String a2, String a3) {
-        if (userId <= 0) return "Invalid user.";
+    // dirty check
+    public String update(String userId, JournalEntry editing, String title, String a1, String a2, String a3) {
+        if (userId == null || userId.isBlank()) return "Invalid user.";
         if (editing == null) return "Entry not found.";
-        if (editing.getUserId() != userId) return "Forbidden.";
+        if (!Objects.equals(editing.getUserId(), userId)) return "Forbidden.";
 
         String newTitle = title == null ? null : title.trim();
         String newContent = serializer.serialize(

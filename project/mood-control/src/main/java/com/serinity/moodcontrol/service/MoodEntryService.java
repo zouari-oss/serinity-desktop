@@ -28,12 +28,14 @@ public class MoodEntryService implements IMoodEntryService {
     }
 
     @Override
-    public List<MoodHistoryItem> findHistory(long userId, Integer lastDays, String typeFilter) throws SQLException {
+    public List<MoodHistoryItem> findHistory(String userId, Integer lastDays, String typeFilter) throws SQLException {
+        Objects.requireNonNull(userId, "userId");
         return dao.findHistory(userId, lastDays, typeFilter);
     }
 
     @Override
-    public MoodHistoryItem getByID(long moodEntryId, long userId) throws SQLException {
+    public MoodHistoryItem getByID(long moodEntryId, String userId) throws SQLException {
+        Objects.requireNonNull(userId, "userId");
         return dao.findById(moodEntryId, userId);
     }
 
@@ -44,7 +46,8 @@ public class MoodEntryService implements IMoodEntryService {
     }
 
     @Override
-    public boolean delete(long moodEntryId, long userId) throws SQLException {
+    public boolean delete(long moodEntryId, String userId) throws SQLException {
+        Objects.requireNonNull(userId, "userId");
         return dao.delete(moodEntryId, userId);
     }
 }

@@ -6,6 +6,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class JournalEntryDao {
 
@@ -13,22 +14,24 @@ public class JournalEntryDao {
         return ts == null ? null : ts.toLocalDateTime();
     }
 
-    public List<JournalEntry> findAll(final long userId) throws SQLException {
+    public List<JournalEntry> findAll(final String userId) throws SQLException {
+        Objects.requireNonNull(userId, "userId");
+
         final String sql = "SELECT id, user_id, title, content, created_at, updated_at " +
                 "FROM journal_entry WHERE user_id=? ORDER BY created_at DESC";
 
-        final List<JournalEntry> out = new ArrayList<JournalEntry>();
+        final List<JournalEntry> out = new ArrayList<>();
 
         final Connection cn = DbConnection.getConnection(); // DO NOT close (singleton)
         try (PreparedStatement ps = cn.prepareStatement(sql)) {
 
-            ps.setLong(1, userId);
+            ps.setString(1, userId);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     final JournalEntry e = new JournalEntry();
                     e.setId(rs.getLong("id"));
-                    e.setUserId(rs.getLong("user_id"));
+                    e.setUserId(rs.getString("user_id"));
                     e.setTitle(rs.getString("title"));
                     e.setContent(rs.getString("content"));
                     e.setCreatedAt(toLdt(rs.getTimestamp("created_at")));
@@ -41,7 +44,9 @@ public class JournalEntryDao {
         return out;
     }
 
-    public JournalEntry findById(final long id, final long userId) throws SQLException {
+    public JournalEntry findById(final long id, final String userId) throws SQLException {
+        Objects.requireNonNull(userId, "userId");
+
         final String sql = "SELECT id, user_id, title, content, created_at, updated_at " +
                 "FROM journal_entry WHERE id=? AND user_id=?";
 
@@ -49,7 +54,7 @@ public class JournalEntryDao {
         try (PreparedStatement ps = cn.prepareStatement(sql)) {
 
             ps.setLong(1, id);
-            ps.setLong(2, userId);
+            ps.setString(2, userId);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next())
@@ -57,7 +62,7 @@ public class JournalEntryDao {
 
                 final JournalEntry e = new JournalEntry();
                 e.setId(rs.getLong("id"));
-                e.setUserId(rs.getLong("user_id"));
+                e.setUserId(rs.getString("user_id"));
                 e.setTitle(rs.getString("title"));
                 e.setContent(rs.getString("content"));
                 e.setCreatedAt(toLdt(rs.getTimestamp("created_at")));
@@ -68,12 +73,15 @@ public class JournalEntryDao {
     }
 
     public long insert(final JournalEntry e) throws SQLException {
+        Objects.requireNonNull(e, "entry");
+        Objects.requireNonNull(e.getUserId(), "entry.userId");
+
         final String sql = "INSERT INTO journal_entry(user_id, title, content) VALUES(?,?,?)";
 
         final Connection cn = DbConnection.getConnection(); // DO NOT close (singleton)
         try (PreparedStatement ps = cn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setLong(1, e.getUserId());
+            ps.setString(1, e.getUserId());
             ps.setString(2, e.getTitle());
             ps.setString(3, e.getContent());
 
@@ -89,6 +97,9 @@ public class JournalEntryDao {
     }
 
     public boolean update(final JournalEntry e) throws SQLException {
+        Objects.requireNonNull(e, "entry");
+        Objects.requireNonNull(e.getUserId(), "entry.userId");
+
         final String sql = "UPDATE journal_entry SET title=?, content=? WHERE id=? AND user_id=?";
 
         final Connection cn = DbConnection.getConnection(); // DO NOT close (singleton)
@@ -97,20 +108,22 @@ public class JournalEntryDao {
             ps.setString(1, e.getTitle());
             ps.setString(2, e.getContent());
             ps.setLong(3, e.getId());
-            ps.setLong(4, e.getUserId());
+            ps.setString(4, e.getUserId());
 
             return ps.executeUpdate() == 1;
         }
     }
 
-    public boolean delete(final long id, final long userId) throws SQLException {
+    public boolean delete(final long id, final String userId) throws SQLException {
+        Objects.requireNonNull(userId, "userId");
+
         final String sql = "DELETE FROM journal_entry WHERE id=? AND user_id=?";
 
         final Connection cn = DbConnection.getConnection(); // DO NOT close (singleton)
         try (PreparedStatement ps = cn.prepareStatement(sql)) {
 
             ps.setLong(1, id);
-            ps.setLong(2, userId);
+            ps.setString(2, userId);
 
             return ps.executeUpdate() == 1;
         }

@@ -1,5 +1,7 @@
-package com.serinity.moodcontrol.dao;
+package com.serinity.moodcontrol;
 
+import com.serinity.moodcontrol.dao.DbConnection;
+import com.serinity.moodcontrol.dao.JournalEntryDao;
 import com.serinity.moodcontrol.model.JournalEntry;
 import org.junit.jupiter.api.*;
 
@@ -13,8 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class JournalEntryDaoIT {
 
-    private static final long USER_1 = 900_001L;
-    private static final long USER_2 = 900_002L;
+    // Use valid UUID-like values (CHAR(36))
+    private static final String USER_1 = "00000000-0000-0000-0000-000000000001";
+    private static final String USER_2 = "00000000-0000-0000-0000-000000000002";
 
     private final JournalEntryDao dao = new JournalEntryDao();
 
@@ -25,8 +28,8 @@ class JournalEntryDaoIT {
              PreparedStatement ps = cn.prepareStatement(
                      "DELETE FROM journal_entry WHERE user_id IN (?, ?)"
              )) {
-            ps.setLong(1, USER_1);
-            ps.setLong(2, USER_2);
+            ps.setString(1, USER_1);
+            ps.setString(2, USER_2);
             ps.executeUpdate();
         }
     }
