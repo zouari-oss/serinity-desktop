@@ -9,8 +9,8 @@ import org.json.JSONObject;
 
 public class Moderate {
 
-    private static final String API_KEY = "AIzaSyCqxmJu5nIF2_YzklnSew_5fMXw9r-Ihfg";
-    private static final String BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
+    private static final String API_KEY = "AIzaSyDxv5-ud8U-5IPR-zcEJizy9iZqNzYq6Kk";
+    private static final String BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
 
     public boolean isToxic(String text) {
         try {
