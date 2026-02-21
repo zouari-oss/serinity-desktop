@@ -3,6 +3,7 @@ package com.serinity.accesscontrol.repository;
 
 // `java` import(s)
 import java.time.Instant;
+import java.util.Optional;
 
 // `zouarioss` import(s)
 import org.zouarioss.skinnedratorm.core.EntityManager;
@@ -54,15 +55,18 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
     }
   }
 
-  public AuthSession findActiveSession(final User user) {
+  public Optional<AuthSession> findActiveSession(final User user) {
     try {
-      return em.createQuery(AuthSession.class)
+      AuthSession session = em.createQuery(AuthSession.class)
           .where("user_id", user.getId())
           .where("revoked", false)
           .where("expires_at", ">", Instant.now())
           .getSingleResult();
+      return Optional.ofNullable(session);
+
     } catch (final Exception e) {
-      return null;
+      e.printStackTrace();
+      return Optional.empty();
     }
   }
 

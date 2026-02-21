@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.flag.ResourceFile;
-import com.serinity.accesscontrol.flag.SupportedLanguage;
 import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.service.UserService;
 import com.serinity.accesscontrol.util.FXMLAnimationUtil;
@@ -15,8 +14,6 @@ import com.serinity.accesscontrol.util.FXMLLoaderUtil;
 import com.serinity.accesscontrol.util.I18nUtil;
 
 // `javafx` import(s)
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -43,7 +40,7 @@ import javafx.stage.Stage;
  *        LoginController.java
  *        </a>
  */
-public class LoginController {
+public final class LoginController extends com.serinity.accesscontrol.controller.base.BaseController {
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;
 
@@ -55,6 +52,9 @@ public class LoginController {
 
   @FXML // fx:id="footerLabel"
   private Label footerLabel; // Value injected by FXMLLoader
+
+  @FXML // fx:id="forgetPasswordHyperlink"
+  private Hyperlink forgetPasswordHyperlink; // Value injected by FXMLLoader
 
   @FXML // fx:id="languageComboBox"
   private ComboBox<String> languageComboBox; // Value injected by FXMLLoader
@@ -109,28 +109,19 @@ public class LoginController {
   // ##############################
 
   @FXML
-  void onLanguageComboBoxAction(ActionEvent event) {
-    I18nUtil.setLocale(
-        languageComboBox.getValue().equals(SupportedLanguage.FR.getCode())
-            ? SupportedLanguage.FR.getLocale() // To `fr`
-            : SupportedLanguage.EN.getLocale()); // To `en`
-
-    ((Stage) loginInterface.getScene().getWindow())
-        .setScene(FXMLLoaderUtil.loadScene(
-            getClass(),
-            ResourceFile.LOGIN_FXML.getFileName(),
-            I18nUtil.getBundle()));
+  void onForgetPasswordHyperlinkAction(ActionEvent event) {
+    rootController.push(ResourceFile.RESET_PASSWORD_FXML.getFileName());
   }
 
   @FXML
-  void onSignInButtonAction(ActionEvent event) {
+  void onSignInButtonAction(final ActionEvent event) {
     UserService.signIn(
         usernameOrEmail.getText(),
         password.getText());
   }
 
   @FXML
-  void onSignInHyperlinkAction(ActionEvent event) {
+  void onSignInHyperlinkAction(final ActionEvent event) {
     FXMLAnimationUtil.slideFullScreen(
         loginSideWebView,
         loginInterface
@@ -141,7 +132,7 @@ public class LoginController {
   }
 
   @FXML
-  void onSignUpButtonAction(ActionEvent event) {
+  void onSignUpButtonAction(final ActionEvent event) {
     UserService.signUp( // TODO: I need to return a message from `signUp`
         singnUpEmailTextField.getText(),
         signUpPasswordField.getText(),
@@ -149,7 +140,7 @@ public class LoginController {
         signUpUserRoleComboBox.getValue());
 
     // Sign-up success
-    Stage stage = (Stage) signUpUserRoleComboBox.getScene().getWindow();
+    final Stage stage = (Stage) signUpUserRoleComboBox.getScene().getWindow();
     stage.setScene(FXMLLoaderUtil.loadScene(
         this.getClass(),
         ResourceFile.DASHBOARD_FXML.getFileName(),
@@ -157,7 +148,7 @@ public class LoginController {
   }
 
   @FXML
-  void onSignUpHyperlinkAction(ActionEvent event) {
+  void onSignUpHyperlinkAction(final ActionEvent event) {
     FXMLAnimationUtil.slideFullScreen(
         loginSideWebView,
         loginInterface
@@ -167,10 +158,16 @@ public class LoginController {
         true);
   }
 
+  // ##################################
+  // ### INITIALIZATION FUNCTION(S) ###
+  // ##################################
+
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {
     assert faceIdImageView != null : "fx:id=\"faceIdImageView\" was not injected: check your FXML file 'login.fxml'.";
     assert footerLabel != null : "fx:id=\"footerLabel\" was not injected: check your FXML file 'login.fxml'.";
+    assert forgetPasswordHyperlink != null
+        : "fx:id=\"forgetPasswordHyperlink\" was not injected: check your FXML file 'login.fxml'.";
     assert languageComboBox != null : "fx:id=\"languageComboBox\" was not injected: check your FXML file 'login.fxml'.";
     assert loginInterface != null : "fx:id=\"loginInterface\" was not injected: check your FXML file 'login.fxml'.";
     assert loginSideWebView != null : "fx:id=\"loginSideWebView\" was not injected: check your FXML file 'login.fxml'.";
@@ -192,20 +189,8 @@ public class LoginController {
     assert usernameOrEmail != null : "fx:id=\"usernameOrEmail\" was not injected: check your FXML file 'login.fxml'.";
 
     // Custom initialization
-    languageComboBoxInit();
     signUpUserRoleComboBoxInit();
     loginSideWebViewInit();
-  }
-
-  // #########################################
-  // ### CUSTOM INITIALIZATION FUNCTION(S) ###
-  // #########################################
-
-  private void languageComboBoxInit() {
-    languageComboBox.getItems()
-        .addAll((ObservableList<String>) FXCollections.observableArrayList(
-            I18nUtil.getSupportedLanguagesToString()));
-    languageComboBox.setValue(I18nUtil.getLocale().getLanguage());
   }
 
   private void signUpUserRoleComboBoxInit() {
@@ -217,7 +202,7 @@ public class LoginController {
   }
 
   private void loginSideWebViewInit() {
-    URL url = getClass().getResource(ResourceFile.LOGIN_SIDE_HTML.getFileName());
+    final URL url = getClass().getResource(ResourceFile.LOGIN_SIDE_HTML.getFileName());
 
     if (url == null) {
       throw new IllegalStateException("Resource not found: "
@@ -226,4 +211,4 @@ public class LoginController {
 
     loginSideWebView.getEngine().load(url.toExternalForm());
   }
-} // LoginController class
+} // LoginController final class
