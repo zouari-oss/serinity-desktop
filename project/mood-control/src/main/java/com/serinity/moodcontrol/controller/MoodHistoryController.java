@@ -130,6 +130,7 @@ public class MoodHistoryController {
     private void reloadMasterFromDb() {
         try {
             final long userId = 1L; // TEMP until user integration
+            // TODO(USER-ID): migrate user_id from BIGINT (long) to CHAR (String) .
 
             // Load everything
             final List<MoodHistoryItem> data = new MoodEntryDao().findHistory(userId, null, "ALL");
@@ -359,6 +360,8 @@ public class MoodHistoryController {
         if (res.isPresent() && res.get() == javafx.scene.control.ButtonType.OK) {
             try {
                 final long userId = 1L;
+                // TODO(USER-ID): migrate user_id from BIGINT (long) to CHAR (String) .
+
                 final boolean ok = new MoodEntryDao().delete(m.id, userId);
 
                 if (ok) {

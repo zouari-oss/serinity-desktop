@@ -232,7 +232,9 @@ public class StateOfMindWizardController {
       final MoodEntry entry = new MoodEntry();
 
       entry.setUserId(1); // TEMP
-      entry.setMomentType(stepTypeController.getSelectedType());
+        // TODO(USER-ID): migrate user_id from BIGINT (long) to CHAR (String) .
+
+        entry.setMomentType(stepTypeController.getSelectedType());
       entry.setMoodLevel(stepMoodController.getMoodLevel());
       entry.setEmotions(stepEmotionsController.getSelectedEmotions());
       entry.setInfluences(stepInfluencesController.getSelectedInfluences());

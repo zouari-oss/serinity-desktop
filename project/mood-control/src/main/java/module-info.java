@@ -1,4 +1,4 @@
-module com.serinity {
+module com.serinity.moodcontrol {
   requires transitive javafx.controls;
   requires javafx.fxml;
 

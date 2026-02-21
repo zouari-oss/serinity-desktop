@@ -33,6 +33,7 @@ public class JournalController {
 
     // TEMP until users module
     private static final long USER_ID = 1L;
+    // TODO(USER-ID): migrate user_id from BIGINT (long) to CHAR (String) .
 
     @FXML private VBox journalBox;
 
