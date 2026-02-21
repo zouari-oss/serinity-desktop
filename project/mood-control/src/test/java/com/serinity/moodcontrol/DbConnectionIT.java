@@ -1,5 +1,6 @@
-package com.serinity.moodcontrol.dao;
+package com.serinity.moodcontrol;
 
+import com.serinity.moodcontrol.dao.DbConnection;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
@@ -19,7 +20,6 @@ class DbConnectionIT {
             DatabaseMetaData md = cn.getMetaData();
             assertNotNull(md);
 
-            // These are safe + read-only checks
             assertNotNull(md.getDatabaseProductName());
             assertNotNull(md.getDatabaseProductVersion());
             assertNotNull(md.getDriverName());
@@ -31,7 +31,6 @@ class DbConnectionIT {
         try (Connection cn = DbConnection.getConnection()) {
             DatabaseMetaData md = cn.getMetaData();
 
-            // table name casing can vary; try common cases
             assertTrue(
                     tableExists(md, "journal_entry") ||
                             tableExists(md, "JOURNAL_ENTRY") ||

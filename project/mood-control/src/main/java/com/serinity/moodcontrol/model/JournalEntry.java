@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class JournalEntry {
 
     private long id;
-    private long userId;
+    private String userId; // UUID (CHAR(36))
     private String title;
     private String content;
     private LocalDateTime createdAt;
@@ -13,7 +13,7 @@ public class JournalEntry {
 
     public JournalEntry() {}
 
-    public JournalEntry(long userId, String title, String content) {
+    public JournalEntry(String userId, String title, String content) {
         this.userId = userId;
         this.title = title;
         this.content = content;
@@ -22,8 +22,8 @@ public class JournalEntry {
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
 
-    public long getUserId() { return userId; }
-    public void setUserId(long userId) { this.userId = userId; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
