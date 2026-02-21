@@ -87,6 +87,25 @@
       <scope>compile</scope>
       <!-- !org.apache.logging.log4j.log4j-core -->
     </dependency>
+
+    <!-- com.github.ben-manes.caffeine.caffeine -->
+    <!-- Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
+    <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !com.github.ben-manes.caffeine.caffeine -->
+
+    <!-- org.springframework.security.spring-security-crypto -->
+    <!-- Source:
+    https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-crypto</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !org.springframework.security.spring-security-crypto -->
   </dependencies>
 
   <build>

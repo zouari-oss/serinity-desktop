@@ -8,12 +8,14 @@ module com.serinity.accesscontrol {
   requires java.sql;
   requires java.naming;
   requires org.zouarioss.skinnedratorm;
-  requires org.simplejavamail;
-  requires org.simplejavamail.core;
-  requires org.apache.logging.log4j;
 
   // --- Configuration dependencies ---
   requires io.github.cdimascio.dotenv.java;
+  requires org.simplejavamail;
+  requires org.simplejavamail.core;
+  requires org.apache.logging.log4j;
+  requires com.github.benmanes.caffeine;
+  requires spring.security.crypto;
 
   // --- Module exports ---
   exports com.serinity.accesscontrol;

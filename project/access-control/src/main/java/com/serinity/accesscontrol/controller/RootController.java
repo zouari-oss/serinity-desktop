@@ -6,8 +6,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 // `serinity` import(s)
+import com.serinity.accesscontrol.flag.MessageStatus;
 import com.serinity.accesscontrol.flag.ResourceFile;
 import com.serinity.accesscontrol.flag.SupportedLanguage;
+import com.serinity.accesscontrol.util.FXMLAnimationUtil;
 import com.serinity.accesscontrol.util.FXMLLoaderUtil;
 import com.serinity.accesscontrol.util.I18nUtil;
 
@@ -18,6 +20,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -51,6 +55,12 @@ public final class RootController {
   @FXML // fx:id="loginInterface"
   private AnchorPane loginInterface; // Value injected by FXMLLoader
 
+  @FXML // fx:id="messageStatusImageView"
+  private ImageView messageStatusImageView; // Value injected by FXMLLoader
+  //
+  @FXML // fx:id="messageStatusLabel"
+  private Label messageStatusLabel; // Value injected by FXMLLoader
+
   @FXML // fx:id="rootStackPane"
   private StackPane rootStackPane; // Value injected by FXMLLoader
 
@@ -59,14 +69,14 @@ public final class RootController {
   // ##########################
 
   public <T> void push(final String fxml) {
-    FXMLLoaderUtil.ViewLoader<T> view = FXMLLoaderUtil.loadView(
+    final FXMLLoaderUtil.ViewLoader<T> view = FXMLLoaderUtil.loadView(
         getClass(),
         fxml,
         I18nUtil.getBundle());
 
-    T controller = view.getController();
+    final T controller = view.getController();
 
-    if (controller instanceof com.serinity.accesscontrol.controller.base.BaseController baseController) {
+    if (controller instanceof final com.serinity.accesscontrol.controller.base.BaseController baseController) {
       baseController.setRootController(this);
     }
 
@@ -82,6 +92,31 @@ public final class RootController {
 
   public void pop() {
     rootStackPane.getChildren().removeLast();
+  }
+
+  public void showStatusMessage(final String message, final MessageStatus status) {
+    // Reset CSS
+    messageStatusLabel.getStyleClass().removeAll("success", "error", "warning", "info");
+    if (!messageStatusLabel.getStyleClass().contains("statusMsg")) {
+      messageStatusLabel.getStyleClass().add("statusMsg");
+    }
+    messageStatusLabel.getStyleClass().add(status.getCssClass());
+
+    // Set message text
+    messageStatusLabel.setText(message);
+
+    // Set icon
+    if (messageStatusImageView != null && status.getIconPath() != null) {
+      messageStatusImageView.setImage(new Image(getClass().getResourceAsStream(status.getIconPath())));
+    }
+
+    // Animate from top
+    FXMLAnimationUtil.slideFromTop(
+        messageStatusLabel,
+        50,
+        500,
+        true,
+        5);
   }
 
   // ##############################
@@ -111,6 +146,8 @@ public final class RootController {
     assert footerLabel != null : "fx:id=\"footerLabel\" was not injected: check your FXML file 'root.fxml'.";
     assert languageComboBox != null : "fx:id=\"languageComboBox\" was not injected: check your FXML file 'root.fxml'.";
     assert loginInterface != null : "fx:id=\"loginInterface\" was not injected: check your FXML file 'root.fxml'.";
+    assert messageStatusLabel != null
+        : "fx:id=\"messageStatusLabel\" was not injected: check your FXML file 'root.fxml'.";
     assert rootStackPane != null : "fx:id=\"rootStackPane\" was not injected: check your FXML file 'root.fxml'.";
 
     // Custom initialization

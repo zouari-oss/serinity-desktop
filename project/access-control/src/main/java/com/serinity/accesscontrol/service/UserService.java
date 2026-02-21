@@ -3,12 +3,14 @@ package com.serinity.accesscontrol.service;
 
 // `java` import(s)
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 // `zouarioss` import(s)
 import org.zouarioss.skinnedratorm.core.EntityManager;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
+import com.serinity.accesscontrol.dto.ServiceResult;
 import com.serinity.accesscontrol.flag.AuditAction;
 import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.AuditLog;
@@ -20,6 +22,7 @@ import com.serinity.accesscontrol.repository.AuthSessionRepository;
 import com.serinity.accesscontrol.repository.ProfileRepository;
 import com.serinity.accesscontrol.repository.UserRepository;
 import com.serinity.accesscontrol.util.PasswordEncoder;
+import com.serinity.accesscontrol.util.RandomPasswordGenerator;
 import com.serinity.accesscontrol.util.RegexValidator;
 
 /**
@@ -45,37 +48,57 @@ import com.serinity.accesscontrol.util.RegexValidator;
  *      </a>
  */
 public final class UserService {
+
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(MailSenderService.class);
 
-  public static void signUp(
+  private static final com.github.benmanes.caffeine.cache.Cache<String, String> resetCodeCache = com.github.benmanes.caffeine.cache.Caffeine
+      .newBuilder()
+      .expireAfterWrite(10, TimeUnit.MINUTES) // Code valid for 10 min
+      .maximumSize(10_000)
+      .build();
+
+  /**
+   * Registers a new user with email, password, and role.
+   *
+   * <p>
+   * This method performs:
+   * <ul>
+   * <li>Input validation for email, password, confirm password, and role.</li>
+   * <li>User creation with hashed password.</li>
+   * <li>Profile, session, and audit log creation.</li>
+   * <li>Persisting all entities using the corresponding repositories.</li>
+   * </ul>
+   * </p>
+   *
+   * @param email           the user's email
+   * @param password        the user's chosen password
+   * @param confirmPassword confirmation of the password
+   * @param role            the role assigned to the user
+   * @return a {@link ServiceResult} indicating success or failure with messages
+   */
+  public static ServiceResult<User> signUp(
       final String email,
       final String password,
       final String confirmPassword,
       final UserRole role) {
 
-    // #####################
-    // ## Data Validation ##
-    // #####################
     if (!RegexValidator.isValidEmail(email)) {
-      return;
+      return ServiceResult.failure("Invalid email format.");
     }
 
     if (!RegexValidator.isValidPassword(password)) {
-      return;
+      return ServiceResult.failure("Password does not meet complexity requirements.");
     }
 
     if (!password.equals(confirmPassword)) {
-      return;
+      return ServiceResult.failure("Passwords do not match.");
     }
 
     if (role == null) {
-      return;
+      return ServiceResult.failure("User role must be specified.");
     }
 
-    // ###########
-    // ## Setup ##
-    // ###########
     final User user = new User();
     user.setEmail(email);
     user.setPasswordHash(PasswordEncoder.encode(password));
@@ -91,53 +114,144 @@ public final class UserService {
     auditLog.setAction(AuditAction.USER_SIGN_UP.getValue());
     auditLog.setSession(authSession);
 
-    // ################
-    // ## Persisting ##
-    // ################
-    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
-    final UserRepository userRepository = new UserRepository(em);
-    userRepository.save(user);
+    try {
+      final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
 
-    final ProfileRepository profileRepository = new ProfileRepository(em);
-    profileRepository.save(profile);
+      new UserRepository(em).save(user);
+      new ProfileRepository(em).save(profile);
+      new AuthSessionRepository(em).save(authSession);
+      new AuditLogRepository(em).save(auditLog);
 
-    final AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
-    authSessionRepository.save(authSession);
+      _LOGGER.info("New user registered: {} with role {}", email, role);
 
-    final AuditLogRepository auditLogRepository = new AuditLogRepository(em);
-    auditLogRepository.save(auditLog);
-
-    _LOGGER.info("User: {}, {} sign-in!", email, role);
+      return ServiceResult.success(user, "User registered successfully. Welcome!");
+    } catch (final Exception e) {
+      _LOGGER.error("Error during user sign-up for email {}: {}", email, e.getMessage(), e);
+      return ServiceResult.failure("Failed to register user. Please try again later.");
+    }
   }
 
-  public static User signIn(final String usernameOrEmail, final String password) {
+  /**
+   * Signs in a user using their email (or username) and password.
+   *
+   * <p>
+   * This method performs the following steps:
+   * <ol>
+   * <li>Validates the email/username format.</li>
+   * <li>Retrieves the user from the database.</li>
+   * <li>Verifies the password using {@link PasswordEncoder}.</li>
+   * <li>Checks for an existing active session.</li>
+   * <li>Returns a {@link ServiceResult} containing success or error
+   * information.</li>
+   * </ol>
+   * </p>
+   *
+   * @param usernameOrEmail the user's email or username
+   * @param password        the plain-text password provided by the user
+   * @return a {@link ServiceResult} containing the authenticated {@link User} or
+   *         an error
+   */
+  public static ServiceResult<User> signIn(final String usernameOrEmail, final String password) {
     final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
     final AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
     final UserRepository userRepository = new UserRepository(em);
 
-    // #####################
-    // ## Data Validation ##
-    // #####################
     if (!RegexValidator.isValidEmail(usernameOrEmail)) {
-      return null;
+      return ServiceResult.failure("Invalid email format");
     }
 
     final User user = userRepository.findUserByEmail(usernameOrEmail);
+    if (user == null) {
+      return ServiceResult.failure("User not found");
+    }
 
-    authSessionRepository.findActiveSession(user);
-    return null; // TODO
+    if (!PasswordEncoder.isConfirmPassword(password, user.getPassword())) {
+      return ServiceResult.failure("Incorrect password");
+    }
+
+    final Optional<AuthSession> activeSession = authSessionRepository.findActiveSession(user);
+    activeSession.ifPresent(authSessionRepository::delete);
+
+    AuthSession newAuthSession = new AuthSession();
+    newAuthSession.setUser(user);
+    authSessionRepository.save(newAuthSession);
+
+    return ServiceResult.success(user, "User signed in successfully!");
   }
 
-  public static Optional<String> resetPassword(final String email) {
-    return null; // TODO
+  public static ServiceResult<Void> sendResetMail(final String email) {
+    if (!RegexValidator.isValidEmail(email)) {
+      _LOGGER.warn("Invalid Email! - {}", email);
+      return ServiceResult.failure("Invalid email format!");
+    }
+
+    try {
+      final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+      final UserRepository userRepository = new UserRepository(em);
+      final User user = userRepository.findUserByEmail(email);
+
+      if (user == null) {
+        _LOGGER.info("User with email {} does not exist.", email);
+        return ServiceResult.failure("User does not exist!");
+      }
+
+      final ProfileRepository profileRepository = new ProfileRepository(em);
+      final Profile profile = profileRepository.findByUserId(user.getId());
+
+      final String generatedCode = RandomPasswordGenerator.generate();
+
+      // Store reset code in Caffeine
+      resetCodeCache.put(user.getEmail(), generatedCode);
+
+      MailSenderService.sendPasswordReset(
+          profile.getUsername(),
+          user.getEmail(),
+          generatedCode);
+
+      return ServiceResult.success(null,
+          "Reset code sent successfully.");
+
+    } catch (final Exception e) {
+      _LOGGER.error("Password reset start failed", e);
+      return ServiceResult.failure("Failed to process reset request.");
+    }
   }
 
-  public static Optional<String> resetPassword(
+  public static ServiceResult<Void> confirmResetMail(
       final String email,
-      final String accualCode,
       final String inputCode,
       final String newPassword) {
-    return null; // TODO
-  }
+    final String storedCode = resetCodeCache.getIfPresent(email);
 
+    if (storedCode == null) {
+      return ServiceResult.failure("Code expired or not found.");
+    }
+
+    if (!storedCode.equals(inputCode)) {
+      return ServiceResult.failure("Incorrect code!");
+    }
+
+    if (!RegexValidator.isValidPassword(newPassword)) {
+      return ServiceResult.failure("Invalid password format!");
+    }
+
+    try {
+      final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+      final UserRepository userRepository = new UserRepository(em);
+      final User user = userRepository.findUserByEmail(email);
+
+      user.setPasswordHash(PasswordEncoder.encode(newPassword));
+      userRepository.update(user);
+
+      // Remove code after successful reset
+      resetCodeCache.invalidate(email);
+
+      return ServiceResult.success(null,
+          "Password updated successfully!");
+
+    } catch (final Exception e) {
+      _LOGGER.error("Password update failed", e);
+      return ServiceResult.failure("Failed to update password.");
+    }
+  }
 } // UserService final class

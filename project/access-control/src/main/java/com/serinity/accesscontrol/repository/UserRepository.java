@@ -54,5 +54,4 @@ public final class UserRepository extends BaseRepository<User, Long> {
       return null;
     }
   }
-
 } // UserRepository final class

@@ -2,8 +2,10 @@
 package com.serinity.accesscontrol.util;
 
 // `javafx` import(s)
+import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
+import javafx.scene.Node;
 import javafx.scene.web.WebView;
 
 /**
@@ -32,6 +34,7 @@ import javafx.scene.web.WebView;
  *        </a>
  */
 public final class FXMLAnimationUtil {
+
   /**
    * Animates a {@link WebView} by sliding it horizontally across the screen.
    *
@@ -67,5 +70,49 @@ public final class FXMLAnimationUtil {
     final TranslateTransition tt = new TranslateTransition(Duration.millis(1000), node);
     tt.setToX(shift ? stageWidth - node.getWidth() : 0);
     tt.play();
+  }
+
+  /**
+   * Animates a {@link Node} by sliding it vertically from top to bottom and
+   * optionally hides it after a delay.
+   *
+   * <p>
+   * Useful for status messages, notifications, or temporary banners in your UI.
+   * </p>
+   *
+   * @param node             the {@link Node} to animate (e.g., Label)
+   * @param distance         how far to slide the node (positive = down)
+   * @param duration         duration of the slide animation in milliseconds
+   * @param autoHide         if true, the node will slide back and be hidden after
+   *                         {@code hideDelaySeconds}
+   * @param hideDelaySeconds seconds to wait before hiding the node
+   *
+   *                         <pre>{@code
+   * // Example usage:
+   * FXMLAnimationUtil.slideFromTop(messageStatusLabel, 50, 500, true, 3);
+   * }</pre>
+   */
+  public static void slideFromTop(final Node node, final double distance, final int duration,
+      final boolean autoHide, final int hideDelaySeconds) {
+    // Ensure the node is visible
+    node.setVisible(true);
+
+    // Slide down
+    TranslateTransition slideDown = new TranslateTransition(Duration.millis(duration), node);
+    slideDown.setFromY(-distance);
+    slideDown.setToY(0);
+    slideDown.play();
+
+    if (autoHide) {
+      PauseTransition wait = new PauseTransition(Duration.seconds(hideDelaySeconds));
+      wait.setOnFinished(e -> {
+        TranslateTransition slideUp = new TranslateTransition(Duration.millis(duration), node);
+        slideUp.setFromY(0);
+        slideUp.setToY(-distance);
+        slideUp.setOnFinished(ev -> node.setVisible(false));
+        slideUp.play();
+      });
+      wait.play();
+    }
   }
 } // FXMLAnimationUtil class

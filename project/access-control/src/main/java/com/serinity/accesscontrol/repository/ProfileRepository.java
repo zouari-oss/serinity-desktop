@@ -1,6 +1,7 @@
-
 // `ProfileRepository` package name
 package com.serinity.accesscontrol.repository;
+
+import java.util.UUID;
 
 // `zouarioss` import(s)
 import org.zouarioss.skinnedratorm.core.EntityManager;
@@ -36,6 +37,17 @@ public final class ProfileRepository extends BaseRepository<Profile, Long> {
           .where("username", username)
           .getSingleResult();
 
+    } catch (final Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException(e);
+    }
+  }
+
+  public Profile findByUserId(final UUID userId) {
+    try {
+      return em.createQuery(Profile.class)
+          .where("user_id", userId)
+          .getSingleResult();
     } catch (final Exception e) {
       e.printStackTrace();
       throw new RuntimeException(e);

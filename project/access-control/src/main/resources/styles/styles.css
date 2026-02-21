@@ -1,19 +1,67 @@
 * {
-  -fx-font-family: "Segoe UI", system-ui, Arial;
+  -fx-font-family: "Segoe UI", system-ui, Arial, sans-serif;
 
+  /* Colors */
   -color-primary: #2F6F6D;
   -color-secondary: #E6F2F1;
   -color-accent: #88BDBC;
 
   -bg-color: #F9FAFB;
   -text-primary: #1F2933;
-  -text-primary: #5F6C7B;
+  -text-secondary: #5F6C7B;
 
   -color-success: #4CAF50;
   -color-warning: #F4B400;
   -color-error: #D9534F;
+  -color-info: #2196F3;
 }
 
 .app-bg {
   -fx-background-color: -bg-color;
+}
+
+
+/* Base style for status messages */
+.statusMsg {
+  -fx-font-weight: bold;
+  -fx-font-size: 14px;
+  -fx-padding: 6px 12px;
+  -fx-background-radius: 6px;
+  -fx-background-color: transparent;
+  /* transparent by default */
+  -fx-text-fill: -text-primary;
+  -fx-opacity: 0.9;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 2, 0.0, 0, 1);
+  -fx-alignment: center-left;
+  -fx-wrap-text: true;
+}
+
+/* Success message */
+.statusMsg.success {
+  -fx-text-fill: white;
+  -fx-background-color: -color-success;
+}
+
+/* Error message */
+.statusMsg.error {
+  -fx-text-fill: white;
+  -fx-background-color: -color-error;
+}
+
+/* Warning message */
+.statusMsg.warning {
+  -fx-text-fill: white;
+  -fx-background-color: -color-warning;
+}
+
+/* Info message */
+.statusMsg.info {
+  -fx-text-fill: white;
+  -fx-background-color: -color-info;
+}
+
+/* Optional: subtle hover effect */
+.statusMsg:hover {
+  -fx-opacity: 1;
+  -fx-cursor: default;
 }

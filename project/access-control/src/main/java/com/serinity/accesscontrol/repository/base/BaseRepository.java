@@ -39,6 +39,14 @@ public abstract class BaseRepository<T, ID> {
     }
   }
 
+  public void update(final T entity) {
+    try {
+      em.update(entity);
+    } catch (final Exception e) {
+      e.printStackTrace();
+    }
+  }
+
   public Optional<T> findById(final ID id) {
     try {
       return Optional.ofNullable(em.findById(entityClass, id));

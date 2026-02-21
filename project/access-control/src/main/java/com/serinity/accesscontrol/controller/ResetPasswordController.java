@@ -5,6 +5,10 @@ package com.serinity.accesscontrol.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.serinity.accesscontrol.dto.ServiceResult;
+import com.serinity.accesscontrol.flag.MessageStatus;
+import com.serinity.accesscontrol.service.UserService;
+
 // `javafx` import(s)
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -58,12 +62,28 @@ public final class ResetPasswordController extends com.serinity.accesscontrol.co
 
   @FXML
   void onResetPasswordButtonAction(ActionEvent event) {
+    ServiceResult<Void> serviceResult = UserService.confirmResetMail(EmailTextField.getText(),
+        CodePasswordField.getText(),
+        NewPasswordField.getText());
 
+    if (serviceResult.isSuccess()) {
+      rootController.pop();
+    }
   }
 
   @FXML
   void onSendMailButtonAction(ActionEvent event) {
-
+    rootController.showStatusMessage("Reset code sent! Check your email.", MessageStatus.SUCCESS);
+    ServiceResult<Void> serviceResult = UserService.sendResetMail(EmailTextField.getText());
+    if (serviceResult.isSuccess()) {
+      CodePasswordField.setDisable(false);
+      NewPasswordField.setDisable(false);
+      // sen.setDisable(false);
+      EmailTextField.setDisable(true);
+      rootController.showStatusMessage("Reset code sent! Check your email.", MessageStatus.SUCCESS);
+    } else {
+      rootController.showStatusMessage("Failed to send reset email. Try again.", MessageStatus.ERROR);
+    }
   }
 
   // ##################################
