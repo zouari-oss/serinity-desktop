@@ -5,6 +5,7 @@ import com.serinity.forumcontrol.Models.Category;
 import com.serinity.forumcontrol.Models.ThreadType;
 import com.serinity.forumcontrol.Models.ThreadStatus;
 import com.serinity.forumcontrol.Services.ServiceImgBB;
+import com.serinity.forumcontrol.Services.Moderate;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -41,6 +42,7 @@ public class AddThreadController {
     private final ServiceThread threadService = new ServiceThread();
     private final ServiceCategory categoryService = new ServiceCategory();
     private final ServiceImgBB imgbbService = new ServiceImgBB();
+    private final Moderate perspectiveService = new Moderate();
     private int red;
     private boolean isEditMode = false;
     private Thread threadToEdit = null;
@@ -345,6 +347,11 @@ public class AddThreadController {
             if(red==11){showError(titleField, "Title must be at least 5 characters");return;}
             if(red==2){showError(contentArea, "Content is required");return;}
             if(red==22){showError(contentArea, "Content too short (min 20 chars)");return;}
+        }
+        String fullText = titleField.getText().trim() + " " + contentArea.getText().trim();
+        if (perspectiveService.isToxic(fullText)) {
+            alert("Your post was flagged as harmful. Please revise it.", Alert.AlertType.WARNING);
+            return;
         }
         try {
             if (selectedImageFile != null && !isEditMode) {

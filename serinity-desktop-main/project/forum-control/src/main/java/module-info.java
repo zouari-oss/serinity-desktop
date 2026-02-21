@@ -10,6 +10,7 @@ module com.serinity {
     requires java.desktop;
     requires javafx.base;
     requires org.json;
+    requires java.net.http;
 
 
     opens com.serinity.forumcontrol.Controllers to javafx.fxml;

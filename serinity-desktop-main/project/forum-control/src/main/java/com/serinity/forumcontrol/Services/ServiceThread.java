@@ -1,5 +1,4 @@
 package com.serinity.forumcontrol.Services;
-
 import com.serinity.forumcontrol.Interfaces.Services;
 import com.serinity.forumcontrol.Models.Thread;
 import com.serinity.forumcontrol.Models.ThreadType;
