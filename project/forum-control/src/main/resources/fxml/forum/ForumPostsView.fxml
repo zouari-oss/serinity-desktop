@@ -52,7 +52,6 @@
                   <Button fx:id="categoriesButton" managed="false" maxWidth="Infinity" onAction="#onCategories" style="-fx-background-color: transparent; -fx-text-fill: #333; -fx-font-size: 14; -fx-padding: 10; -fx-background-radius: 5; -fx-cursor: hand;" styleClass="nav-btn" text="🏷️ Category List" visible="false" />
 
                   <Button fx:id="newCategoryButton" managed="false" maxWidth="Infinity" onAction="#onNewCategory" style="-fx-background-color: transparent; -fx-text-fill: #333; -fx-font-size: 14; -fx-padding: 10; -fx-background-radius: 5; -fx-cursor: hand;" styleClass="nav-btn" text="➕ New Category" visible="false" />
-
               </VBox>
     </left>
     <center>
@@ -121,13 +120,13 @@
                         <VBox fx:id="cardsContainer" spacing="16" style="-fx-padding:24;">
                         </VBox>
                     </content>
-
                       </ScrollPane>
             </children>
             <StackPane fx:id="overlayPane"
                        minHeight="150"
                        prefHeight="150"
                        visible="false"
+                       managed="false"
                        style="-fx-background-color: rgba(0,0,0,0.3);"
                        mouseTransparent="false">
             </StackPane>

@@ -172,6 +172,7 @@ public class NotificationsPanelController {
     @FXML
     private void onClose() {
         closePanel();
+
     }
 
     /**
@@ -182,6 +183,7 @@ public class NotificationsPanelController {
         if (overlay != null) {
             overlay.getChildren().clear();
             overlay.setVisible(false);
+            overlay.setManaged(false);
         }
     }
 

@@ -257,7 +257,7 @@ public class ServiceReply implements Services<Reply> {
     public String getReplyAuthor(String userId) {
 
         String sql =
-                "SELECT username FROM user WHERE user_id = ?";
+                "SELECT username FROM profiles WHERE user_id = ?";
 
         try (PreparedStatement ps =
                      cnx.prepareStatement(sql)) {

@@ -264,7 +264,7 @@ public class ServiceThread implements Services<Thread> {
     public String getAuthor(String userId) {
 
         String sql =
-                "SELECT username FROM user WHERE user_id = ?";
+                "SELECT username FROM profiles WHERE user_id = ?";
 
         try (PreparedStatement ps =
                      cnx.prepareStatement(sql)) {
@@ -285,7 +285,7 @@ public class ServiceThread implements Services<Thread> {
     }
     public boolean isAdmin(String userId){
         String sql =
-                "SELECT admin FROM user WHERE user_id = ?";
+                "SELECT role FROM profiles WHERE user_id = ?";
 
         try (PreparedStatement ps =
                      cnx.prepareStatement(sql)) {
@@ -295,7 +295,7 @@ public class ServiceThread implements Services<Thread> {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                if(rs.getString("admin").equals("1")){return true;}
+                if(rs.getString("role").equals("admin")){return true;}
             }
 
         } catch (SQLException e) {

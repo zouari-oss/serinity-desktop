@@ -54,6 +54,7 @@ public class ForumPostsController {
     @FXML private ComboBox<String> sortByComboBox;
     @FXML private Button notificationsButton;
     @FXML private Label notificationBadge;
+    @FXML private StackPane overlayPane;
 
     private ServiceNotification notificationService = new ServiceNotification(); // NEW
     private ServiceThread service = new ServiceThread();
@@ -753,7 +754,7 @@ public class ForumPostsController {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/fxml/forum/NotificationsPanel.fxml")
             );
-
+            overlayPane.setManaged(true);
             // Must call load() BEFORE getController()
             Parent notificationsPanel = loader.load();
 
