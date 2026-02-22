@@ -32,7 +32,7 @@ import com.serinity.accesscontrol.util.I18nUtil;
  *      </a>
  */
 public enum UserRole {
-  ADMIN(""),
+  ADMIN("user.role.admin"),
   THERAPIST("user.role.therapist"),
   PATIENT("user.role.patient");
 

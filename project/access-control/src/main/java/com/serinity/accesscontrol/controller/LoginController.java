@@ -6,12 +6,15 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 // `serinity` import(s)
+import com.serinity.accesscontrol.controller.base.StackNavigable;
+import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
+import com.serinity.accesscontrol.dto.ServiceResult;
+import com.serinity.accesscontrol.flag.MessageStatus;
 import com.serinity.accesscontrol.flag.ResourceFile;
 import com.serinity.accesscontrol.flag.UserRole;
+import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.service.UserService;
 import com.serinity.accesscontrol.util.FXMLAnimationUtil;
-import com.serinity.accesscontrol.util.FXMLLoaderUtil;
-import com.serinity.accesscontrol.util.I18nUtil;
 
 // `javafx` import(s)
 import javafx.event.ActionEvent;
@@ -24,8 +27,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 
 /**
  * `login.fxml` controller class
@@ -40,7 +43,8 @@ import javafx.stage.Stage;
  *        LoginController.java
  *        </a>
  */
-public final class LoginController extends com.serinity.accesscontrol.controller.base.BaseController {
+public final class LoginController implements StackNavigable, StatusMessageProvider {
+
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;
 
@@ -104,20 +108,86 @@ public final class LoginController extends com.serinity.accesscontrol.controller
   @FXML // fx:id="usernameOrEmail"
   private TextField usernameOrEmail; // Value injected by FXMLLoader
 
-  // ##############################
-  // ### SLOT HANDLER FUNCTIONS ###
-  // ##############################
+  private StackPane stackHost; // Will be injected by RootController
+
+  private StatusMessageProvider statusProvider; // Delegate to RootController
+
+  // #############################
+  // ### GETTER(S) & SETTER(S) ###
+  // #############################
+
+  public void setStatusProvider(final StatusMessageProvider provider) {
+    this.statusProvider = provider;
+  }
+
+  // ############################
+  // ### OVERRIDE FUNCTION(S) ###
+  // ############################
+
+  @Override
+  public StackPane getStackHost() {
+    return stackHost;
+  }
+
+  @Override
+  public void setStackHost(final StackPane host) {
+    this.stackHost = host;
+  }
+
+  @Override
+  public void showStatusMessage(final String message, final MessageStatus status) {
+    if (statusProvider != null) {
+      statusProvider.showStatusMessage(message, status);
+    }
+  }
+
+  // ################################
+  // ### SLOT HANDLER FUNCTION(S) ###
+  // ################################
 
   @FXML
-  void onForgetPasswordHyperlinkAction(ActionEvent event) {
-    rootController.push(ResourceFile.RESET_PASSWORD_FXML.getFileName());
+  void onForgetPasswordHyperlinkAction(final ActionEvent event) {
+    push(ResourceFile.RESET_PASSWORD_FXML.getFileName());
   }
 
   @FXML
   void onSignInButtonAction(final ActionEvent event) {
-    UserService.signIn(
+    final ServiceResult<User> userServiceResult = UserService.signIn(
         usernameOrEmail.getText(),
         password.getText());
+
+    if (userServiceResult.isSuccess()) {
+      showStatusMessage(userServiceResult.getMessage(), MessageStatus.SUCCESS);
+      final User user = userServiceResult.getData();
+      push(user.getRole().equals(UserRole.ADMIN)
+          ? ResourceFile.ADMIN_DASHBOARD_FXML.getFileName()
+          : ResourceFile.DASHBOARD_FXML.getFileName(),
+          controller -> injectUserIntoDashboard(controller, user));
+
+    } else {
+      showStatusMessage(userServiceResult.getMessage(), MessageStatus.WARNING);
+    }
+  }
+
+  @FXML
+  void onSignUpButtonAction(final ActionEvent event) {
+    final ServiceResult<User> userServiceResult = UserService.signUp(
+        singnUpEmailTextField.getText(),
+        signUpPasswordField.getText(),
+        signUpConfirmPasswordField.getText(),
+        signUpUserRoleComboBox.getValue());
+
+    if (userServiceResult.isSuccess()) {
+      showStatusMessage(userServiceResult.getMessage(), MessageStatus.SUCCESS);
+      final User user = userServiceResult.getData();
+      push(user.getRole().equals(UserRole.ADMIN)
+          ? ResourceFile.ADMIN_DASHBOARD_FXML.getFileName()
+          : ResourceFile.DASHBOARD_FXML.getFileName(),
+          controller -> injectUserIntoDashboard(controller, user));
+
+    } else {
+      showStatusMessage(userServiceResult.getMessage(), MessageStatus.WARNING);
+    }
   }
 
   @FXML
@@ -129,22 +199,6 @@ public final class LoginController extends com.serinity.accesscontrol.controller
             .getWindow()
             .getWidth(),
         false);
-  }
-
-  @FXML
-  void onSignUpButtonAction(final ActionEvent event) {
-    UserService.signUp( // TODO: I need to return a message from `signUp`
-        singnUpEmailTextField.getText(),
-        signUpPasswordField.getText(),
-        signUpConfirmPasswordField.getText(),
-        signUpUserRoleComboBox.getValue());
-
-    // Sign-up success
-    final Stage stage = (Stage) signUpUserRoleComboBox.getScene().getWindow();
-    stage.setScene(FXMLLoaderUtil.loadScene(
-        this.getClass(),
-        ResourceFile.DASHBOARD_FXML.getFileName(),
-        I18nUtil.getBundle()));
   }
 
   @FXML
@@ -193,20 +247,28 @@ public final class LoginController extends com.serinity.accesscontrol.controller
     loginSideWebViewInit();
   }
 
+  private void injectUserIntoDashboard(final Object controller, final User user) {
+    if (controller instanceof final AdminDashboardController admin) {
+      admin.setUser(user);
+    }
+
+    if (controller instanceof final DashboardController dash) {
+      dash.setUser(user);
+    }
+  }
+
   private void signUpUserRoleComboBoxInit() {
     signUpUserRoleComboBox.getItems().addAll(
-        UserRole.PATIENT, // Patient
-        UserRole.THERAPIST // Therapist
-    );
-    signUpUserRoleComboBox.setValue(UserRole.PATIENT); // Default Value: Patient
+        UserRole.PATIENT,
+        UserRole.THERAPIST);
+    signUpUserRoleComboBox.setValue(UserRole.PATIENT);
   }
 
   private void loginSideWebViewInit() {
     final URL url = getClass().getResource(ResourceFile.LOGIN_SIDE_HTML.getFileName());
 
     if (url == null) {
-      throw new IllegalStateException("Resource not found: "
-          + ResourceFile.LOGIN_SIDE_HTML.getFileName());
+      throw new IllegalStateException("Resource not found: " + ResourceFile.LOGIN_SIDE_HTML.getFileName());
     }
 
     loginSideWebView.getEngine().load(url.toExternalForm());
