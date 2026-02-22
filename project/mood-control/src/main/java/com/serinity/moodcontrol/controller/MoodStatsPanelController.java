@@ -157,8 +157,8 @@ public class MoodStatsPanelController {
             counts[lvl]++;
 
         }
-        System.out.println("Invalid levels: " +
-                src.stream().filter(m -> m.moodLevel < 1 || m.moodLevel > 5).count());
+        //lvls debug
+        //System.out.println("Invalid levels: " + src.stream().filter(m -> m.moodLevel < 1 || m.moodLevel > 5).count());
         boolean hasAny = false;
         for (int lvl = 1; lvl <= 5; lvl++) {
             if (counts[lvl] <= 0) continue;

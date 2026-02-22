@@ -19,7 +19,7 @@ public class CallMeBotService {
         this.client = new CallMeBotClient();
         this.dotenv = Dotenv.configure()
                 .directory(".")
-                .filename(".env.development")
+                .filename(".env")
                 .ignoreIfMissing()
                 .load();
     }
