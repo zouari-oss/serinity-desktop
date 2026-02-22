@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 // `serinity` import(s)
+import com.serinity.accesscontrol.controller.base.StackNavigable;
+import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.flag.MessageStatus;
 import com.serinity.accesscontrol.flag.ResourceFile;
 import com.serinity.accesscontrol.flag.SupportedLanguage;
@@ -35,11 +37,12 @@ import javafx.stage.Stage;
  *
  *        <a
  *        href=
- *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/controller/RootPasswordController.java">
- *        RootPasswordController.java
+ *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/controller/RootController.java">
+ *        RootController.java
  *        </a>
  */
-public final class RootController {
+public final class RootController implements StackNavigable, StatusMessageProvider {
+
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;
 
@@ -68,32 +71,12 @@ public final class RootController {
   // ### HELPER FUNCTION(S) ###
   // ##########################
 
-  public <T> void push(final String fxml) {
-    final FXMLLoaderUtil.ViewLoader<T> view = FXMLLoaderUtil.loadView(
-        getClass(),
-        fxml,
-        I18nUtil.getBundle());
-
-    final T controller = view.getController();
-
-    if (controller instanceof final com.serinity.accesscontrol.controller.base.BaseController baseController) {
-      baseController.setRootController(this);
-    }
-
-    rootStackPane.getChildren().add(view.getRoot());
+  @Override
+  public StackPane getStackHost() {
+    return rootStackPane;
   }
 
-  public void replace(final String fxml) {
-    rootStackPane.getChildren().setAll(FXMLLoaderUtil.loadFXML(
-        getClass(),
-        fxml,
-        I18nUtil.getBundle()));
-  }
-
-  public void pop() {
-    rootStackPane.getChildren().removeLast();
-  }
-
+  @Override
   public void showStatusMessage(final String message, final MessageStatus status) {
     // Reset CSS
     messageStatusLabel.getStyleClass().removeAll("success", "error", "warning", "info");
@@ -162,7 +145,8 @@ public final class RootController {
         I18nUtil.getBundle());
 
     // inject RootController into LoginController
-    view.getController().setRootController(this);
+    view.getController().setStackHost(rootStackPane);
+    view.getController().setStatusProvider(this);
 
     rootStackPane.getChildren().add(view.getRoot());
   }

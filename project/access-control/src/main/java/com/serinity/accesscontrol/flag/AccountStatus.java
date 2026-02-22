@@ -1,6 +1,9 @@
 // `AccountStatus` package name
 package com.serinity.accesscontrol.flag;
 
+// `serinity` import(s)
+import com.serinity.accesscontrol.util.I18nUtil;
+
 /**
  * Represents the different user presence status
  *
@@ -28,6 +31,21 @@ package com.serinity.accesscontrol.flag;
  *      </a>
  */
 public enum AccountStatus {
-  ACTIVE,
-  DISABLED
+  ACTIVE("user.status.active"),
+  DISABLED("user.status.disabled");
+
+  private final String key;
+
+  private AccountStatus(final String key) {
+    this.key = key;
+  }
+
+  public String getKey() {
+    return key;
+  }
+
+  @Override
+  public String toString() {
+    return I18nUtil.getValue(key);
+  }
 } // AccountStatus enum

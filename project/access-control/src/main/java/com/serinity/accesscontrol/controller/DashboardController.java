@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import com.serinity.accesscontrol.model.User;
+
 // `javafx` import(s)
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -31,6 +33,7 @@ import javafx.scene.layout.StackPane;
  *        </a>
  */
 public final class DashboardController {
+
   @FXML
   private Button btnDashboard;
 
@@ -62,6 +65,12 @@ public final class DashboardController {
   private ResourceBundle resources;
 
   private List<Button> navButtons;
+
+  private User user;
+
+  public void setUser(User user) {
+    this.user = user;
+  }
 
   @FXML
   public void initialize() {

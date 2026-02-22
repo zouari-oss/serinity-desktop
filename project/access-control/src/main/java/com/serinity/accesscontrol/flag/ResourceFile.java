@@ -27,6 +27,8 @@ public enum ResourceFile {
   ROOT_FXML("/fxml/root.fxml"),
   LOGIN_FXML("/fxml/login.fxml"),
   DASHBOARD_FXML("/fxml/dashboard.fxml"),
+  ADMIN_DASHBOARD_FXML("/fxml/admin-dashboard.fxml"),
+  ADMIN_USERS_MANAGMENT_FXML("/fxml/admin-users-management.fxml"),
   RESET_PASSWORD_FXML("/fxml/reset-password.fxml"),
   LOGIN_SIDE_HTML("/html/login-side.html"),
   FORGET_PASSWORD_HTML("/html/forgot-password.html");

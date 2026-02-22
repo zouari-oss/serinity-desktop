@@ -103,6 +103,10 @@ public final class User extends TimestampedEntity {
     return accountStatus;
   }
 
+  public void setAccountStatus(final AccountStatus accountStatus) {
+    this.accountStatus = accountStatus;
+  }
+
   // #############################
   // ### PRE_PERSIST METHOD(S) ###
   // #############################
