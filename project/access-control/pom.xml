@@ -69,6 +69,43 @@
       <artifactId>skinnedratorm</artifactId>
     </dependency>
     <!-- !org.zouarioss.skinnedratorm -->
+
+    <!-- org.simplejavamail.simple-java-mail -->
+    <!-- Source: https://mvnrepository.com/artifact/org.simplejavamail/simple-java-mail -->
+    <dependency>
+      <groupId>org.simplejavamail</groupId>
+      <artifactId>simple-java-mail</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !org.simplejavamail.simple-java-mail -->
+
+    <!-- org.apache.logging.log4j.log4j-core -->
+    <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>compile</scope>
+      <!-- !org.apache.logging.log4j.log4j-core -->
+    </dependency>
+
+    <!-- com.github.ben-manes.caffeine.caffeine -->
+    <!-- Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
+    <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !com.github.ben-manes.caffeine.caffeine -->
+
+    <!-- org.springframework.security.spring-security-crypto -->
+    <!-- Source:
+    https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-crypto</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !org.springframework.security.spring-security-crypto -->
   </dependencies>
 
   <build>
@@ -103,7 +140,11 @@
             <!-- Usage: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>com.serinity.accesscontrol.App</mainClass>
+              <mainClass>com.serinity.accesscontrol/com.serinity.accesscontrol.App</mainClass>
+              <options>
+                <option>--enable-native-access=javafx.graphics</option>
+                <option>--enable-native-access=javafx.web</option>
+              </options>
             </configuration>
           </execution>
         </executions>

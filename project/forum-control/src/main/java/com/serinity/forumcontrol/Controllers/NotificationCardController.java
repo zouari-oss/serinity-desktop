@@ -54,10 +54,9 @@ public class NotificationCardController {
                 iconLabel.setText("🔔");
         }
 
-        // Set content
+
         contentLabel.setText(notification.getContent());
 
-        // Format date
         if (notification.getDate() != null) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm");
@@ -68,10 +67,8 @@ public class NotificationCardController {
             }
         }
 
-        // Show unseen indicator and style card
         if (!notification.isSeen()) {
             unseenIndicator.setVisible(true);
-            // Highlight unseen notifications
             if (root != null) {
                 String currentStyle = root.getStyle();
                 if (!currentStyle.contains("-fx-background-color")) {

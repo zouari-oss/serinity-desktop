@@ -37,7 +37,6 @@ public class ServiceNotification {
         String actorName = threadService.getAuthor(actorUserId);
         String threadTitle = thread.getTitle();
 
-        // Truncate thread title if too long
         if (threadTitle.length() > 50) {
             threadTitle = threadTitle.substring(0, 47) + "...";
         }

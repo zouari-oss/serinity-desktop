@@ -2,9 +2,7 @@ package com.serinity.forumcontrol.Models;
 
 import java.sql.Timestamp;
 
-/**
- * Notification model for user notifications
- */
+
 public class Notification {
 
     private Long id;

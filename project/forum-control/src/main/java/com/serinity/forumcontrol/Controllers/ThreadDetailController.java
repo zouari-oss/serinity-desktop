@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class ThreadDetailController {
-
+    private FakeUser user ;
+    String currentUserId = user.getCurrentUserId();
     @FXML private Label titleLabel;
     @FXML private Label metaLabel;
     @FXML private Label lfoukLabel;
@@ -48,7 +49,8 @@ public class ThreadDetailController {
     private ServiceReply replyService = new ServiceReply();
     private Long replyingToParentId = null;
     private Thread thread;
-    private FakeUser user ;
+
+
 
     public void setThread(Thread t) {
         this.thread = t;
@@ -201,7 +203,6 @@ public class ThreadDetailController {
     }
 
     private void loadInteractions() {
-        String userId = user.getCurrentUserId();
         int threadId = (int) thread.getId();
 
         Thread refreshedThread = service.getById(thread.getId());
@@ -239,13 +240,13 @@ public class ThreadDetailController {
                         "-fx-padding: 8 15;"
         );
 
-        int userVote = interactionService.getUserVote(threadId, userId);
+        int userVote = interactionService.getUserVote(threadId, currentUserId);
         updateVoteButtonStyles(userVote);
 
         String followersText = followCount == 1 ? "follower" : "followers";
         followerCountLabel.setText(followCount + " " + followersText);
 
-        boolean isFollowing = interactionService.isFollowing(threadId, userId);
+        boolean isFollowing = interactionService.isFollowing(threadId, currentUserId);
         updateFollowButton(isFollowing);
 
     }
@@ -327,30 +328,27 @@ public class ThreadDetailController {
 
     @FXML
     private void onUpvote(MouseEvent event) {
-        String userId = user.getCurrentUserId();
         int threadId = (int) thread.getId();
 
-        interactionService.toggleUpvote(threadId, userId);
+        interactionService.toggleUpvote(threadId, currentUserId);
 
         loadInteractions();
     }
 
     @FXML
     private void onDownvote(MouseEvent event) {
-        String userId = user.getCurrentUserId();
         int threadId = (int) thread.getId();
 
-        interactionService.toggleDownvote(threadId, userId);
+        interactionService.toggleDownvote(threadId, currentUserId);
 
         loadInteractions();
     }
 
     @FXML
     private void onToggleFollow() {
-        String userId = user.getCurrentUserId();
         int threadId = (int) thread.getId();
 
-        interactionService.toggleFollow(threadId, userId);
+        interactionService.toggleFollow(threadId, currentUserId);
 
         loadInteractions();
 

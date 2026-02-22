@@ -22,7 +22,8 @@ import java.awt.*;
 import java.util.Optional;
 
 public class ReplyCardController {
-
+    private FakeUser user;
+    String currentUserId = user.getCurrentUserId();
     @FXML private Label authorLabel;
     @FXML private Label contentLabel;
     @FXML private Label dateLabel;
@@ -30,7 +31,7 @@ public class ReplyCardController {
     @FXML private VBox cardContainer;
     @FXML
     private MenuButton menuButton;
-    private FakeUser user;
+
 
     private Reply reply;
     private ServiceReply service= new ServiceReply();
@@ -63,7 +64,6 @@ public class ReplyCardController {
     }
     private void configureMenu() {
         try {
-            String currentUserId = user.getCurrentUserId();
             boolean isAdmin = servicethread.isAdmin(currentUserId);
             boolean isOwner = reply.getUserId().equalsIgnoreCase(currentUserId);
             boolean ispostOwner=servicethread.isOwner(parentController.getThread().getId(), currentUserId);

@@ -39,10 +39,11 @@ public class AddThreadController {
     @FXML private Label imageStatusLabel;
 
     private FakeUser user;
+    private String currentUserId = user.getCurrentUserId();
     private final ServiceThread threadService = new ServiceThread();
     private final ServiceCategory categoryService = new ServiceCategory();
     private final ServiceImgBB imgbbService = new ServiceImgBB();
-    private final Moderate perspectiveService = new Moderate();
+    private final Moderate Moderate = new Moderate();
     private int red;
     private boolean isEditMode = false;
     private Thread threadToEdit = null;
@@ -140,7 +141,6 @@ public class AddThreadController {
         }
     }
     private void checkAdminAndSetPinnedVisibility() {
-        String currentUserId = user.getCurrentUserId();
         if (threadService.isAdmin(currentUserId)) {
 
             pinnedCheck.setVisible(true);
@@ -251,15 +251,12 @@ public class AddThreadController {
         File file = fileChooser.showOpenDialog(uploadImageButton.getScene().getWindow());
 
         if (file != null) {
-            // Validate image
             if (!imgbbService.isValidImage(file)) {
                 alert("Please select a valid image file (max 32MB)", Alert.AlertType.ERROR);
                 return;
             }
 
             selectedImageFile = file;
-
-            // Show preview
             try {
                 Image image = new Image(file.toURI().toString(), true);
                 if (imagePreview != null) {
@@ -283,7 +280,7 @@ public class AddThreadController {
         }
     }
 
-    // NEW METHOD: Handle remove image
+
     @FXML
     private void onRemoveImage() {
         selectedImageFile = null;
@@ -304,10 +301,10 @@ public class AddThreadController {
         }
     }
 
-    // NEW METHOD: Upload image to ImgBB
+
     private boolean uploadImageToImgBB() {
         if (selectedImageFile == null) {
-            return true; // No image to upload
+            return true;
         }
 
         try {
@@ -349,7 +346,7 @@ public class AddThreadController {
             if(red==22){showError(contentArea, "Content too short (min 20 chars)");return;}
         }
         String fullText = titleField.getText().trim() + " " + contentArea.getText().trim();
-        if (perspectiveService.isToxic(fullText)) {
+        if (Moderate.isToxic(fullText)) {
             alert("Your post was flagged as harmful. Please revise it.", Alert.AlertType.WARNING);
             return;
         }
@@ -396,7 +393,7 @@ public class AddThreadController {
         }
         thread.setPinned(isPinned);
 
-        thread.setUserId(user.getCurrentUserId());
+        thread.setUserId(currentUserId);
 
         System.out.println("Creating thread: " + thread.getTitle());
 

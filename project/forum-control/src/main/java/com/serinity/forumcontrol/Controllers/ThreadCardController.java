@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class ThreadCardController {
+    private FakeUser user;
+    String currentUserId = user.getCurrentUserId();
     @FXML
     private VBox rootCard;
     @FXML
@@ -34,7 +36,6 @@ public class ThreadCardController {
     private MenuButton menuButton;
     private ServiceThread service = new ServiceThread();
     private Thread thread;
-    private FakeUser user;
     private Runnable onRefreshCallback;
     public void setData(Thread t) {
         this.thread = t;
@@ -98,7 +99,7 @@ public class ThreadCardController {
      */
     private void configureMenu() {
         try {
-            String currentUserId = user.getCurrentUserId();
+
             boolean isAdmin = service.isAdmin(currentUserId);
             boolean isOwner = thread.getUserId().equalsIgnoreCase(currentUserId);
 

@@ -1,20 +1,21 @@
 package com.serinity.moodcontrol.controller;
 
 import com.serinity.moodcontrol.dao.JournalEntryDao;
+import com.serinity.moodcontrol.interfaces.IJournalEntryService;
 import com.serinity.moodcontrol.model.JournalEntry;
+import com.serinity.moodcontrol.service.JournalEntryService;
+import com.serinity.moodcontrol.service.JournalService;
+import com.serinity.moodcontrol.service.CallMeBotService;
 
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -22,23 +23,20 @@ import javafx.util.Duration;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.ArrayList;
 
 public class JournalController {
-
-    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
 
     // kima Journal.fxml prefWidth
     private static final double EDITOR_WIDTH = 430.0;
 
-    // TEMP until users module
-    private static final long USER_ID = 1L;
+    // TEMP until users module (UUID CHAR(36))
+    private static final String USER_ID = "6affa2df-dda9-442d-99ee-d2a3c1e78c64";
+    // TODO(USER-ID): replace USER_ID with authenticated id from access-control integration.
 
-    // ----- FXML -----
     @FXML private VBox journalBox;
 
     @FXML private StackPane overlay;
@@ -48,13 +46,21 @@ public class JournalController {
 
     private JournalEditorController editor;
 
+    // NOTIF API
+    private final CallMeBotService callMeBotService = new CallMeBotService();
     // DB
     private final JournalEntryDao dao = new JournalEntryDao();
 
-    // current data
-    private List<JournalEntry> items = new ArrayList<JournalEntry>();
+    // CRUD wrapper service (workshop interface style)
+    private final IJournalEntryService journalEntryService = new JournalEntryService(dao);
 
-    // tracki current "edit context"
+    // Business logic service (validation + guided serialization)
+    private final JournalService journalService = new JournalService(dao, this::serializeGuided);
+
+    // current data
+    private List<JournalEntry> items = new ArrayList<>();
+
+    // track current "edit context"
     private JournalEntry editing = null;
 
     @FXML
@@ -71,10 +77,7 @@ public class JournalController {
         closeEditorInstant();
     }
 
-    // ======================
-    // Load editor component
-    // ======================
-
+    // editor component
     private void loadEditor() {
         try {
             final FXMLLoader loader = new FXMLLoader(
@@ -85,7 +88,7 @@ public class JournalController {
             final Parent view = loader.load();
             editor = loader.getController();
 
-            editor.setOnSave(draft -> onEditorSave(draft));
+            editor.setOnSave(this::onEditorSave);
             editor.setOnCancel(new Runnable() {
                 @Override public void run() { closeEditor(); }
             });
@@ -97,10 +100,7 @@ public class JournalController {
         }
     }
 
-    // ======================
-    // Top actions
-    // ======================
-
+    // actions
     @FXML
     private void onNew() {
         editing = null;
@@ -119,54 +119,54 @@ public class JournalController {
         render();
     }
 
-    // ======================
     // DB load
-    // ======================
-
     private void reloadFromDb() {
         try {
-            items = dao.findAll(USER_ID);
+            items = journalEntryService.getAll(USER_ID);
         } catch (SQLException e) {
             e.printStackTrace();
-            items = new ArrayList<JournalEntry>();
+            items = new ArrayList<>();
         }
     }
 
-    // ======================
-    // Editor callbacks
-    // ======================
-
+    // Editor save
     private void onEditorSave(final JournalEditorController.JournalDraft d) {
+        final boolean isNew = (editing == null);
+
         String title = safe(d.title);
-        if (title.isEmpty()) title = t("journal.untitled");
 
-        final String content = serializeGuided(d.a1, d.a2, d.a3);
+        String err = isNew
+                ? journalService.create(USER_ID, title, d.a1, d.a2, d.a3)
+                : journalService.update(USER_ID, editing, title, d.a1, d.a2, d.a3);
 
-        try {
-            if (editing == null) {
-                // NEW
-                JournalEntry e = new JournalEntry();
-                e.setUserId(USER_ID);
-                e.setTitle(title);
-                e.setContent(content);
+        if (err != null) {
+            // err format: "journal.field.title|journal.validation.empty"
+            String[] parts = err.split("\\|", 2);
+            String fieldKey = parts.length > 0 ? parts[0] : err;
+            String ruleKey  = parts.length > 1 ? parts[1] : "journal.validation.invalid";
 
-                dao.insert(e);
+            final Alert alert = new Alert(Alert.AlertType.WARNING);
 
-            } else {
-                // EDIT
-                JournalEntry e = new JournalEntry();
-                e.setId(editing.getId());
-                e.setUserId(USER_ID);
-                e.setTitle(title);
-                e.setContent(content);
+            alert.setTitle(t("journal.validation.title"));
+            alert.setHeaderText(null);
+            alert.setContentText(t(fieldKey) + " " + t(ruleKey));
 
-                dao.update(e);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            alert.getButtonTypes().setAll(ButtonType.OK);
+
+            alert.getDialogPane().getStylesheets().add(
+                    getClass().getResource("/styles/styles.css").toExternalForm()
+            );
+            alert.getDialogPane().getStyleClass().add("app-dialog");
+
+            alert.showAndWait();
+            return;
         }
 
-        // Always reload from DB so UI stays truthful
+        // notif if journal saved in db
+        if (isNew) {
+            callMeBotService.notifyJournalSaved(title, LocalDateTime.now());
+        }
+
         editing = null;
         reloadFromDb();
         render();
@@ -188,10 +188,7 @@ public class JournalController {
         showEditor();
     }
 
-    // ======================
     // Rendering
-    // ======================
-
     private void render() {
         journalBox.getChildren().clear();
 
@@ -247,63 +244,33 @@ public class JournalController {
     }
 
     private Node journalCard(final JournalEntry entry, final LocalDateTime dt) {
-        final VBox card = new VBox(8);
-        card.getStyleClass().add("journal-card");
+        try {
+            final FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/mood/components/JournalCard.fxml"),
+                    resources
+            );
 
-        final HBox top = new HBox(12);
-        top.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            final Node card = loader.load();
 
-        final VBox main = new VBox(4);
+            final JournalCardController c = loader.getController();
+            c.setData(
+                    entry,
+                    dt,
+                    resources,
+                    this::openEdit,
+                    this::onDelete
+            );
 
-        final Label title = new Label(entry.getTitle());
-        title.getStyleClass().add("journal-card-title");
+            return card;
 
-        final String time = " • " + TIME_FMT.format(dt);
-        final Label meta = new Label(t("journal.card.sub") + time);
-        meta.getStyleClass().add("journal-card-meta");
-
-        main.getChildren().addAll(title, meta);
-
-        final Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        final HBox actions = new HBox(8);
-        actions.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
-
-        final Button btnEdit = new Button("✎");
-        btnEdit.getStyleClass().addAll("icon-btn", "icon-btn-edit", "ms-icon");
-        btnEdit.setOnAction(e -> {
-            e.consume();
-            openEdit(entry);
-        });
-
-        final Button btnDelete = new Button("\uD83D\uDDD1");
-        btnDelete.getStyleClass().addAll("icon-btn", "icon-btn-delete", "ms-icon");
-        btnDelete.setOnAction(e -> {
-            e.consume();
-            onDelete(entry);
-        });
-
-        actions.getChildren().addAll(btnEdit, btnDelete);
-
-        top.getChildren().addAll(main, spacer, actions);
-
-        final Label preview = new Label(makePreview(entry.getContent()));
-        preview.getStyleClass().add("journal-card-preview");
-        preview.setWrapText(true);
-
-        card.getChildren().addAll(top, preview);
-
-        // click card opens edit
-        card.setOnMouseClicked(e -> openEdit(entry));
-
-        return card;
+        } catch (final Exception e) {
+            throw new RuntimeException("Failed to load JournalCard.fxml", e);
+        }
     }
 
     private void onDelete(final JournalEntry entry) {
         final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 
-        // if you want i18n later, add keys like journal.delete.title/header/body
         alert.setTitle(t("journal.delete.title"));
         alert.setHeaderText(t("journal.delete.header"));
         alert.setContentText(t("journal.delete.body"));
@@ -311,7 +278,7 @@ public class JournalController {
         final Optional<ButtonType> res = alert.showAndWait();
         if (res.isPresent() && res.get() == ButtonType.OK) {
             try {
-                dao.delete(entry.getId(), USER_ID);
+                journalEntryService.delete(entry.getId(), USER_ID);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -320,10 +287,7 @@ public class JournalController {
         }
     }
 
-    // ======================
     // Overlay open/close
-    // ======================
-
     private void showEditor() {
         overlay.setManaged(true);
         overlay.setVisible(true);
@@ -354,10 +318,7 @@ public class JournalController {
         tt.play();
     }
 
-    // ======================
-    // Guided serialization/parsing (Java 11)
-    // ======================
-
+    // guided serialization
     private static class Parsed {
         final String a1;
         final String a2;
@@ -396,27 +357,6 @@ public class JournalController {
         final int next = content.indexOf("\nQ", start);
         final String part = (next >= 0) ? content.substring(start, next) : content.substring(start);
         return part.trim();
-    }
-
-    private String makePreview(final String content) {
-        final Parsed p = parseGuided(content);
-
-        String v = firstNonEmpty(p.a1, p.a2, p.a3);
-        if (v.isEmpty()) return t("journal.preview.empty");
-
-        v = v.replace("\n", " ").trim();
-        return v.length() > 120 ? v.substring(0, 120) + "…" : v;
-    }
-
-    // ======================
-    // Helpers
-    // ======================
-
-    private String firstNonEmpty(final String a, final String b, final String c) {
-        if (a != null && !a.trim().isEmpty()) return a.trim();
-        if (b != null && !b.trim().isEmpty()) return b.trim();
-        if (c != null && !c.trim().isEmpty()) return c.trim();
-        return "";
     }
 
     private String safe(final String s) {

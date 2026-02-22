@@ -31,6 +31,7 @@ public class NotificationsPanelController {
     private ServiceNotification notificationService;
     private ServiceThread threadService;
     private FakeUser user;
+    String currentUserId = user.getCurrentUserId();
     private Runnable onCloseCallback;
 
     public NotificationsPanelController() {
@@ -46,8 +47,7 @@ public class NotificationsPanelController {
     public void loadNotifications() {
         notificationsBox.getChildren().clear();
 
-        String userId = user.getCurrentUserId();
-        List<Notification> notifications = notificationService.getUserNotifications(userId);
+        List<Notification> notifications = notificationService.getUserNotifications(currentUserId);
 
         if (notifications.isEmpty()) {
             // Show empty state
@@ -136,8 +136,7 @@ public class NotificationsPanelController {
      */
     @FXML
     private void onMarkAllAsRead() {
-        String userId = user.getCurrentUserId();
-        notificationService.markAllAsSeen(userId);
+        notificationService.markAllAsSeen(currentUserId);
         loadNotifications();
 
         // Notify parent to update badge
@@ -157,8 +156,7 @@ public class NotificationsPanelController {
         confirm.setContentText("Are you sure you want to delete all notifications?");
 
         if (confirm.showAndWait().get() == ButtonType.OK) {
-            String userId = user.getCurrentUserId();
-            notificationService.deleteAllForUser(userId);
+            notificationService.deleteAllForUser(currentUserId);
             loadNotifications();
 
             // Notify parent to update badge

@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 public class ForumPostsController {
     private FakeUser user;
+    String currentUserId = user.getCurrentUserId();
     @FXML private VBox cardsContainer;
     @FXML private Button categoriesButton;
     @FXML private Button newCategoryButton;
@@ -169,7 +170,6 @@ public class ForumPostsController {
 
     private void configureCategory() {
         try {
-            String currentUserId = user.getCurrentUserId();
             boolean isAdmin = service.isAdmin(currentUserId);
             if (isAdmin) {
                 categoriesButton.setVisible(true);
@@ -349,11 +349,10 @@ public class ForumPostsController {
         setActiveNavButton(followedButton);
         try {
             cardsContainer.getChildren().clear();
-            String userId = user.getCurrentUserId();
             ServicePostInteraction interactionService = new ServicePostInteraction();
             ServiceThread service = new ServiceThread();
             List<Thread> threads = service.getAll().stream()
-                    .filter(t->interactionService.isFollowing((int) t.getId(),userId))
+                    .filter(t->interactionService.isFollowing((int) t.getId(),currentUserId))
                     .filter(t -> t.getStatus() != ThreadStatus.ARCHIVED)
                     .collect(Collectors.toList());
 
@@ -700,8 +699,7 @@ public class ForumPostsController {
         return sorted;
     }
     private void updateNotificationBadge() {
-        String userId = user.getCurrentUserId();
-        int unseenCount = notificationService.getUnseenCount(userId);
+        int unseenCount = notificationService.getUnseenCount(currentUserId);
 
         if (unseenCount > 0) {
             // Show badge
@@ -775,8 +773,8 @@ public class ForumPostsController {
             overlay.getChildren().add(notificationsPanel);
             overlay.setVisible(true);
 
-            String userId = user.getCurrentUserId();
-            notificationService.markAllAsSeen(userId);
+
+            notificationService.markAllAsSeen(currentUserId);
             updateNotificationBadge();
 
         } catch (IOException e) {
