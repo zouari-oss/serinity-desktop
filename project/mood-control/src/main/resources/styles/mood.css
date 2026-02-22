@@ -246,7 +246,7 @@
 }
 
 /* =========================
-   MOOD HISTORY (Timeline)
+   MOOD HISTORY
    ========================= */
 .history-top {}
 
@@ -358,7 +358,7 @@
     -fx-text-fill: -ser-text2;
 }
 
-/* Icon buttons (ONE OWNER = mood.css) */
+/* Icon buttons  */
 .icon-btn {
     -fx-background-color: rgba(31, 41, 51, 0.06);
     -fx-text-fill: -ser-text;
@@ -404,4 +404,100 @@
 .filter-search:focused {
     -fx-border-color: rgba(47, 111, 109, 0.40);
     -fx-effect: dropshadow(gaussian, rgba(47, 111, 109, 0.18), 12, 0.25, 0, 0);
+}
+
+/* ---------- icon ImageView ---------- */
+.clickable-icon {
+    -fx-cursor: hand;
+    -fx-opacity: 0.90;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+}
+
+.clickable-icon:hover {
+    -fx-opacity: 1.0;
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
+}
+
+.clickable-icon.pressed {
+    -fx-opacity: 0.72;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+#stats_icon {
+    -fx-image: url("../assets/icons/chart.png");
+}
+
+/* ---------- Stats slide panel ---------- */
+.slide-panel-host {
+    -fx-border-color: rgba(0,0,0,0.0);
+    -fx-border-width: 0 0 0 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 18, 0.2, -4, 0);
+}
+
+.stats-panel {
+    -fx-background-color: rgba(239, 244, 244, 0.92);
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+
+    -fx-border-width: 1;
+    -fx-border-color: rgba(0,0,0,0.08);
+}
+
+.stats-header .panel-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+}
+
+.chart-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1F5E5A;
+
+}
+.chart-legend {
+    -fx-background-color: transparent;
+}
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+.chart-horizontal-grid-lines,
+.chart-vertical-grid-lines {
+    -fx-stroke: rgba(0,0,0,0.06);
+}
+/* ---------- Segmented toggle buttons ---------- */
+.seg-btn {
+
+    -fx-background-color: #EFF4F4;
+    -fx-text-fill: -ser-text;
+    -fx-font-weight: 800;
+    -fx-font-size: 12px;
+
+    -fx-padding: 8 14;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-border-color: rgba(31, 41, 51, 0.10);
+
+    -fx-cursor: hand;
+}
+
+.seg-btn:hover {
+    -fx-background-color: #E8EFEF;
+}
+
+.seg-btn:pressed {
+    -fx-background-color: #E1EBEB;
+}
+
+.seg-btn:selected {
+    -fx-background-color: -ser-primary;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.seg-btn:selected:hover {
+    -fx-background-color: derive(-ser-primary, 6%);
 }
