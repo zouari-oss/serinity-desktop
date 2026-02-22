@@ -5,6 +5,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/serinity-desktop-main/project/pom.xml" />
+        <option value="$PROJECT_DIR$/project/forum-control/pom.xml" />
       </list>
     </option>
   </component>

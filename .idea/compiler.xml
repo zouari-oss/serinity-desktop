@@ -6,10 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="access-control" />
-        <module name="forum-control" />
-        <module name="mood-controll" />
+        <module name="forum-modul" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="access-control" target="17" />
+      <module name="forum-control" target="17" />
+      <module name="mood-controll" target="11" />
+      <module name="serinity" target="25" />
+    </bytecodeTargetLevel>
   </component>
 </project>

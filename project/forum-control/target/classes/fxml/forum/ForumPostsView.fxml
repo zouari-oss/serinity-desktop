@@ -124,6 +124,13 @@
 
                       </ScrollPane>
             </children>
+            <StackPane fx:id="overlayPane"
+                       minHeight="150"
+                       prefHeight="150"
+                       visible="false"
+                       style="-fx-background-color: rgba(0,0,0,0.3);"
+                       mouseTransparent="false">
+            </StackPane>
         </VBox>
     </center>
 

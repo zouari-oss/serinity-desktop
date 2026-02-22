@@ -752,22 +752,32 @@ public class ForumPostsController {
     @FXML
     private void onNotifications() {
         try {
-
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/fxml/forum/NotificationsPanel.fxml")
             );
+
+            // Must call load() BEFORE getController()
             Parent notificationsPanel = loader.load();
 
             NotificationsPanelController controller = loader.getController();
             controller.setOnCloseCallback(this::updateNotificationBadge);
 
-            // Mark all as seen when opening
+            // Look up the overlay StackPane in the scene
+            StackPane overlay = (StackPane) notificationsButton.getScene().lookup("#overlayPane");
+
+            if (overlay == null) {
+                System.err.println("overlayPane not found in scene. Add a StackPane with fx:id=\"overlayPane\" to your main FXML.");
+                return;
+            }
+
+            // Clear any existing popups and show this one
+            overlay.getChildren().clear();
+            overlay.getChildren().add(notificationsPanel);
+            overlay.setVisible(true);
+
             String userId = user.getCurrentUserId();
             notificationService.markAllAsSeen(userId);
             updateNotificationBadge();
-
-            // Show as overlay popup
-            showNotificationsPopup(notificationsPanel);
 
         } catch (IOException e) {
             System.err.println("Error loading notifications panel: " + e.getMessage());

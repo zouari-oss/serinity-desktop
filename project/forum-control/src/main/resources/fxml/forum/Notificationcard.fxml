@@ -4,9 +4,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox
-      xmlns="http://javafx.com/javafx"
+<HBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
+      fx:id="root"
       fx:controller="com.serinity.forumcontrol.Controllers.NotificationCardController"
       spacing="10"
       alignment="CENTER_LEFT"

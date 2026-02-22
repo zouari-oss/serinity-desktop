@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<VBox maxHeight="500" prefWidth="400" spacing="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 15, 0, 0, 3);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.forumcontrol.Controllers.NotificationsPanelController">
+<VBox  prefWidth="350" prefHeight="150" maxHeight="150" spacing="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 15, 0, 0, 3);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.forumcontrol.Controllers.NotificationsPanelController">
 
              <!-- Header -->
     <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 15; -fx-background-color: #2196F3; -fx-background-radius: 10 10 0 0;">
@@ -26,9 +26,9 @@
              <Separator style="-fx-background-color: #e0e0e0;" />
 
              <!-- Notifications List -->
-    <ScrollPane fitToWidth="true" style="-fx-background-color: white; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
+    <ScrollPane fitToWidth="true" minHeight="150" prefHeight="150" style="-fx-background-color: white; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
         <content>
-            <VBox fx:id="notificationsBox" spacing="0" style="-fx-background-color: white;" />
+            <VBox fx:id="notificationsBox" spacing="0" style="-fx-background-color: white;" VBox.vgrow="ALWAYS" />
         </content>
     </ScrollPane>
 

@@ -180,13 +180,10 @@ public class NotificationsPanelController {
      * Close this panel
      */
     private void closePanel() {
-        Node node = notificationsBox.getScene().getRoot();
-        if (node instanceof StackPane) {
-            StackPane root = (StackPane) node;
-            // Remove the overlay (last child should be the popup)
-            if (root.getChildren().size() > 1) {
-                root.getChildren().remove(root.getChildren().size() - 1);
-            }
+        StackPane overlay = (StackPane) notificationsBox.getScene().lookup("#overlayPane");
+        if (overlay != null) {
+            overlay.getChildren().clear();
+            overlay.setVisible(false);
         }
     }
 
