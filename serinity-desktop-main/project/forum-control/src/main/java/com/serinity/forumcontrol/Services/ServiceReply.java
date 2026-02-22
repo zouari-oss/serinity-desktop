@@ -12,6 +12,7 @@ import java.util.List;
 public class ServiceReply implements Services<Reply> {
 
     private Connection cnx;
+    private ServiceNotification notificationService = new ServiceNotification();
 
     public ServiceReply() {
         this.cnx = MyDataBase.getInstance().getCnx();
@@ -40,6 +41,7 @@ public class ServiceReply implements Services<Reply> {
 
             pstm.executeUpdate();
 
+            notificationService.createNotification(reply.getThreadId(), "comment", reply.getUserId());
 
         } catch (SQLException e) {
             System.out.println("Error adding reply: " + e.getMessage());
@@ -119,9 +121,7 @@ public class ServiceReply implements Services<Reply> {
         }
     }
 
-    /**
-     * Get reply by ID
-     */
+
     public Reply getById(long id) {
         String req = "SELECT * FROM `replies` WHERE `id` = ?";
 

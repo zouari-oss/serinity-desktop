@@ -5,22 +5,26 @@ import com.serinity.forumcontrol.Models.Category;
 import com.serinity.forumcontrol.Models.ThreadStatus;
 import com.serinity.forumcontrol.Models.ThreadType;
 import com.serinity.forumcontrol.Services.ServiceCategory;
+import com.serinity.forumcontrol.Services.ServiceNotification;
 import com.serinity.forumcontrol.Services.ServicePostInteraction;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import com.serinity.forumcontrol.Models.Thread;
 import com.serinity.forumcontrol.Services.ServiceThread;
 
 import javafx.geometry.Insets;
+import javafx.util.Duration;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -47,7 +51,10 @@ public class ForumPostsController {
     @FXML private CheckBox typeAnnouncementCheckBox;
     @FXML private VBox categoriesFilterBox;
     @FXML private ComboBox<String> sortByComboBox;
+    @FXML private Button notificationsButton;
+    @FXML private Label notificationBadge;
 
+    private ServiceNotification notificationService = new ServiceNotification(); // NEW
     private ServiceThread service = new ServiceThread();
     private ServiceCategory categoryService = new ServiceCategory();
     private List<Thread> currentThreads = new ArrayList<>();
@@ -65,6 +72,12 @@ public class ForumPostsController {
         loadCheckboxCategories();
         configureCategory();
         setActiveNavButton(homeButton);
+        updateNotificationBadge();
+        Timeline notificationRefreshTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(30), event -> updateNotificationBadge())
+        );
+        notificationRefreshTimeline.setCycleCount(Timeline.INDEFINITE);
+        notificationRefreshTimeline.play();
     }
     private void configureSearch() {
         if (searchField != null) {
@@ -686,5 +699,121 @@ public class ForumPostsController {
 
         return sorted;
     }
+    private void updateNotificationBadge() {
+        String userId = user.getCurrentUserId();
+        int unseenCount = notificationService.getUnseenCount(userId);
 
+        if (unseenCount > 0) {
+            // Show badge
+            if (notificationBadge != null) {
+                notificationBadge.setText(String.valueOf(unseenCount));
+                notificationBadge.setVisible(true);
+                notificationBadge.setManaged(true);
+            }
+
+            // Highlight notification button
+            if (notificationsButton != null) {
+                notificationsButton.setStyle(
+                        "-fx-background-color: #E3F2FD; " +
+                                "-fx-text-fill: #333; " +
+                                "-fx-font-size: 14; " +
+                                "-fx-padding: 10; " +
+                                "-fx-background-radius: 5; " +
+                                "-fx-cursor: hand; " +
+                                "-fx-border-color: #2196F3; " +
+                                "-fx-border-width: 2; " +
+                                "-fx-border-radius: 5;"
+                );
+            }
+        } else {
+            // Hide badge
+            if (notificationBadge != null) {
+                notificationBadge.setVisible(false);
+                notificationBadge.setManaged(false);
+            }
+
+            // Normal button style
+            if (notificationsButton != null) {
+                notificationsButton.setStyle(
+                        "-fx-background-color: transparent; " +
+                                "-fx-text-fill: #333; " +
+                                "-fx-font-size: 14; " +
+                                "-fx-padding: 10; " +
+                                "-fx-background-radius: 5; " +
+                                "-fx-cursor: hand;"
+                );
+            }
+        }
+    }
+
+    /**
+     * Handle notifications button click
+     */
+    @FXML
+    private void onNotifications() {
+        try {
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/forum/NotificationsPanel.fxml")
+            );
+            Parent notificationsPanel = loader.load();
+
+            NotificationsPanelController controller = loader.getController();
+            controller.setOnCloseCallback(this::updateNotificationBadge);
+
+            // Mark all as seen when opening
+            String userId = user.getCurrentUserId();
+            notificationService.markAllAsSeen(userId);
+            updateNotificationBadge();
+
+            // Show as overlay popup
+            showNotificationsPopup(notificationsPanel);
+
+        } catch (IOException e) {
+            System.err.println("Error loading notifications panel: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Show notifications panel as popup overlay
+     */
+    private void showNotificationsPopup(Parent notificationsPanel) {
+        // Get the root of the scene
+        Node sceneRoot = notificationsButton.getScene().getRoot();
+
+        if (sceneRoot instanceof StackPane) {
+            StackPane root = (StackPane) sceneRoot;
+
+            // Create semi-transparent background overlay
+            Region overlay = new Region();
+            overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+            overlay.setOnMouseClicked(event -> {
+                // Close popup when clicking outside
+                root.getChildren().remove(root.getChildren().size() - 1);
+            });
+
+            // Create container for the panel
+            StackPane popupContainer = new StackPane();
+            popupContainer.setAlignment(Pos.TOP_RIGHT);
+            popupContainer.setStyle("-fx-padding: 80 20 20 20;");
+            popupContainer.getChildren().add(notificationsPanel);
+            popupContainer.setPickOnBounds(false);
+
+            // Combine overlay and popup
+            StackPane combined = new StackPane();
+            combined.getChildren().addAll(overlay, popupContainer);
+
+            // Add to root
+            root.getChildren().add(combined);
+        } else if (sceneRoot instanceof BorderPane) {
+            // If root is BorderPane, wrap it in a StackPane first
+            BorderPane borderPane = (BorderPane) sceneRoot;
+
+            // We need to add overlay to the scene differently
+            // Create a temporary overlay approach
+            System.err.println("Root is BorderPane - notification popup may not display correctly");
+            System.err.println("Consider wrapping your root in a StackPane in the FXML");
+        }
+    }
 }

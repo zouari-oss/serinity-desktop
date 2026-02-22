@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox maxHeight="500" prefWidth="400" spacing="0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 15, 0, 0, 3);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.forumcontrol.Controllers.NotificationsPanelController">
+
+             <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 15; -fx-background-color: #2196F3; -fx-background-radius: 10 10 0 0;">
+
+                 <Label style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: white;" text="🔔 Notifications" />
+
+                 <Region HBox.hgrow="ALWAYS" />
+
+                 <Button fx:id="markAllReadButton" onAction="#onMarkAllAsRead" style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-font-size: 11; -fx-padding: 5 10; -fx-background-radius: 15; -fx-cursor: hand;" text="Mark all as read" />
+
+                 <Button onAction="#onClose" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 18; -fx-cursor: hand; -fx-padding: 0 5;" text="✖" />
+    </HBox>
+
+             <Separator style="-fx-background-color: #e0e0e0;" />
+
+             <!-- Notifications List -->
+    <ScrollPane fitToWidth="true" style="-fx-background-color: white; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
+        <content>
+            <VBox fx:id="notificationsBox" spacing="0" style="-fx-background-color: white;" />
+        </content>
+    </ScrollPane>
+
+             <!-- Empty State -->
+    <VBox fx:id="emptyState" alignment="CENTER" managed="false" spacing="10" style="-fx-padding: 40;" visible="false">
+
+                 <Label style="-fx-font-size: 48; -fx-opacity: 0.3;" text="🔕" />
+
+                 <Label style="-fx-font-size: 14; -fx-text-fill: #999;" text="No notifications" />
+
+                 <Label style="-fx-font-size: 12; -fx-text-fill: #bbb;" text="You're all caught up!" />
+    </VBox>
+
+             <!-- Footer -->
+    <HBox alignment="CENTER" style="-fx-padding: 10; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+
+                 <Button fx:id="clearAllButton" onAction="#onClearAll" style="-fx-background-color: transparent; -fx-text-fill: #f44336; -fx-font-size: 12; -fx-cursor: hand;" text="Clear All Notifications" />
+    </HBox>
+
+      </VBox>

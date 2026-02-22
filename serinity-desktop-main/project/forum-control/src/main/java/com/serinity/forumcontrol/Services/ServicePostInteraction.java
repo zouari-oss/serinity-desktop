@@ -2,6 +2,7 @@ package com.serinity.forumcontrol.Services;
 
 import com.serinity.forumcontrol.Models.PostInteraction;
 import com.serinity.forumcontrol.Utils.MyDataBase;
+import com.serinity.forumcontrol.Services.ServiceNotification;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 public class ServicePostInteraction {
 
     private Connection cnx;
-
+    private ServiceNotification notificationService = new ServiceNotification();
     public ServicePostInteraction() {
         this.cnx = MyDataBase.getInstance().getCnx();
     }
@@ -48,25 +49,40 @@ public class ServicePostInteraction {
 
     public void toggleUpvote(int threadId, String userId) {
         PostInteraction interaction = getInteraction(threadId, userId);
+        int oldVote = interaction != null ? interaction.getVote() : 0;
 
         if (interaction == null) {
             upvote(threadId, userId);
+            // CREATE NOTIFICATION when upvoting
+            notificationService.createNotification((long) threadId, "like", userId);
         } else if (interaction.hasUpvoted()) {
             removeVote(threadId, userId);
         } else {
             upvote(threadId, userId);
+            // CREATE NOTIFICATION when upvoting
+            if (oldVote != 1) {
+                notificationService.createNotification((long) threadId, "like", userId);
+            }
         }
+
     }
 
     public void toggleDownvote(int threadId, String userId) {
         PostInteraction interaction = getInteraction(threadId, userId);
+        int oldVote = interaction != null ? interaction.getVote() : 0;
 
         if (interaction == null) {
             downvote(threadId, userId);
+            // CREATE NOTIFICATION when downvoting
+            notificationService.createNotification((long) threadId, "dislike", userId);
         } else if (interaction.hasDownvoted()) {
             removeVote(threadId, userId);
         } else {
             downvote(threadId, userId);
+            // CREATE NOTIFICATION when downvoting
+            if (oldVote != -1) {
+                notificationService.createNotification((long) threadId, "dislike", userId);
+            }
         }
     }
 
@@ -112,9 +128,14 @@ public class ServicePostInteraction {
 
     public void toggleFollow(int threadId, String userId) {
         PostInteraction interaction = getInteraction(threadId, userId);
+        boolean wasFollowing = interaction != null && interaction.isFollow();
 
         if (interaction == null || !interaction.isFollow()) {
             follow(threadId, userId);
+            // CREATE NOTIFICATION when following
+            if (!wasFollowing) {
+                notificationService.createNotification((long) threadId, "follow", userId);
+            }
         } else {
             unfollow(threadId, userId);
         }
