@@ -280,3 +280,30 @@
     -fx-background-color: rgba(244,180,0,0.18);
     -fx-text-fill: #8A6A00;
 }
+.history-list {
+    -fx-background-color: transparent;
+    -fx-padding: 6;
+}
+
+.history-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8 6;
+}
+
+.history-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-padding: 14;
+    -fx-border-color: #E6ECEC;
+    -fx-border-radius: 14;
+}
+
+.card-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2F6F6D;
+}
+
+.card-sub {
+    -fx-text-fill: #5D6D6C;
+}

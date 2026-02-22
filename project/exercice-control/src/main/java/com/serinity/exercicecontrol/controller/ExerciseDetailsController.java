@@ -1,5 +1,7 @@
 package com.serinity.exercicecontrol.controller;
 
+import com.serinity.exercicecontrol.dao.SessionDAO;
+import com.serinity.exercicecontrol.service.SessionService;
 import com.serinity.exercicecontrol.model.Exercise;
 import com.serinity.exercicecontrol.model.Resource;
 import com.serinity.exercicecontrol.service.ExerciseService;
@@ -188,24 +190,33 @@ public class ExerciseDetailsController {
         }
     }
 
+    // ✅ UPDATED: Start session using SessionDAO + SessionService then open SessionRun.fxml
     @FXML
     private void onStart() {
         if (exercise == null) return;
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseSession.fxml"));
+            int userId = 1; // TODO: remplacer par l'utilisateur connecté
+
+            SessionDAO dao = new SessionDAO();
+            SessionService service = new SessionService(dao);
+
+            int sessionId = dao.createCreatedSession(userId, exercise.getId());
+            service.start(sessionId);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/SessionRun.fxml"));
             Parent root = loader.load();
 
-            ExerciseSessionController ctrl = loader.getController();
-            ctrl.setExercise(exercise);
+            SessionRunController ctrl = loader.getController();
+            ctrl.init(sessionId, exercise);
 
             setContent(root);
-        } catch (IOException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
-            showError("Erreur", "Impossible de démarrer la session.");
+            showError("Erreur", "Impossible de démarrer la session.\n" + e.getMessage());
         }
     }
-
 
     @FXML
     private void onOpenHistory() {
