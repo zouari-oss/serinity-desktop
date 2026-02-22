@@ -5,6 +5,7 @@ import com.serinity.moodcontrol.interfaces.IJournalEntryService;
 import com.serinity.moodcontrol.model.JournalEntry;
 import com.serinity.moodcontrol.service.JournalEntryService;
 import com.serinity.moodcontrol.service.JournalService;
+import com.serinity.moodcontrol.service.CallMeBotService;
 
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
@@ -45,6 +46,8 @@ public class JournalController {
 
     private JournalEditorController editor;
 
+    // NOTIF API
+    private final CallMeBotService callMeBotService = new CallMeBotService();
     // DB
     private final JournalEntryDao dao = new JournalEntryDao();
 
@@ -128,9 +131,11 @@ public class JournalController {
 
     // Editor save
     private void onEditorSave(final JournalEditorController.JournalDraft d) {
+        final boolean isNew = (editing == null);
+
         String title = safe(d.title);
 
-        String err = (editing == null)
+        String err = isNew
                 ? journalService.create(USER_ID, title, d.a1, d.a2, d.a3)
                 : journalService.update(USER_ID, editing, title, d.a1, d.a2, d.a3);
 
@@ -155,6 +160,11 @@ public class JournalController {
 
             alert.showAndWait();
             return;
+        }
+
+        // notif if journal saved in db
+        if (isNew) {
+            callMeBotService.notifyJournalSaved(title, LocalDateTime.now());
         }
 
         editing = null;

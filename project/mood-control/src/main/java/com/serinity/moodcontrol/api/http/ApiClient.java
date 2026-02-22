@@ -1,0 +1,24 @@
+package com.serinity.moodcontrol.api.http;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.net.http.HttpClient;
+import java.time.Duration;
+
+/**
+ * Shared HTTP + JSON utilities for external APIs (ZenQuotes, Jokes, etc.).
+ * Keep this UI-agnostic: no JavaFX imports here.
+ */
+public class ApiClient {
+
+    protected final HttpClient http;
+    protected final ObjectMapper mapper;
+
+    public ApiClient() {
+        this.http = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .build();
+
+        this.mapper = new ObjectMapper();
+    }
+}

@@ -1,5 +1,3 @@
-
-
 /* =========================
    PAGE HEADER
    ========================= */
@@ -44,34 +42,24 @@
     -fx-padding: 22;
     -fx-cursor: hand;
 
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 20, 0.18, 0, 8);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 20, 0.15, 0, 6);
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    transition:
+            -fx-scale-x 0.2s ease,
+            -fx-scale-y 0.2s ease;
 }
 
-.mood-card-disabled {
-    -fx-background-color: rgba(255, 255, 255, 0.70);
-    -fx-border-color: rgba(31, 41, 51, 0.06);
-    -fx-cursor: default;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.06), 16, 0.14, 0, 6);
-    -fx-opacity: 0.80;
-}
-
-/* Hover: stronger lift + subtle tint (kept ONCE) */
 .mood-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.20), 34, 0.22, 0, 14);
-    -fx-border-color: rgba(47, 111, 109, 0.32);
-    -fx-background-color: rgba(230, 242, 241, 0.35);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
 }
 
 .mood-card:pressed {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.14), 22, 0.18, 0, 8);
-    -fx-background-color: rgba(230, 242, 241, 0.22);
+    -fx-scale-x: 0.995;
+    -fx-scale-y: 0.995;
 }
 
-.mood-card-disabled:hover {
-    -fx-opacity: 0.65;
-}
-
-/* Icon scaling on hover  */
 .mood-card #mood_log {
     -fx-image: url("../assets/icons/mood_log.png");
     -fx-scale-x: 1;
@@ -127,4 +115,63 @@
     -fx-wrap-text: true;
     -fx-alignment: center;
     -fx-max-width: 420;
+}
+
+/* =========================
+   DAILY ZEN (Quote Card)
+   ========================= */
+.boost-card {
+    -fx-alignment: center-left;
+
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-background-radius: 18;
+
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(31, 41, 51, 0.08);
+    -fx-border-width: 1;
+
+    -fx-padding: 14 16;
+
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 18, 0.12, 0, 5);
+}
+
+.boost-title {
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -ser-text2;
+    -fx-letter-spacing: 0.4px;
+}
+
+.boost-quote {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -ser-text;
+}
+
+.boost-author {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -ser-text2;
+}
+
+.boost-refresh {
+    -fx-background-color: rgba(47, 111, 109, 0.20);
+    -fx-background-radius: 14;
+
+    -fx-padding: 10 14;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1F2933;
+
+    -fx-cursor: hand;
+}
+
+.boost-refresh:hover {
+    -fx-background-color: rgba(47, 111, 109, 0.28);
+}
+
+.boost-refresh:disabled {
+    -fx-opacity: 0.7;
+    -fx-cursor: default;
 }
