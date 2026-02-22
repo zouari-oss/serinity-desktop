@@ -3,6 +3,7 @@ package com.serinity.moodcontrol.controller;
 import com.serinity.moodcontrol.dao.MoodEntryDao;
 import com.serinity.moodcontrol.dao.MoodHistoryItem;
 
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,8 +11,10 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -22,15 +25,18 @@ import java.text.Normalizer;
 
 public class MoodHistoryController {
 
+    // Slide panel width
+    private static final double STATS_WIDTH = 430.0;
+
     // TEMP until users module (UUID CHAR(36))
     private static final String USER_ID = "6affa2df-dda9-442d-99ee-d2a3c1e78c64";
     // TODO(USER-ID): replace with authenticated id from access-control integration.
 
-    // ---- Card VM UI-shaped data ----
-    static class MoodCardVM { // package-private so MoodHistoryCardController can use it
+    // Card VM (data)
+    static class MoodCardVM {
         final long id;
         final LocalDateTime dateTime;
-        final String momentType; // "MOMENT"/"DAY" (FILTER ONLY, NOT SEARCHED)
+        final String momentType; // "MOMENT"/"DAY"
         final int moodLevel;
         final List<String> emotions;   // CODES
         final List<String> influences; // CODES
@@ -56,7 +62,7 @@ public class MoodHistoryController {
     @FXML private VBox timelineBox;
     @FXML private ComboBox<String> rangeBox;
     @FXML private ComboBox<String> typeBox;
-    @FXML private TextField searchField; // <-- add in FXML next to typeBox
+    @FXML private TextField searchField; // local search (no SQL)
     @FXML private ResourceBundle resources;
 
     // Host injected by MoodHomeController
@@ -65,8 +71,15 @@ public class MoodHistoryController {
     // Master cache loaded once
     private List<MoodCardVM> masterItems = new ArrayList<MoodCardVM>();
 
-    // Current view after filters
+    // Current view reload
     private List<MoodCardVM> currentItems = new ArrayList<MoodCardVM>();
+
+    //STATS
+    @FXML private ImageView statsIcon;
+    @FXML private StackPane overlay;
+    @FXML private StackPane statsHost;
+
+    private MoodStatsPanelController statsController;
 
     @FXML
     public void initialize() {
@@ -89,14 +102,16 @@ public class MoodHistoryController {
                 t("history.type.day"));
         typeBox.getSelectionModel().select(0);
 
-        // Filters only re-render locally (NO DB call)
+        // Filters only re-render locally
         rangeBox.setOnAction(e -> applyFiltersAndRender());
         typeBox.setOnAction(e -> applyFiltersAndRender());
 
-        // Search (local, no SQL)
+        // Search
         if (searchField != null) {
             searchField.textProperty().addListener((obs, oldV, newV) -> applyFiltersAndRender());
         }
+
+        closeStatsInstant();
 
         // One DB call on page load
         reloadMasterFromDb();
@@ -112,6 +127,11 @@ public class MoodHistoryController {
         // DB call + local filtering
         reloadMasterFromDb();
         applyFiltersAndRender();
+
+        // If stats is open, refresh from cache (no DB call)
+        if (overlay != null && overlay.isVisible()) {
+            refreshStatsFromCache();
+        }
     }
 
     @FXML
@@ -129,7 +149,134 @@ public class MoodHistoryController {
         }
     }
 
-    // ---------------- DB LOAD (MASTER) ----------------
+    // STATS ICON HANDLERS
+
+    @FXML
+    private void onStatsClicked() {
+        if (overlay != null && overlay.isVisible()) {
+            closeStats();
+        } else {
+            openStats();
+        }
+    }
+
+    @FXML
+    private void onStatsPressed() {
+        if (statsIcon != null && !statsIcon.getStyleClass().contains("pressed")) {
+            statsIcon.getStyleClass().add("pressed");
+        }
+    }
+
+    @FXML
+    private void onStatsReleased() {
+        if (statsIcon != null) {
+            statsIcon.getStyleClass().remove("pressed");
+        }
+    }
+
+    @FXML
+    private void onStatsOverlayClicked() {
+        closeStats();
+    }
+
+    private void openStats() {
+        ensureStatsPanelLoaded();
+        refreshStatsFromCache();
+
+        overlay.setManaged(true);
+        overlay.setVisible(true);
+
+        statsHost.setManaged(true);
+        statsHost.setVisible(true);
+
+        statsHost.setTranslateX(STATS_WIDTH);
+        final TranslateTransition tt = new TranslateTransition(Duration.millis(220), statsHost);
+        tt.setToX(0);
+        tt.play();
+    }
+
+    private void closeStatsInstant() {
+        if (overlay != null) {
+            overlay.setVisible(false);
+            overlay.setManaged(false);
+        }
+        if (statsHost != null) {
+            statsHost.setVisible(false);
+            statsHost.setManaged(false);
+            statsHost.setTranslateX(0);
+        }
+    }
+
+    private void closeStats() {
+        if (statsHost == null) return;
+
+        final TranslateTransition tt = new TranslateTransition(Duration.millis(160), statsHost);
+        tt.setToX(STATS_WIDTH);
+        tt.setOnFinished(e -> closeStatsInstant());
+        tt.play();
+    }
+
+    private void ensureStatsPanelLoaded() {
+        if (statsController != null) return;
+
+        try {
+            final FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/mood/MoodStatsPanel.fxml"),
+                    resources
+            );
+            final Parent panel = loader.load();
+
+            statsController = loader.getController();
+            statsController.setOnClose(new Runnable() {
+                @Override
+                public void run() {
+                    closeStats();
+                }
+            });
+
+            statsHost.getChildren().setAll(panel);
+
+        } catch (final IOException e) {
+            throw new RuntimeException("Failed to load MoodStatsPanel.fxml", e);
+        }
+    }
+
+    private void refreshStatsFromCache() {
+        if (statsController == null) return;
+
+        final List<MoodCardVM> itemsForStats = getItemsForStats();
+        statsController.setItems(itemsForStats);
+    }
+
+    private List<MoodCardVM> getItemsForStats() {
+        final String rangeLabel = rangeBox.getValue();
+        final String typeCode = toTypeCode(typeBox.getValue()); // ALL/MOMENT/DAY
+
+        Integer lastDays = null;
+        if (t("history.range.last7").equals(rangeLabel)) lastDays = Integer.valueOf(7);
+        else if (t("history.range.last30").equals(rangeLabel)) lastDays = Integer.valueOf(30);
+
+        final LocalDateTime cutoff =
+                (lastDays == null) ? null : LocalDate.now().minusDays(lastDays.intValue()).atStartOfDay();
+
+        final List<MoodCardVM> filtered = new ArrayList<MoodCardVM>();
+        for (final MoodCardVM m : masterItems) {
+
+            // range filter
+            if (cutoff != null && m.dateTime.isBefore(cutoff)) continue;
+
+            // type filter (momentType)
+            if (!"ALL".equalsIgnoreCase(typeCode)) {
+                final String mt = (m.momentType == null) ? "" : m.momentType.trim().toUpperCase(Locale.ROOT);
+                if (!typeCode.equals(mt)) continue;
+            }
+
+            filtered.add(m);
+        }
+        return filtered;
+    }
+
+
 
     private void reloadMasterFromDb() {
         try {
@@ -157,7 +304,7 @@ public class MoodHistoryController {
         }
     }
 
-    // ---------------- LOCAL FILTERING (+ SEARCH) ----------------
+    // LOCAL FILTERING
 
     private void applyFiltersAndRender() {
         final String rangeLabel = rangeBox.getValue();
@@ -176,16 +323,16 @@ public class MoodHistoryController {
         final List<MoodCardVM> filtered = new ArrayList<MoodCardVM>();
         for (final MoodCardVM m : masterItems) {
 
-            // 1) range filter
+            // range filter
             if (cutoff != null && m.dateTime.isBefore(cutoff)) continue;
 
-            // 2) type filter (momentType)
+            // type filter (momentType)
             if (!"ALL".equalsIgnoreCase(typeCode)) {
                 final String mt = (m.momentType == null) ? "" : m.momentType.trim().toUpperCase(Locale.ROOT);
                 if (!typeCode.equals(mt)) continue;
             }
 
-            // 3) search filter (NOT searching type/momentType)
+            // search filter
             if (hasQuery) {
                 final String hay = buildSearchText(m);
                 if (!hay.contains(q)) continue;
@@ -196,6 +343,10 @@ public class MoodHistoryController {
 
         currentItems = filtered;
         renderTimeline(currentItems);
+
+        if (overlay != null && overlay.isVisible()) {
+            refreshStatsFromCache();
+        }
     }
 
     /**
@@ -205,7 +356,6 @@ public class MoodHistoryController {
      * - influence labels (localized)
      * - date/time text
      *
-     * DOES NOT include momentType (because you said: not Type / not moment type).
      */
     private String buildSearchText(final MoodCardVM m) {
         final StringBuilder sb = new StringBuilder(160);
@@ -237,14 +387,14 @@ public class MoodHistoryController {
     private String normalize(final String s) {
         if (s == null) return "";
         String x = s.toLowerCase(Locale.ROOT).trim();
-        // remove accents to make search forgiving (é == e)
+        // remove accents
         x = Normalizer.normalize(x, Normalizer.Form.NFD).replaceAll("\\p{M}+", "");
         // collapse spaces
         x = x.replaceAll("\\s+", " ");
         return x;
     }
 
-    // ---------------- RENDERING ----------------
+    //RENDERING
 
     private void renderTimeline(final List<MoodCardVM> items) {
         timelineBox.getChildren().clear();
@@ -310,7 +460,7 @@ public class MoodHistoryController {
         }
     }
 
-    // ---------------- Actions (Edit / Delete) ----------------
+    // Actions (Edit / Delete)
 
     private void onEdit(final MoodCardVM m) {
         try {
@@ -338,6 +488,11 @@ public class MoodHistoryController {
                 public void run() {
                     reloadMasterFromDb();
                     applyFiltersAndRender();
+
+                    // If stats is open, refresh too
+                    if (overlay != null && overlay.isVisible()) {
+                        refreshStatsFromCache();
+                    }
                 }
             });
 
@@ -364,6 +519,10 @@ public class MoodHistoryController {
                 if (ok) {
                     reloadMasterFromDb();
                     applyFiltersAndRender();
+
+                    if (overlay != null && overlay.isVisible()) {
+                        refreshStatsFromCache();
+                    }
                 }
             } catch (final Exception ex) {
                 ex.printStackTrace();

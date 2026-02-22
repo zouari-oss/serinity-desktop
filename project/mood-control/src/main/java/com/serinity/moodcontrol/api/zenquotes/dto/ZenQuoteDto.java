@@ -14,7 +14,6 @@ public class ZenQuoteDto {
     private String q;
     private String a;
 
-    // Jackson-friendly no-args constructor
     public ZenQuoteDto() {}
 
     public ZenQuoteDto(String q, String a) {

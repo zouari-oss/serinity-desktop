@@ -6,8 +6,7 @@ import java.net.http.HttpClient;
 import java.time.Duration;
 
 /**
- * Shared HTTP + JSON utilities for external APIs (ZenQuotes, Jokes, etc.).
- * Keep this UI-agnostic: no JavaFX imports here.
+ * Shared HTTP + JSON utilities for external APIs (ZenQuotes, CallMeBot, etc.).
  */
 public class ApiClient {
 
