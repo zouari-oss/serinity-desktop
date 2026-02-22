@@ -24,6 +24,37 @@
         <Button text="Actualiser" onAction="#onRefresh" styleClass="secondary-btn"/>
     </HBox>
 
+    <!-- ✅ Score card (Scoring comportemental) -->
+    <VBox spacing="10" styleClass="card">
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="Votre progression" style="-fx-font-weight: 900; -fx-font-size: 14px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblScorePill" text="—" styleClass="pill pill-info"/>
+        </HBox>
+
+        <HBox spacing="16">
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="Score" styleClass="muted-text"/>
+                <Label fx:id="lblScore" text="—" styleClass="card-title"/>
+            </VBox>
+
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="Série" styleClass="muted-text"/>
+                <Label fx:id="lblStreak" text="—" styleClass="card-title"/>
+            </VBox>
+
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="Complétion" styleClass="muted-text"/>
+                <Label fx:id="lblCompletion" text="—" styleClass="card-title"/>
+            </VBox>
+
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="Temps actif (7j)" styleClass="muted-text"/>
+                <Label fx:id="lblActive7d" text="—" styleClass="card-title"/>
+            </VBox>
+        </HBox>
+    </VBox>
+
     <!-- Filters -->
     <VBox spacing="10" styleClass="card">
         <HBox spacing="10" alignment="CENTER_LEFT">

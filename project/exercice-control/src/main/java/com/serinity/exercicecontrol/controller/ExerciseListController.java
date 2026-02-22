@@ -1,7 +1,9 @@
 package com.serinity.exercicecontrol.controller;
 
+import com.serinity.exercicecontrol.dao.ScoringDAO;
 import com.serinity.exercicecontrol.model.Exercise;
 import com.serinity.exercicecontrol.service.ExerciseService;
+import com.serinity.exercicecontrol.service.ScoringService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,7 +24,17 @@ public class ExerciseListController {
     @FXML private ComboBox<Integer> cbLevel;
     @FXML private FlowPane cardsPane;
 
+    // ✅ Scoring UI (ajoutés dans ExerciseList.fxml)
+    @FXML private Label lblScore;
+    @FXML private Label lblStreak;
+    @FXML private Label lblCompletion;
+    @FXML private Label lblActive7d;
+    @FXML private Label lblScorePill;
+
     private final ExerciseService exerciseService = new ExerciseService();
+
+    // ✅ Scoring service
+    private final ScoringService scoringService = new ScoringService(new ScoringDAO());
 
     // cache local pour filtrage UI
     private List<Exercise> allExercises = new ArrayList<>();
@@ -43,6 +55,9 @@ public class ExerciseListController {
         cbLevel.getSelectionModel().selectFirst();
 
         refresh();
+
+        // ✅ Charger le score au chargement
+        loadScore();
     }
 
     // ===================== Actions FXML =====================
@@ -50,6 +65,7 @@ public class ExerciseListController {
     @FXML
     private void onRefresh() {
         refresh();
+        loadScore(); // ✅ mettre à jour aussi après refresh
     }
 
     @FXML
@@ -72,7 +88,10 @@ public class ExerciseListController {
 
             ExerciseFormController ctrl = loader.getController();
             // après sauvegarde: revenir à la liste et refresh
-            ctrl.setModeCreateReturnToList(this::refresh);
+            ctrl.setModeCreateReturnToList(() -> {
+                refresh();
+                loadScore();
+            });
 
             setContent(root);
         } catch (IOException e) {
@@ -83,7 +102,6 @@ public class ExerciseListController {
 
     // ===================== Public API (appelée par ExerciseCardController) =====================
 
-
     public void openEdit(Exercise ex) {
         if (ex == null) return;
 
@@ -92,7 +110,10 @@ public class ExerciseListController {
             Parent root = loader.load();
 
             ExerciseFormController ctrl = loader.getController();
-            ctrl.setModeEditReturnToList(ex, this::refresh);
+            ctrl.setModeEditReturnToList(ex, () -> {
+                refresh();
+                loadScore();
+            });
 
             setContent(root);
         } catch (IOException e) {
@@ -100,7 +121,6 @@ public class ExerciseListController {
             showError("Erreur", "Impossible d'ouvrir la modification.");
         }
     }
-
 
     public void openDetails(Exercise ex) {
         if (ex == null) return;
@@ -118,6 +138,7 @@ public class ExerciseListController {
             showError("Erreur", "Impossible d'ouvrir les détails.");
         }
     }
+
     public void deleteExercise(Exercise ex) {
         if (ex == null) return;
 
@@ -131,6 +152,7 @@ public class ExerciseListController {
         try {
             exerciseService.deleteExercise(ex.getId());
             refresh();
+            loadScore();
         } catch (SQLException e) {
             e.printStackTrace();
             Alert a = new Alert(Alert.AlertType.ERROR);
@@ -141,7 +163,7 @@ public class ExerciseListController {
         }
     }
 
-
+    // ===================== Data =====================
 
     public void refresh() {
         try {
@@ -213,7 +235,46 @@ public class ExerciseListController {
         }
     }
 
+    // ===================== Scoring UI =====================
 
+    private void loadScore() {
+        // Si jamais le FXML n'a pas encore été mis à jour, éviter crash
+        if (lblScore == null || lblScorePill == null) return;
+
+        try {
+            int userId = 1; // TODO: user connecté
+            ScoringService.ScoreResult score = scoringService.computeEngagementScore(userId);
+
+            lblScore.setText(score.score100() + "/100 (" + score.levelText() + ")");
+            lblStreak.setText(score.streakDays() + " j");
+            lblCompletion.setText(score.completionRatePercent() + "%");
+            lblActive7d.setText(score.activeTime7dText());
+
+            lblScorePill.getStyleClass().removeAll("pill-success", "pill-warn", "pill-info");
+            if (!lblScorePill.getStyleClass().contains("pill")) lblScorePill.getStyleClass().add("pill");
+
+            if (score.score100() >= 70) {
+                lblScorePill.setText("EXCELLENT");
+                lblScorePill.getStyleClass().add("pill-success");
+            } else if (score.score100() >= 40) {
+                lblScorePill.setText("BON");
+                lblScorePill.getStyleClass().add("pill-info");
+            } else {
+                lblScorePill.setText("À RENFORCER");
+                lblScorePill.getStyleClass().add("pill-warn");
+            }
+
+        } catch (Exception e) {
+            // ne pas bloquer l'écran
+            lblScore.setText("—");
+            lblStreak.setText("—");
+            lblCompletion.setText("—");
+            lblActive7d.setText("—");
+            lblScorePill.setText("—");
+        }
+    }
+
+    // ===================== Template Host =====================
 
     private void setContent(Parent page) {
         StackPane host = (StackPane) cardsPane.getScene().lookup("#contentHost");
