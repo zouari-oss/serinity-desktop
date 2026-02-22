@@ -10,7 +10,7 @@ public class DbConnection {
     private Connection connection;
 
     // Change these defaults to match your DB if you want
-    private static final String DEFAULT_URL = "jdbc:mariadb://localhost:3306/serinity";
+    private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/serinity?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC";
     private static final String DEFAULT_USER = "root";
     private static final String DEFAULT_PASS = "";
 
