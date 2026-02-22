@@ -23,17 +23,11 @@
         <Button text="Actualiser" onAction="#onRefresh" styleClass="secondary-btn"/>
     </HBox>
 
-    <!-- Modern table card -->
+    <!-- History cards (no table, no ID) -->
     <VBox styleClass="table-card">
-        <TableView fx:id="table" styleClass="modern-table" prefHeight="560">
-            <columns>
-                <TableColumn fx:id="colId" text="ID" prefWidth="70"/>
-                <TableColumn fx:id="colStatus" text="Statut" prefWidth="140"/>
-                <TableColumn fx:id="colStarted" text="Début" prefWidth="200"/>
-                <TableColumn fx:id="colCompleted" text="Fin" prefWidth="200"/>
-                <TableColumn fx:id="colFeedback" text="Feedback" prefWidth="420"/>
-            </columns>
-        </TableView>
+        <ListView fx:id="historyList"
+                  styleClass="history-list"
+                  prefHeight="560"/>
     </VBox>
 
 </VBox>
