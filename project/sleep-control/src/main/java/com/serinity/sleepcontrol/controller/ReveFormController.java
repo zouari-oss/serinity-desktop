@@ -1,25 +1,36 @@
 package com.serinity.sleepcontrol.controller;
 
-import com.serinity.sleepcontrol.dao.SommeilDao;
 import com.serinity.sleepcontrol.model.Reve;
 import com.serinity.sleepcontrol.model.Sommeil;
 import com.serinity.sleepcontrol.service.ReveService;
 import com.serinity.sleepcontrol.service.SommeilService;
-import com.serinity.sleepcontrol.utils.MyDataBase;
+import javafx.animation.FadeTransition;
+import javafx.animation.ScaleTransition;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import javafx.util.StringConverter;
 
-import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ReveFormController {
 
+    // ─── Champs FXML ────────────────────────────────────────────────────────────
+
+    @FXML private VBox mainContainer;
+    @FXML private Label titleLabel;
+    @FXML private Label subtitleLabel;
+    @FXML private Label headerIcon;
+
     @FXML private ComboBox<Sommeil> sommeilCombo;
     @FXML private TextField titreField;
     @FXML private TextArea descriptionArea;
+    @FXML private Label descCharCountLabel;
     @FXML private ComboBox<String> typeCombo;
     @FXML private ComboBox<String> humeurCombo;
     @FXML private Slider intensiteSlider;
@@ -31,194 +42,213 @@ public class ReveFormController {
     @FXML private Button btnSave;
     @FXML private Button btnCancel;
 
+    // ─── Champs internes ────────────────────────────────────────────────────────
+
     private ReveService reveService;
     private SommeilService sommeilService;
     private Reve reve;
     private ReveController parentController;
 
+    private static final int MAX_DESCRIPTION = 2000;
+    private static final int MAX_TITRE       = 100;
+    private static final int MAX_OPTIONAL    = 200;
+
+    // ─── Groupes de classes CSS pour reset propre ────────────────────────────────
+
+    private static final List<String> VALIDATION_CLASSES = List.of(
+            "field-default", "field-valid-purple", "field-valid-blue",
+            "field-valid-green", "field-valid-orange", "field-error", "field-warn"
+    );
+
+    private static final List<String> INTENSITE_CLASSES = List.of(
+            "intensite-low", "intensite-medium", "intensite-high"
+    );
+
+    // ─── Initialisation ─────────────────────────────────────────────────────────
+
     @FXML
     public void initialize() {
-        try {
-            Connection connection = MyDataBase.getInstance().getConnection();
-            sommeilService = new SommeilService((SommeilDao) connection);
-
-            typeCombo.setItems(FXCollections.observableArrayList(
-                    "Normal", "Cauchemar", "Lucide", "Récurrent"
-            ));
-            typeCombo.setPromptText("Sélectionner...");
-
-            humeurCombo.setItems(FXCollections.observableArrayList(
-                    "Joyeux", "Triste", "Anxieux", "Neutre", "Excité", "Effrayé", "Paisible"
-            ));
-            humeurCombo.setPromptText("Sélectionner...");
-
-            chargerSommeils();
-
-            intensiteSlider.setMin(1);
-            intensiteSlider.setMax(10);
-            intensiteSlider.setValue(5);
-            intensiteSlider.setMajorTickUnit(1);
-            intensiteSlider.setMinorTickCount(0);
-            intensiteSlider.setShowTickLabels(true);
-            intensiteSlider.setShowTickMarks(true);
-            intensiteSlider.setSnapToTicks(true);
-
-            intensiteSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
-                intensiteLabel.setText(String.valueOf(newVal.intValue()));
-            });
-
-            intensiteLabel.setText("5");
-
-            couleurCheck.setSelected(true);
-
-            setupValidation();
-
-        } catch (Exception e) {
-            showError("Erreur", "Erreur de connexion à la base de données: " + e.getMessage());
-            e.printStackTrace();
-        }
+        initComboBoxes();
+        initSlider();
+        initDescriptionCounter();
+        setupButtonEffects();
+        applyEntranceAnimation();
+        couleurCheck.setSelected(true);
     }
 
-    private void setupValidation() {
-        sommeilCombo.valueProperty().addListener((obs, old, newVal) -> validateSommeil());
-        titreField.textProperty().addListener((obs, old, newVal) -> validateTitre());
-        descriptionArea.textProperty().addListener((obs, old, newVal) -> validateDescription());
-        typeCombo.valueProperty().addListener((obs, old, newVal) -> validateComboBox(typeCombo));
-        humeurCombo.valueProperty().addListener((obs, old, newVal) -> validateComboBox(humeurCombo));
-        emotionsField.textProperty().addListener((obs, old, newVal) -> validateEmotions());
-        symbolesField.textProperty().addListener((obs, old, newVal) -> validateSymboles());
+    private void initComboBoxes() {
+        typeCombo.setItems(FXCollections.observableArrayList(
+                "💭 Normal", "😱 Cauchemar", "🌟 Lucide", "🔁 Récurrent"
+        ));
+        typeCombo.setPromptText("Sélectionner...");
 
-        validateSommeil();
+        humeurCombo.setItems(FXCollections.observableArrayList(
+                "😄 Joyeux", "😢 Triste", "😰 Anxieux", "😐 Neutre",
+                "🤩 Excité", "😨 Effrayé", "😌 Paisible"
+        ));
+        humeurCombo.setPromptText("Sélectionner...");
     }
 
-    private int compterLettres(String texte) {
-        if (texte == null) return 0;
+    private void initSlider() {
+        intensiteSlider.setMin(1);
+        intensiteSlider.setMax(10);
+        intensiteSlider.setValue(5);
+        intensiteSlider.setMajorTickUnit(1);
+        intensiteSlider.setMinorTickCount(0);
+        intensiteSlider.setShowTickLabels(true);
+        intensiteSlider.setShowTickMarks(true);
+        intensiteSlider.setSnapToTicks(true);
+        intensiteLabel.setText("5");
 
-        int count = 0;
-        for (char c : texte.toCharArray()) {
-            if (Character.isLetter(c)) {
-                count++;
+        intensiteSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            int val = newVal.intValue();
+            intensiteLabel.setText(String.valueOf(val));
+
+            // Swap de classe CSS selon l'intensité
+            intensiteLabel.getStyleClass().removeAll(INTENSITE_CLASSES);
+            if (val <= 3)      intensiteLabel.getStyleClass().add("intensite-low");
+            else if (val <= 6) intensiteLabel.getStyleClass().add("intensite-medium");
+            else               intensiteLabel.getStyleClass().add("intensite-high");
+        });
+    }
+
+    private void initDescriptionCounter() {
+        updateDescCharCount(0);
+        descriptionArea.textProperty().addListener((obs, old, newVal) -> {
+            int length = newVal == null ? 0 : newVal.length();
+            updateDescCharCount(length);
+            if (length > MAX_DESCRIPTION) {
+                descriptionArea.setText(newVal.substring(0, MAX_DESCRIPTION));
+                descriptionArea.positionCaret(MAX_DESCRIPTION);
             }
-        }
-        return count;
+        });
     }
 
-    private void validateSommeil() {
-        if (sommeilCombo.getValue() == null) {
-            sommeilCombo.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        } else {
-            sommeilCombo.setStyle("");
-        }
-    }
-
-    private void validateTitre() {
-        String text = titreField.getText();
-
-        if (text == null || text.trim().isEmpty()) {
-            titreField.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        } else {
-            int nbLettres = compterLettres(text.trim());
-
-            if (nbLettres < 3) {
-                titreField.setStyle("-fx-border-color: orange; -fx-border-width: 2;");
-            } else if (text.trim().length() > 100) {
-                titreField.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-            } else {
-                titreField.setStyle("");
-            }
-        }
-    }
-
-    private void validateDescription() {
-        String text = descriptionArea.getText();
-
-        if (text == null || text.trim().isEmpty()) {
-            descriptionArea.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        } else {
-            int nbLettres = compterLettres(text.trim());
-
-            if (nbLettres < 5) {
-                descriptionArea.setStyle("-fx-border-color: orange; -fx-border-width: 2;");
-            } else if (text.trim().length() > 2000) {
-                descriptionArea.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-            } else {
-                descriptionArea.setStyle("");
-            }
-        }
-    }
-
-    private void validateComboBox(ComboBox<String> combo) {
-        if (combo.getValue() == null) {
-            combo.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-        } else {
-            combo.setStyle("");
-        }
-    }
-
-    private void validateEmotions() {
-        String text = emotionsField.getText();
-
-        if (text == null || text.trim().isEmpty()) {
-            emotionsField.setStyle("");
-        } else {
-            int nbLettres = compterLettres(text.trim());
-
-            if (nbLettres < 4) {
-                emotionsField.setStyle("-fx-border-color: orange; -fx-border-width: 2;");
-            } else if (text.length() > 200) {
-                emotionsField.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-            } else {
-                emotionsField.setStyle("");
-            }
-        }
-    }
-
-    private void validateSymboles() {
-        String text = symbolesField.getText();
-
-        if (text == null || text.trim().isEmpty()) {
-            symbolesField.setStyle("");
-        } else {
-            int nbLettres = compterLettres(text.trim());
-
-            if (nbLettres < 4) {
-                symbolesField.setStyle("-fx-border-color: orange; -fx-border-width: 2;");
-            } else if (text.length() > 200) {
-                symbolesField.setStyle("-fx-border-color: red; -fx-border-width: 2;");
-            } else {
-                symbolesField.setStyle("");
-            }
-        }
+    private void updateDescCharCount(int length) {
+        if (descCharCountLabel == null) return;
+        descCharCountLabel.setText(length + " / " + MAX_DESCRIPTION + " caractères");
+        descCharCountLabel.getStyleClass().removeAll("char-count", "char-count-warning");
+        descCharCountLabel.getStyleClass().add(
+                length > MAX_DESCRIPTION * 0.9 ? "char-count-warning" : "char-count"
+        );
     }
 
     private void chargerSommeils() throws SQLException {
         List<Sommeil> sommeils = sommeilService.listerTous();
-
         sommeilCombo.setItems(FXCollections.observableArrayList(sommeils));
 
-        sommeilCombo.setConverter(new javafx.util.StringConverter<Sommeil>() {
+        sommeilCombo.setConverter(new StringConverter<>() {
+            private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
             @Override
-            public String toString(Sommeil sommeil) {
-                if (sommeil == null) return "";
-                return String.format("%s - %s",
-                        sommeil.getDateNuit().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                        sommeil.getQualite()
-                );
+            public String toString(Sommeil s) {
+                if (s == null) return "";
+                return "🌙 " + s.getDateNuit().format(fmt) + "  —  " + s.getQualite();
             }
 
             @Override
-            public Sommeil fromString(String string) {
-                return null;
-            }
+            public Sommeil fromString(String string) { return null; }
         });
 
-        if (!sommeils.isEmpty()) {
-            sommeilCombo.setValue(sommeils.get(0));
-        }
+        if (!sommeils.isEmpty()) sommeilCombo.setValue(sommeils.get(0));
     }
+
+    // ─── Validation visuelle (via CSS classes uniquement) ───────────────────────
+
+    private void setupValidation() {
+        sommeilCombo.valueProperty().addListener((obs, old, newVal) ->
+                setFieldState(sommeilCombo, newVal != null ? "field-valid-blue" : "field-error")
+        );
+        titreField.textProperty().addListener((obs, old, newVal) ->
+                validateTitreVisual(newVal));
+        descriptionArea.textProperty().addListener((obs, old, newVal) ->
+                validateDescriptionVisual(newVal));
+        typeCombo.valueProperty().addListener((obs, old, newVal) ->
+                setFieldState(typeCombo, newVal != null ? "field-valid-purple" : "field-error")
+        );
+        humeurCombo.valueProperty().addListener((obs, old, newVal) ->
+                setFieldState(humeurCombo, newVal != null ? "field-valid-green" : "field-error")
+        );
+        emotionsField.textProperty().addListener((obs, old, newVal) ->
+                validateOptionalField(emotionsField, newVal));
+        symbolesField.textProperty().addListener((obs, old, newVal) ->
+                validateOptionalField(symbolesField, newVal));
+    }
+
+    /** Retire toutes les classes de validation et applique la nouvelle. */
+    private void setFieldState(Control field, String cssClass) {
+        field.getStyleClass().removeAll(VALIDATION_CLASSES);
+        field.getStyleClass().add(cssClass);
+    }
+
+    private void validateTitreVisual(String text) {
+        if (text == null || text.trim().isEmpty())
+            setFieldState(titreField, "field-error");
+        else if (compterLettres(text.trim()) < 3 || text.trim().length() > MAX_TITRE)
+            setFieldState(titreField, "field-warn");
+        else
+            setFieldState(titreField, "field-valid-purple");
+    }
+
+    private void validateDescriptionVisual(String text) {
+        if (text == null || text.trim().isEmpty())
+            setFieldState(descriptionArea, "field-error");
+        else if (compterLettres(text.trim()) < 5 || text.trim().length() > MAX_DESCRIPTION)
+            setFieldState(descriptionArea, "field-warn");
+        else
+            setFieldState(descriptionArea, "field-valid-purple");
+    }
+
+    private void validateOptionalField(TextField field, String text) {
+        if (text == null || text.trim().isEmpty())
+            setFieldState(field, "field-default");
+        else if (compterLettres(text.trim()) < 4 || text.length() > MAX_OPTIONAL)
+            setFieldState(field, "field-warn");
+        else
+            setFieldState(field, "field-valid-orange");
+    }
+
+    // ─── Effets visuels ─────────────────────────────────────────────────────────
+
+    private void setupButtonEffects() {
+        // Couleurs hover/pressed → CSS  |  Scale → Java (CSS ne peut pas animer)
+        addScaleEffect(btnSave);
+        addScaleEffect(btnCancel);
+    }
+
+    private void addScaleEffect(Button btn) {
+        btn.setOnMouseEntered(e -> {
+            ScaleTransition st = new ScaleTransition(Duration.millis(150), btn);
+            st.setToX(1.05); st.setToY(1.05); st.play();
+        });
+        btn.setOnMouseExited(e -> {
+            ScaleTransition st = new ScaleTransition(Duration.millis(150), btn);
+            st.setToX(1.0); st.setToY(1.0); st.play();
+        });
+    }
+
+    private void applyEntranceAnimation() {
+        if (mainContainer == null) return;
+        mainContainer.setOpacity(0);
+        FadeTransition ft = new FadeTransition(Duration.millis(400), mainContainer);
+        ft.setFromValue(0); ft.setToValue(1); ft.play();
+    }
+
+    // ─── API publique ────────────────────────────────────────────────────────────
 
     public void setReveService(ReveService service) {
         this.reveService = service;
+    }
+
+    public void setSommeilService(SommeilService service) {
+        this.sommeilService = service;
+        try {
+            chargerSommeils();
+            setupValidation();
+        } catch (SQLException e) {
+            showStyledError("Erreur de chargement",
+                    "Impossible de charger les nuits.\n" + e.getMessage());
+        }
     }
 
     public void setParentController(ReveController parent) {
@@ -228,39 +258,40 @@ public class ReveFormController {
     public void setReve(Reve reve) {
         this.reve = reve;
 
-        titreField.setText(reve.getTitre());
-        descriptionArea.setText(reve.getDescription());
+        if (titleLabel != null)    titleLabel.setText("Modifier le Rêve");
+        if (subtitleLabel != null) subtitleLabel.setText("Mettez à jour les détails de votre rêve");
+        if (headerIcon != null)    headerIcon.setText("✏️");
+        if (btnSave != null)       btnSave.setText("✓ Modifier");
+
+        titreField.setText(reve.getTitre() != null ? reve.getTitre() : "");
+        descriptionArea.setText(reve.getDescription() != null ? reve.getDescription() : "");
         typeCombo.setValue(reve.getTypeReve());
         humeurCombo.setValue(reve.getHumeur());
         intensiteSlider.setValue(reve.getIntensite());
         couleurCheck.setSelected(reve.isCouleur());
         recurrentCheck.setSelected(reve.isRecurrent());
-        emotionsField.setText(reve.getEmotions());
-        symbolesField.setText(reve.getSymboles());
+        emotionsField.setText(reve.getEmotions() != null ? reve.getEmotions() : "");
+        symbolesField.setText(reve.getSymboles() != null ? reve.getSymboles() : "");
 
         try {
             Sommeil sommeil = sommeilService.trouverParId(reve.getSommeilId());
-            if (sommeil != null) {
-                sommeilCombo.setValue(sommeil);
-            }
+            if (sommeil != null) sommeilCombo.setValue(sommeil);
         } catch (SQLException e) {
-            e.printStackTrace();
+            showStyledError("Erreur", "Impossible de charger le sommeil associé.\n" + e.getMessage());
         }
     }
 
+    // ─── Actions FXML ────────────────────────────────────────────────────────────
+
     @FXML
     private void sauvegarder() {
-        if (!validerFormulaire()) {
-            return;
-        }
+        if (!validerFormulaire()) return;
 
         try {
-            if (reve == null) {
-                reve = new Reve();
-            }
+            if (reve == null) reve = new Reve();
 
-            Sommeil sommeilSelectionne = sommeilCombo.getValue();
-            reve.setSommeilId(sommeilSelectionne.getId());
+            Sommeil s = sommeilCombo.getValue();
+            reve.setSommeilId(s.getId());
             reve.setTitre(titreField.getText().trim());
             reve.setDescription(descriptionArea.getText().trim());
             reve.setTypeReve(typeCombo.getValue());
@@ -277,122 +308,124 @@ public class ReveFormController {
 
             if (reve.getId() == 0) {
                 reveService.creer(reve);
-                showSuccess("Rêve ajouté avec succès!");
+                showStyledSuccess("💭 Rêve enregistré !", "Votre rêve a été sauvegardé.");
             } else {
                 reveService.modifier(reve);
-                showSuccess("Rêve modifié avec succès!");
+                showStyledSuccess("✏️ Rêve modifié !", "Les détails ont été mis à jour.");
             }
 
-            if (parentController != null) {
-                parentController.loadAllReves();
-            }
-
+            if (parentController != null) parentController.loadAllReves();
             fermer();
 
         } catch (SQLException e) {
-            showError("Erreur de sauvegarde", "Erreur lors de la sauvegarde: " + e.getMessage());
-            e.printStackTrace();
+            showStyledError("Erreur BD", "Impossible de sauvegarder.\n" + e.getMessage());
         } catch (Exception e) {
-            showError("Erreur", "Une erreur inattendue s'est produite: " + e.getMessage());
-            e.printStackTrace();
+            showStyledError("Erreur inattendue", e.getMessage());
         }
     }
+
+    @FXML
+    private void annuler() { fermer(); }
+
+    // ─── Validation métier ───────────────────────────────────────────────────────
 
     private boolean validerFormulaire() {
         StringBuilder errors = new StringBuilder();
 
-        if (sommeilCombo.getValue() == null) {
-            errors.append("- Vous devez sélectionner un sommeil\n");
-        }
+        if (sommeilCombo.getValue() == null)
+            errors.append("🛌  Sélectionnez une nuit de sommeil\n");
 
         String titre = titreField.getText();
-        if (titre == null || titre.trim().isEmpty()) {
-            errors.append("- Le titre est obligatoire\n");
-        } else {
-            int nbLettres = compterLettres(titre.trim());
-            if (nbLettres < 3) {
-                errors.append("- Le titre doit contenir au moins 3 lettres\n");
-            } else if (titre.trim().length() > 100) {
-                errors.append("- Le titre ne doit pas dépasser 100 caractères\n");
-            }
+        if (titre == null || titre.trim().isEmpty())
+            errors.append("✏️  Le titre est obligatoire\n");
+        else {
+            if (compterLettres(titre.trim()) < 3)
+                errors.append("✏️  Le titre doit contenir au moins 3 lettres\n");
+            if (titre.trim().length() > MAX_TITRE)
+                errors.append("✏️  Le titre ne doit pas dépasser " + MAX_TITRE + " caractères\n");
         }
 
         String description = descriptionArea.getText();
-        if (description == null || description.trim().isEmpty()) {
-            errors.append("- La description est obligatoire\n");
-        } else {
-            int nbLettres = compterLettres(description.trim());
-            if (nbLettres < 5) {
-                errors.append("- La description doit contenir au moins 5 lettres\n");
-            } else if (description.trim().length() > 2000) {
-                errors.append("- La description ne doit pas dépasser 2000 caractères\n");
-            }
+        if (description == null || description.trim().isEmpty())
+            errors.append("📖  La description est obligatoire\n");
+        else {
+            if (compterLettres(description.trim()) < 5)
+                errors.append("📖  La description doit contenir au moins 5 lettres\n");
+            if (description.trim().length() > MAX_DESCRIPTION)
+                errors.append("📖  La description ne doit pas dépasser " + MAX_DESCRIPTION + " caractères\n");
         }
 
-        if (typeCombo.getValue() == null) {
-            errors.append("- Le type de rêve est obligatoire\n");
-        }
-
-        if (humeurCombo.getValue() == null) {
-            errors.append("- L'humeur ressentie est obligatoire\n");
-        }
+        if (typeCombo.getValue() == null)  errors.append("🎭  Le type de rêve est obligatoire\n");
+        if (humeurCombo.getValue() == null) errors.append("😊  L'humeur ressentie est obligatoire\n");
 
         int intensite = (int) intensiteSlider.getValue();
-        if (intensite < 1 || intensite > 10) {
-            errors.append("- L'intensité doit être entre 1 et 10\n");
-        }
+        if (intensite < 1 || intensite > 10)
+            errors.append("⚡  L'intensité doit être entre 1 et 10\n");
 
         String emotions = emotionsField.getText();
         if (emotions != null && !emotions.trim().isEmpty()) {
-            int nbLettres = compterLettres(emotions.trim());
-            if (nbLettres < 4) {
-                errors.append("- Les émotions doivent contenir au moins 4 lettres\n");
-            } else if (emotions.length() > 200) {
-                errors.append("- Les émotions ne doivent pas dépasser 200 caractères\n");
-            }
+            if (compterLettres(emotions.trim()) < 4)
+                errors.append("💫  Les émotions doivent contenir au moins 4 lettres\n");
+            if (emotions.length() > MAX_OPTIONAL)
+                errors.append("💫  Émotions : max " + MAX_OPTIONAL + " caractères\n");
         }
 
         String symboles = symbolesField.getText();
         if (symboles != null && !symboles.trim().isEmpty()) {
-            int nbLettres = compterLettres(symboles.trim());
-            if (nbLettres < 4) {
-                errors.append("- Les symboles doivent contenir au moins 4 lettres\n");
-            } else if (symboles.length() > 200) {
-                errors.append("- Les symboles ne doivent pas dépasser 200 caractères\n");
-            }
+            if (compterLettres(symboles.trim()) < 4)
+                errors.append("🔮  Les symboles doivent contenir au moins 4 lettres\n");
+            if (symboles.length() > MAX_OPTIONAL)
+                errors.append("🔮  Symboles : max " + MAX_OPTIONAL + " caractères\n");
         }
 
         if (errors.length() > 0) {
-            showError("Formulaire invalide", "Veuillez corriger les erreurs suivantes :\n\n" + errors.toString());
+            showStyledError("Formulaire invalide", "Veuillez corriger :\n\n" + errors);
             return false;
         }
-
         return true;
     }
 
-    @FXML
-    private void annuler() {
-        fermer();
+    // ─── Utilitaires ────────────────────────────────────────────────────────────
+
+    private int compterLettres(String texte) {
+        if (texte == null) return 0;
+        int count = 0;
+        for (char c : texte.toCharArray()) if (Character.isLetter(c)) count++;
+        return count;
     }
 
     private void fermer() {
         Stage stage = (Stage) btnCancel.getScene().getWindow();
-        stage.close();
+        FadeTransition ft = new FadeTransition(Duration.millis(200), btnCancel.getScene().getRoot());
+        ft.setFromValue(1); ft.setToValue(0);
+        ft.setOnFinished(e -> stage.close());
+        ft.play();
     }
 
-    private void showError(String title, String message) {
+    private void showStyledError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
-        alert.setHeaderText(null);
+        alert.setHeaderText("❌  " + title);
         alert.setContentText(message);
+        applyAlertStyle(alert, "alert-error");
         alert.showAndWait();
     }
 
-    private void showSuccess(String message) {
+    private void showStyledSuccess(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Succès");
-        alert.setHeaderText(null);
+        alert.setHeaderText(title);
         alert.setContentText(message);
+        applyAlertStyle(alert, "alert-success");
         alert.showAndWait();
+    }
+
+    /** Injecte le CSS dans la DialogPane de l'alerte (fenêtre séparée). */
+    private void applyAlertStyle(Alert alert, String cssClass) {
+        DialogPane dp = alert.getDialogPane();
+        dp.getStylesheets().add(
+                getClass().getResource("/css/reve-form.css").toExternalForm()
+        );
+        dp.getStyleClass().add(cssClass);
     }
 }

@@ -3,86 +3,219 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <ScrollPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.serinity.sleepcontrol.controller.ReveFormController"
-            fitToWidth="true"
-            fitToHeight="true"
-            style="-fx-background-color: white;">
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background: linear-gradient(to bottom, #f5f0ff, #ffffff);">
 
-    <VBox spacing="12" style="-fx-background-color: white;">
-        <padding>
-            <Insets top="20" right="30" bottom="20" left="30" />
-        </padding>
+    <VBox fx:id="mainContainer" spacing="20.0" style="-fx-background-color: transparent;">
+        <padding><Insets top="30" right="40" bottom="30" left="40" /></padding>
 
-        <Label text="Formulaire Rêve"
-               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+        <!-- En-tête -->
+        <HBox alignment="CENTER_LEFT" spacing="15.0"
+              style="-fx-background-color: linear-gradient(to right, #8e44ad, #9b59b6);
+                     -fx-background-radius: 12; -fx-padding: 20;">
+            <Label fx:id="headerIcon" text="💭"
+                   style="-fx-font-size: 32px; -fx-text-fill: white;" />
+            <VBox spacing="5.0">
+                <Label fx:id="titleLabel" text="Enregistrer un Rêve"
+                       style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;" />
+                <Label fx:id="subtitleLabel" text="Capturez les détails de votre rêve"
+                       style="-fx-font-size: 14px; -fx-text-fill: #f3e5f5;" />
+            </VBox>
+        </HBox>
 
-        <Separator />
-
-        <VBox spacing="5">
-            <Label text="Sommeil associé *" style="-fx-font-weight: bold;"/>
-            <ComboBox fx:id="sommeilCombo" prefWidth="250"/>
-        </VBox>
-
-        <VBox spacing="5">
-            <Label text="Titre *" style="-fx-font-weight: bold;"/>
-            <TextField fx:id="titreField" promptText="Ex: Rêve étrange"/>
-        </VBox>
-
-        <VBox spacing="5">
-            <Label text="Description *" style="-fx-font-weight: bold;"/>
-            <TextArea fx:id="descriptionArea" promptText="Décrivez votre rêve..."
-                      prefHeight="80" wrapText="true"/>
-        </VBox>
-
-        <VBox spacing="5">
-            <Label text="Type de rêve *" style="-fx-font-weight: bold;"/>
-            <ComboBox fx:id="typeCombo" prefWidth="250" promptText="Sélectionner..."/>
-        </VBox>
-
-        <VBox spacing="5">
-            <Label text="Humeur ressentie *" style="-fx-font-weight: bold;"/>
-            <ComboBox fx:id="humeurCombo" prefWidth="250" promptText="Sélectionner..."/>
-        </VBox>
-
-        <VBox spacing="5">
-            <Label text="Intensité" style="-fx-font-weight: bold;"/>
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Slider fx:id="intensiteSlider" prefWidth="300"/>
-                <Label fx:id="intensiteLabel" text="5" style="-fx-font-weight: bold;"/>
+        <!-- Section: Sommeil associé -->
+        <VBox spacing="15.0"
+              style="-fx-background-color: white; -fx-background-radius: 10;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2); -fx-padding: 20;">
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label text="🛌" style="-fx-font-size: 18px; -fx-text-fill: #4a90e2;" />
+                <Label text="Sommeil Associé"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+            </HBox>
+            <Separator style="-fx-background-color: #e0e0e0;" />
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="📅" style="-fx-font-size: 20px;" />
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Nuit concernée *"
+                           style="-fx-font-weight: bold; -fx-text-fill: #34495e;" />
+                    <ComboBox fx:id="sommeilCombo" prefWidth="350.0"
+                              promptText="Choisir une nuit..."
+                              style="-fx-background-radius: 8; -fx-border-color: #4a90e2; -fx-border-radius: 8;" />
+                </VBox>
             </HBox>
         </VBox>
 
-        <CheckBox fx:id="couleurCheck" text="Rêve en couleur"/>
+        <!-- Section: Détails du rêve -->
+        <VBox spacing="15.0"
+              style="-fx-background-color: white; -fx-background-radius: 10;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2); -fx-padding: 20;">
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label text="✨" style="-fx-font-size: 18px; -fx-text-fill: #8e44ad;" />
+                <Label text="Détails du Rêve"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+            </HBox>
+            <Separator style="-fx-background-color: #e0e0e0;" />
 
-        <CheckBox fx:id="recurrentCheck" text="Rêve récurrent"/>
+            <!-- Titre -->
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="✏️" style="-fx-font-size: 20px;" />
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Titre *"
+                           style="-fx-font-weight: bold; -fx-text-fill: #34495e;" />
+                    <TextField fx:id="titreField"
+                               promptText="Ex: Vol au-dessus des nuages..."
+                               style="-fx-background-radius: 8; -fx-border-color: #8e44ad;
+                                      -fx-border-radius: 8; -fx-padding: 8;" />
+                </VBox>
+            </HBox>
 
-        <VBox spacing="5">
-            <Label text="Émotions (optionnel)" style="-fx-font-weight: bold;"/>
-            <TextField fx:id="emotionsField" promptText="Ex: joie, peur, tristesse"/>
+            <!-- Description -->
+            <HBox alignment="TOP_LEFT" spacing="15.0">
+                <Label text="📖" style="-fx-font-size: 20px;" />
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Description *"
+                           style="-fx-font-weight: bold; -fx-text-fill: #34495e;" />
+                    <TextArea fx:id="descriptionArea" prefHeight="100.0"
+                              promptText="Décrivez votre rêve en détail..."
+                              style="-fx-background-radius: 8; -fx-border-color: #8e44ad; -fx-border-radius: 8;"
+                              wrapText="true" />
+                    <Label fx:id="descCharCountLabel" text="0 / 2000 caractères"
+                           style="-fx-text-fill: #95a5a6; -fx-font-size: 11px; -fx-font-style: italic;" />
+                </VBox>
+            </HBox>
+
+            <!-- Type -->
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="🎭" style="-fx-font-size: 20px;" />
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Type de rêve *"
+                           style="-fx-font-weight: bold; -fx-text-fill: #34495e;" />
+                    <ComboBox fx:id="typeCombo" prefWidth="300.0"
+                              promptText="Sélectionner..."
+                              style="-fx-background-radius: 8; -fx-border-color: #8e44ad; -fx-border-radius: 8;" />
+                </VBox>
+            </HBox>
         </VBox>
 
-        <VBox spacing="5">
-            <Label text="Symboles (optionnel)" style="-fx-font-weight: bold;"/>
-            <TextField fx:id="symbolesField" promptText="Ex: eau, feu, animaux"/>
+        <!-- Section: Ressenti & Intensité -->
+        <VBox spacing="15.0"
+              style="-fx-background-color: white; -fx-background-radius: 10;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2); -fx-padding: 20;">
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label text="💚" style="-fx-font-size: 18px; -fx-text-fill: #27ae60;" />
+                <Label text="Ressenti &amp; Intensité"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+            </HBox>
+            <Separator style="-fx-background-color: #e0e0e0;" />
+
+            <!-- Humeur -->
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="😊" style="-fx-font-size: 20px;" />
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Humeur ressentie *"
+                           style="-fx-font-weight: bold; -fx-text-fill: #34495e;" />
+                    <ComboBox fx:id="humeurCombo" prefWidth="300.0"
+                              promptText="Sélectionner..."
+                              style="-fx-background-radius: 8; -fx-border-color: #27ae60; -fx-border-radius: 8;" />
+                </VBox>
+            </HBox>
+
+            <!-- Intensité avec slider -->
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="⚡" style="-fx-font-size: 20px;" />
+                <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <Label text="Intensité du rêve"
+                               style="-fx-font-weight: bold; -fx-text-fill: #34495e;" />
+                        <Label fx:id="intensiteLabel" text="5"
+                               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #8e44ad;
+                                      -fx-background-color: #f3e5f5; -fx-background-radius: 20; -fx-padding: 2 10;" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <Label text="1" style="-fx-text-fill: #95a5a6; -fx-font-size: 12px;" />
+                        <Slider fx:id="intensiteSlider" prefWidth="300.0" HBox.hgrow="ALWAYS"
+                                style="-fx-accent: #8e44ad;" />
+                        <Label text="10" style="-fx-text-fill: #95a5a6; -fx-font-size: 12px;" />
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <!-- CheckBoxes -->
+            <HBox spacing="30.0" style="-fx-padding: 5 0 0 35;">
+                <CheckBox fx:id="couleurCheck" text="🌈  Rêve en couleur"
+                          style="-fx-font-size: 14px; -fx-text-fill: #34495e;" />
+                <CheckBox fx:id="recurrentCheck" text="🔁  Rêve récurrent"
+                          style="-fx-font-size: 14px; -fx-text-fill: #34495e;" />
+            </HBox>
         </VBox>
 
-        <Separator />
+        <!-- Section: Détails supplémentaires (optionnel) -->
+        <VBox spacing="15.0"
+              style="-fx-background-color: white; -fx-background-radius: 10;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2); -fx-padding: 20;">
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label text="🔍" style="-fx-font-size: 18px; -fx-text-fill: #e67e22;" />
+                <Label text="Détails Supplémentaires"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                <Label text="(optionnel)"
+                       style="-fx-font-size: 12px; -fx-text-fill: #95a5a6; -fx-font-style: italic;" />
+            </HBox>
+            <Separator style="-fx-background-color: #e0e0e0;" />
 
-        <HBox alignment="CENTER_RIGHT" spacing="15">
-            <Button fx:id="btnCancel" text="Annuler" onAction="#annuler"
-                    prefHeight="43" prefWidth="123"
-                    style="-fx-background-color: #e9f6f6; -fx-padding: 10 25; -fx-font-size: 14px; -fx-background-radius: 4;"/>
+            <!-- Émotions -->
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="💫" style="-fx-font-size: 20px;" />
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Émotions"
+                           style="-fx-font-weight: bold; -fx-text-fill: #34495e;" />
+                    <TextField fx:id="emotionsField"
+                               promptText="Ex: joie, peur, tristesse..."
+                               style="-fx-background-radius: 8; -fx-border-color: #e0e0e0;
+                                      -fx-border-radius: 8; -fx-padding: 8;" />
+                </VBox>
+            </HBox>
 
-            <Button fx:id="btnSave" text="Sauvegarder" onAction="#sauvegarder"
-                    style="-fx-background-color: #1f5f63; -fx-text-fill: white; -fx-padding: 10 25; -fx-font-size: 14px; -fx-background-radius: 5;"/>
+            <!-- Symboles -->
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="🔮" style="-fx-font-size: 20px;" />
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Symboles"
+                           style="-fx-font-weight: bold; -fx-text-fill: #34495e;" />
+                    <TextField fx:id="symbolesField"
+                               promptText="Ex: eau, feu, forêt..."
+                               style="-fx-background-radius: 8; -fx-border-color: #e0e0e0;
+                                      -fx-border-radius: 8; -fx-padding: 8;" />
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- Boutons d'action -->
+        <HBox alignment="CENTER" spacing="20.0" style="-fx-padding: 20 0 0 0;">
+            <Button fx:id="btnCancel" text="✖ Annuler" onAction="#annuler"
+                    prefHeight="45.0" prefWidth="160.0"
+                    style="-fx-background-color: #ecf0f1; -fx-text-fill: #7f8c8d;
+                           -fx-font-size: 15px; -fx-font-weight: bold;
+                           -fx-background-radius: 25; -fx-cursor: hand;">
+                <font><Font name="System Bold" size="15.0" /></font>
+            </Button>
+            <Button fx:id="btnSave" text="✓ Sauvegarder" onAction="#sauvegarder"
+                    prefHeight="45.0" prefWidth="160.0"
+                    style="-fx-background-color: linear-gradient(to right, #8e44ad, #9b59b6);
+                           -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;
+                           -fx-background-radius: 25; -fx-cursor: hand;">
+                <font><Font name="System Bold" size="15.0" /></font>
+            </Button>
         </HBox>
 
-        <Label text="* Champs obligatoires"
-               style="-fx-font-size: 12px; -fx-text-fill: #666; -fx-font-style: italic;"/>
+        <HBox alignment="CENTER">
+            <Label text="* Champs obligatoires"
+                   style="-fx-font-size: 13px; -fx-text-fill: #95a5a6; -fx-font-style: italic;" />
+        </HBox>
 
     </VBox>
-
 </ScrollPane>
