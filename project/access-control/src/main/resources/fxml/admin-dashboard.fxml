@@ -59,7 +59,7 @@
 
   <stylesheets>
     <URL value="@../styles/styles.css" />
-    <URL value="@../styles/dashboard.css" />
+    <URL value="@../styles/admin-dashboard.css" />
   </stylesheets>
 
 </AnchorPane>

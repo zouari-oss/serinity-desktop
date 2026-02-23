@@ -66,15 +66,23 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
   @FXML // fx:id="usersPage"
   private AnchorPane usersPage; // Value injected by FXMLLoader
 
-  private final List<User> allUsers = new ArrayList<>();
-
   private StackPane stackHost; // Will be injected by RootController
 
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
-  // ##########################
-  // ### HELPER FUNCTION(S) ###
-  // ##########################
+  private final List<User> allUsers = new ArrayList<>();
+
+  // #############################
+  // ### GETTER(S) & SETTER(S) ###
+  // #############################
+
+  public void setStatusProvider(final StatusMessageProvider provider) {
+    this.statusProvider = provider;
+  }
+
+  // ############################
+  // ### OVERRIDE FUNCTION(S) ###
+  // ############################
 
   @Override
   public StackPane getStackHost() {
@@ -86,10 +94,6 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     this.stackHost = host;
   }
 
-  public void setStatusProvider(final StatusMessageProvider provider) {
-    this.statusProvider = provider;
-  }
-
   @Override
   public void showStatusMessage(final String message, final MessageStatus status) {
     if (statusProvider != null) {
@@ -97,24 +101,9 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     }
   }
 
-  @FXML
-  public void usersManagmentInit() {
-    // Initialize filter dropdown
-    roleFilterComboBox.getItems().addAll(
-        "ALL",
-        UserRole.ADMIN.toString(),
-        UserRole.PATIENT.toString(),
-        UserRole.THERAPIST.toString());
-    roleFilterComboBox.setValue("ALL");
-
-    // Add sample users
-    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
-    final UserRepository userRepository = new UserRepository(em);
-    allUsers.addAll(userRepository.findAll());
-
-    // Load all users initially
-    loadUsers(allUsers);
-  }
+  // ################################
+  // ### SLOT HANDLER FUNCTION(S) ###
+  // ################################
 
   /**
    * Triggered whenever the role filter changes.
@@ -132,22 +121,9 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     filterUsers(searchTextField.getText(), roleFilterComboBox.getValue());
   }
 
-  @FXML // This method is called by the FXMLLoader when initialization is complete
-  void initialize() {
-    assert roleFilterComboBox != null
-        : "fx:id=\"roleFilterComboBox\" was not injected: check your FXML file 'admin-users-management.fxml'.";
-    assert searchTextField != null
-        : "fx:id=\"searchTextField\" was not injected: check your FXML file 'admin-users-management.fxml'.";
-    assert usersContainer != null
-        : "fx:id=\"usersContainer\" was not injected: check your FXML file 'admin-users-management.fxml'.";
-    assert usersPage != null
-        : "fx:id=\"usersPage\" was not injected: check your FXML file 'admin-users-management.fxml'.";
-
-    // Custom initialization
-    setStackHost(stackHost);
-    setStatusProvider(statusProvider);
-    usersManagmentInit();
-  }
+  // ##########################
+  // ### HELPER FUNCTION(S) ###
+  // ##########################
 
   /**
    * Filters users by keyword and role.
@@ -240,5 +216,44 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     card.getChildren().addAll(emailLabel, roleLabel, statusLabel, actionsBox);
 
     return card;
+  }
+
+  // ##################################
+  // ### INITIALIZATION FUNCTION(S) ###
+  // ##################################
+
+  @FXML // This method is called by the FXMLLoader when initialization is complete
+  void initialize() {
+    assert roleFilterComboBox != null
+        : "fx:id=\"roleFilterComboBox\" was not injected: check your FXML file 'admin-users-management.fxml'.";
+    assert searchTextField != null
+        : "fx:id=\"searchTextField\" was not injected: check your FXML file 'admin-users-management.fxml'.";
+    assert usersContainer != null
+        : "fx:id=\"usersContainer\" was not injected: check your FXML file 'admin-users-management.fxml'.";
+    assert usersPage != null
+        : "fx:id=\"usersPage\" was not injected: check your FXML file 'admin-users-management.fxml'.";
+
+    // Custom initialization
+    setStackHost(stackHost);
+    setStatusProvider(statusProvider);
+    usersManagmentInit();
+  }
+
+  public void usersManagmentInit() {
+    // Initialize filter dropdown
+    roleFilterComboBox.getItems().addAll(
+        "ALL",
+        UserRole.ADMIN.toString(),
+        UserRole.PATIENT.toString(),
+        UserRole.THERAPIST.toString());
+    roleFilterComboBox.setValue("ALL");
+
+    // Add sample users
+    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    final UserRepository userRepository = new UserRepository(em);
+    allUsers.addAll(userRepository.findAll());
+
+    // Load all users initially
+    loadUsers(allUsers);
   }
 } // AdminUsersManagmentController final class

@@ -1,0 +1,92 @@
+/* =================== Root panel =================== */
+.edit-profile-panel {
+  -fx-background-color: -bg-color;
+  -fx-border-color: #E5E7EB;
+  -fx-border-width: 0 0 0 1;
+  /* Left border */
+  -fx-padding: 25;
+}
+
+/* ================= Labels ========================== */
+Label {
+  -fx-text-fill: -text-primary;
+}
+
+.edit-profile-panel Label {
+  -fx-font-size: 18px;
+  -fx-font-weight: bold;
+}
+
+/* =========== Text-fields & Text-area ================ */
+TextField,
+TextArea,
+ComboBox {
+  -fx-background-color: white;
+  -fx-text-fill: -text-primary;
+  -fx-prompt-text-fill: -text-secondary;
+  -fx-border-radius: 8;
+  -fx-background-radius: 8;
+  -fx-border-color: #D1D5DB;
+  -fx-border-width: 1;
+  -fx-padding: 6 10;
+  -fx-font-size: 13px;
+}
+
+TextField:focused,
+TextArea:focused,
+ComboBox:focused {
+  -fx-border-color: -color-primary;
+  -fx-effect: dropshadow(gaussian, rgba(47, 111, 109, 0.2), 4, 0.5, 0, 0);
+}
+
+/* ======= Image-view (Profile Image) ================== */
+#profileImageView {
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0.5, 0, 2);
+}
+
+/* ==================== Buttons =============== */
+.btn-primary {
+  -fx-background-color: -color-primary;
+  -fx-text-fill: white;
+  -fx-background-radius: 8;
+  -fx-padding: 8 16;
+  -fx-font-weight: 600;
+  -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+  -fx-background-color: derive(-color-primary, 20%);
+}
+
+.btn-primary:pressed {
+  -fx-background-color: derive(-color-primary, -10%);
+}
+
+.btn-secondary {
+  -fx-background-color: -color-secondary;
+  -fx-text-fill: -text-primary;
+  -fx-background-radius: 8;
+  -fx-padding: 8 16;
+  -fx-font-weight: 600;
+  -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+  -fx-background-color: derive(-color-secondary, 10%);
+}
+
+.btn-secondary:pressed {
+  -fx-background-color: derive(-color-secondary, -10%);
+}
+
+/* ============ HBox (for buttons) ==================== */
+HBox {
+  -fx-spacing: 10;
+  -fx-alignment: center-right;
+}
+
+/* ============== Scrollable Text-area ================= */
+TextArea {
+  -fx-focus-color: -color-primary;
+  -fx-faint-focus-color: rgba(47, 111, 109, 0.1);
+}

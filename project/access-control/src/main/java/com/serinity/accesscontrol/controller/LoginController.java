@@ -112,14 +112,6 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
 
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
-  // #############################
-  // ### GETTER(S) & SETTER(S) ###
-  // #############################
-
-  public void setStatusProvider(final StatusMessageProvider provider) {
-    this.statusProvider = provider;
-  }
-
   // ############################
   // ### OVERRIDE FUNCTION(S) ###
   // ############################
@@ -135,9 +127,28 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
   }
 
   @Override
+  public void setStatusProvider(final StatusMessageProvider provider) {
+    this.statusProvider = provider;
+  }
+
+  @Override
   public void showStatusMessage(final String message, final MessageStatus status) {
     if (statusProvider != null) {
       statusProvider.showStatusMessage(message, status);
+    }
+  }
+
+  // ##########################
+  // ### HELPER FUNCTION(S) ###
+  // ##########################
+
+  private void injectUserIntoDashboard(final Object controller, final User user) {
+    if (controller instanceof final AdminDashboardController admin) {
+      admin.setUser(user);
+    }
+
+    if (controller instanceof final UserHomeController dash) {
+      dash.setUser(user);
     }
   }
 
@@ -161,7 +172,7 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
       final User user = userServiceResult.getData();
       push(user.getRole().equals(UserRole.ADMIN)
           ? ResourceFile.ADMIN_DASHBOARD_FXML.getFileName()
-          : ResourceFile.DASHBOARD_FXML.getFileName(),
+          : ResourceFile.USER_HOME_FXML.getFileName(),
           controller -> injectUserIntoDashboard(controller, user));
 
     } else {
@@ -182,7 +193,7 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
       final User user = userServiceResult.getData();
       push(user.getRole().equals(UserRole.ADMIN)
           ? ResourceFile.ADMIN_DASHBOARD_FXML.getFileName()
-          : ResourceFile.DASHBOARD_FXML.getFileName(),
+          : ResourceFile.USER_HOME_FXML.getFileName(),
           controller -> injectUserIntoDashboard(controller, user));
 
     } else {
@@ -245,16 +256,6 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
     // Custom initialization
     signUpUserRoleComboBoxInit();
     loginSideWebViewInit();
-  }
-
-  private void injectUserIntoDashboard(final Object controller, final User user) {
-    if (controller instanceof final AdminDashboardController admin) {
-      admin.setUser(user);
-    }
-
-    if (controller instanceof final DashboardController dash) {
-      dash.setUser(user);
-    }
   }
 
   private void signUpUserRoleComboBoxInit() {
