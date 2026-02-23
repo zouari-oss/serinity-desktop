@@ -23,28 +23,64 @@
         <Button text="Actualiser" styleClass="btn-secondary" onAction="#actualiser"/>
     </HBox>
 
-    <!-- KPIs -->
+    <!-- KPIs modernes -->
     <HBox spacing="12.0">
-        <VBox styleClass="stat-card-violet" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <Label text="Total nuits"       styleClass="stat-card-label"/>
-            <Label fx:id="kpiTotal"         text="–" styleClass="stat-card-value"/>
+
+        <!-- Total nuits -->
+        <VBox styleClass="stat-card primary" spacing="6" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+            <Label text="Nuits suivies" styleClass="stat-card-title"/>
+            <HBox alignment="CENTER_LEFT" spacing="6.0">
+                <Label text="🌙" styleClass="stat-card-icon"/>
+                <Label fx:id="kpiTotal" text="–" styleClass="stat-card-value"/>
+            </HBox>
+            <Label text="Nombre total de nuits enregistrées"
+                   styleClass="stat-card-subtitle"/>
         </VBox>
-        <VBox styleClass="stat-card-blue" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <Label text="Durée moyenne"     styleClass="stat-card-label"/>
-            <Label fx:id="kpiDuree"         text="–" styleClass="stat-card-value"/>
+
+        <!-- Durée moyenne -->
+        <VBox styleClass="stat-card info" spacing="6" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+            <Label text="Durée moyenne" styleClass="stat-card-title"/>
+            <HBox alignment="CENTER_LEFT" spacing="6.0">
+                <Label text="⏱" styleClass="stat-card-icon"/>
+                <Label fx:id="kpiDuree" text="– h" styleClass="stat-card-value"/>
+            </HBox>
+            <Label text="Heures de sommeil par nuit"
+                   styleClass="stat-card-subtitle"/>
         </VBox>
-        <VBox styleClass="stat-card-green" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <Label text="Score moyen"       styleClass="stat-card-label"/>
-            <Label fx:id="kpiScore"         text="–" styleClass="stat-card-value"/>
+
+        <!-- Score moyen -->
+        <VBox styleClass="stat-card success" spacing="6" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+            <Label text="Score moyen" styleClass="stat-card-title"/>
+            <HBox alignment="CENTER_LEFT" spacing="6.0">
+                <Label text="⭐" styleClass="stat-card-icon"/>
+                <Label fx:id="kpiScore" text="– /100" styleClass="stat-card-value"/>
+            </HBox>
+            <Label text="Qualité globale de vos nuits"
+                   styleClass="stat-card-subtitle"/>
         </VBox>
-        <VBox styleClass="stat-card-red" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <Label text="Dette sommeil"     styleClass="stat-card-label"/>
-            <Label fx:id="kpiDette"         text="–" styleClass="stat-card-value-sm"/>
+
+        <!-- Dette sommeil -->
+        <VBox styleClass="stat-card warning" spacing="6" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+            <Label text="Dette de sommeil" styleClass="stat-card-title"/>
+            <HBox alignment="CENTER_LEFT" spacing="6.0">
+                <Label text="⏳" styleClass="stat-card-icon"/>
+                <Label fx:id="kpiDette" text="–" styleClass="stat-card-value-sm"/>
+            </HBox>
+            <Label text="Manque accumulé sur 7 jours"
+                   styleClass="stat-card-subtitle"/>
         </VBox>
-        <VBox styleClass="stat-card-orange" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <Label text="Efficacité"        styleClass="stat-card-label"/>
-            <Label fx:id="kpiEfficacite"    text="–" styleClass="stat-card-value"/>
+
+        <!-- Efficacité -->
+        <VBox styleClass="stat-card accent" spacing="6" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+            <Label text="Efficacité" styleClass="stat-card-title"/>
+            <HBox alignment="CENTER_LEFT" spacing="6.0">
+                <Label text="⚡" styleClass="stat-card-icon"/>
+                <Label fx:id="kpiEfficacite" text="– %" styleClass="stat-card-value"/>
+            </HBox>
+            <Label text="Temps réellement dormi au lit"
+                   styleClass="stat-card-subtitle"/>
         </VBox>
+
     </HBox>
 
     <!-- Bien-être & Résilience -->

@@ -1,5 +1,5 @@
 /* ========================================================================
-   SERINITY SLEEP CONTROL - STYLES APPLICATION (FUSION COMPLÈTE)
+   SERINITY SLEEP CONTROL - STYLES APPLICATION (FUSION SANS DOUBLONS)
    ======================================================================== */
 
 /* ==================== ROOT ==================== */
@@ -54,7 +54,9 @@
     -fx-spacing: 10;
 }
 
-.nav-btn {
+/* Boutons nav simples + MenuButton (Gérer sommeil) partagent la base */
+.nav-btn,
+.nav-menu-btn {
     -fx-background-color: transparent;
     -fx-text-fill: rgba(255,255,255,0.88);
     -fx-font-size: 13px;
@@ -62,24 +64,83 @@
     -fx-padding: 8 12;
     -fx-background-radius: 12;
     -fx-cursor: hand;
+    -fx-border-color: transparent;
 }
 
-.nav-btn:hover {
+.nav-btn:hover,
+.nav-menu-btn:hover {
     -fx-background-color: rgba(255,255,255,0.14);
     -fx-text-fill: white;
 }
 
-.nav-btn:pressed {
+.nav-btn:pressed,
+.nav-menu-btn:pressed {
     -fx-background-color: rgba(255,255,255,0.20);
 }
 
-.nav-btn-active {
+.nav-btn-active,
+.nav-menu-btn-active {
     -fx-background-color: rgba(255,255,255,0.22);
     -fx-text-fill: white;
 }
 
-.nav-btn-active:hover {
+.nav-btn-active:hover,
+.nav-menu-btn-active:hover {
     -fx-background-color: rgba(255,255,255,0.30);
+}
+
+/* Spécifique MenuButton nav (texte interne + flèche + menu) */
+.nav-menu-btn .label {
+    -fx-text-fill: rgba(255,255,255,0.88);
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
+.nav-menu-btn:hover .label {
+    -fx-text-fill: white;
+}
+
+.nav-menu-btn:showing {
+    -fx-background-color: rgba(255,255,255,0.22);
+}
+
+.nav-menu-btn:showing .label {
+    -fx-text-fill: white;
+}
+
+/* Flèche blanche */
+.nav-menu-btn .arrow-button {
+    -fx-padding: 0 0 0 4;
+    -fx-background-color: transparent;
+}
+
+.nav-menu-btn .arrow-button .arrow {
+    -fx-background-color: rgba(255,255,255,0.88);
+    -fx-padding: 3px;
+}
+
+/* Menu déroulant */
+.nav-menu-btn .context-menu {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 4);
+    -fx-padding: 4;
+}
+
+.nav-menu-btn .menu-item {
+    -fx-padding: 10 20;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+
+.nav-menu-btn .menu-item .label {
+    -fx-text-fill: #1f5f63;
+}
+
+.nav-menu-btn .menu-item:hover {
+    -fx-background-color: #E6F2F1;
 }
 
 /* ==================== SEARCH ==================== */
@@ -250,6 +311,7 @@
 
 /* ==================== CARDS ==================== */
 
+/* Fusion des deux .card → on garde l’effet le plus soft (0.08) et la bordure bleutée */
 .card {
     -fx-background-color: white;
     -fx-background-radius: 8;
@@ -266,7 +328,7 @@
 .card-title {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50 !important;
+    -fx-text-fill: #2c3e50; /* !important non nécessaire car tu n’écrases plus ailleurs */
 }
 
 .card-description {
@@ -287,12 +349,15 @@
 
 /* ==================== BADGES ==================== */
 
+/* Base badge (unique) */
 .badge {
+    -fx-font-size: 11px;
     -fx-padding: 3 8;
     -fx-background-radius: 3;
-    -fx-font-size: 11px;
+    -fx-text-fill: white;
 }
 
+/* Variantes génériques */
 .badge-primary {
     -fx-background-color: #B2EBF2;
     -fx-text-fill: #0277BD !important;
@@ -313,12 +378,23 @@
     -fx-text-fill: #C62828 !important;
 }
 
+/* Badges spécifiques rêve */
+.badge-couleur   { -fx-background-color: #03A9F4; }
+.badge-recurrent { -fx-background-color: #FFCCBC; -fx-text-fill: #E64A19; }
+.badge-lucide    { -fx-background-color: #C5E1A5; -fx-text-fill: #2E7D32; }
+
+.badge-cauchemar { -fx-background-color: #f44336; }
+.badge-lucide    { -fx-background-color: #4CAF50; }
+.badge-recurrent { -fx-background-color: #FF9800; }
+.badge-normal    { -fx-background-color: #26C6DA; }
+
 /* ==================== TYPE LABELS ==================== */
 
 .type-label {
     -fx-font-size: 13px;
     -fx-padding: 4 10;
     -fx-background-radius: 5;
+    -fx-text-fill: white;
 }
 
 .type-cauchemar {
@@ -365,17 +441,12 @@
 
 /* ==================== PROGRESS BAR ==================== */
 
-.intensite-elevee {
-    -fx-accent: #f44336;
-}
+.intensite-elevee  { -fx-accent: #f44336; }
+.intensite-moyenne { -fx-accent: #FF9800; }
+.intensite-faible  { -fx-accent: #4CAF50; }
 
-.intensite-moyenne {
-    -fx-accent: #FF9800;
-}
-
-.intensite-faible {
-    -fx-accent: #4CAF50;
-}
+.intensite-haute   { -fx-accent: #f44336; }
+.intensite-basse   { -fx-accent: #4CAF50; }
 
 /* ==================== ANXIETE & SCORE ==================== */
 
@@ -392,22 +463,26 @@
     -fx-text-fill: #4CAF50 !important;
 }
 
+.anxiete-haute   { -fx-text-fill: #f44336; -fx-font-weight: bold; }
+.anxiete-basse   { -fx-text-fill: #4CAF50; }
+
+/* bar via -fx-accent */
+.anxiete-low  { -fx-accent: #4CAF50; }
+.anxiete-mid  { -fx-accent: #FFB300; }
+.anxiete-high { -fx-accent: #E53935; }
+
 .score-label {
     -fx-font-size: 15px;
     -fx-font-weight: bold;
 }
 
-.score-excellent {
-    -fx-text-fill: #4CAF50 !important;
-}
+.score-excellent { -fx-text-fill: #4CAF50 !important; }
+.score-moyen     { -fx-text-fill: #FF9800 !important; }
+.score-faible    { -fx-text-fill: #f44336 !important; }
 
-.score-moyen {
-    -fx-text-fill: #FF9800 !important;
-}
-
-.score-faible {
-    -fx-text-fill: #f44336 !important;
-}
+.score-low  { -fx-accent: #E53935; }
+.score-mid  { -fx-accent: #FFB300; }
+.score-high { -fx-accent: #4CAF50; }
 
 /* ==================== EMOTIONS ==================== */
 
@@ -510,16 +585,16 @@
 }
 
 .stats-container {
-    -fx-background-color: #E3F2FD;
-    -fx-background-radius: 5;
+    -fx-background-color: #e6f3ff;
+    -fx-background-radius: 6;
     -fx-border-color: #90CAF9;
     -fx-border-radius: 5;
     -fx-border-width: 1;
 }
 
 .stats-label {
-    -fx-font-size: 14px;
-    -fx-text-fill: #1565C0;
+    -fx-font-size: 13px;
+    -fx-text-fill: #1a237e;
     -fx-font-weight: bold;
 }
 
@@ -596,179 +671,86 @@
     -fx-text-fill: white;
 }
 
-/* ==================== MENU BUTTON NAV (Gérer sommeil) ==================== */
+/* ════════════════════════════════════════
+   Cards KPI Sommeil (sommeil-stats.fxml)
+   ════════════════════════════════════════ */
 
-.nav-menu-btn {
-    -fx-background-color: transparent;
-    -fx-text-fill: rgba(255,255,255,0.88);
-    -fx-font-size: 13px;
-    -fx-font-weight: 700;
-    -fx-padding: 8 12;
-    -fx-background-radius: 12;
-    -fx-cursor: hand;
-    -fx-border-color: transparent;
+.stat-card {
+    -fx-padding: 10 12;
+    -fx-background-radius: 14;
+    -fx-background-color: linear-gradient(to bottom, #ffffff, #f3f4ff);
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 12, 0.25, 0, 3);
+    -fx-spacing: 4;
+    -fx-alignment: TOP_LEFT;
+    -fx-min-width: 140;
 }
 
-/* ← AJOUT CLÉ : forcer le label interne en blanc */
-.nav-menu-btn .label {
-    -fx-text-fill: rgba(255,255,255,0.88);
-    -fx-font-size: 13px;
-    -fx-font-weight: 700;
+.stat-card.primary {
+    -fx-border-color: rgba(59,130,246,0.25);
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
 }
 
-.nav-menu-btn:hover {
-    -fx-background-color: rgba(255,255,255,0.14);
+.stat-card.info {
+    -fx-border-color: rgba(56,189,248,0.25);
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
 }
 
-.nav-menu-btn:hover .label {
-    -fx-text-fill: white;
+.stat-card.success {
+    -fx-border-color: rgba(34,197,94,0.25);
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
 }
 
-.nav-menu-btn:pressed {
-    -fx-background-color: rgba(255,255,255,0.20);
+.stat-card.warning {
+    -fx-border-color: rgba(249,115,22,0.25);
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
 }
 
-.nav-menu-btn:showing {
-    -fx-background-color: rgba(255,255,255,0.22);
+.stat-card.accent {
+    -fx-border-color: rgba(139,92,246,0.25);
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
 }
 
-.nav-menu-btn:showing .label {
-    -fx-text-fill: white;
-}
-
-/* État actif */
-.nav-menu-btn-active {
-    -fx-background-color: rgba(255,255,255,0.22);
-}
-
-.nav-menu-btn-active .label {
-    -fx-text-fill: white;
-}
-
-/* Flèche blanche */
-.nav-menu-btn .arrow-button {
-    -fx-padding: 0 0 0 4;
-    -fx-background-color: transparent;
-}
-
-.nav-menu-btn .arrow-button .arrow {
-    -fx-background-color: rgba(255,255,255,0.88);
-    -fx-padding: 3px;
-}
-
-/* Menu déroulant */
-.nav-menu-btn .context-menu {
-    -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 4);
-    -fx-padding: 4;
-}
-
-.nav-menu-btn .menu-item {
-    -fx-padding: 10 20;
-    -fx-font-size: 13px;
-    -fx-font-weight: 600;
-    -fx-cursor: hand;
-    -fx-background-color: transparent;
-}
-
-.nav-menu-btn .menu-item .label {
-    -fx-text-fill: #1f5f63;
-}
-
-.nav-menu-btn .menu-item:hover {
-    -fx-background-color: #E6F2F1;
-}
-
-/* Carte générique (déjà utilisée par Sommeil) */
-.card {
-    -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
-}
-
-/* Titre (date / titre de rêve) */
-.card-title {
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
-}
-
-/* Label de type / qualité */
-.type-label {
-    -fx-font-size: 13px;
-    -fx-padding: 4 10;
-    -fx-background-radius: 12;
-    -fx-text-fill: white;
-}
-
-/* Couleurs pour les types de rêves */
-.badge-cauchemar { -fx-background-color: #f44336; }
-.badge-lucide    { -fx-background-color: #4CAF50; }
-.badge-recurrent { -fx-background-color: #FF9800; }
-.badge-normal    { -fx-background-color: #26C6DA; }
-
-/* Barre d’intensité */
-.intensite-haute   { -fx-accent: #f44336; }   /* rouge */
-.intensite-moyenne { -fx-accent: #FF9800; }   /* orange */
-.intensite-basse   { -fx-accent: #4CAF50; }   /* vert */
-
-/* Texte anxiété */
-.anxiete-haute   { -fx-text-fill: #f44336; -fx-font-weight: bold; }
-.anxiete-moyenne { -fx-text-fill: #FF9800; }
-.anxiete-basse   { -fx-text-fill: #4CAF50; }
-
-/* Badges couleur / récurrent / lucide (déjà utilisés) */
-.badge {
+.stat-card-title {
+    -fx-text-fill: #64748b;
     -fx-font-size: 11px;
-    -fx-padding: 3 8;
-    -fx-background-radius: 3;
-    -fx-text-fill: white;
-}
-.badge-couleur   { -fx-background-color: #03A9F4; }
-.badge-recurrent { -fx-background-color: #FFCCBC; -fx-text-fill: #E64A19; }
-.badge-lucide    { -fx-background-color: #C5E1A5; -fx-text-fill: #2E7D32; }
-
-.stats-container {
-    -fx-background-color: #e6f3ff;
-    -fx-background-radius: 6;
+    -fx-font-weight: 600;
 }
 
-.stat-badge-primary {
-    -fx-background-color: #1976d2;
-    -fx-text-fill: white;
-    -fx-padding: 4 10;
-    -fx-background-radius: 12;
-    -fx-font-weight: bold;
+.stat-card-icon {
+    -fx-font-size: 18px;
 }
 
-.stat-badge-info {
-    -fx-background-color: #26a69a;
-    -fx-text-fill: white;
-    -fx-padding: 4 10;
-    -fx-background-radius: 12;
+.stat-card-value {
+    -fx-text-fill: #0f172a;
+    -fx-font-size: 20px;
+    -fx-font-weight: 700;
 }
 
-.stats-label {
-    -fx-font-size: 13px;
-    -fx-text-fill: #1a237e;
+.stat-card-value-sm {
+    -fx-text-fill: #0f172a;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
 }
 
-/* couleur de la barre via -fx-accent [web:60] */
-.anxiete-low  { -fx-accent: #4CAF50; }
-.anxiete-mid  { -fx-accent: #FFB300; }
-.anxiete-high { -fx-accent: #E53935; }
+.stat-card-subtitle {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 11px;
+}
 
-.score-low  { -fx-accent: #E53935; }   /* mauvais sommeil */
-.score-mid  { -fx-accent: #FFB300; }
-.score-high { -fx-accent: #4CAF50; }   /* bon sommeil */
+/* Hover : léger mouvement + ombre plus forte */
+.stat-card:hover {
+    -fx-translate-y: -1;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.16), 16, 0.35, 0, 4);
+    -fx-cursor: hand;
+}
 
+/* ── Stat badges (rêves) ───────────────────────── */
 
-/* ══════════════════════════════════════════════════════════════
-   REVE PAGE — extensions
-   ══════════════════════════════════════════════════════════════ */
-
-/* ── Stat badges ─────────────────────────────────────────────── */
 .stat-badge-primary,
 .stat-badge-info,
 .stat-badge-danger,
@@ -778,21 +760,24 @@
     -fx-padding: 8 14 8 14;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 1);
 }
-.stat-badge-primary { -fx-background-color: #8e44ad; }
-.stat-badge-info    { -fx-background-color: #2980b9; }
-.stat-badge-danger  { -fx-background-color: #c0392b; }
-.stat-badge-success { -fx-background-color: #27ae60; }
-.stat-badge-warning { -fx-background-color: #d68910; }
+
+.stat-badge-primary { -fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-weight: bold; }
+.stat-badge-info    { -fx-background-color: #26a69a; -fx-text-fill: white; }
+.stat-badge-danger  { -fx-background-color: #c0392b; -fx-text-fill: white; }
+.stat-badge-success { -fx-background-color: #27ae60; -fx-text-fill: white; }
+.stat-badge-warning { -fx-background-color: #d68910; -fx-text-fill: white; }
 
 .stat-badge-label {
     -fx-font-size: 11px;
     -fx-text-fill: rgba(255,255,255,0.85);
 }
+
 .stat-badge-value {
     -fx-font-size: 15px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
+
 .stat-badge-value-small {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
@@ -800,15 +785,33 @@
     -fx-wrap-text: true;
 }
 
-/* ── Barre anxiété ───────────────────────────────────────────── */
-.anxiete-bar { -fx-pref-height: 5; }
-.anxiete-bar .track {
-    -fx-background-color: rgba(255,255,255,0.3);
-    -fx-background-radius: 3;
+/* ── Panel insights ──────────────────────────────────────────── */
+.insights-pane {
+    -fx-background-color: #faf5ff;
+    -fx-border-color: #d7bde2;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
 }
-.anxiete-bar.anxiete-low  .bar { -fx-background-color: #2ecc71; }
-.anxiete-bar.anxiete-mid  .bar { -fx-background-color: #f39c12; }
-.anxiete-bar.anxiete-high .bar { -fx-background-color: #e74c3c; }
+
+.insights-pane > .title {
+    -fx-background-color: #f4ecfc;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6c3483;
+    -fx-background-radius: 8;
+}
+
+.insights-box { -fx-background-color: transparent; }
+
+.insight-item {
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 5 10;
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 1);
+}
 
 /* ── Bouton outline ──────────────────────────────────────────── */
 .btn-outline {
@@ -820,7 +823,10 @@
     -fx-font-size: 12px;
     -fx-cursor: hand;
 }
-.btn-outline:hover { -fx-background-color: #f4ecfc; }
+
+.btn-outline:hover {
+    -fx-background-color: #f4ecfc;
+}
 
 /* ── Combo filtre ────────────────────────────────────────────── */
 .filter-combo {
@@ -829,29 +835,8 @@
     -fx-border-color: #d5d8dc;
     -fx-border-width: 1.5;
 }
-.filter-check { -fx-font-size: 13px; -fx-text-fill: #34495e; }
 
-/* ── Panel insights ──────────────────────────────────────────── */
-.insights-pane {
-    -fx-background-color: #faf5ff;
-    -fx-border-color: #d7bde2;
-    -fx-border-width: 1;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-}
-.insights-pane > .title {
-    -fx-background-color: #f4ecfc;
+.filter-check {
     -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #6c3483;
-    -fx-background-radius: 8;
-}
-.insights-box { -fx-background-color: transparent; }
-.insight-item {
-    -fx-font-size: 13px;
-    -fx-text-fill: #2c3e50;
-    -fx-padding: 5 10;
-    -fx-background-color: white;
-    -fx-background-radius: 6;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 1);
+    -fx-text-fill: #34495e;
 }

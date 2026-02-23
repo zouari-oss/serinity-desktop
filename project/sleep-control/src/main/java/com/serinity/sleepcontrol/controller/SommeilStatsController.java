@@ -63,7 +63,7 @@ public class SommeilStatsController {
             chargerTendances();
             chargerInsights();
         } catch (SQLException e) {
-            kpiTotal.setText("Erreur de chargement");
+            kpiTotal.setText("Erreur");
             e.printStackTrace();
         }
     }
@@ -77,11 +77,11 @@ public class SommeilStatsController {
         double dette      = sommeilService.calculerDetteSommeil();
         double efficacite = sommeilService.calculerEfficaciteMoyenne();
 
-        kpiTotal.setText(total + " nuits");
+        kpiTotal.setText(String.valueOf(total));
         kpiDuree.setText(String.format("%.1f h", dureeMoy));
-        kpiScore.setText(String.format("%.0f / 100", scoreMoy));
+        kpiScore.setText(String.format("%.0f /100", scoreMoy));
         kpiDette.setText(sommeilService.libelleDette(dette));
-        kpiEfficacite.setText(String.format("%.0f%%", efficacite));
+        kpiEfficacite.setText(String.format("%.0f %%", efficacite));
     }
 
     // ─── Bien-être & Résilience ───────────────────────────────────────────────────
@@ -135,13 +135,13 @@ public class SommeilStatsController {
 
         Map<String, String> tendances = sommeilService.identifierTendances(debut, fin);
         tendances.forEach((cle, valeur) -> {
-            Label l = new Label(cle.substring(0, 1).toUpperCase() + cle.substring(1)
-                    + " : " + valeur);
+            Label l = new Label(
+                    cle.substring(0, 1).toUpperCase() + cle.substring(1)
+                            + " : " + valeur);
             l.getStyleClass().add("card-info");
             tendancesContainer.getChildren().add(l);
         });
 
-        // Régularité & profil chronobiologique
         double regularite = sommeilService.calculerRegulariteHoraires();
         Label lblReg = new Label("Régularité : "
                 + sommeilService.libelleRegularite(regularite));
