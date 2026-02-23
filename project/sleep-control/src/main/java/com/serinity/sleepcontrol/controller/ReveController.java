@@ -163,7 +163,7 @@ public class ReveController {
         }
     }
 
-    // ─── Analyse IA globale ───────────────────────────────────────────────────────
+    // ─── Analyse IA globale (1er bouton) ─────────────────────────────────────────
 
     @FXML
     private void ouvrirAnalyseIA() {
@@ -173,7 +173,7 @@ public class ReveController {
             Parent root = loader.load();
             ReveAnalyseController ctrl = loader.getController();
             ctrl.setReveService(reveService);
-            ctrl.demarrerAnalyseGlobale();          // ← déclenche l'analyse globale
+            ctrl.demarrerAnalyseGlobale();
             Stage stage = new Stage();
             stage.setTitle("🧠 Analyse IA des Rêves");
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -184,7 +184,9 @@ public class ReveController {
         }
     }
 
-    // ─── Analyse IA d'un rêve spécifique ─────────────────────────────────────────
+
+
+    // ─── Analyse IA d'un rêve spécifique ────────────────────────────────────────
 
     public void analyserRevePublic(Reve reve) {
         try {
@@ -192,8 +194,8 @@ public class ReveController {
                     getClass().getResource("/view/fxml/reve-analyse.fxml"));
             Parent root = loader.load();
             ReveAnalyseController ctrl = loader.getController();
-            ctrl.setReveService(reveService);       // ← EN PREMIER obligatoire
-            ctrl.setReveUnique(reve);               // ← déclenche l'analyse automatiquement
+            ctrl.setReveService(reveService);
+            ctrl.setReveUnique(reve);
             Stage stage = new Stage();
             stage.setTitle("🧠 Analyse IA — " + reve.getTitre());
             stage.initModality(Modality.APPLICATION_MODAL);

@@ -322,6 +322,23 @@ public class SommeilController {
         loadAllSommeils();
     }
 
+    @FXML
+    private void ouvrirMeteo() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/fxml/weather.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("🌤️ Météo & Sommeil");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root, 560, 520));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);

@@ -37,6 +37,9 @@
                 styleClass="btn-secondary"
                 onAction="#ouvrirAnalyseIA"/>
 
+
+
+
     </HBox>
 
     <!-- Filtres -->
