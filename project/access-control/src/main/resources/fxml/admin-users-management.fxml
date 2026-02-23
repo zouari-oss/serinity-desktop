@@ -8,23 +8,20 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane fx:id="usersPage" prefHeight="540.0" prefWidth="680.0" styleClass="users-page"
-  stylesheets="@../styles/admin-user-managment.css" xmlns="http://javafx.com/javafx/25"
+  stylesheets="@../styles/admin-users-managment.css" xmlns="http://javafx.com/javafx/25"
   xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="com.serinity.accesscontrol.controller.AdminUsersManagmentController">
 
   <HBox alignment="CENTER_LEFT" spacing="15" styleClass="users-toolbar" AnchorPane.leftAnchor="20.0"
     AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="15.0">
-
     <TextField fx:id="searchTextField" onAction="#onSearchTextFieldAction"
       promptText="Search by email..." styleClass="search-field" HBox.hgrow="ALWAYS" />
-
     <ComboBox fx:id="roleFilterComboBox" onAction="#onRoleFilterComboBoxAction"
       promptText="Filter by Role" styleClass="filter-box" />
   </HBox>
 
   <ScrollPane fitToWidth="true" styleClass="users-scroll" AnchorPane.bottomAnchor="20.0"
     AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="70.0">
-
     <VBox fx:id="usersContainer" spacing="15" styleClass="users-container" />
   </ScrollPane>
 

@@ -1,18 +1,6 @@
 // `serinity` package name
 package com.serinity.accesscontrol.controller;
 
-import javafx.event.ActionEvent;
-// `javafx` import(s)
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.control.Label;
-
 // `java` import(s)
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,6 +20,18 @@ import com.serinity.accesscontrol.flag.MessageStatus;
 import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.UserRepository;
+
+// `javafx` import(s)
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 /**
  * `admin-user-dashboard.fxml` controller class
@@ -66,15 +66,15 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
   @FXML // fx:id="usersPage"
   private AnchorPane usersPage; // Value injected by FXMLLoader
 
-  private final List<User> allUsers = new ArrayList<>();
-
   private StackPane stackHost; // Will be injected by RootController
 
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
-  // ##########################
-  // ### HELPER FUNCTION(S) ###
-  // ##########################
+  private final List<User> allUsers = new ArrayList<>();
+
+  public void setStatusProvider(final StatusMessageProvider provider) {
+    this.statusProvider = provider;
+  }
 
   @Override
   public StackPane getStackHost() {
@@ -86,10 +86,6 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     this.stackHost = host;
   }
 
-  public void setStatusProvider(final StatusMessageProvider provider) {
-    this.statusProvider = provider;
-  }
-
   @Override
   public void showStatusMessage(final String message, final MessageStatus status) {
     if (statusProvider != null) {
@@ -97,7 +93,6 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     }
   }
 
-  @FXML
   public void usersManagmentInit() {
     // Initialize filter dropdown
     roleFilterComboBox.getItems().addAll(
