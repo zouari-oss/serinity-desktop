@@ -56,8 +56,7 @@
     </properties>
 
     <modules>
-        <module>access-control</module>
-        <module>mood-control</module>
+
         <module>sleep-control</module>
     </modules>
 
