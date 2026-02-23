@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.sleepcontrol.controller.ReveFormController"
+            fitToWidth="true"
+            fitToHeight="true"
+            style="-fx-background-color: white;">
+
+    <VBox spacing="12" style="-fx-background-color: white;">
+        <padding>
+            <Insets top="20" right="30" bottom="20" left="30" />
+        </padding>
+
+        <Label text="Formulaire Rêve"
+               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+
+        <Separator />
+
+        <VBox spacing="5">
+            <Label text="Sommeil associé *" style="-fx-font-weight: bold;"/>
+            <ComboBox fx:id="sommeilCombo" prefWidth="250"/>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Titre *" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="titreField" promptText="Ex: Rêve étrange"/>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Description *" style="-fx-font-weight: bold;"/>
+            <TextArea fx:id="descriptionArea" promptText="Décrivez votre rêve..."
+                      prefHeight="80" wrapText="true"/>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Type de rêve *" style="-fx-font-weight: bold;"/>
+            <ComboBox fx:id="typeCombo" prefWidth="250" promptText="Sélectionner..."/>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Humeur ressentie *" style="-fx-font-weight: bold;"/>
+            <ComboBox fx:id="humeurCombo" prefWidth="250" promptText="Sélectionner..."/>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Intensité" style="-fx-font-weight: bold;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Slider fx:id="intensiteSlider" prefWidth="300"/>
+                <Label fx:id="intensiteLabel" text="5" style="-fx-font-weight: bold;"/>
+            </HBox>
+        </VBox>
+
+        <CheckBox fx:id="couleurCheck" text="Rêve en couleur"/>
+
+        <CheckBox fx:id="recurrentCheck" text="Rêve récurrent"/>
+
+        <VBox spacing="5">
+            <Label text="Émotions (optionnel)" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="emotionsField" promptText="Ex: joie, peur, tristesse"/>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Symboles (optionnel)" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="symbolesField" promptText="Ex: eau, feu, animaux"/>
+        </VBox>
+
+        <Separator />
+
+        <HBox alignment="CENTER_RIGHT" spacing="15">
+            <Button fx:id="btnCancel" text="Annuler" onAction="#annuler"
+                    prefHeight="43" prefWidth="123"
+                    style="-fx-background-color: #e9f6f6; -fx-padding: 10 25; -fx-font-size: 14px; -fx-background-radius: 4;"/>
+
+            <Button fx:id="btnSave" text="Sauvegarder" onAction="#sauvegarder"
+                    style="-fx-background-color: #1f5f63; -fx-text-fill: white; -fx-padding: 10 25; -fx-font-size: 14px; -fx-background-radius: 5;"/>
+        </HBox>
+
+        <Label text="* Champs obligatoires"
+               style="-fx-font-size: 12px; -fx-text-fill: #666; -fx-font-style: italic;"/>
+
+    </VBox>
+
+</ScrollPane>

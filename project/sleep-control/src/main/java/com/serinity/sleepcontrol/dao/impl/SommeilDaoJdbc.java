@@ -1,7 +1,9 @@
 package com.serinity.sleepcontrol.dao.impl;
+
 import com.serinity.sleepcontrol.dao.SommeilDao;
 import com.serinity.sleepcontrol.dao.ReveDao;
 import com.serinity.sleepcontrol.model.Sommeil;
+import com.serinity.sleepcontrol.utils.MyDataBase;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -10,10 +12,11 @@ import java.util.List;
 
 public class SommeilDaoJdbc implements SommeilDao {
 
-    private Connection connection;
+    private final Connection connection;
 
-    public SommeilDaoJdbc(Connection connection) {
-        this.connection = connection;
+    // Récupération de la connexion via le singleton MyDataBase
+    public SommeilDaoJdbc() {
+        this.connection = MyDataBase.getInstance().getConnection();
     }
 
     @Override
@@ -71,7 +74,7 @@ public class SommeilDaoJdbc implements SommeilDao {
                 if (rs.next()) {
                     Sommeil sommeil = mapResultSetToSommeil(rs);
                     // Charger les rêves associés (relation OneToMany)
-                    ReveDao reveDao = new ReveDaoJdbc(connection);
+                    ReveDao reveDao = new ReveDaoJdbc();  // lui aussi utilise MyDataBase
                     sommeil.setReves(reveDao.trouverParSommeilId(id));
                     return sommeil;
                 }
@@ -219,6 +222,7 @@ public class SommeilDaoJdbc implements SommeilDao {
         sommeil.setNiveauBruit(rs.getString("bruit_niveau"));
         return sommeil;
     }
+
     @Override
     public Connection getConnection() {
         return this.connection;

@@ -37,8 +37,8 @@ public class SommeilController {
     @FXML
     public void initialize() {
         try {
-            Connection connection = MyDataBase.getInstance().getConnection();
-            sommeilService = new SommeilService(connection);
+            sommeilService = new SommeilService();
+
 
             initializeFilters();
             loadAllSommeils();

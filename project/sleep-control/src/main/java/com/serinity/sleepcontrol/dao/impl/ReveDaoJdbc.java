@@ -2,16 +2,18 @@ package com.serinity.sleepcontrol.dao.impl;
 
 import com.serinity.sleepcontrol.dao.ReveDao;
 import com.serinity.sleepcontrol.model.Reve;
+import com.serinity.sleepcontrol.utils.MyDataBase;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReveDaoJdbc implements ReveDao {
 
-    private Connection connection;
+    private final Connection connection;
 
-    public ReveDaoJdbc(Connection connection) {
-        this.connection = connection;
+    public ReveDaoJdbc() {
+        this.connection = MyDataBase.getInstance().getConnection();
     }
 
     @Override

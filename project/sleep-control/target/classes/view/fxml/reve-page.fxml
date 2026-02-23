@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.sleepcontrol.controller.ReveController"
+      fx:id="mainContainer"
+      stylesheets="@../styles/styles.css"
+      spacing="15.0"
+      style="-fx-background-color: #f5f7fa;">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20" />
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15.0">
+        <Label text="Gestion des Rêves" styleClass="page-header" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="btnAjouter"
+                text="+ Ajouter un Rêve"
+                styleClass="btn-primary"
+                onAction="#ajouterReve" />
+        <Button fx:id="btnRefresh"
+                text="⟳ Rafraîchir"
+                styleClass="btn-secondary"
+                onAction="#rafraichir" />
+    </HBox>
+
+    <VBox spacing="12.0" styleClass="filter-container">
+        <padding>
+            <Insets top="15" right="15" bottom="15" left="15" />
+        </padding>
+
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <Label text="Recherche:" styleClass="form-label" />
+            <TextField fx:id="searchField"
+                       promptText="Rechercher par titre, description, émotions..."
+                       prefWidth="400.0"
+                       styleClass="form-control"
+                       HBox.hgrow="ALWAYS" />
+        </HBox>
+
+        <HBox alignment="CENTER_LEFT" spacing="15.0">
+            <VBox spacing="5.0">
+                <Label text="Type:" styleClass="form-label" />
+                <ComboBox fx:id="filterType" prefWidth="150.0" />
+            </VBox>
+
+            <VBox spacing="5.0">
+                <Label text="Trier par:" styleClass="form-label" />
+                <ComboBox fx:id="sortComboBox" prefWidth="180.0" />
+            </VBox>
+
+            <VBox spacing="5.0">
+                <Label text=" " />
+                <CheckBox fx:id="filterRecurrent" text="Rêves récurrents uniquement" />
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="stats-container">
+        <padding>
+            <Insets top="10" right="15" bottom="10" left="15" />
+        </padding>
+        <Label fx:id="statsLabel"
+               styleClass="stats-label"
+               text="Chargement des statistiques..." />
+    </HBox>
+
+    <ScrollPane fitToWidth="true"
+                VBox.vgrow="ALWAYS"
+                styleClass="cards-scroll-pane">
+        <FlowPane fx:id="cardsContainer"
+                  hgap="15.0"
+                  vgap="15.0"
+                  styleClass="cards-flow-pane">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10" />
+            </padding>
+        </FlowPane>
+    </ScrollPane>
+
+</VBox>

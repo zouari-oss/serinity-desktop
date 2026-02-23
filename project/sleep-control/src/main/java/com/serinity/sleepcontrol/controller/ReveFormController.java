@@ -1,5 +1,6 @@
 package com.serinity.sleepcontrol.controller;
 
+import com.serinity.sleepcontrol.dao.SommeilDao;
 import com.serinity.sleepcontrol.model.Reve;
 import com.serinity.sleepcontrol.model.Sommeil;
 import com.serinity.sleepcontrol.service.ReveService;
@@ -39,7 +40,7 @@ public class ReveFormController {
     public void initialize() {
         try {
             Connection connection = MyDataBase.getInstance().getConnection();
-            sommeilService = new SommeilService(connection);
+            sommeilService = new SommeilService((SommeilDao) connection);
 
             typeCombo.setItems(FXCollections.observableArrayList(
                     "Normal", "Cauchemar", "Lucide", "Récurrent"

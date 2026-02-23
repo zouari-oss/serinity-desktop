@@ -4,19 +4,20 @@ import com.serinity.sleepcontrol.dao.ReveDao;
 import com.serinity.sleepcontrol.dao.impl.ReveDaoJdbc;
 import com.serinity.sleepcontrol.model.Reve;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ReveService {
 
-    private ReveDao reveDao;
+    private final ReveDao reveDao;
 
-    public ReveService(Connection connection) {
-        this.reveDao = new ReveDaoJdbc(connection);
+    // Constructeur par défaut : utilise le DAO qui lui-même utilise MyDataBase (singleton)
+    public ReveService() {
+        this.reveDao = new ReveDaoJdbc();
     }
 
+    // Constructeur pour tests unitaires ou injection manuelle
     public ReveService(ReveDao reveDao) {
         this.reveDao = reveDao;
     }
@@ -298,10 +299,9 @@ public class ReveService {
     }
 
     public Map<String, Object> statistiquesGlobales() throws SQLException {
-        List<Reve> reves = listerTous();
         Map<String, Object> stats = new HashMap<>();
 
-        stats.put("nombreTotal", reves.size());
+        stats.put("nombreTotal", compterTotal());
         stats.put("intensiteMoyenne", calculerIntensiteMoyenne());
         stats.put("anxieteMoyenne", calculerAnxieteMoyenne());
         stats.put("pourcentageCauchemars", calculerPourcentageCauchemars());

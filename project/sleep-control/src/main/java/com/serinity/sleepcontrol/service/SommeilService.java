@@ -5,9 +5,6 @@ import com.serinity.sleepcontrol.dao.impl.SommeilDaoJdbc;
 import com.serinity.sleepcontrol.model.Sommeil;
 import com.serinity.sleepcontrol.model.Reve;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
@@ -15,14 +12,14 @@ import java.util.stream.Collectors;
 
 public class SommeilService {
 
-    private SommeilDao sommeilDao;
-    private Connection connection;
+    private final SommeilDao sommeilDao;
 
-    public SommeilService(Connection connection) {
-        this.connection = connection;
-        this.sommeilDao = new SommeilDaoJdbc(connection);
+    // Constructeur par défaut : le DAO va chercher la connexion dans MyDataBase (singleton)
+    public SommeilService() {
+        this.sommeilDao = new SommeilDaoJdbc();
     }
 
+    // Pour tests unitaires / injection manuelle
     public SommeilService(SommeilDao sommeilDao) {
         this.sommeilDao = sommeilDao;
     }
@@ -508,57 +505,14 @@ public class SommeilService {
                 .anyMatch(s -> s.getDateNuit().equals(date));
     }
 
+
+
     public List<Sommeil> listerTousAvecReves() throws SQLException {
-        List<Sommeil> sommeils = listerTous();
 
-        for (Sommeil sommeil : sommeils) {
-            chargerRevesAssocies(sommeil);
-        }
-
-        return sommeils;
+        return listerTous();
     }
 
     public Sommeil trouverParIdAvecReves(int id) throws SQLException {
-        Sommeil sommeil = trouverParId(id);
-
-        if (sommeil != null) {
-            chargerRevesAssocies(sommeil);
-        }
-
-        return sommeil;
-    }
-
-    private void chargerRevesAssocies(Sommeil sommeil) throws SQLException {
-        if (sommeil == null) return;
-
-        String sql = "SELECT * FROM reves WHERE sommeil_id = ? ORDER BY id DESC";
-
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, sommeil.getId());
-            ResultSet rs = ps.executeQuery();
-
-            List<Reve> reves = new ArrayList<>();
-
-            while (rs.next()) {
-                Reve reve = new Reve();
-                reve.setId(rs.getInt("id"));
-                reve.setSommeilId(rs.getInt("sommeil_id"));
-                reve.setTitre(rs.getString("titre"));
-                reve.setDescription(rs.getString("description"));
-                reve.setTypeReve(rs.getString("type_reve"));
-                reve.setHumeur(rs.getString("humeur"));
-                reve.setIntensite(rs.getInt("intensite"));
-                reve.setCouleur(rs.getBoolean("couleur"));
-                reve.setRecurrent(rs.getBoolean("recurrent"));
-                reve.setEmotions(rs.getString("emotions"));
-                reve.setSymboles(rs.getString("symboles"));
-
-                reve.setSommeil(sommeil);
-                reves.add(reve);
-            }
-
-            sommeil.setReves(reves);
-            rs.close();
-        }
+        return trouverParId(id);
     }
 }
