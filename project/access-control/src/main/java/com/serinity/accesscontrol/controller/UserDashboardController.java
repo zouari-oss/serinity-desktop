@@ -19,6 +19,7 @@ import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.ProfileRepository;
 import com.serinity.accesscontrol.service.FreeImageHostClient;
+import com.serinity.accesscontrol.util.RegexValidator;
 
 // `javafx` import(s)
 import javafx.application.Platform;
@@ -27,6 +28,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -81,6 +83,12 @@ public final class UserDashboardController implements StatusMessageProvider {
   @FXML // fx:id="phoneTextField"
   private TextField phoneTextField; // Value injected by FXMLLoader
 
+  @FXML // fx:id="profileCompletionBar"
+  private ProgressBar profileCompletionBar; // Value injected by FXMLLoader
+
+  @FXML // fx:id="profileCompletionLabel"
+  private Label profileCompletionLabel; // Value injected by FXMLLoader
+  //
   @FXML // fx:id="profileImageView"
   private ImageView profileImageView; // Value injected by FXMLLoader
 
@@ -125,43 +133,6 @@ public final class UserDashboardController implements StatusMessageProvider {
     }
   }
 
-  // ##########################
-  // ### HELPER FUNCTION(S) ###
-  // ##########################
-
-  private String handleProfileImageUpload() {
-
-    final Image image = profileImageView.getImage();
-    if (image == null || image.getUrl() == null) {
-      return null;
-    }
-
-    final String imageUrl = image.getUrl();
-
-    try {
-      // Case 1: Local file, so upload required
-      if (imageUrl.startsWith("file:")) {
-        final File file = new File(new URI(imageUrl));
-        final String uploadedUrl = FreeImageHostClient.uploadImage(file);
-        if (uploadedUrl != null && !uploadedUrl.isBlank()) {
-          profileImageView.setImage(new Image(uploadedUrl));
-          return uploadedUrl;
-        }
-      }
-
-      // Case 2: Already uploaded (http/https)
-      if (imageUrl.startsWith("http")) {
-        return imageUrl;
-      }
-
-    } catch (final Exception e) {
-      e.printStackTrace();
-      showStatusMessage("Image upload failed.", MessageStatus.ERROR);
-    }
-
-    return null;
-  }
-
   // ##############################
   // ### SLOT HANDLER FUNCTIONS ###
   // ##############################
@@ -193,6 +164,12 @@ public final class UserDashboardController implements StatusMessageProvider {
       return;
     }
 
+    String phoneNumber = phoneTextField.getText();
+    if (!RegexValidator.isValidPhoneNumber(phoneNumber)) {
+      showStatusMessage("Invalid Phone Number Format!", MessageStatus.WARNING);
+      return;
+    }
+
     userProfile.setFirstName(firstNameTextField.getText());
     userProfile.setLastName(lastNameTextField.getText());
     userProfile.setUsername(userProfileUsername);
@@ -212,12 +189,11 @@ public final class UserDashboardController implements StatusMessageProvider {
     final ProfileRepository profileRepository = new ProfileRepository(em);
     profileRepository.update(userProfile);
 
+    // update profile completion
+    updateProfileCompletion();
+
     showStatusMessage("Profile updated successfully.", MessageStatus.SUCCESS);
   }
-
-  // ##################################
-  // ### INITIALIZATION FUNCTION(S) ###
-  // ##################################
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {
@@ -237,6 +213,10 @@ public final class UserDashboardController implements StatusMessageProvider {
         : "fx:id=\"lastNameTextField\" was not injected: check your FXML file 'user-dashboard.fxml'.";
     assert phoneTextField != null
         : "fx:id=\"phoneTextField\" was not injected: check your FXML file 'user-dashboard.fxml'.";
+    assert profileCompletionBar != null
+        : "fx:id=\"profileCompletionBar\" was not injected: check your FXML file 'user-dashboard.fxml'.";
+    assert profileCompletionLabel != null
+        : "fx:id=\"profileCompletionLabel\" was not injected: check your FXML file 'user-dashboard.fxml'.";
     assert profileImageView != null
         : "fx:id=\"profileImageView\" was not injected: check your FXML file 'user-dashboard.fxml'.";
     assert saveButton != null : "fx:id=\"saveButton\" was not injected: check your FXML file 'user-dashboard.fxml'.";
@@ -253,11 +233,16 @@ public final class UserDashboardController implements StatusMessageProvider {
 
     Platform.runLater(() -> { // NOTE: After controller initialized
       initUserInfoLater();
+      updateProfileCompletion();
       welcomeLabel.setText(welcomeLabel.getText() + userProfile.getUsername());
     });
 
     _LOGGER.info("User Dashboard Interface initialized successfully!");
   }
+
+  // ##################################
+  // ### INITIALIZATION FUNCTION(S) ###
+  // ##################################
 
   /*
    * Init user data (profile) & setup the edit profile side
@@ -291,4 +276,77 @@ public final class UserDashboardController implements StatusMessageProvider {
         Gender.FEMALE);
   }
 
+  // ##########################
+  // ### HELPER FUNCTION(S) ###
+  // ##########################
+
+  private void updateProfileCompletion() {
+    final int totalFields = 8;
+    int filledFields = 0;
+
+    if (!firstNameTextField.getText().isEmpty())
+      filledFields++;
+    if (!lastNameTextField.getText().isEmpty())
+      filledFields++;
+    if (!usernameTextField.getText().isEmpty())
+      filledFields++;
+    if (!phoneTextField.getText().isEmpty())
+      filledFields++;
+    if (genderComboBox.getValue() != null)
+      filledFields++;
+    if (!countryTextField.getText().isEmpty())
+      filledFields++;
+    if (!stateTextField.getText().isEmpty())
+      filledFields++;
+    if (!aboutMeTextArea.getText().isEmpty())
+      filledFields++;
+
+    final double percentage = (double) filledFields / totalFields;
+
+    profileCompletionBar.getStyleClass().removeAll("progress-low", "progress-medium", "progress-high");
+
+    if (percentage < 0.4) {
+      profileCompletionBar.getStyleClass().add("progress-low");
+    } else if (percentage < 0.8) {
+      profileCompletionBar.getStyleClass().add("progress-medium");
+    } else {
+      profileCompletionBar.getStyleClass().add("progress-high");
+    }
+
+    profileCompletionBar.setProgress(percentage);
+    profileCompletionLabel.setText((int) (percentage * 100) + "%");
+  }
+
+  private String handleProfileImageUpload() {
+
+    final Image image = profileImageView.getImage();
+    if (image == null || image.getUrl() == null) {
+      return null;
+    }
+
+    final String imageUrl = image.getUrl();
+
+    try {
+      // Case 1: Local file, so upload required
+      if (imageUrl.startsWith("file:")) {
+        final File file = new File(new URI(imageUrl));
+        final String uploadedUrl = FreeImageHostClient.uploadImage(file);
+        if (uploadedUrl != null && !uploadedUrl.isBlank()) {
+          profileImageView.setImage(new Image(uploadedUrl));
+          return uploadedUrl;
+        }
+      }
+
+      // Case 2: Already uploaded (http/https)
+      if (imageUrl.startsWith("http")) {
+        return imageUrl;
+      }
+
+    } catch (final Exception e) {
+      e.printStackTrace();
+      showStatusMessage("Image upload failed.", MessageStatus.ERROR);
+    }
+
+    return null;
+  }
 } // UserDashboardController final class

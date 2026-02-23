@@ -11,6 +11,61 @@
   -fx-padding: 0 0 15 0;
 }
 
+/* ============ Profile completion section ======================= */
+
+.profile-completion-container {
+  -fx-background-color: linear-gradient(to right, #1f2937, #111827);
+  -fx-background-radius: 12;
+  -fx-padding: 15;
+  -fx-spacing: 8;
+  -fx-border-radius: 12;
+  -fx-border-color: rgba(255, 255, 255, 0.05);
+  -fx-border-width: 1;
+}
+
+.profile-completion-title {
+  -fx-text-fill: #64748b;
+  -fx-font-size: 14px;
+  -fx-font-weight: 600;
+}
+
+.profile-percentage-label {
+  -fx-text-fill: #9ca3af;
+  -fx-font-size: 12px;
+  -fx-font-weight: bold;
+}
+
+/* ====================== Progress bar ============================= */
+
+.progress-bar {
+  -fx-background-color: #374151;
+  -fx-background-radius: 10;
+  -fx-pref-height: 10;
+}
+
+.progress-bar .bar {
+  -fx-background-color: linear-gradient(to right, #3b82f6, #06b6d4);
+  -fx-background-radius: 10;
+  -fx-padding: 0.2em;
+}
+
+.progress-bar .track {
+  -fx-background-color: #374151;
+  -fx-background-radius: 10;
+}
+
+.progress-low .bar {
+  -fx-background-color: #ef4444;
+}
+
+.progress-medium .bar {
+  -fx-background-color: #f59e0b;
+}
+
+.progress-high .bar {
+  -fx-background-color: #10b981;
+}
+
 /* =================== Root panel =================== */
 .edit-profile-panel {
   -fx-background-color: -bg-color;
