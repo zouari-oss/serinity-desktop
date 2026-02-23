@@ -2,6 +2,7 @@ package com.serinity.sleepcontrol.controller;
 
 import com.serinity.sleepcontrol.model.Reve;
 import com.serinity.sleepcontrol.service.ReveService;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,7 +12,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.collections.FXCollections;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -28,7 +28,12 @@ public class ReveController {
     @FXML private Button btnAjouter;
     @FXML private Button btnRefresh;
     @FXML private FlowPane cardsContainer;
-    @FXML private Label statsLabel;
+
+    // nouveaux champs stats
+    @FXML private Label totalRevesLabel;
+    @FXML private Label intensiteMoyLabel;
+    @FXML private Label anxieteMoyLabel;
+    @FXML private ProgressBar anxieteMoyBar;
 
     private ReveService reveService;
     private List<Reve> currentReves;
@@ -36,14 +41,11 @@ public class ReveController {
     @FXML
     public void initialize() {
         try {
-            // Plus de Connection ici : ReveService gère tout via ReveDaoJdbc -> MyDataBase (singleton)
             reveService = new ReveService();
-
             initializeFilters();
             loadAllReves();
             setupListeners();
             updateStats();
-
         } catch (Exception e) {
             showError("Erreur de connexion", "Impossible de se connecter à la base de données");
             e.printStackTrace();
@@ -107,7 +109,6 @@ public class ReveController {
                 cardController.setData(reve, this);
 
                 cardsContainer.getChildren().add(card);
-
             } catch (IOException e) {
                 System.err.println("Erreur lors du chargement de la carte: " + e.getMessage());
                 e.printStackTrace();
@@ -316,18 +317,34 @@ public class ReveController {
         }
     }
 
+    // ---- nouvelles stats graphiques ----
     private void updateStats() {
         try {
             double intensiteMoyenne = reveService.calculerIntensiteMoyenne();
             double anxieteMoyenne = reveService.calculerAnxieteMoyenne();
             int total = currentReves != null ? currentReves.size() : 0;
 
-            statsLabel.setText(String.format(
-                    "Total: %d rêves | Intensité moyenne: %.1f/10 | Anxiété moyenne: %.1f/10",
-                    total, intensiteMoyenne, anxieteMoyenne
-            ));
+            totalRevesLabel.setText("Total: " + total + " rêves");
+            intensiteMoyLabel.setText(String.format("Intensité moyenne: %.1f/10", intensiteMoyenne));
+
+            anxieteMoyBar.setProgress(anxieteMoyenne / 10.0);
+            anxieteMoyLabel.setText(String.format("Anxiété moyenne: %.1f/10", anxieteMoyenne));
+
+            anxieteMoyBar.getStyleClass().removeAll("anxiete-low", "anxiete-mid", "anxiete-high");
+            if (anxieteMoyenne >= 7) {
+                anxieteMoyBar.getStyleClass().add("anxiete-high");
+            } else if (anxieteMoyenne >= 4) {
+                anxieteMoyBar.getStyleClass().add("anxiete-mid");
+            } else {
+                anxieteMoyBar.getStyleClass().add("anxiete-low");
+            }
+
         } catch (SQLException e) {
-            statsLabel.setText("Erreur lors du calcul des statistiques");
+            totalRevesLabel.setText("Erreur statistiques");
+            intensiteMoyLabel.setText("");
+            anxieteMoyLabel.setText("");
+            anxieteMoyBar.setProgress(0);
+            anxieteMoyBar.getStyleClass().removeAll("anxiete-low", "anxiete-mid", "anxiete-high");
         }
     }
 

@@ -728,3 +728,39 @@
 .badge-couleur   { -fx-background-color: #03A9F4; }
 .badge-recurrent { -fx-background-color: #FFCCBC; -fx-text-fill: #E64A19; }
 .badge-lucide    { -fx-background-color: #C5E1A5; -fx-text-fill: #2E7D32; }
+
+.stats-container {
+    -fx-background-color: #e6f3ff;
+    -fx-background-radius: 6;
+}
+
+.stat-badge-primary {
+    -fx-background-color: #1976d2;
+    -fx-text-fill: white;
+    -fx-padding: 4 10;
+    -fx-background-radius: 12;
+    -fx-font-weight: bold;
+}
+
+.stat-badge-info {
+    -fx-background-color: #26a69a;
+    -fx-text-fill: white;
+    -fx-padding: 4 10;
+    -fx-background-radius: 12;
+}
+
+.stats-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #1a237e;
+}
+
+/* couleur de la barre via -fx-accent [web:60] */
+.anxiete-low  { -fx-accent: #4CAF50; }
+.anxiete-mid  { -fx-accent: #FFB300; }
+.anxiete-high { -fx-accent: #E53935; }
+
+.score-low  { -fx-accent: #E53935; }   /* mauvais sommeil */
+.score-mid  { -fx-accent: #FFB300; }
+.score-high { -fx-accent: #4CAF50; }   /* bon sommeil */
+
+

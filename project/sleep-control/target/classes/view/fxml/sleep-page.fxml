@@ -16,6 +16,7 @@
         <Insets top="18" right="18" bottom="18" left="18" />
     </padding>
 
+    <!-- En-tête -->
     <HBox alignment="CENTER_LEFT" spacing="12.0">
         <Label text="Gestion du Sommeil" styleClass="page-header" />
         <Region HBox.hgrow="ALWAYS" />
@@ -29,6 +30,7 @@
                 onAction="#rafraichir" />
     </HBox>
 
+    <!-- Filtres -->
     <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="filter-container">
         <padding>
             <Insets top="12" right="12" bottom="12" left="12" />
@@ -52,15 +54,32 @@
                   styleClass="combo-box" />
     </HBox>
 
-    <HBox spacing="2.0" styleClass="stats-container">
+    <!-- Zone statistiques dynamique -->
+    <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="stats-container">
         <padding>
             <Insets top="12" right="12" bottom="12" left="12" />
         </padding>
-        <Label fx:id="statsLabel"
-               text="Chargement des statistiques..."
-               styleClass="stats-label" />
+
+        <!-- Total nuits -->
+        <Label fx:id="totalNuitsLabel"
+               text="Total: 0 nuits"
+               styleClass="stat-badge-primary" />
+
+        <!-- Durée moyenne -->
+        <Label fx:id="dureeMoyLabel"
+               text="Durée moyenne: -- h"
+               styleClass="stat-badge-info" />
+
+        <!-- Score moyen avec barre -->
+        <HBox alignment="CENTER_LEFT" spacing="8.0">
+            <ProgressBar fx:id="scoreMoyBar" prefWidth="160.0" />
+            <Label fx:id="scoreMoyLabel"
+                   text="Score moyen: --/10"
+                   styleClass="stats-label" />
+        </HBox>
     </HBox>
 
+    <!-- Liste des cartes -->
     <ScrollPane fitToWidth="true"
                 styleClass="cards-scroll-pane"
                 VBox.vgrow="ALWAYS">

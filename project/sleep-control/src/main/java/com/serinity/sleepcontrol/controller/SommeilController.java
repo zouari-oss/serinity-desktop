@@ -2,19 +2,18 @@ package com.serinity.sleepcontrol.controller;
 
 import com.serinity.sleepcontrol.model.Sommeil;
 import com.serinity.sleepcontrol.service.SommeilService;
-import com.serinity.sleepcontrol.utils.MyDataBase;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.collections.FXCollections;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,7 +28,12 @@ public class SommeilController {
     @FXML private Button btnAjouter;
     @FXML private Button btnRefresh;
     @FXML private FlowPane cardsContainer;
-    @FXML private Label statsLabel;
+
+    // ---- nouveaux champs stats (liés au FXML sleep-page) ----
+    @FXML private Label totalNuitsLabel;
+    @FXML private Label dureeMoyLabel;
+    @FXML private Label scoreMoyLabel;
+    @FXML private ProgressBar scoreMoyBar;
 
     private SommeilService sommeilService;
     private List<Sommeil> currentSommeils;
@@ -38,13 +42,10 @@ public class SommeilController {
     public void initialize() {
         try {
             sommeilService = new SommeilService();
-
-
             initializeFilters();
             loadAllSommeils();
             setupListeners();
             updateStats();
-
         } catch (Exception e) {
             showError("Erreur de connexion", "Impossible de se connecter a la base de donnees");
             e.printStackTrace();
@@ -67,12 +68,11 @@ public class SommeilController {
     }
 
     private void setupListeners() {
-        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
-            rechercherSommeils(newVal);
-        });
-
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> rechercherSommeils(newVal));
         filterQualite.setOnAction(e -> appliquerFiltres());
         sortComboBox.setOnAction(e -> appliquerTri());
+        btnAjouter.setOnAction(e -> ajouterSommeil());
+        btnRefresh.setOnAction(e -> rafraichir());
     }
 
     @FXML
@@ -90,7 +90,7 @@ public class SommeilController {
     private void afficherCards() {
         cardsContainer.getChildren().clear();
 
-        if (currentSommeils.isEmpty()) {
+        if (currentSommeils == null || currentSommeils.isEmpty()) {
             Label emptyLabel = new Label("Aucun sommeil enregistre");
             emptyLabel.getStyleClass().add("empty-label");
             cardsContainer.getChildren().add(emptyLabel);
@@ -108,7 +108,6 @@ public class SommeilController {
                 cardController.setData(sommeil, this);
 
                 cardsContainer.getChildren().add(card);
-
             } catch (IOException e) {
                 System.err.println("Erreur lors du chargement de la carte: " + e.getMessage());
                 e.printStackTrace();
@@ -123,6 +122,7 @@ public class SommeilController {
             } else {
                 currentSommeils = sommeilService.rechercherDynamique(critere);
                 afficherCards();
+                updateStats();
             }
         } catch (SQLException e) {
             showError("Erreur", "Erreur lors de la recherche");
@@ -140,6 +140,7 @@ public class SommeilController {
             } else {
                 currentSommeils = sommeilService.filtrerParQualite(qualite);
                 afficherCards();
+                updateStats();
             }
         } catch (SQLException e) {
             showError("Erreur", "Erreur lors du filtrage");
@@ -180,6 +181,7 @@ public class SommeilController {
             }
 
             afficherCards();
+            updateStats();
         } catch (SQLException e) {
             showError("Erreur", "Erreur lors du tri");
             e.printStackTrace();
@@ -298,18 +300,37 @@ public class SommeilController {
         }
     }
 
+    // ---- nouvelles stats graphiques ----
     private void updateStats() {
         try {
             double dureeMoyenne = sommeilService.calculerDureeMoyenne();
-            double scoreMoyen = sommeilService.calculerScoreMoyen();
+            double scoreMoyen = sommeilService.calculerScoreMoyen();   // /10 pour la ProgressBar [web:65]
             int total = currentSommeils != null ? currentSommeils.size() : 0;
 
-            statsLabel.setText(String.format(
-                    "Total: %d nuits | Duree moyenne: %.2fh | Score moyen: %.0f/100",
-                    total, dureeMoyenne, scoreMoyen
-            ));
+            totalNuitsLabel.setText("Total: " + total + " nuits");
+            dureeMoyLabel.setText(String.format("Durée moyenne: %.2f h", dureeMoyenne));
+
+            double scorePour10 = scoreMoyen / 10.0;
+            if (scorePour10 < 0) scorePour10 = 0;
+            if (scorePour10 > 1) scorePour10 = 1;
+
+            scoreMoyBar.setProgress(scorePour10);
+            scoreMoyLabel.setText(String.format("Score moyen: %.1f/10", scoreMoyen));
+
+            scoreMoyBar.getStyleClass().removeAll("score-low", "score-mid", "score-high");
+            if (scoreMoyen >= 7) {
+                scoreMoyBar.getStyleClass().add("score-high");
+            } else if (scoreMoyen >= 4) {
+                scoreMoyBar.getStyleClass().add("score-mid");
+            } else {
+                scoreMoyBar.getStyleClass().add("score-low");
+            }
         } catch (SQLException e) {
-            statsLabel.setText("Erreur lors du calcul des statistiques");
+            totalNuitsLabel.setText("Erreur statistiques");
+            dureeMoyLabel.setText("");
+            scoreMoyLabel.setText("");
+            scoreMoyBar.setProgress(0);
+            scoreMoyBar.getStyleClass().removeAll("score-low", "score-mid", "score-high");
         }
     }
 
