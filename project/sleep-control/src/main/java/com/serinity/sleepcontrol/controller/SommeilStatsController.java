@@ -199,7 +199,7 @@ public class SommeilStatsController {
             Label chip = new Label(emoji + "  " + insight);
             chip.getStyleClass().addAll("insight-chip", chipStyle);
             chip.setWrapText(true);
-            chip.setMaxWidth(420);
+            chip.setMaxWidth(320);
 
             insightsContainer.getChildren().add(chip);
         });

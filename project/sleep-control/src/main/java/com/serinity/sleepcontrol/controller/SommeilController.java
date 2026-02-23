@@ -29,15 +29,14 @@ public class SommeilController {
     @FXML private Button btnRefresh;
     @FXML private FlowPane cardsContainer;
 
-    // ---- nouveaux champs stats (liés au FXML sleep-page) ----
     @FXML private Label totalNuitsLabel;
     @FXML private Label dureeMoyLabel;
     @FXML private Label scoreMoyLabel;
     @FXML private ProgressBar scoreMoyBar;
+    @FXML private Button btnStats;
 
     private SommeilService sommeilService;
     private List<Sommeil> currentSommeils;
-    @FXML private Button btnStats;
 
     @FXML
     public void initialize() {
@@ -75,13 +74,12 @@ public class SommeilController {
         btnAjouter.setOnAction(e -> ajouterSommeil());
         btnRefresh.setOnAction(e -> rafraichir());
         btnStats.setOnAction(e -> ouvrirStatistiques());
-
     }
 
     @FXML
     public void loadAllSommeils() {
         try {
-            currentSommeils = sommeilService.listerTousAvecReves();
+            currentSommeils = sommeilService.listerTousAvecNbReves();
             afficherCards();
             updateStats();
         } catch (SQLException e) {
@@ -106,16 +104,17 @@ public class SommeilController {
                         getClass().getResource("/view/fxml/sommeil-card.fxml")
                 );
                 VBox card = loader.load();
-
                 SommeilCardController cardController = loader.getController();
                 cardController.setData(sommeil, this);
-
                 cardsContainer.getChildren().add(card);
             } catch (IOException e) {
-                System.err.println("Erreur lors du chargement de la carte: " + e.getMessage());
                 e.printStackTrace();
             }
         }
+    }
+
+    private void enrichirAvecNbReves(List<Sommeil> sommeils) {
+        sommeils.forEach(s -> s.setNbReves(sommeilService.compterRevesParSommeil(s.getId())));
     }
 
     private void rechercherSommeils(String critere) {
@@ -124,6 +123,7 @@ public class SommeilController {
                 loadAllSommeils();
             } else {
                 currentSommeils = sommeilService.rechercherDynamique(critere);
+                enrichirAvecNbReves(currentSommeils);
                 afficherCards();
                 updateStats();
             }
@@ -137,16 +137,39 @@ public class SommeilController {
     private void appliquerFiltres() {
         try {
             String qualite = filterQualite.getValue();
-
             if ("Toutes".equals(qualite)) {
                 loadAllSommeils();
             } else {
                 currentSommeils = sommeilService.filtrerParQualite(qualite);
+                enrichirAvecNbReves(currentSommeils);
                 afficherCards();
                 updateStats();
             }
         } catch (SQLException e) {
             showError("Erreur", "Erreur lors du filtrage");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void appliquerTri() {
+        try {
+            String triOption = sortComboBox.getValue();
+            switch (triOption) {
+                case "Date (recent)"      -> currentSommeils = sommeilService.trierParDate(false);
+                case "Date (ancien)"      -> currentSommeils = sommeilService.trierParDate(true);
+                case "Duree (croissant)"  -> currentSommeils = sommeilService.trierParDuree(true);
+                case "Duree (decroissant)"-> currentSommeils = sommeilService.trierParDuree(false);
+                case "Qualite (meilleure)"-> currentSommeils = sommeilService.trierParQualite(false);
+                case "Qualite (pire)"     -> currentSommeils = sommeilService.trierParQualite(true);
+                case "Score (eleve)"      -> currentSommeils = sommeilService.trierParScore(false);
+                case "Score (faible)"     -> currentSommeils = sommeilService.trierParScore(true);
+            }
+            enrichirAvecNbReves(currentSommeils);
+            afficherCards();
+            updateStats();
+        } catch (SQLException e) {
+            showError("Erreur", "Erreur lors du tri");
             e.printStackTrace();
         }
     }
@@ -158,10 +181,8 @@ public class SommeilController {
                     getClass().getResource("/view/fxml/sommeil-stats.fxml")
             );
             Parent root = loader.load();
-
             SommeilStatsController statsCtrl = loader.getController();
             statsCtrl.setSommeilService(sommeilService);
-
             Stage stage = new Stage();
             stage.setTitle("Statistiques du Sommeil");
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -169,50 +190,8 @@ public class SommeilController {
             stage.setMinWidth(600);
             stage.setMinHeight(500);
             stage.showAndWait();
-
         } catch (IOException e) {
             showError("Erreur", "Impossible d'ouvrir les statistiques.");
-            e.printStackTrace();
-        }
-    }
-
-
-    @FXML
-    private void appliquerTri() {
-        try {
-            String triOption = sortComboBox.getValue();
-
-            switch (triOption) {
-                case "Date (recent)":
-                    currentSommeils = sommeilService.trierParDate(false);
-                    break;
-                case "Date (ancien)":
-                    currentSommeils = sommeilService.trierParDate(true);
-                    break;
-                case "Duree (croissant)":
-                    currentSommeils = sommeilService.trierParDuree(true);
-                    break;
-                case "Duree (decroissant)":
-                    currentSommeils = sommeilService.trierParDuree(false);
-                    break;
-                case "Qualite (meilleure)":
-                    currentSommeils = sommeilService.trierParQualite(false);
-                    break;
-                case "Qualite (pire)":
-                    currentSommeils = sommeilService.trierParQualite(true);
-                    break;
-                case "Score (eleve)":
-                    currentSommeils = sommeilService.trierParScore(false);
-                    break;
-                case "Score (faible)":
-                    currentSommeils = sommeilService.trierParScore(true);
-                    break;
-            }
-
-            afficherCards();
-            updateStats();
-        } catch (SQLException e) {
-            showError("Erreur", "Erreur lors du tri");
             e.printStackTrace();
         }
     }
@@ -234,20 +213,11 @@ public class SommeilController {
         alert.setTitle("Details du Sommeil");
         alert.setHeaderText("Nuit du " +
                 sommeil.getDateNuit().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-
         String analyse = sommeilService.analyserQualiteSommeil(sommeil);
         String details = String.format(
-                "%s\n\n" +
-                        "Coucher: %s\n" +
-                        "Reveil: %s\n" +
-                        "Duree: %.2f heures\n" +
-                        "Interruptions: %d\n" +
-                        "Humeur: %s\n" +
-                        "Temperature: %.1f C\n" +
-                        "Niveau de bruit: %s\n" +
-                        "Environnement: %s\n" +
-                        "Nombre de reves: %d\n\n" +
-                        "Commentaire:\n%s",
+                "%s\n\nCoucher: %s\nReveil: %s\nDuree: %.2f heures\n" +
+                        "Interruptions: %d\nHumeur: %s\nTemperature: %.1f C\n" +
+                        "Niveau de bruit: %s\nEnvironnement: %s\nNombre de reves: %d\n\nCommentaire:\n%s",
                 analyse,
                 sommeil.getHeureCoucher(),
                 sommeil.getHeureReveil(),
@@ -257,10 +227,9 @@ public class SommeilController {
                 sommeil.getTemperature(),
                 sommeil.getNiveauBruit(),
                 sommeil.getEnvironnement(),
-                sommeil.getNombreReves(),
+                sommeil.getNbReves(),
                 sommeil.getCommentaire() != null ? sommeil.getCommentaire() : "Aucun"
         );
-
         alert.setContentText(details);
         alert.showAndWait();
     }
@@ -280,27 +249,17 @@ public class SommeilController {
                     getClass().getResource("/view/fxml/sommeil-form.fxml")
             );
             Parent root = loader.load();
-
             SommeilFormController controller = loader.getController();
             controller.setSommeilService(sommeilService);
-
-            if (sommeil != null) {
-                controller.setSommeil(sommeil);
-            }
-
+            if (sommeil != null) controller.setSommeil(sommeil);
             controller.setParentController(this);
-
             Stage stage = new Stage();
             stage.setTitle(sommeil == null ? "Ajouter un Sommeil" : "Modifier le Sommeil");
             stage.initModality(Modality.APPLICATION_MODAL);
-
-            Scene scene = new Scene(root, 550, 600);
-            stage.setScene(scene);
+            stage.setScene(new Scene(root, 550, 600));
             stage.setMinWidth(500);
             stage.setMinHeight(400);
-
             stage.showAndWait();
-
         } catch (IOException e) {
             showError("Erreur", "Impossible d'ouvrir le formulaire");
             e.printStackTrace();
@@ -312,10 +271,9 @@ public class SommeilController {
         confirmation.setTitle("Confirmation");
         confirmation.setHeaderText("Supprimer ce sommeil ?");
         confirmation.setContentText(
-                "Cette action supprimera egalement tous les reves associes.\n" +
-                        "Date: " + sommeil.getDateNuit().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                "Cette action supprimera egalement tous les reves associes.\nDate: " +
+                        sommeil.getDateNuit().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         );
-
         Optional<ButtonType> result = confirmation.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
@@ -329,31 +287,24 @@ public class SommeilController {
         }
     }
 
-    // ---- nouvelles stats graphiques ----
     private void updateStats() {
         try {
             double dureeMoyenne = sommeilService.calculerDureeMoyenne();
-            double scoreMoyen = sommeilService.calculerScoreMoyen();   // /10 pour la ProgressBar [web:65]
+            double scoreMoyen   = sommeilService.calculerScoreMoyen();
             int total = currentSommeils != null ? currentSommeils.size() : 0;
 
             totalNuitsLabel.setText("Total: " + total + " nuits");
             dureeMoyLabel.setText(String.format("Durée moyenne: %.2f h", dureeMoyenne));
 
-            double scorePour10 = scoreMoyen / 100.0;
-            if (scorePour10 < 0) scorePour10 = 0;
-            if (scorePour10 > 1) scorePour10 = 1;
-
+            double scorePour10 = Math.max(0, Math.min(1, scoreMoyen / 100.0));
             scoreMoyBar.setProgress(scorePour10);
             scoreMoyLabel.setText(String.format("Score moyen: %.1f/100", scoreMoyen));
 
             scoreMoyBar.getStyleClass().removeAll("score-low", "score-mid", "score-high");
-            if (scoreMoyen >= 7) {
-                scoreMoyBar.getStyleClass().add("score-high");
-            } else if (scoreMoyen >= 4) {
-                scoreMoyBar.getStyleClass().add("score-mid");
-            } else {
-                scoreMoyBar.getStyleClass().add("score-low");
-            }
+            if      (scoreMoyen >= 70) scoreMoyBar.getStyleClass().add("score-high");
+            else if (scoreMoyen >= 40) scoreMoyBar.getStyleClass().add("score-mid");
+            else                       scoreMoyBar.getStyleClass().add("score-low");
+
         } catch (SQLException e) {
             totalNuitsLabel.setText("Erreur statistiques");
             dureeMoyLabel.setText("");

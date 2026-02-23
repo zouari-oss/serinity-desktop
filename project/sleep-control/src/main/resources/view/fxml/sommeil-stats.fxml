@@ -166,18 +166,16 @@
 
     </HBox>
 
-    <!-- ══ Insights ═════════════════════════════════════════════ -->
+    <!-- Insights -->
     <VBox styleClass="filter-container" spacing="10.0">
         <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
 
-        <Label text="💡 Insights personnalisés"
-               styleClass="section-title"/>
+        <Label text="💡 Insights personnalisés" styleClass="section-title"/>
 
-        <!-- FlowPane pour les chips qui s'adaptent à la largeur -->
         <FlowPane fx:id="insightsContainer"
                   hgap="8.0" vgap="8.0"
-                  prefWrapLength="700.0"/>
-
+                  prefWrapLength="800.0"
+                  VBox.vgrow="ALWAYS"/>
     </VBox>
 
 </VBox>

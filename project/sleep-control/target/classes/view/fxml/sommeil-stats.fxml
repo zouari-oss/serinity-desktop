@@ -16,133 +16,166 @@
         <Insets top="24" right="24" bottom="24" left="24"/>
     </padding>
 
-    <!-- Titre -->
+    <!-- ══ Titre ══════════════════════════════════════════════════ -->
     <HBox alignment="CENTER_LEFT" spacing="12.0">
-        <Label text="Statistiques du Sommeil" styleClass="page-header"/>
+        <Label text="📊 Statistiques du Sommeil" styleClass="page-header"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Button text="Actualiser" styleClass="btn-secondary" onAction="#actualiser"/>
+        <Button text="🔄 Actualiser" styleClass="btn-secondary" onAction="#actualiser"/>
     </HBox>
 
-    <!-- KPIs modernes -->
+    <!-- ══ KPI Cards ══════════════════════════════════════════════ -->
     <HBox spacing="12.0">
 
-        <!-- Total nuits -->
-        <VBox styleClass="stat-card primary" spacing="6" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
-            <Label text="Nuits suivies" styleClass="stat-card-title"/>
+        <!-- Nuits suivies -->
+        <VBox styleClass="stat-card primary" spacing="5"
+              alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+            <Label text="NUITS SUIVIES" styleClass="stat-card-title"/>
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                 <Label text="🌙" styleClass="stat-card-icon"/>
                 <Label fx:id="kpiTotal" text="–" styleClass="stat-card-value"/>
             </HBox>
-            <Label text="Nombre total de nuits enregistrées"
+            <Label text="Total nuits enregistrées"
                    styleClass="stat-card-subtitle"/>
         </VBox>
 
         <!-- Durée moyenne -->
-        <VBox styleClass="stat-card info" spacing="6" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
-            <Label text="Durée moyenne" styleClass="stat-card-title"/>
+        <VBox styleClass="stat-card info" spacing="5"
+              alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+            <Label text="DURÉE MOYENNE" styleClass="stat-card-title"/>
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                 <Label text="⏱" styleClass="stat-card-icon"/>
                 <Label fx:id="kpiDuree" text="– h" styleClass="stat-card-value"/>
             </HBox>
-            <Label text="Heures de sommeil par nuit"
+            <Label text="Heures par nuit"
                    styleClass="stat-card-subtitle"/>
         </VBox>
 
         <!-- Score moyen -->
-        <VBox styleClass="stat-card success" spacing="6" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
-            <Label text="Score moyen" styleClass="stat-card-title"/>
+        <VBox styleClass="stat-card success" spacing="5"
+              alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+            <Label text="SCORE MOYEN" styleClass="stat-card-title"/>
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                 <Label text="⭐" styleClass="stat-card-icon"/>
                 <Label fx:id="kpiScore" text="– /100" styleClass="stat-card-value"/>
             </HBox>
-            <Label text="Qualité globale de vos nuits"
+            <Label text="Qualité globale des nuits"
                    styleClass="stat-card-subtitle"/>
         </VBox>
 
         <!-- Dette sommeil -->
-        <VBox styleClass="stat-card warning" spacing="6" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
-            <Label text="Dette de sommeil" styleClass="stat-card-title"/>
+        <VBox styleClass="stat-card warning" spacing="5"
+              alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+            <Label text="DETTE SOMMEIL" styleClass="stat-card-title"/>
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                 <Label text="⏳" styleClass="stat-card-icon"/>
-                <Label fx:id="kpiDette" text="–" styleClass="stat-card-value-sm"/>
+                <Label fx:id="kpiDette" text="–"
+                       styleClass="stat-card-value-sm"/>
             </HBox>
-            <Label text="Manque accumulé sur 7 jours"
+            <Label text="Manque accumulé (7j)"
                    styleClass="stat-card-subtitle"/>
         </VBox>
 
         <!-- Efficacité -->
-        <VBox styleClass="stat-card accent" spacing="6" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
-            <Label text="Efficacité" styleClass="stat-card-title"/>
+        <VBox styleClass="stat-card accent" spacing="5"
+              alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+            <Label text="EFFICACITÉ" styleClass="stat-card-title"/>
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                 <Label text="⚡" styleClass="stat-card-icon"/>
-                <Label fx:id="kpiEfficacite" text="– %" styleClass="stat-card-value"/>
+                <Label fx:id="kpiEfficacite" text="– %"
+                       styleClass="stat-card-value"/>
             </HBox>
-            <Label text="Temps réellement dormi au lit"
+            <Label text="Temps dormi / temps au lit"
                    styleClass="stat-card-subtitle"/>
         </VBox>
 
     </HBox>
 
-    <!-- Bien-être & Résilience -->
-    <VBox styleClass="filter-container" spacing="10.0">
-        <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
-        <Label text="Bien-être &amp; Résilience" styleClass="section-title"/>
-        <HBox spacing="30.0">
+    <!-- ══ Bien-être & Résilience ════════════════════════════════ -->
+    <VBox styleClass="filter-container" spacing="12.0">
+        <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+
+        <Label text="🧘 Bien-être &amp; Résilience" styleClass="section-title"/>
+
+        <HBox spacing="24.0">
+
+            <!-- Score bien-être -->
             <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                 <Label text="Score bien-être" styleClass="form-label"/>
-                <HBox alignment="CENTER_LEFT" spacing="8.0">
-                    <ProgressBar fx:id="barBienEtre" prefWidth="200.0"/>
-                    <Label fx:id="lblBienEtre" text="–" styleClass="card-info"/>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <ProgressBar fx:id="barBienEtre" prefWidth="180.0"
+                                 prefHeight="10.0"/>
+                    <Label fx:id="lblBienEtre" text="–"
+                           styleClass="stat-bar-label"/>
                 </HBox>
             </VBox>
+
+            <!-- Résilience -->
             <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                 <Label text="Résilience" styleClass="form-label"/>
-                <HBox alignment="CENTER_LEFT" spacing="8.0">
-                    <ProgressBar fx:id="barResilience" prefWidth="200.0"/>
-                    <Label fx:id="lblResilience" text="–" styleClass="card-info"/>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <ProgressBar fx:id="barResilience" prefWidth="180.0"
+                                 prefHeight="10.0"/>
+                    <Label fx:id="lblResilience" text="–"
+                           styleClass="stat-bar-label"/>
                 </HBox>
             </VBox>
+
+            <!-- Durée optimale -->
             <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                 <Label text="Durée optimale" styleClass="form-label"/>
-                <HBox alignment="CENTER_LEFT" spacing="8.0">
-                    <ProgressBar fx:id="barOptimale" prefWidth="200.0"/>
-                    <Label fx:id="lblOptimale" text="–%" styleClass="card-info"/>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <ProgressBar fx:id="barOptimale" prefWidth="180.0"
+                                 prefHeight="10.0"/>
+                    <Label fx:id="lblOptimale" text="–%"
+                           styleClass="stat-bar-label"/>
                 </HBox>
             </VBox>
+
         </HBox>
     </VBox>
 
-    <!-- Répartition & Insights -->
+    <!-- ══ Répartition & Tendances ══════════════════════════════ -->
     <HBox spacing="14.0" VBox.vgrow="ALWAYS">
 
         <!-- Répartition par qualité -->
-        <VBox styleClass="filter-container" spacing="10.0" HBox.hgrow="ALWAYS">
-            <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
-            <Label text="Répartition qualité" styleClass="section-title"/>
-            <VBox fx:id="qualiteContainer" spacing="6.0"/>
+        <VBox styleClass="filter-container" spacing="10.0"
+              HBox.hgrow="ALWAYS">
+            <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+            <Label text="📈 Répartition qualité"
+                   styleClass="section-title"/>
+            <VBox fx:id="qualiteContainer" spacing="8.0"/>
         </VBox>
 
         <!-- Répartition humeur -->
-        <VBox styleClass="filter-container" spacing="10.0" HBox.hgrow="ALWAYS">
-            <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
-            <Label text="Humeur au réveil" styleClass="section-title"/>
-            <VBox fx:id="humeurContainer" spacing="6.0"/>
+        <VBox styleClass="filter-container" spacing="10.0"
+              HBox.hgrow="ALWAYS">
+            <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+            <Label text="😴 Humeur au réveil"
+                   styleClass="section-title"/>
+            <VBox fx:id="humeurContainer" spacing="8.0"/>
         </VBox>
 
         <!-- Tendances -->
-        <VBox styleClass="filter-container" spacing="10.0" HBox.hgrow="ALWAYS">
-            <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
-            <Label text="Tendances (30j)" styleClass="section-title"/>
-            <VBox fx:id="tendancesContainer" spacing="6.0"/>
+        <VBox styleClass="filter-container" spacing="10.0"
+              HBox.hgrow="ALWAYS">
+            <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+            <Label text="🔮 Tendances (30j)"
+                   styleClass="section-title"/>
+            <VBox fx:id="tendancesContainer" spacing="8.0"/>
         </VBox>
 
     </HBox>
 
     <!-- Insights -->
-    <VBox styleClass="filter-container" spacing="8.0">
-        <padding><Insets top="12" right="14" bottom="10" left="14"/></padding>
-        <Label text="Insights" styleClass="section-title"/>
-        <VBox fx:id="insightsContainer" spacing="5.0"/>
+    <VBox styleClass="filter-container" spacing="10.0">
+        <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+
+        <Label text="💡 Insights personnalisés" styleClass="section-title"/>
+
+        <FlowPane fx:id="insightsContainer"
+                  hgap="8.0" vgap="8.0"
+                  prefWrapLength="800.0"
+                  VBox.vgrow="ALWAYS"/>
     </VBox>
 
 </VBox>
