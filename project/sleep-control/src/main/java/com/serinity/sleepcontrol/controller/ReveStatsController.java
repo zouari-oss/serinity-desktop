@@ -1,8 +1,10 @@
 package com.serinity.sleepcontrol.controller;
 
 import com.serinity.sleepcontrol.service.ReveService;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -11,15 +13,11 @@ import java.util.Map;
 
 public class ReveStatsController {
 
-    // ─── KPIs ────────────────────────────────────────────────────────────────────
-
     @FXML private Label kpiTotal;
     @FXML private Label kpiIntensite;
     @FXML private Label kpiAnxiete;
     @FXML private Label kpiBienEtre;
     @FXML private Label kpiResilience;
-
-    // ─── Barres % ─────────────────────────────────────────────────────────────────
 
     @FXML private ProgressBar barCauchemars;
     @FXML private Label       pctCauchemars;
@@ -28,30 +26,27 @@ public class ReveStatsController {
     @FXML private ProgressBar barCouleur;
     @FXML private Label       pctCouleur;
 
-    // ─── Conteneurs dynamiques ────────────────────────────────────────────────────
-
-    @FXML private VBox typesContainer;
-    @FXML private VBox emotionsContainer;
-    @FXML private VBox symbolesContainer;
-    @FXML private VBox insightsContainer;
-
-    // ─── Service ─────────────────────────────────────────────────────────────────
+    @FXML private VBox      typesContainer;
+    @FXML private VBox      emotionsContainer;
+    @FXML private VBox      symbolesContainer;
+    @FXML private FlowPane  insightsContainer;
 
     private ReveService reveService;
 
-    // ─── Init ────────────────────────────────────────────────────────────────────
+    @FXML
+    public void initialize() {
+        if (reveService != null) chargerStats();
+    }
 
     public void setReveService(ReveService service) {
         this.reveService = service;
-        chargerStats();
+        Platform.runLater(this::chargerStats);
     }
 
     @FXML
     private void actualiser() {
         chargerStats();
     }
-
-    // ─── Chargement ──────────────────────────────────────────────────────────────
 
     private void chargerStats() {
         try {
@@ -62,7 +57,7 @@ public class ReveStatsController {
             chargerTopSymboles();
             chargerInsights();
         } catch (SQLException e) {
-            kpiTotal.setText("Erreur de chargement");
+            kpiTotal.setText("Erreur");
             e.printStackTrace();
         }
     }
@@ -74,22 +69,28 @@ public class ReveStatsController {
         int    bienEtre   = reveService.calculerScoreBienEtreOnirique();
         double resilience = reveService.calculerIndexResilience();
 
-        kpiTotal.setText(total + " rêves");
+        kpiTotal.setText(String.valueOf(total));
         kpiIntensite.setText(String.format("%.1f / 10", intensite));
         kpiAnxiete.setText(String.format("%.1f / 10", anxiete));
         kpiBienEtre.setText(bienEtre + " / 100");
-        kpiResilience.setText(String.format("%.0f%%  %s",
-                resilience * 100,
-                reveService.libelleResilience(resilience)));
+        kpiResilience.setText(String.format("%.0f%%", resilience * 100));
+
+        kpiBienEtre.getStyleClass().removeAll("score-excellent", "score-moyen", "score-faible");
+        if      (bienEtre >= 70) kpiBienEtre.getStyleClass().add("score-excellent");
+        else if (bienEtre >= 45) kpiBienEtre.getStyleClass().add("score-moyen");
+        else                     kpiBienEtre.getStyleClass().add("score-faible");
+
+        kpiAnxiete.getStyleClass().removeAll("anxiete-haute", "anxiete-moyenne", "anxiete-basse");
+        if      (anxiete >= 7) kpiAnxiete.getStyleClass().add("anxiete-haute");
+        else if (anxiete >= 4) kpiAnxiete.getStyleClass().add("anxiete-moyenne");
+        else                   kpiAnxiete.getStyleClass().add("anxiete-basse");
     }
 
     private void chargerPourcentages() throws SQLException {
-        double pctC = reveService.calculerPourcentageCauchemars();
-        double pctR = reveService.calculerPourcentageRecurrents();
-        double pctCo = reveService.statistiquesGlobales()
-                .containsKey("pourcentageCouleur")
-                ? (double) reveService.statistiquesGlobales().get("pourcentageCouleur")
-                : 0;
+        double pctC  = reveService.calculerPourcentageCauchemars();
+        double pctR  = reveService.calculerPourcentageRecurrents();
+        double pctCo = reveService.statistiquesGlobales().containsKey("pourcentageCouleur")
+                ? (double) reveService.statistiquesGlobales().get("pourcentageCouleur") : 0;
 
         setBar(barCauchemars, pctCauchemars, pctC);
         setBar(barRecurrents, pctRecurrents, pctR);
@@ -105,66 +106,87 @@ public class ReveStatsController {
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
                 .forEach(e -> {
                     double pct = total > 0 ? (e.getValue() * 100.0 / total) : 0;
-                    typesContainer.getChildren().add(
-                            ligneStats(e.getKey(), e.getValue(), pct)
-                    );
+                    typesContainer.getChildren().add(ligneStats(e.getKey(), e.getValue(), pct));
                 });
     }
 
     private void chargerTopEmotions() throws SQLException {
         emotionsContainer.getChildren().clear();
         reveService.emotionsFrequentes().forEach((emotion, count) ->
-                emotionsContainer.getChildren().add(
-                        lignePuces(emotion, count + " fois")
-                ));
+                emotionsContainer.getChildren().add(lignePuces(emotion, count + " fois")));
     }
 
     private void chargerTopSymboles() throws SQLException {
         symbolesContainer.getChildren().clear();
         reveService.symbolesFrequents().forEach((symbole, count) ->
-                symbolesContainer.getChildren().add(
-                        lignePuces(symbole, count + " fois")
-                ));
+                symbolesContainer.getChildren().add(lignePuces(symbole, count + " fois")));
     }
 
     private void chargerInsights() throws SQLException {
         insightsContainer.getChildren().clear();
+
         reveService.obtenirInsights().forEach(insight -> {
-            Label l = new Label(insight);
-            l.getStyleClass().add("card-info");
-            l.setWrapText(true);
-            insightsContainer.getChildren().add(l);
+            String lower     = insight.toLowerCase();
+            String emoji     = "💡";
+            String chipStyle = "insight-chip-neutral";
+
+            if (lower.contains("cauchemar") || lower.contains("anxiété")
+                    || lower.contains("élevé") || lower.contains("critique")) {
+                emoji     = "⚠️";
+                chipStyle = "insight-chip-strong";
+            } else if (lower.contains("excellent") || lower.contains("bon")
+                    || lower.contains("lucide")    || lower.contains("positif")) {
+                emoji     = "✅";
+                chipStyle = "insight-chip-good";
+            }
+
+            Label chip = new Label(emoji + "  " + insight);
+            chip.getStyleClass().addAll("insight-chip", chipStyle);
+            chip.setWrapText(true);
+            chip.setMaxWidth(320);
+            insightsContainer.getChildren().add(chip);
         });
+
+        if (insightsContainer.getChildren().isEmpty()) {
+            Label empty = new Label("💡  Enregistrez plus de rêves pour obtenir des insights.");
+            empty.getStyleClass().addAll("insight-chip", "insight-chip-neutral");
+            empty.setWrapText(true);
+            insightsContainer.getChildren().add(empty);
+        }
     }
 
-    // ─── Utilitaires UI ──────────────────────────────────────────────────────────
-
-    /** Ligne : label + barre + count + % */
     private HBox ligneStats(String label, long count, double pct) {
-        Label lbl  = new Label(String.format("%-12s", label));
-        lbl.getStyleClass().add("card-info");
-        lbl.setPrefWidth(90);
+        Label lbl = new Label(label);
+        lbl.setPrefWidth(95);
+        lbl.setWrapText(false);
+        String badgeStyle = switch (label.toLowerCase()) {
+            case "cauchemar"  -> "type-cauchemar";
+            case "lucide"     -> "type-lucide";
+            case "recurrent"  -> "type-recurrent";
+            default           -> "type-normal";
+        };
+        lbl.getStyleClass().addAll("type-label", badgeStyle);
 
         ProgressBar bar = new ProgressBar(pct / 100.0);
-        bar.setPrefWidth(130);
-        bar.getStyleClass().add("intensite-moyenne");
+        bar.setPrefWidth(120);
+        bar.setPrefHeight(8);
+        bar.getStyleClass().add(pct >= 60 ? "intensite-haute"
+                : pct >= 30 ? "intensite-moyenne" : "intensite-basse");
 
         Label val = new Label(count + "  (" + String.format("%.0f%%", pct) + ")");
-        val.getStyleClass().add("card-info");
+        val.getStyleClass().add("repartition-value");
 
         HBox row = new HBox(8, lbl, bar, val);
         row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         return row;
     }
 
-    /** Ligne simple : • label — valeur */
     private Label lignePuces(String label, String valeur) {
-        Label l = new Label("• " + label + "  —  " + valeur);
-        l.getStyleClass().add("card-info");
+        Label l = new Label("▸  " + label + "   " + valeur);
+        l.getStyleClass().add("tendance-label");
         return l;
     }
 
-    /** Met à jour une barre de progression + son label %. */
     private void setBar(ProgressBar bar, Label lbl, double pct) {
         bar.setProgress(pct / 100.0);
         lbl.setText(String.format("%.0f%%", pct));

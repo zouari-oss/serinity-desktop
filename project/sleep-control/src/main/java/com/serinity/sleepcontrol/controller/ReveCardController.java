@@ -27,57 +27,41 @@ public class ReveCardController {
     public void setData(Reve reve, ReveController parent) {
         this.reve = reve;
         this.parentController = parent;
-
         afficherDonnees();
         configurerActions();
     }
 
     private void afficherDonnees() {
-        // Titre (même style que dateLabel dans SommeilCard)
         titreLabel.setText(reve.getTitre());
-        // le style vient de styles.css via styleClass="card-title" dans le FXML
 
-        // Type avec badge couleur (même logique que qualiteLabel)
         typeLabel.setText(reve.getTypeReve());
-        typeLabel.getStyleClass().clear();
-        typeLabel.getStyleClass().add("type-label"); // pour la forme du badge
-        typeLabel.getStyleClass().add(getTypeStyleClass(reve.getTypeReve())); // couleur spécifique
+        typeLabel.getStyleClass().removeAll(
+                "type-cauchemar", "type-lucide", "type-recurrent", "type-normal"
+        );
+        typeLabel.getStyleClass().add(getTypeStyleClass(reve.getTypeReve()));
 
-        // Description
-        String descCourte = reve.getDescription().length() > 100
+        String descCourte = reve.getDescription() != null && reve.getDescription().length() > 100
                 ? reve.getDescription().substring(0, 100) + "..."
-                : reve.getDescription();
+                : reve.getDescription() != null ? reve.getDescription() : "";
         descriptionLabel.setText(descCourte);
 
-        // Humeur
         humeurLabel.setText("Humeur: " +
                 (reve.getHumeur() != null ? reve.getHumeur() : "Non spécifiée"));
 
-        // Intensité (même logique que score couleur : vert / orange / rouge)
         intensiteBar.setProgress(reve.getIntensite() / 10.0);
         intensiteBar.getStyleClass().removeAll("intensite-haute", "intensite-moyenne", "intensite-basse");
-        if (reve.getIntensite() >= 8) {
-            intensiteBar.getStyleClass().add("intensite-haute");
-        } else if (reve.getIntensite() >= 6) {
-            intensiteBar.getStyleClass().add("intensite-moyenne");
-        } else {
-            intensiteBar.getStyleClass().add("intensite-basse");
-        }
+        if      (reve.getIntensite() >= 8) intensiteBar.getStyleClass().add("intensite-haute");
+        else if (reve.getIntensite() >= 6) intensiteBar.getStyleClass().add("intensite-moyenne");
+        else                               intensiteBar.getStyleClass().add("intensite-basse");
         intensiteValue.setText(reve.getIntensite() + "/10");
 
-        // Anxiété
         int anxiete = reve.calculerNiveauAnxiete();
         anxieteLabel.setText(String.format("Anxiété: %d/10", anxiete));
         anxieteLabel.getStyleClass().removeAll("anxiete-haute", "anxiete-moyenne", "anxiete-basse");
-        if (anxiete >= 7) {
-            anxieteLabel.getStyleClass().add("anxiete-haute");
-        } else if (anxiete >= 4) {
-            anxieteLabel.getStyleClass().add("anxiete-moyenne");
-        } else {
-            anxieteLabel.getStyleClass().add("anxiete-basse");
-        }
+        if      (anxiete >= 7) anxieteLabel.getStyleClass().add("anxiete-haute");
+        else if (anxiete >= 4) anxieteLabel.getStyleClass().add("anxiete-moyenne");
+        else                   anxieteLabel.getStyleClass().add("anxiete-basse");
 
-        // Badges
         couleurBadge.setVisible(reve.isCouleur());
         couleurBadge.setManaged(reve.isCouleur());
 
@@ -87,7 +71,6 @@ public class ReveCardController {
         lucideBadge.setVisible(reve.estLucide());
         lucideBadge.setManaged(reve.estLucide());
 
-        // Émotions
         if (reve.getEmotions() != null && !reve.getEmotions().isEmpty()) {
             emotionsLabel.setText("Émotions: " + reve.getEmotions());
             emotionsLabel.setVisible(true);
@@ -105,10 +88,12 @@ public class ReveCardController {
     }
 
     private String getTypeStyleClass(String type) {
-        String t = type.toLowerCase();
-        if (t.equals("cauchemar")) return "badge-cauchemar";
-        if (t.equals("lucide"))    return "badge-lucide";
-        if (t.equals("recurrent")) return "badge-recurrent";
-        return "badge-normal";
+        if (type == null) return "type-normal";
+        switch (type.toLowerCase()) {
+            case "cauchemar": return "type-cauchemar";
+            case "lucide":    return "type-lucide";
+            case "recurrent": return "type-recurrent";
+            default:          return "type-normal";
+        }
     }
 }
