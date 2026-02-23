@@ -11,42 +11,40 @@
 <VBox xmlns="http://javafx.com/javafx/17.0.2"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.serinity.sleepcontrol.controller.ReveCardController"
-      styleClass="reve-card"
+      styleClass="card"
       stylesheets="@../styles/styles.css"
-      maxWidth="300.0"
-      prefWidth="300.0"
+      maxWidth="280.0"
+      prefWidth="280.0"
       spacing="8.0">
 
     <padding>
         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
     </padding>
 
-    <!-- En-tête avec titre -->
+    <!-- En-tête : titre + type (comme date + qualité) -->
     <HBox alignment="CENTER_LEFT" spacing="10.0">
-        <Label fx:id="titreLabel" styleClass="reve-titre" wrapText="true" />
+        <Label fx:id="titreLabel" styleClass="card-title" wrapText="true" />
+        <!-- badge type de rêve, même style que qualiteLabel -->
+        <Label fx:id="typeLabel" styleClass="type-label" />
     </HBox>
 
-    <!-- Type -->
-    <Label fx:id="typeLabel" styleClass="type-label" />
-
-    <!-- Séparateur -->
     <Separator />
 
     <!-- Description -->
-    <Label fx:id="descriptionLabel" styleClass="reve-description" wrapText="true" />
+    <Label fx:id="descriptionLabel" styleClass="card-info" wrapText="true" />
 
     <!-- Humeur -->
-    <Label fx:id="humeurLabel" styleClass="info-label" />
+    <Label fx:id="humeurLabel" styleClass="card-info" />
 
     <!-- Intensité -->
     <HBox alignment="CENTER_LEFT" spacing="5.0">
-        <Label styleClass="info-label" text="Intensite: " />
+        <Label styleClass="card-info" text="Intensité: " />
         <ProgressBar fx:id="intensiteBar" prefWidth="90.0" />
-        <Label fx:id="intensiteValue" styleClass="info-label" />
+        <Label fx:id="intensiteValue" styleClass="card-info" />
     </HBox>
 
     <!-- Anxiété -->
-    <Label fx:id="anxieteLabel" styleClass="info-label" />
+    <Label fx:id="anxieteLabel" styleClass="card-info" />
 
     <!-- Badges -->
     <HBox alignment="CENTER_LEFT" spacing="5.0">
@@ -54,7 +52,7 @@
                styleClass="badge, badge-couleur"
                visible="false" managed="false" />
 
-        <Label fx:id="recurrentBadge" text="Recurrent"
+        <Label fx:id="recurrentBadge" text="Récurrent"
                styleClass="badge, badge-recurrent"
                visible="false" managed="false" />
 
@@ -64,14 +62,16 @@
     </HBox>
 
     <!-- Émotions (optionnel) -->
-    <Label fx:id="emotionsLabel" styleClass="emotions-label"
-           managed="false" visible="false" wrapText="true" />
+    <Label fx:id="emotionsLabel"
+           styleClass="card-info-secondary"
+           managed="false" visible="false"
+           wrapText="true" />
 
-    <!-- Boutons d'action -->
+    <!-- Boutons d'action (mêmes classes que Sommeil) -->
     <HBox alignment="CENTER" spacing="8.0">
-        <Button fx:id="btnVoir" text="Voir" styleClass="btn-voir" />
-        <Button fx:id="btnModifier" text="Modifier" styleClass="btn-modifier" />
-        <Button fx:id="btnSupprimer" text="X" styleClass="btn-supprimer" />
+        <Button fx:id="btnVoir" text="Voir" styleClass="btn-primary, btn-sm" />
+        <Button fx:id="btnModifier" text="Modifier" styleClass="btn-warning" />
+        <Button fx:id="btnSupprimer" text="X" styleClass="btn-danger" />
     </HBox>
 
 </VBox>

@@ -609,8 +609,18 @@
     -fx-border-color: transparent;
 }
 
+/* ← AJOUT CLÉ : forcer le label interne en blanc */
+.nav-menu-btn .label {
+    -fx-text-fill: rgba(255,255,255,0.88);
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
 .nav-menu-btn:hover {
     -fx-background-color: rgba(255,255,255,0.14);
+}
+
+.nav-menu-btn:hover .label {
     -fx-text-fill: white;
 }
 
@@ -620,10 +630,22 @@
 
 .nav-menu-btn:showing {
     -fx-background-color: rgba(255,255,255,0.22);
+}
+
+.nav-menu-btn:showing .label {
     -fx-text-fill: white;
 }
 
-/* Flèche discrète blanche */
+/* État actif */
+.nav-menu-btn-active {
+    -fx-background-color: rgba(255,255,255,0.22);
+}
+
+.nav-menu-btn-active .label {
+    -fx-text-fill: white;
+}
+
+/* Flèche blanche */
 .nav-menu-btn .arrow-button {
     -fx-padding: 0 0 0 4;
     -fx-background-color: transparent;
@@ -645,22 +667,64 @@
 .nav-menu-btn .menu-item {
     -fx-padding: 10 20;
     -fx-font-size: 13px;
-    -fx-text-fill: #1f5f63;
     -fx-font-weight: 600;
     -fx-cursor: hand;
     -fx-background-color: transparent;
+}
+
+.nav-menu-btn .menu-item .label {
+    -fx-text-fill: #1f5f63;
 }
 
 .nav-menu-btn .menu-item:hover {
     -fx-background-color: #E6F2F1;
 }
 
-.nav-menu-btn .menu-item .label {
-    -fx-text-fill: #1f5f63;
+/* Carte générique (déjà utilisée par Sommeil) */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
 }
-.nav-menu-btn-active {
-    -fx-background-color: rgba(255,255,255,0.22);
+
+/* Titre (date / titre de rêve) */
+.card-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Label de type / qualité */
+.type-label {
+    -fx-font-size: 13px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 12;
     -fx-text-fill: white;
 }
 
+/* Couleurs pour les types de rêves */
+.badge-cauchemar { -fx-background-color: #f44336; }
+.badge-lucide    { -fx-background-color: #4CAF50; }
+.badge-recurrent { -fx-background-color: #FF9800; }
+.badge-normal    { -fx-background-color: #26C6DA; }
 
+/* Barre d’intensité */
+.intensite-haute   { -fx-accent: #f44336; }   /* rouge */
+.intensite-moyenne { -fx-accent: #FF9800; }   /* orange */
+.intensite-basse   { -fx-accent: #4CAF50; }   /* vert */
+
+/* Texte anxiété */
+.anxiete-haute   { -fx-text-fill: #f44336; -fx-font-weight: bold; }
+.anxiete-moyenne { -fx-text-fill: #FF9800; }
+.anxiete-basse   { -fx-text-fill: #4CAF50; }
+
+/* Badges couleur / récurrent / lucide (déjà utilisés) */
+.badge {
+    -fx-font-size: 11px;
+    -fx-padding: 3 8;
+    -fx-background-radius: 3;
+    -fx-text-fill: white;
+}
+.badge-couleur   { -fx-background-color: #03A9F4; }
+.badge-recurrent { -fx-background-color: #FFCCBC; -fx-text-fill: #E64A19; }
+.badge-lucide    { -fx-background-color: #C5E1A5; -fx-text-fill: #2E7D32; }

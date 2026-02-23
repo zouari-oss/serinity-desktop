@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane minHeight="600.0" minWidth="900.0" prefHeight="800.0" prefWidth="1200.0"
-            styleClass="app-bg"
-            stylesheets="@../styles/styles.css"
-            xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.serinity.sleepcontrol.controller.MainTemplateController">
+<BorderPane minHeight="600.0" minWidth="900.0" prefHeight="800.0" prefWidth="1200.0" styleClass="app-bg" stylesheets="@../styles/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.sleepcontrol.controller.MainTemplateController">
 
-    <!-- ================= TOP BAR ================= -->
     <top>
-        <HBox fx:id="topBar" alignment="CENTER_LEFT" prefHeight="64.0" spacing="14.0"
-              styleClass="topbar" BorderPane.alignment="CENTER_LEFT">
+        <HBox fx:id="topBar" alignment="CENTER_LEFT" prefHeight="64.0" spacing="14.0" styleClass="topbar" BorderPane.alignment="CENTER_LEFT">
 
             <padding>
                 <Insets bottom="10" left="16" right="16" top="10" />
@@ -30,24 +22,35 @@
                             <Image url="@../../assets/logo2.png" />
                         </image>
                     </ImageView>
-                    <Label styleClass="brand-title" text="Serinity SleepControl" />
+                    <Label styleClass="brand-title" text="Serinity" />
                 </children>
             </HBox>
 
-            <!-- Navigation -->
+            <!-- Navigation : 6 éléments comme le groupe -->
             <HBox fx:id="navBox" alignment="CENTER_LEFT" spacing="10.0" styleClass="nav">
                 <children>
-                    <Button fx:id="btnDashboard" onAction="#onDashboardClick"
-                            styleClass="nav-btn nav-btn-active" text="Dashboard" />
+                    <!-- 1. Dashboard -->
+                    <Button fx:id="btnDashboard" onAction="#onNavClick" styleClass="nav-btn nav-btn-active" text="Dashboard" />
 
-                    <!-- Menu déroulant Gérer Sommeil — classe nav-menu-btn -->
-                    <MenuButton fx:id="menuSleep" text="Gérer sommeil"
-                                styleClass="nav-menu-btn">
+                    <!-- 2. Sleep → MenuButton Gérer sommeil -->
+                    <MenuButton fx:id="menuSleep" styleClass="nav-menu-btn" text="Gérer sommeil" textFill="WHITE">
                         <items>
-                            <MenuItem fx:id="menuItemSommeil" text="Sommeil" onAction="#onMenuSommeil"/>
-                            <MenuItem fx:id="menuItemReve"    text="Rêves"   onAction="#onMenuReve"/>
+                            <MenuItem fx:id="menuItemSommeil" onAction="#onMenuSommeil" text="Sommeil" />
+                            <MenuItem fx:id="menuItemReve" onAction="#onMenuReve" text="Rêves" />
                         </items>
                     </MenuButton>
+
+                    <!-- 3. Mood -->
+                    <Button fx:id="btnMood" onAction="#onNavClick" styleClass="nav-btn" text="Mood" />
+
+                    <!-- 4. Support -->
+                    <Button fx:id="btnSupport" onAction="#onNavClick" styleClass="nav-btn" text="Support" />
+
+                    <!-- 5. Exercises -->
+                    <Button fx:id="btnExercises" onAction="#onNavClick" styleClass="nav-btn" text="Exercises" />
+
+                    <!-- 6. Appointments -->
+                    <Button fx:id="btnAppointments" onAction="#onNavClick" styleClass="nav-btn" text="Appointments" />
                 </children>
             </HBox>
 
@@ -60,9 +63,7 @@
                 <HBox fx:id="searchBox" spacing="8.0" styleClass="search">
                     <children>
                         <Label styleClass="search-icon" text="🔍" />
-                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="220.0"
-                                   promptText="Rechercher..."
-                                   styleClass="search-field" />
+                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="220.0" promptText="Rechercher..." styleClass="search-field" />
                     </children>
                 </HBox>
 
@@ -70,8 +71,7 @@
                 <HBox fx:id="userBox" alignment="CENTER_RIGHT" spacing="10.0" styleClass="user">
                     <children>
                         <Label fx:id="userNameLabel" styleClass="user-name" text="Bienvenue" />
-                        <ImageView fx:id="avatarImg" fitHeight="40.0" fitWidth="40.0"
-                                   preserveRatio="true" styleClass="avatar">
+                        <ImageView fx:id="avatarImg" fitHeight="40.0" fitWidth="40.0" preserveRatio="true" styleClass="avatar">
                             <image>
                                 <Image url="@../../assets/user_logo.png" />
                             </image>
@@ -83,12 +83,12 @@
         </HBox>
     </top>
 
-    <!-- ================= CONTENU CENTRAL ================= -->
+    <!-- Centre -->
     <center>
         <StackPane fx:id="contentHost" styleClass="content-host" />
     </center>
 
-    <!-- ================= FOOTER ================= -->
+    <!-- Footer -->
     <bottom>
         <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
             <Label fx:id="footerLabel" text="Serinity SleepControl • 2026" />

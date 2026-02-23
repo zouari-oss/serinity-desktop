@@ -33,55 +33,68 @@ public class ReveCardController {
     }
 
     private void afficherDonnees() {
+        // Titre (même style que dateLabel dans SommeilCard)
         titreLabel.setText(reve.getTitre());
-        titreLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        // le style vient de styles.css via styleClass="card-title" dans le FXML
 
+        // Type avec badge couleur (même logique que qualiteLabel)
         typeLabel.setText(reve.getTypeReve());
-        typeLabel.setStyle("-fx-font-size: 13px; -fx-padding: 4 10; -fx-background-radius: 5; " +
-                getTypeColor(reve.getTypeReve()));
+        typeLabel.getStyleClass().clear();
+        typeLabel.getStyleClass().add("type-label"); // pour la forme du badge
+        typeLabel.getStyleClass().add(getTypeStyleClass(reve.getTypeReve())); // couleur spécifique
 
+        // Description
         String descCourte = reve.getDescription().length() > 100
                 ? reve.getDescription().substring(0, 100) + "..."
                 : reve.getDescription();
         descriptionLabel.setText(descCourte);
-        descriptionLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #555;");
 
+        // Humeur
         humeurLabel.setText("Humeur: " +
-                (reve.getHumeur() != null ? reve.getHumeur() : "Non specifie"));
-        humeurLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
+                (reve.getHumeur() != null ? reve.getHumeur() : "Non spécifiée"));
 
+        // Intensité (même logique que score couleur : vert / orange / rouge)
         intensiteBar.setProgress(reve.getIntensite() / 10.0);
-        intensiteBar.setStyle(getIntensiteStyle(reve.getIntensite()));
+        intensiteBar.getStyleClass().removeAll("intensite-haute", "intensite-moyenne", "intensite-basse");
+        if (reve.getIntensite() >= 8) {
+            intensiteBar.getStyleClass().add("intensite-haute");
+        } else if (reve.getIntensite() >= 6) {
+            intensiteBar.getStyleClass().add("intensite-moyenne");
+        } else {
+            intensiteBar.getStyleClass().add("intensite-basse");
+        }
         intensiteValue.setText(reve.getIntensite() + "/10");
-        intensiteValue.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
 
+        // Anxiété
         int anxiete = reve.calculerNiveauAnxiete();
-        anxieteLabel.setText(String.format("Anxiete: %d/10", anxiete));
-        anxieteLabel.setStyle("-fx-font-size: 12px; " + getAnxieteStyle(anxiete));
+        anxieteLabel.setText(String.format("Anxiété: %d/10", anxiete));
+        anxieteLabel.getStyleClass().removeAll("anxiete-haute", "anxiete-moyenne", "anxiete-basse");
+        if (anxiete >= 7) {
+            anxieteLabel.getStyleClass().add("anxiete-haute");
+        } else if (anxiete >= 4) {
+            anxieteLabel.getStyleClass().add("anxiete-moyenne");
+        } else {
+            anxieteLabel.getStyleClass().add("anxiete-basse");
+        }
 
+        // Badges
         couleurBadge.setVisible(reve.isCouleur());
         couleurBadge.setManaged(reve.isCouleur());
-        if (reve.isCouleur()) {
-            couleurBadge.setStyle("-fx-background-color: #B2EBF2; -fx-text-fill: #0277BD; -fx-padding: 3 8; -fx-background-radius: 3; -fx-font-size: 11px;");
-        }
 
         recurrentBadge.setVisible(reve.isRecurrent());
         recurrentBadge.setManaged(reve.isRecurrent());
-        if (reve.isRecurrent()) {
-            recurrentBadge.setStyle("-fx-background-color: #FFCCBC; -fx-text-fill: #E64A19; -fx-padding: 3 8; -fx-background-radius: 3; -fx-font-size: 11px;");
-        }
 
         lucideBadge.setVisible(reve.estLucide());
         lucideBadge.setManaged(reve.estLucide());
-        if (reve.estLucide()) {
-            lucideBadge.setStyle("-fx-background-color: #C5E1A5; -fx-text-fill: #2E7D32; -fx-padding: 3 8; -fx-background-radius: 3; -fx-font-size: 11px;");
-        }
 
+        // Émotions
         if (reve.getEmotions() != null && !reve.getEmotions().isEmpty()) {
-            emotionsLabel.setText("Emotions: " + reve.getEmotions());
-            emotionsLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #666; -fx-font-style: italic;");
+            emotionsLabel.setText("Émotions: " + reve.getEmotions());
             emotionsLabel.setVisible(true);
             emotionsLabel.setManaged(true);
+        } else {
+            emotionsLabel.setVisible(false);
+            emotionsLabel.setManaged(false);
         }
     }
 
@@ -91,36 +104,11 @@ public class ReveCardController {
         btnSupprimer.setOnAction(e -> parentController.supprimerRevePublic(reve));
     }
 
-    private String getTypeColor(String type) {
-        switch (type.toLowerCase()) {
-            case "cauchemar":
-                return "-fx-background-color: #f44336; -fx-text-fill: white;";
-            case "lucide":
-                return "-fx-background-color: #4CAF50; -fx-text-fill: white;";
-            case "recurrent":
-                return "-fx-background-color: #FF9800; -fx-text-fill: white;";
-            default:
-                return "-fx-background-color: #26C6DA; -fx-text-fill: white;";
-        }
-    }
-
-    private String getIntensiteStyle(int intensite) {
-        if (intensite >= 8) {
-            return "-fx-accent: #f44336;";
-        } else if (intensite >= 6) {
-            return "-fx-accent: #FF9800;";
-        } else {
-            return "-fx-accent: #4CAF50;";
-        }
-    }
-
-    private String getAnxieteStyle(int anxiete) {
-        if (anxiete >= 7) {
-            return "-fx-text-fill: #f44336; -fx-font-weight: bold;";
-        } else if (anxiete >= 4) {
-            return "-fx-text-fill: #FF9800;";
-        } else {
-            return "-fx-text-fill: #4CAF50;";
-        }
+    private String getTypeStyleClass(String type) {
+        String t = type.toLowerCase();
+        if (t.equals("cauchemar")) return "badge-cauchemar";
+        if (t.equals("lucide"))    return "badge-lucide";
+        if (t.equals("recurrent")) return "badge-recurrent";
+        return "badge-normal";
     }
 }
