@@ -13,7 +13,6 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.serinity.sleepcontrol.controller.MainTemplateController">
 
-    <!-- ================= TOP BAR ================= -->
     <top>
         <HBox fx:id="topBar" alignment="CENTER_LEFT" prefHeight="64.0" spacing="14.0"
               styleClass="topbar" BorderPane.alignment="CENTER_LEFT">
@@ -34,13 +33,14 @@
                 </children>
             </HBox>
 
-            <!-- Navigation -->
+            <!-- Navigation : 6 éléments comme le groupe -->
             <HBox fx:id="navBox" alignment="CENTER_LEFT" spacing="10.0" styleClass="nav">
                 <children>
-                    <Button fx:id="btnDashboard" onAction="#onDashboardClick"
+                    <!-- 1. Dashboard -->
+                    <Button fx:id="btnDashboard" onAction="#onNavClick"
                             styleClass="nav-btn nav-btn-active" text="Dashboard" />
 
-                    <!-- Menu déroulant Gérer Sommeil — classe nav-menu-btn -->
+                    <!-- 2. Sleep → MenuButton Gérer sommeil -->
                     <MenuButton fx:id="menuSleep" text="Gérer sommeil"
                                 styleClass="nav-menu-btn">
                         <items>
@@ -48,6 +48,22 @@
                             <MenuItem fx:id="menuItemReve"    text="Rêves"   onAction="#onMenuReve"/>
                         </items>
                     </MenuButton>
+
+                    <!-- 3. Mood -->
+                    <Button fx:id="btnMood" onAction="#onNavClick"
+                            styleClass="nav-btn" text="Mood" />
+
+                    <!-- 4. Support -->
+                    <Button fx:id="btnSupport" onAction="#onNavClick"
+                            styleClass="nav-btn" text="Support" />
+
+                    <!-- 5. Exercises -->
+                    <Button fx:id="btnExercises" onAction="#onNavClick"
+                            styleClass="nav-btn" text="Exercises" />
+
+                    <!-- 6. Appointments -->
+                    <Button fx:id="btnAppointments" onAction="#onNavClick"
+                            styleClass="nav-btn" text="Appointments" />
                 </children>
             </HBox>
 
@@ -83,12 +99,12 @@
         </HBox>
     </top>
 
-    <!-- ================= CONTENU CENTRAL ================= -->
+    <!-- Centre -->
     <center>
         <StackPane fx:id="contentHost" styleClass="content-host" />
     </center>
 
-    <!-- ================= FOOTER ================= -->
+    <!-- Footer -->
     <bottom>
         <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
             <Label fx:id="footerLabel" text="Serinity SleepControl • 2026" />

@@ -14,91 +14,49 @@
     <name>Serinity</name>
     <url>http://serinity.dev</url>
 
-    <licenses>
-        <license>
-            <name>GPL-3.0</name>
-            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <id>Gl3diator</id>
-            <name>Ghaith Ben Salah</name>
-            <email>ghaithbensalah1999@gmail.com</email>
-            <organization>Esprit</organization>
-            <organizationUrl>https://www.esprit.tn</organizationUrl>
-            <timezone>GMT+1</timezone>
-        </developer>
-        <developer>
-            <id>ZouariOmar</id>
-            <name>Zouari Omar</name>
-            <email>zouariomar20@gmail.com</email>
-            <url>https://github.com/ZouariOmar</url>
-            <organization>Esprit</organization>
-            <organizationUrl>https://www.esprit.tn</organizationUrl>
-            <timezone>GMT+1</timezone>
-        </developer>
-    </developers>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!-- Version Java alignée -->
         <maven.compiler.release>21</maven.compiler.release>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-
-        <!-- Libs versions -->
         <javafx.version>21.0.2</javafx.version>
         <junit.jupiter.version>5.11.0</junit.jupiter.version>
         <mysql.version>8.0.33</mysql.version>
     </properties>
 
     <modules>
-
         <module>sleep-control</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
-            <!-- JavaFX Controls -->
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-controls</artifactId>
                 <version>${javafx.version}</version>
             </dependency>
-
-            <!-- JavaFX FXML -->
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-fxml</artifactId>
                 <version>${javafx.version}</version>
             </dependency>
-
-            <!-- MySQL Connector -->
             <dependency>
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
-
-            <!-- JUnit 5 for testing -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit.jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junit.jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
-
-            <!-- AssertJ for better assertions (optionnel) -->
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
@@ -111,8 +69,6 @@
     <build>
         <pluginManagement>
             <plugins>
-
-                <!-- Compilation Java -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -121,28 +77,21 @@
                         <release>${maven.compiler.release}</release>
                     </configuration>
                 </plugin>
-
-                <!-- Tests -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.1</version>
                 </plugin>
-
-                <!-- JavaFX -->
                 <plugin>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-maven-plugin</artifactId>
                     <version>0.0.8</version>
                 </plugin>
-
-                <!-- Resources -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.3.1</version>
                 </plugin>
-
             </plugins>
         </pluginManagement>
     </build>

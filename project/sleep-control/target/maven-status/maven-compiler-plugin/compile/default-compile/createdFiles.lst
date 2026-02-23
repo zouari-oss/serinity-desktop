@@ -6,7 +6,6 @@ com\serinity\sleepcontrol\dao\ReveDao.class
 com\serinity\sleepcontrol\dao\SommeilDao.class
 com\serinity\sleepcontrol\controller\ReveCardController.class
 com\serinity\sleepcontrol\controller\ReveFormController$1.class
-com\serinity\sleepcontrol\Main.class
 com\serinity\sleepcontrol\controller\SommeilFormController.class
 com\serinity\sleepcontrol\controller\SommeilCardController.class
 com\serinity\sleepcontrol\controller\ReveController.class
