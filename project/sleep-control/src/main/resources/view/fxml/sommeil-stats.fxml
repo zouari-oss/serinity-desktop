@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.sleepcontrol.controller.SommeilStatsController"
+      spacing="16.0"
+      stylesheets="@../styles/styles.css"
+      style="-fx-background-color: #f5f7fa;"
+      minWidth="600" minHeight="500">
+
+    <padding>
+        <Insets top="24" right="24" bottom="24" left="24"/>
+    </padding>
+
+    <!-- Titre -->
+    <HBox alignment="CENTER_LEFT" spacing="12.0">
+        <Label text="Statistiques du Sommeil" styleClass="page-header"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Actualiser" styleClass="btn-secondary" onAction="#actualiser"/>
+    </HBox>
+
+    <!-- KPIs -->
+    <HBox spacing="12.0">
+        <VBox styleClass="stat-card-violet" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="Total nuits"       styleClass="stat-card-label"/>
+            <Label fx:id="kpiTotal"         text="–" styleClass="stat-card-value"/>
+        </VBox>
+        <VBox styleClass="stat-card-blue" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="Durée moyenne"     styleClass="stat-card-label"/>
+            <Label fx:id="kpiDuree"         text="–" styleClass="stat-card-value"/>
+        </VBox>
+        <VBox styleClass="stat-card-green" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="Score moyen"       styleClass="stat-card-label"/>
+            <Label fx:id="kpiScore"         text="–" styleClass="stat-card-value"/>
+        </VBox>
+        <VBox styleClass="stat-card-red" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="Dette sommeil"     styleClass="stat-card-label"/>
+            <Label fx:id="kpiDette"         text="–" styleClass="stat-card-value-sm"/>
+        </VBox>
+        <VBox styleClass="stat-card-orange" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <Label text="Efficacité"        styleClass="stat-card-label"/>
+            <Label fx:id="kpiEfficacite"    text="–" styleClass="stat-card-value"/>
+        </VBox>
+    </HBox>
+
+    <!-- Bien-être & Résilience -->
+    <VBox styleClass="filter-container" spacing="10.0">
+        <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+        <Label text="Bien-être &amp; Résilience" styleClass="section-title"/>
+        <HBox spacing="30.0">
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label text="Score bien-être" styleClass="form-label"/>
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <ProgressBar fx:id="barBienEtre" prefWidth="200.0"/>
+                    <Label fx:id="lblBienEtre" text="–" styleClass="card-info"/>
+                </HBox>
+            </VBox>
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label text="Résilience" styleClass="form-label"/>
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <ProgressBar fx:id="barResilience" prefWidth="200.0"/>
+                    <Label fx:id="lblResilience" text="–" styleClass="card-info"/>
+                </HBox>
+            </VBox>
+            <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                <Label text="Durée optimale" styleClass="form-label"/>
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <ProgressBar fx:id="barOptimale" prefWidth="200.0"/>
+                    <Label fx:id="lblOptimale" text="–%" styleClass="card-info"/>
+                </HBox>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <!-- Répartition & Insights -->
+    <HBox spacing="14.0" VBox.vgrow="ALWAYS">
+
+        <!-- Répartition par qualité -->
+        <VBox styleClass="filter-container" spacing="10.0" HBox.hgrow="ALWAYS">
+            <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+            <Label text="Répartition qualité" styleClass="section-title"/>
+            <VBox fx:id="qualiteContainer" spacing="6.0"/>
+        </VBox>
+
+        <!-- Répartition humeur -->
+        <VBox styleClass="filter-container" spacing="10.0" HBox.hgrow="ALWAYS">
+            <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+            <Label text="Humeur au réveil" styleClass="section-title"/>
+            <VBox fx:id="humeurContainer" spacing="6.0"/>
+        </VBox>
+
+        <!-- Tendances -->
+        <VBox styleClass="filter-container" spacing="10.0" HBox.hgrow="ALWAYS">
+            <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+            <Label text="Tendances (30j)" styleClass="section-title"/>
+            <VBox fx:id="tendancesContainer" spacing="6.0"/>
+        </VBox>
+
+    </HBox>
+
+    <!-- Insights -->
+    <VBox styleClass="filter-container" spacing="8.0">
+        <padding><Insets top="12" right="14" bottom="10" left="14"/></padding>
+        <Label text="Insights" styleClass="section-title"/>
+        <VBox fx:id="insightsContainer" spacing="5.0"/>
+    </VBox>
+
+</VBox>

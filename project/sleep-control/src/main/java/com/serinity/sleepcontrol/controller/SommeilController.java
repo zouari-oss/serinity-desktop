@@ -37,6 +37,7 @@ public class SommeilController {
 
     private SommeilService sommeilService;
     private List<Sommeil> currentSommeils;
+    @FXML private Button btnStats;
 
     @FXML
     public void initialize() {
@@ -73,6 +74,8 @@ public class SommeilController {
         sortComboBox.setOnAction(e -> appliquerTri());
         btnAjouter.setOnAction(e -> ajouterSommeil());
         btnRefresh.setOnAction(e -> rafraichir());
+        btnStats.setOnAction(e -> ouvrirStatistiques());
+
     }
 
     @FXML
@@ -147,6 +150,32 @@ public class SommeilController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void ouvrirStatistiques() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/fxml/sommeil-stats.fxml")
+            );
+            Parent root = loader.load();
+
+            SommeilStatsController statsCtrl = loader.getController();
+            statsCtrl.setSommeilService(sommeilService);
+
+            Stage stage = new Stage();
+            stage.setTitle("Statistiques du Sommeil");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root, 700, 620));
+            stage.setMinWidth(600);
+            stage.setMinHeight(500);
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            showError("Erreur", "Impossible d'ouvrir les statistiques.");
+            e.printStackTrace();
+        }
+    }
+
 
     @FXML
     private void appliquerTri() {
