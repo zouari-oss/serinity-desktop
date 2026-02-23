@@ -158,3 +158,71 @@ TextArea {
   -fx-focus-color: -color-primary;
   -fx-faint-focus-color: rgba(47, 111, 109, 0.1);
 }
+
+/* ================= Activity Section ================= */
+
+.section-title {
+  -fx-font-size: 18px;
+  -fx-font-weight: 700;
+  -fx-text-fill: -text-primary;
+}
+
+/* Scrollpane */
+.activity-scroll {
+  -fx-background-color: transparent;
+  -fx-border-color: transparent;
+}
+
+.activity-scroll .viewport {
+  -fx-background-color: transparent;
+}
+
+/* Container */
+.activity-cards-container {
+  -fx-padding: 5;
+}
+
+/* Individual Card */
+.activity-card {
+  -fx-background-color: white;
+  -fx-background-radius: 12;
+  -fx-border-radius: 12;
+  -fx-border-color: #E5E7EB;
+  -fx-border-width: 1;
+  -fx-padding: 15;
+  -fx-spacing: 6;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 8, 0.3, 0, 2);
+}
+
+/* Hover effect */
+.activity-card:hover {
+  -fx-border-color: -color-primary;
+  -fx-effect: dropshadow(gaussian, rgba(47, 111, 109, 0.15), 12, 0.4, 0, 3);
+}
+
+/* Action badge */
+.activity-action {
+  -fx-background-color: -color-secondary;
+  -fx-text-fill: -color-primary;
+  -fx-font-weight: 700;
+  -fx-padding: 4 10;
+  -fx-background-radius: 20;
+}
+
+/* OS label */
+.activity-os {
+  -fx-text-fill: -text-secondary;
+  -fx-font-size: 13px;
+}
+
+/* Meta info */
+.activity-meta {
+  -fx-text-fill: -text-secondary;
+  -fx-font-size: 12px;
+}
+
+/* Date */
+.activity-date {
+  -fx-text-fill: #9ca3af;
+  -fx-font-size: 11px;
+}

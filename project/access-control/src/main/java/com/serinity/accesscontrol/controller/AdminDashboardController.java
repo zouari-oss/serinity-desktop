@@ -62,11 +62,7 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
 
   private User user;
 
-  // ##########################
-  // ### HELPER FUNCTION(S) ###
-  // ##########################
-
-  public void setUser(User user) {
+  public void setUser(final User user) {
     this.user = user;
   }
 
@@ -86,10 +82,6 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
     }
   }
 
-  // ##############################
-  // ### SLOT HANDLER FUNCTIONS ###
-  // ##############################
-
   @FXML
   void onLogoutButtonAction(final ActionEvent event) {
 
@@ -108,10 +100,6 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
   void onUsersManagmentButtonAction(final ActionEvent event) {
     push(ResourceFile.ADMIN_USERS_MANAGMENT_FXML.getFileName());
   }
-
-  // ##################################
-  // ### INITIALIZATION FUNCTION(S) ###
-  // ##################################
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {

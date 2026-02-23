@@ -1,18 +1,6 @@
 // `serinity` package name
 package com.serinity.accesscontrol.controller;
 
-import javafx.event.ActionEvent;
-// `javafx` import(s)
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.control.Label;
-
 // `java` import(s)
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,6 +20,18 @@ import com.serinity.accesscontrol.flag.MessageStatus;
 import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.UserRepository;
+
+// `javafx` import(s)
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 /**
  * `admin-user-dashboard.fxml` controller class
@@ -72,17 +72,9 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
 
   private final List<User> allUsers = new ArrayList<>();
 
-  // #############################
-  // ### GETTER(S) & SETTER(S) ###
-  // #############################
-
   public void setStatusProvider(final StatusMessageProvider provider) {
     this.statusProvider = provider;
   }
-
-  // ############################
-  // ### OVERRIDE FUNCTION(S) ###
-  // ############################
 
   @Override
   public StackPane getStackHost() {
@@ -101,9 +93,23 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     }
   }
 
-  // ################################
-  // ### SLOT HANDLER FUNCTION(S) ###
-  // ################################
+  public void usersManagmentInit() {
+    // Initialize filter dropdown
+    roleFilterComboBox.getItems().addAll(
+        "ALL",
+        UserRole.ADMIN.toString(),
+        UserRole.PATIENT.toString(),
+        UserRole.THERAPIST.toString());
+    roleFilterComboBox.setValue("ALL");
+
+    // Add sample users
+    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    final UserRepository userRepository = new UserRepository(em);
+    allUsers.addAll(userRepository.findAll());
+
+    // Load all users initially
+    loadUsers(allUsers);
+  }
 
   /**
    * Triggered whenever the role filter changes.
@@ -121,9 +127,22 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     filterUsers(searchTextField.getText(), roleFilterComboBox.getValue());
   }
 
-  // ##########################
-  // ### HELPER FUNCTION(S) ###
-  // ##########################
+  @FXML // This method is called by the FXMLLoader when initialization is complete
+  void initialize() {
+    assert roleFilterComboBox != null
+        : "fx:id=\"roleFilterComboBox\" was not injected: check your FXML file 'admin-users-management.fxml'.";
+    assert searchTextField != null
+        : "fx:id=\"searchTextField\" was not injected: check your FXML file 'admin-users-management.fxml'.";
+    assert usersContainer != null
+        : "fx:id=\"usersContainer\" was not injected: check your FXML file 'admin-users-management.fxml'.";
+    assert usersPage != null
+        : "fx:id=\"usersPage\" was not injected: check your FXML file 'admin-users-management.fxml'.";
+
+    // Custom initialization
+    setStackHost(stackHost);
+    setStatusProvider(statusProvider);
+    usersManagmentInit();
+  }
 
   /**
    * Filters users by keyword and role.
@@ -216,44 +235,5 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     card.getChildren().addAll(emailLabel, roleLabel, statusLabel, actionsBox);
 
     return card;
-  }
-
-  // ##################################
-  // ### INITIALIZATION FUNCTION(S) ###
-  // ##################################
-
-  @FXML // This method is called by the FXMLLoader when initialization is complete
-  void initialize() {
-    assert roleFilterComboBox != null
-        : "fx:id=\"roleFilterComboBox\" was not injected: check your FXML file 'admin-users-management.fxml'.";
-    assert searchTextField != null
-        : "fx:id=\"searchTextField\" was not injected: check your FXML file 'admin-users-management.fxml'.";
-    assert usersContainer != null
-        : "fx:id=\"usersContainer\" was not injected: check your FXML file 'admin-users-management.fxml'.";
-    assert usersPage != null
-        : "fx:id=\"usersPage\" was not injected: check your FXML file 'admin-users-management.fxml'.";
-
-    // Custom initialization
-    setStackHost(stackHost);
-    setStatusProvider(statusProvider);
-    usersManagmentInit();
-  }
-
-  public void usersManagmentInit() {
-    // Initialize filter dropdown
-    roleFilterComboBox.getItems().addAll(
-        "ALL",
-        UserRole.ADMIN.toString(),
-        UserRole.PATIENT.toString(),
-        UserRole.THERAPIST.toString());
-    roleFilterComboBox.setValue("ALL");
-
-    // Add sample users
-    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
-    final UserRepository userRepository = new UserRepository(em);
-    allUsers.addAll(userRepository.findAll());
-
-    // Load all users initially
-    loadUsers(allUsers);
   }
 } // AdminUsersManagmentController final class

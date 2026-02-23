@@ -175,10 +175,19 @@ public final class UserService {
 
     final AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
     final Optional<AuthSession> activeSession = authSessionRepository.findActiveSession(user);
-    activeSession.ifPresent(authSessionRepository::delete);
+    activeSession.ifPresent(session -> {
+      session.setRevoked(true);
+      authSessionRepository.update(session);
+    });
 
     AuthSession newAuthSession = new AuthSession();
     newAuthSession.setUser(user);
+
+    final AuditLog auditLog = new AuditLog();
+    auditLog.setAction(AuditAction.USER_LOGIN.getValue());
+    auditLog.setSession(newAuthSession);
+
+    new AuditLogRepository(em).save(auditLog);
     authSessionRepository.save(newAuthSession);
 
     return ServiceResult.success(user, "User signed in successfully!");

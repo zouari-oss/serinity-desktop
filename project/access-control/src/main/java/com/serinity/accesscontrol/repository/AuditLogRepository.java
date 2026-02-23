@@ -1,6 +1,10 @@
 // `UserRepository` package name
 package com.serinity.accesscontrol.repository;
 
+// `java` import(s)
+import java.util.List;
+import java.util.UUID;
+
 // `zouarioss` import(s)
 import org.zouarioss.skinnedratorm.core.EntityManager;
 
@@ -52,5 +56,15 @@ import com.serinity.accesscontrol.repository.base.BaseRepository;
 public final class AuditLogRepository extends BaseRepository<AuditLog, Long> {
   public AuditLogRepository(final EntityManager em) {
     super(em, AuditLog.class);
+  }
+
+  public List<AuditLog> findByAuthSessionId(final UUID authSessionId) {
+    try {
+      return em.createQuery(AuditLog.class)
+          .where("auth_session_id", authSessionId)
+          .getResultList();
+    } catch (final Exception e) {
+      return null;
+    }
   }
 } // UserRepository final class

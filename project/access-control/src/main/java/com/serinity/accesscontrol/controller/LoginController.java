@@ -112,10 +112,6 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
 
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
-  // ############################
-  // ### OVERRIDE FUNCTION(S) ###
-  // ############################
-
   @Override
   public StackPane getStackHost() {
     return stackHost;
@@ -137,26 +133,6 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
       statusProvider.showStatusMessage(message, status);
     }
   }
-
-  // ##########################
-  // ### HELPER FUNCTION(S) ###
-  // ##########################
-
-  private void injectUserIntoDashboard(final Object controller, final User user) {
-    if (controller instanceof final AdminDashboardController admin) {
-      admin.setUser(user);
-      admin.setStatusProvider(this);
-    }
-
-    if (controller instanceof final UserHomeController home) {
-      home.setUser(user);
-      home.setStatusProvider(this);
-    }
-  }
-
-  // ################################
-  // ### SLOT HANDLER FUNCTION(S) ###
-  // ################################
 
   @FXML
   void onForgetPasswordHyperlinkAction(final ActionEvent event) {
@@ -225,10 +201,6 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
         true);
   }
 
-  // ##################################
-  // ### INITIALIZATION FUNCTION(S) ###
-  // ##################################
-
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {
     assert faceIdImageView != null : "fx:id=\"faceIdImageView\" was not injected: check your FXML file 'login.fxml'.";
@@ -258,6 +230,22 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
     // Custom initialization
     signUpUserRoleComboBoxInit();
     loginSideWebViewInit();
+  }
+
+  // ##################################
+  // ### INITIALIZATION FUNCTION(S) ###
+  // ##################################
+
+  private void injectUserIntoDashboard(final Object controller, final User user) {
+    if (controller instanceof final AdminDashboardController admin) {
+      admin.setUser(user);
+      admin.setStatusProvider(this);
+    }
+
+    if (controller instanceof final UserHomeController home) {
+      home.setUser(user);
+      home.setStatusProvider(this);
+    }
   }
 
   private void signUpUserRoleComboBoxInit() {

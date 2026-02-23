@@ -67,10 +67,6 @@ public final class RootController implements StackNavigable, StatusMessageProvid
   @FXML // fx:id="rootStackPane"
   private StackPane rootStackPane; // Value injected by FXMLLoader
 
-  // ##########################
-  // ### HELPER FUNCTION(S) ###
-  // ##########################
-
   @Override
   public StackPane getStackHost() {
     return rootStackPane;
@@ -102,10 +98,6 @@ public final class RootController implements StackNavigable, StatusMessageProvid
         5);
   }
 
-  // ##############################
-  // ### SLOT HANDLER FUNCTIONS ###
-  // ##############################
-
   @FXML
   void onLanguageComboBoxAction(final ActionEvent event) {
     I18nUtil.setLocale(
@@ -119,10 +111,6 @@ public final class RootController implements StackNavigable, StatusMessageProvid
             ResourceFile.ROOT_FXML.getFileName(),
             I18nUtil.getBundle()));
   }
-
-  // ##################################
-  // ### INITIALIZATION FUNCTION(S) ###
-  // ##################################
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {

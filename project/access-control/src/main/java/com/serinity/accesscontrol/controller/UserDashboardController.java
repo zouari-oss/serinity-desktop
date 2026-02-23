@@ -5,6 +5,9 @@ package com.serinity.accesscontrol.controller;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 // `zouarioss` import(s)
@@ -15,8 +18,12 @@ import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.flag.Gender;
 import com.serinity.accesscontrol.flag.MessageStatus;
+import com.serinity.accesscontrol.model.AuditLog;
+import com.serinity.accesscontrol.model.AuthSession;
 import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
+import com.serinity.accesscontrol.repository.AuditLogRepository;
+import com.serinity.accesscontrol.repository.AuthSessionRepository;
 import com.serinity.accesscontrol.repository.ProfileRepository;
 import com.serinity.accesscontrol.service.FreeImageHostClient;
 import com.serinity.accesscontrol.util.RegexValidator;
@@ -25,14 +32,18 @@ import com.serinity.accesscontrol.util.RegexValidator;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 /**
@@ -53,6 +64,41 @@ public final class UserDashboardController implements StatusMessageProvider {
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(UserDashboardController.class);
 
+  private static final VBox createActivityCard(final AuditLog log) {
+    final VBox card = new VBox();
+    card.getStyleClass().add("activity-card");
+
+    final Label action = new Label(log.getAction());
+    action.getStyleClass().add("activity-action");
+
+    final Label os = new Label(log.getOsName());
+    os.getStyleClass().add("activity-os");
+
+    final HBox topRow = new HBox(15, action, os);
+
+    final Label hostname = new Label("Hostname: " + log.getHostname());
+    hostname.getStyleClass().add("activity-meta");
+
+    final Label ip = new Label("Private IP: " + log.getPrivateIpAddress());
+    ip.getStyleClass().add("activity-meta");
+
+    final Label mac = new Label("MAC: " + log.getMacAddress());
+    mac.getStyleClass().add("activity-meta");
+
+    final Label location = new Label("Location: " + log.getLocation());
+    location.getStyleClass().add("activity-meta");
+
+    final Label date = new Label(log.getCreatedAt().toString());
+    date.getStyleClass().add("activity-date");
+
+    final HBox bottomRow = new HBox(date);
+    bottomRow.setAlignment(Pos.CENTER_RIGHT);
+
+    card.getChildren().addAll(topRow, hostname, ip, mac, location, bottomRow);
+
+    return card;
+  }
+
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;
 
@@ -71,6 +117,9 @@ public final class UserDashboardController implements StatusMessageProvider {
   @FXML // fx:id="countryTextField"
   private TextField countryTextField; // Value injected by FXMLLoader
 
+  @FXML // fx:id="activityCardsContainerVBox"
+  private VBox activityCardsContainerVBox; // Value injected by FXMLLoader
+
   @FXML // fx:id="firstNameTextField"
   private TextField firstNameTextField; // Value injected by FXMLLoader
 
@@ -85,9 +134,9 @@ public final class UserDashboardController implements StatusMessageProvider {
 
   @FXML // fx:id="profileCompletionBar"
   private ProgressBar profileCompletionBar; // Value injected by FXMLLoader
-
   @FXML // fx:id="profileCompletionLabel"
   private Label profileCompletionLabel; // Value injected by FXMLLoader
+
   //
   @FXML // fx:id="profileImageView"
   private ImageView profileImageView; // Value injected by FXMLLoader
@@ -110,10 +159,6 @@ public final class UserDashboardController implements StatusMessageProvider {
 
   private Profile userProfile;
 
-  // #############################
-  // ### GETTER(S) & SETTER(S) ###
-  // #############################
-
   public void setUser(final User user) {
     this.user = user;
   }
@@ -122,10 +167,6 @@ public final class UserDashboardController implements StatusMessageProvider {
     this.statusProvider = provider;
   }
 
-  // ############################
-  // ### OVERRIDE FUNCTION(S) ###
-  // ############################
-
   @Override
   public void showStatusMessage(final String message, final MessageStatus status) {
     if (statusProvider != null) {
@@ -133,9 +174,23 @@ public final class UserDashboardController implements StatusMessageProvider {
     }
   }
 
-  // ##############################
-  // ### SLOT HANDLER FUNCTIONS ###
-  // ##############################
+  public void loadActivityCards() {
+    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    final AuditLogRepository auditLogRepository = new AuditLogRepository(em);
+    final List<AuthSession> authSessions = new AuthSessionRepository(em).findByUserId(user.getId());
+    final List<AuditLog> allLogs = new ArrayList<>();
+    for (final AuthSession session : authSessions) {
+      final List<AuditLog> logs = auditLogRepository.findByAuthSessionId(session.getId());
+      allLogs.addAll(logs);
+    }
+
+    // Sort by `created_at` column
+    allLogs.sort(Comparator.comparing(AuditLog::getCreatedAt).reversed());
+
+    activityCardsContainerVBox.getChildren().clear();
+
+    allLogs.forEach(log -> activityCardsContainerVBox.getChildren().add(createActivityCard(log)));
+  }
 
   @FXML
   void onBrowseImage(final ActionEvent event) {
@@ -164,7 +219,7 @@ public final class UserDashboardController implements StatusMessageProvider {
       return;
     }
 
-    String phoneNumber = phoneTextField.getText();
+    final String phoneNumber = phoneTextField.getText();
     if (!RegexValidator.isValidPhoneNumber(phoneNumber)) {
       showStatusMessage("Invalid Phone Number Format!", MessageStatus.WARNING);
       return;
@@ -199,6 +254,8 @@ public final class UserDashboardController implements StatusMessageProvider {
   void initialize() {
     assert aboutMeTextArea != null
         : "fx:id=\"aboutMeTextArea\" was not injected: check your FXML file 'user-dashboard.fxml'.";
+    assert activityCardsContainerVBox != null
+        : "fx:id=\"activityCardsContainerVBox\" was not injected: check your FXML file 'user-dashboard.fxml'.";
     assert browseImageButton != null
         : "fx:id=\"browseImageButton\" was not injected: check your FXML file 'user-dashboard.fxml'.";
     assert cancelButton != null
@@ -235,50 +292,11 @@ public final class UserDashboardController implements StatusMessageProvider {
       initUserInfoLater();
       updateProfileCompletion();
       welcomeLabel.setText(welcomeLabel.getText() + userProfile.getUsername());
+      loadActivityCards();
     });
 
     _LOGGER.info("User Dashboard Interface initialized successfully!");
   }
-
-  // ##################################
-  // ### INITIALIZATION FUNCTION(S) ###
-  // ##################################
-
-  /*
-   * Init user data (profile) & setup the edit profile side
-   */
-  private void initUserInfoLater() {
-    // Retrive user data
-    if (userProfile == null) {
-      final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
-      final ProfileRepository profileRepository = new ProfileRepository(em);
-      userProfile = profileRepository.findByUserId(user.getId());
-    }
-
-    // Set user info
-    firstNameTextField.setText(userProfile.getFirstName());
-    lastNameTextField.setText(userProfile.getLastName());
-    usernameTextField.setText(userProfile.getUsername());
-    phoneTextField.setText(userProfile.getPhone());
-    genderComboBox.setValue(userProfile.getGender());
-    countryTextField.setText(userProfile.getCountry());
-    stateTextField.setText(userProfile.getState());
-    aboutMeTextArea.setText(userProfile.getAboutMe());
-    profileImageView.setImage(
-        userProfile.getProfileImageUrl() == null || userProfile.getProfileImageUrl().isEmpty()
-            ? new Image("/assets/user-dashboard/user-default-profile.png")
-            : new Image(userProfile.getProfileImageUrl(), true));
-  }
-
-  private void initGenderComboBox() {
-    genderComboBox.getItems().addAll(
-        Gender.MALE,
-        Gender.FEMALE);
-  }
-
-  // ##########################
-  // ### HELPER FUNCTION(S) ###
-  // ##########################
 
   private void updateProfileCompletion() {
     final int totalFields = 8;
@@ -348,5 +366,37 @@ public final class UserDashboardController implements StatusMessageProvider {
     }
 
     return null;
+  }
+
+  /*
+   * Init user data (profile) & setup the edit profile side
+   */
+  private void initUserInfoLater() {
+    // Retrive user data
+    if (userProfile == null) {
+      final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+      final ProfileRepository profileRepository = new ProfileRepository(em);
+      userProfile = profileRepository.findByUserId(user.getId());
+    }
+
+    // Set user info
+    firstNameTextField.setText(userProfile.getFirstName());
+    lastNameTextField.setText(userProfile.getLastName());
+    usernameTextField.setText(userProfile.getUsername());
+    phoneTextField.setText(userProfile.getPhone());
+    genderComboBox.setValue(userProfile.getGender());
+    countryTextField.setText(userProfile.getCountry());
+    stateTextField.setText(userProfile.getState());
+    aboutMeTextArea.setText(userProfile.getAboutMe());
+    profileImageView.setImage(
+        userProfile.getProfileImageUrl() == null || userProfile.getProfileImageUrl().isEmpty()
+            ? new Image("/assets/user-dashboard/user-default-profile.png")
+            : new Image(userProfile.getProfileImageUrl(), true));
+  }
+
+  private void initGenderComboBox() {
+    genderComboBox.getItems().addAll(
+        Gender.MALE,
+        Gender.FEMALE);
   }
 } // UserDashboardController final class

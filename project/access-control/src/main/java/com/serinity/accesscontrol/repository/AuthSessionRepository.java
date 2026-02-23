@@ -3,7 +3,9 @@ package com.serinity.accesscontrol.repository;
 
 // `java` import(s)
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 // `zouarioss` import(s)
 import org.zouarioss.skinnedratorm.core.EntityManager;
@@ -38,6 +40,16 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
       return em.createQuery(AuthSession.class)
           .where("refresh_token", refreshToken)
           .getSingleResult();
+    } catch (final Exception e) {
+      return null;
+    }
+  }
+
+  public List<AuthSession> findByUserId(final UUID userId) {
+    try {
+      return em.createQuery(AuthSession.class)
+          .where("user_id", userId)
+          .getResultList();
     } catch (final Exception e) {
       return null;
     }

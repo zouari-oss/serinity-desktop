@@ -80,17 +80,9 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
 
   private User user;
 
-  // #############################
-  // ### GETTER(S) & SETTER(S) ###
-  // #############################
-
   public void setUser(final User user) {
     this.user = user;
   }
-
-  // ############################
-  // ### OVERRIDE FUNCTION(S) ###
-  // ############################
 
   @Override
   public StackPane getStackHost() {
@@ -108,10 +100,6 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
       statusProvider.showStatusMessage(message, status);
     }
   }
-
-  // ##############################
-  // ### SLOT HANDLER FUNCTIONS ###
-  // ##############################
 
   @FXML
   void onNavBarAppointmentsButtonAction(final ActionEvent event) {
@@ -142,10 +130,6 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
   void onNavBarSupportButtonAction(final ActionEvent event) {
 
   }
-
-  // ##################################
-  // ### INITIALIZATION FUNCTION(S) ###
-  // ##################################
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {
