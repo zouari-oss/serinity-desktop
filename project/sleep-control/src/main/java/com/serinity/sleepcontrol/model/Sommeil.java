@@ -25,6 +25,7 @@ public class Sommeil {
     private String niveauBruit;
 
     private List<Reve> reves;
+    private int nbRevesCache = -1;
 
     public Sommeil() {
         this.reves = new ArrayList<>();
@@ -88,7 +89,15 @@ public class Sommeil {
     }
 
     public int getNombreReves() {
-        return reves.size();
+        return getNbReves();
+    }
+
+    public int getNbReves() {
+        return nbRevesCache >= 0 ? nbRevesCache : reves.size();
+    }
+
+    public void setNbReves(int nbReves) {
+        this.nbRevesCache = nbReves;
     }
 
     public boolean estDureeOptimale() {
@@ -141,112 +150,53 @@ public class Sommeil {
         rapport.append("Qualité: ").append(qualite).append("\n");
         rapport.append("Interruptions: ").append(interruptions).append("\n");
         rapport.append("Score: ").append(calculerScoreQualite()).append("/100\n");
-        rapport.append("Nombre de rêves: ").append(getNombreReves()).append("\n");
+        rapport.append("Nombre de rêves: ").append(getNbReves()).append("\n");
         return rapport.toString();
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public LocalDate getDateNuit() { return dateNuit; }
+    public void setDateNuit(LocalDate dateNuit) { this.dateNuit = dateNuit; }
 
-    public LocalDate getDateNuit() {
-        return dateNuit;
-    }
-
-    public void setDateNuit(LocalDate dateNuit) {
-        this.dateNuit = dateNuit;
-    }
-
-    public LocalTime getHeureCoucher() {
-        return heureCoucher;
-    }
-
+    public LocalTime getHeureCoucher() { return heureCoucher; }
     public void setHeureCoucher(LocalTime heureCoucher) {
         this.heureCoucher = heureCoucher;
         this.dureeSommeil = calculerDuree();
     }
 
-    public LocalTime getHeureReveil() {
-        return heureReveil;
-    }
-
+    public LocalTime getHeureReveil() { return heureReveil; }
     public void setHeureReveil(LocalTime heureReveil) {
         this.heureReveil = heureReveil;
         this.dureeSommeil = calculerDuree();
     }
 
-    public String getQualite() {
-        return qualite;
-    }
+    public String getQualite() { return qualite; }
+    public void setQualite(String qualite) { this.qualite = qualite; }
 
-    public void setQualite(String qualite) {
-        this.qualite = qualite;
-    }
+    public String getCommentaire() { return commentaire; }
+    public void setCommentaire(String commentaire) { this.commentaire = commentaire; }
 
-    public String getCommentaire() {
-        return commentaire;
-    }
+    public double getDureeSommeil() { return dureeSommeil; }
+    public void setDureeSommeil(double dureeSommeil) { this.dureeSommeil = dureeSommeil; }
 
-    public void setCommentaire(String commentaire) {
-        this.commentaire = commentaire;
-    }
+    public int getInterruptions() { return interruptions; }
+    public void setInterruptions(int interruptions) { this.interruptions = Math.max(0, interruptions); }
 
-    public double getDureeSommeil() {
-        return dureeSommeil;
-    }
+    public String getHumeurReveil() { return humeurReveil; }
+    public void setHumeurReveil(String humeurReveil) { this.humeurReveil = humeurReveil; }
 
-    public void setDureeSommeil(double dureeSommeil) {
-        this.dureeSommeil = dureeSommeil;
-    }
+    public String getEnvironnement() { return environnement; }
+    public void setEnvironnement(String environnement) { this.environnement = environnement; }
 
-    public int getInterruptions() {
-        return interruptions;
-    }
+    public double getTemperature() { return temperature; }
+    public void setTemperature(double temperature) { this.temperature = temperature; }
 
-    public void setInterruptions(int interruptions) {
-        this.interruptions = Math.max(0, interruptions);
-    }
+    public String getNiveauBruit() { return niveauBruit; }
+    public void setNiveauBruit(String niveauBruit) { this.niveauBruit = niveauBruit; }
 
-    public String getHumeurReveil() {
-        return humeurReveil;
-    }
-
-    public void setHumeurReveil(String humeurReveil) {
-        this.humeurReveil = humeurReveil;
-    }
-
-    public String getEnvironnement() {
-        return environnement;
-    }
-
-    public void setEnvironnement(String environnement) {
-        this.environnement = environnement;
-    }
-
-    public double getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(double temperature) {
-        this.temperature = temperature;
-    }
-
-    public String getNiveauBruit() {
-        return niveauBruit;
-    }
-
-    public void setNiveauBruit(String niveauBruit) {
-        this.niveauBruit = niveauBruit;
-    }
-
-    public List<Reve> getReves() {
-        return new ArrayList<>(reves);
-    }
-
+    public List<Reve> getReves() { return new ArrayList<>(reves); }
     public void setReves(List<Reve> reves) {
         this.reves = reves != null ? new ArrayList<>(reves) : new ArrayList<>();
         for (Reve reve : this.reves) {
@@ -277,7 +227,7 @@ public class Sommeil {
                 ", qualite='" + qualite + '\'' +
                 ", dureeSommeil=" + String.format("%.2f", dureeSommeil) + "h" +
                 ", interruptions=" + interruptions +
-                ", nbReves=" + getNombreReves() +
+                ", nbReves=" + getNbReves() +
                 '}';
     }
 }

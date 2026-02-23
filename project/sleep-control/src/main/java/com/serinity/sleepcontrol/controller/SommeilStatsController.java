@@ -1,6 +1,7 @@
 package com.serinity.sleepcontrol.controller;
 
 import com.serinity.sleepcontrol.service.SommeilService;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
@@ -13,15 +14,11 @@ import java.util.Map;
 
 public class SommeilStatsController {
 
-    // ─── KPIs ────────────────────────────────────────────────────────────────────
-
     @FXML private Label kpiTotal;
     @FXML private Label kpiDuree;
     @FXML private Label kpiScore;
     @FXML private Label kpiDette;
     @FXML private Label kpiEfficacite;
-
-    // ─── Barres bien-être ─────────────────────────────────────────────────────────
 
     @FXML private ProgressBar barBienEtre;
     @FXML private Label       lblBienEtre;
@@ -30,30 +27,29 @@ public class SommeilStatsController {
     @FXML private ProgressBar barOptimale;
     @FXML private Label       lblOptimale;
 
-    // ─── Conteneurs dynamiques ────────────────────────────────────────────────────
-
     @FXML private VBox      qualiteContainer;
     @FXML private VBox      humeurContainer;
     @FXML private VBox      tendancesContainer;
-    @FXML private FlowPane  insightsContainer;  // ← FlowPane pour les chips
-
-    // ─── Service ─────────────────────────────────────────────────────────────────
+    @FXML private FlowPane  insightsContainer;
 
     private SommeilService sommeilService;
 
-    // ─── Init ────────────────────────────────────────────────────────────────────
+    @FXML
+    public void initialize() {
+        if (sommeilService != null) {
+            chargerStats();
+        }
+    }
 
     public void setSommeilService(SommeilService service) {
         this.sommeilService = service;
-        chargerStats();
+        Platform.runLater(this::chargerStats);
     }
 
     @FXML
     private void actualiser() {
         chargerStats();
     }
-
-    // ─── Chargement principal ─────────────────────────────────────────────────────
 
     private void chargerStats() {
         try {
@@ -69,8 +65,6 @@ public class SommeilStatsController {
         }
     }
 
-    // ─── KPIs ─────────────────────────────────────────────────────────────────────
-
     private void chargerKpis() throws SQLException {
         int    total      = sommeilService.compterTotal();
         double dureeMoy   = sommeilService.calculerDureeMoyenne();
@@ -83,7 +77,6 @@ public class SommeilStatsController {
         kpiScore.setText(String.format("%.0f /100", scoreMoy));
         kpiEfficacite.setText(String.format("%.0f %%", efficacite));
 
-        // Dette : couleur rouge si sévère
         String libelleDette = sommeilService.libelleDette(dette);
         kpiDette.setText(libelleDette);
         kpiDette.getStyleClass().remove("dette-critique");
@@ -92,14 +85,11 @@ public class SommeilStatsController {
             kpiDette.getStyleClass().add("dette-critique");
         }
 
-        // Score : couleur selon niveau
         kpiScore.getStyleClass().removeAll("score-excellent", "score-moyen", "score-faible");
         if      (scoreMoy >= 70) kpiScore.getStyleClass().add("score-excellent");
         else if (scoreMoy >= 45) kpiScore.getStyleClass().add("score-moyen");
         else                     kpiScore.getStyleClass().add("score-faible");
     }
-
-    // ─── Bien-être & Résilience ───────────────────────────────────────────────────
 
     private void chargerBienEtre() throws SQLException {
         int    scoreBE    = sommeilService.calculerScoreBienEtre();
@@ -107,18 +97,15 @@ public class SommeilStatsController {
         double pctOpt     = sommeilService.calculerPourcentageDureeOptimale();
 
         setBar(barBienEtre,   lblBienEtre,   scoreBE / 100.0,
-                String.format("%d/100 — %s", scoreBE,
-                        sommeilService.libelleScore(scoreBE)));
+                String.format("%d/100 — %s", scoreBE, sommeilService.libelleScore(scoreBE)));
 
         setBar(barResilience, lblResilience, resilience,
                 String.format("%.0f%% — %s", resilience * 100,
                         sommeilService.libelleResilience(resilience)));
 
-        setBar(barOptimale,   lblOptimale,   pctOpt / 100.0,
+        setBar(barOptimale, lblOptimale, pctOpt / 100.0,
                 String.format("%.0f%%", pctOpt));
     }
-
-    // ─── Répartition qualité ──────────────────────────────────────────────────────
 
     private void chargerRepartitionQualite() throws SQLException {
         qualiteContainer.getChildren().clear();
@@ -129,12 +116,9 @@ public class SommeilStatsController {
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
                 .forEach(e -> {
                     double pct = total > 0 ? (e.getValue() * 100.0 / total) : 0;
-                    qualiteContainer.getChildren().add(
-                            ligneStats(e.getKey(), e.getValue(), pct));
+                    qualiteContainer.getChildren().add(ligneStats(e.getKey(), e.getValue(), pct));
                 });
     }
-
-    // ─── Répartition humeur ───────────────────────────────────────────────────────
 
     private void chargerRepartitionHumeur() throws SQLException {
         humeurContainer.getChildren().clear();
@@ -143,8 +127,6 @@ public class SommeilStatsController {
                 .forEach(e -> humeurContainer.getChildren().add(
                         lignePuces(e.getKey(), e.getValue() + " fois")));
     }
-
-    // ─── Tendances (30 derniers jours) ────────────────────────────────────────────
 
     private void chargerTendances() throws SQLException {
         tendancesContainer.getChildren().clear();
@@ -160,20 +142,15 @@ public class SommeilStatsController {
             tendancesContainer.getChildren().add(l);
         });
 
-        // Régularité
         double regularite = sommeilService.calculerRegulariteHoraires();
-        Label lblReg = new Label("▸ Régularité : "
-                + sommeilService.libelleRegularite(regularite));
+        Label lblReg = new Label("▸ Régularité : " + sommeilService.libelleRegularite(regularite));
         lblReg.getStyleClass().add("tendance-label");
         tendancesContainer.getChildren().add(lblReg);
 
-        // Profil chronobiologique
         Label lblProfil = new Label("▸ " + sommeilService.determinerProfilChronobiologique());
         lblProfil.getStyleClass().add("tendance-label");
         tendancesContainer.getChildren().add(lblProfil);
     }
-
-    // ─── Insights (chips colorés dans FlowPane) ───────────────────────────────────
 
     private void chargerInsights() throws SQLException {
         insightsContainer.getChildren().clear();
@@ -183,15 +160,12 @@ public class SommeilStatsController {
             String emoji     = "💡";
             String chipStyle = "insight-chip-neutral";
 
-            if (lower.contains("anxiété")   || lower.contains("dette")
-                    || lower.contains("préoccupant")|| lower.contains("sévère")
-                    || lower.contains("critique")  || lower.contains("insuffisant")) {
+            if (lower.contains("dette") || lower.contains("sévère")
+                    || lower.contains("critique") || lower.contains("insuffisant")) {
                 emoji     = "⚠️";
                 chipStyle = "insight-chip-strong";
-
-            } else if (lower.contains("excellent") || lower.contains("optimal")
-                    || lower.contains("bien-être")  || lower.contains("équilibré")
-                    || lower.contains("bon")        || lower.contains("régulier")) {
+            } else if (lower.contains("excellent") || lower.contains("bon")
+                    || lower.contains("régulier")  || lower.contains("optimal")) {
                 emoji     = "✅";
                 chipStyle = "insight-chip-good";
             }
@@ -200,30 +174,21 @@ public class SommeilStatsController {
             chip.getStyleClass().addAll("insight-chip", chipStyle);
             chip.setWrapText(true);
             chip.setMaxWidth(320);
-
             insightsContainer.getChildren().add(chip);
         });
 
-        // Message si aucun insight
         if (insightsContainer.getChildren().isEmpty()) {
-            Label empty = new Label("💡  Enregistrez plus de nuits pour obtenir des insights personnalisés.");
+            Label empty = new Label("💡  Enregistrez plus de nuits pour obtenir des insights.");
             empty.getStyleClass().addAll("insight-chip", "insight-chip-neutral");
             empty.setWrapText(true);
             insightsContainer.getChildren().add(empty);
         }
     }
 
-    // ─── Utilitaires UI ──────────────────────────────────────────────────────────
-
-    /**
-     * Ligne avec label + barre de progression colorée + valeur (répartition qualité)
-     */
     private HBox ligneStats(String label, long count, double pct) {
-        // Badge qualité coloré
         Label lbl = new Label(label);
         lbl.setPrefWidth(95);
         lbl.setWrapText(false);
-        // Appliquer la couleur selon la qualité
         String badgeStyle = switch (label.toLowerCase()) {
             case "excellente" -> "qualite-excellente";
             case "bonne"      -> "qualite-bonne";
@@ -233,16 +198,12 @@ public class SommeilStatsController {
         };
         lbl.getStyleClass().addAll("type-label", badgeStyle);
 
-        // Barre de progression
         ProgressBar bar = new ProgressBar(pct / 100.0);
         bar.setPrefWidth(120);
         bar.setPrefHeight(8);
-        String barStyle = pct >= 60 ? "intensite-haute"
-                : pct >= 30 ? "intensite-moyenne"
-                : "intensite-basse";
-        bar.getStyleClass().add(barStyle);
+        bar.getStyleClass().add(pct >= 60 ? "intensite-haute"
+                : pct >= 30 ? "intensite-moyenne" : "intensite-basse");
 
-        // Valeur
         Label val = new Label(count + "  (" + String.format("%.0f%%", pct) + ")");
         val.getStyleClass().add("repartition-value");
 
@@ -251,32 +212,25 @@ public class SommeilStatsController {
         return row;
     }
 
-    /**
-     * Ligne avec puce pour la répartition humeur
-     */
     private Label lignePuces(String label, String valeur) {
         String emoji = switch (label.toLowerCase()) {
-            case "reposé"    -> "😊";
-            case "fatigué"   -> "😴";
-            case "anxieux"   -> "😰";
-            case "neutre"    -> "😐";
-            case "heureux"   -> "😁";
-            case "stressé"   -> "😟";
-            default          -> "•";
+            case "reposé"  -> "😊";
+            case "fatigué" -> "😴";
+            case "anxieux" -> "😰";
+            case "neutre"  -> "😐";
+            case "heureux" -> "😁";
+            case "stressé" -> "😟";
+            default        -> "•";
         };
         Label l = new Label(emoji + "  " + label + "   " + valeur);
         l.getStyleClass().add("tendance-label");
         return l;
     }
 
-    /**
-     * Met à jour une barre de progression avec son label et sa classe de couleur
-     */
     private void setBar(ProgressBar bar, Label lbl, double progress, String texte) {
         bar.setProgress(Math.max(0, Math.min(1, progress)));
         lbl.setText(texte);
         lbl.getStyleClass().add("stat-bar-label");
-
         bar.getStyleClass().removeAll("intensite-basse", "intensite-moyenne", "intensite-haute");
         bar.getStyleClass().add(
                 progress >= 0.70 ? "intensite-haute"

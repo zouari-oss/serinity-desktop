@@ -12,11 +12,8 @@ import java.util.List;
 
 public class SommeilDaoJdbc implements SommeilDao {
 
-    private final Connection connection;
-
-    // Récupération de la connexion via le singleton MyDataBase
-    public SommeilDaoJdbc() {
-        this.connection = MyDataBase.getInstance().getConnection();
+    private Connection getConn() {
+        return MyDataBase.getInstance().getConnection();
     }
 
     @Override
@@ -25,7 +22,7 @@ public class SommeilDaoJdbc implements SommeilDao {
                 "commentaire, duree_sommeil, interruptions, humeur_reveil, environnement, " +
                 "temperature, bruit_niveau) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement stmt = getConn().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setDate(1, Date.valueOf(sommeil.getDateNuit()));
             stmt.setTime(2, Time.valueOf(sommeil.getHeureCoucher()));
             stmt.setTime(3, Time.valueOf(sommeil.getHeureReveil()));
@@ -37,13 +34,9 @@ public class SommeilDaoJdbc implements SommeilDao {
             stmt.setString(9, sommeil.getEnvironnement());
             stmt.setDouble(10, sommeil.getTemperature());
             stmt.setString(11, sommeil.getNiveauBruit());
-
             stmt.executeUpdate();
-
             try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    sommeil.setId(rs.getInt(1));
-                }
+                if (rs.next()) sommeil.setId(rs.getInt(1));
             }
         }
     }
@@ -52,12 +45,12 @@ public class SommeilDaoJdbc implements SommeilDao {
     public List<Sommeil> listerTous() throws SQLException {
         List<Sommeil> sommeils = new ArrayList<>();
         String sql = "SELECT * FROM sommeil ORDER BY date_nuit DESC";
-
-        try (Statement stmt = connection.createStatement();
+        try (Statement stmt = getConn().createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
             while (rs.next()) {
-                sommeils.add(mapResultSetToSommeil(rs));
+                Sommeil sommeil = mapResultSetToSommeil(rs);
+                sommeil.setNbReves(compterRevesDB(sommeil.getId()));
+                sommeils.add(sommeil);
             }
         }
         return sommeils;
@@ -66,15 +59,12 @@ public class SommeilDaoJdbc implements SommeilDao {
     @Override
     public Sommeil trouverParId(int id) throws SQLException {
         String sql = "SELECT * FROM sommeil WHERE id = ?";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement stmt = getConn().prepareStatement(sql)) {
             stmt.setInt(1, id);
-
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Sommeil sommeil = mapResultSetToSommeil(rs);
-                    // Charger les rêves associés (relation OneToMany)
-                    ReveDao reveDao = new ReveDaoJdbc();  // lui aussi utilise MyDataBase
+                    ReveDao reveDao = new ReveDaoJdbc();
                     sommeil.setReves(reveDao.trouverParSommeilId(id));
                     return sommeil;
                 }
@@ -88,8 +78,7 @@ public class SommeilDaoJdbc implements SommeilDao {
         String sql = "UPDATE sommeil SET date_nuit=?, heure_coucher=?, heure_reveil=?, " +
                 "qualite=?, commentaire=?, duree_sommeil=?, interruptions=?, " +
                 "humeur_reveil=?, environnement=?, temperature=?, bruit_niveau=? WHERE id=?";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement stmt = getConn().prepareStatement(sql)) {
             stmt.setDate(1, Date.valueOf(sommeil.getDateNuit()));
             stmt.setTime(2, Time.valueOf(sommeil.getHeureCoucher()));
             stmt.setTime(3, Time.valueOf(sommeil.getHeureReveil()));
@@ -102,7 +91,6 @@ public class SommeilDaoJdbc implements SommeilDao {
             stmt.setDouble(10, sommeil.getTemperature());
             stmt.setString(11, sommeil.getNiveauBruit());
             stmt.setInt(12, sommeil.getId());
-
             stmt.executeUpdate();
         }
     }
@@ -110,8 +98,7 @@ public class SommeilDaoJdbc implements SommeilDao {
     @Override
     public void supprimer(int id) throws SQLException {
         String sql = "DELETE FROM sommeil WHERE id = ?";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement stmt = getConn().prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
         }
@@ -122,17 +109,17 @@ public class SommeilDaoJdbc implements SommeilDao {
         List<Sommeil> sommeils = new ArrayList<>();
         String sql = "SELECT * FROM sommeil WHERE qualite LIKE ? OR commentaire LIKE ? " +
                 "OR humeur_reveil LIKE ? OR environnement LIKE ? ORDER BY date_nuit DESC";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement stmt = getConn().prepareStatement(sql)) {
             String pattern = "%" + critere + "%";
             stmt.setString(1, pattern);
             stmt.setString(2, pattern);
             stmt.setString(3, pattern);
             stmt.setString(4, pattern);
-
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    sommeils.add(mapResultSetToSommeil(rs));
+                    Sommeil sommeil = mapResultSetToSommeil(rs);
+                    sommeil.setNbReves(compterRevesDB(sommeil.getId()));
+                    sommeils.add(sommeil);
                 }
             }
         }
@@ -143,13 +130,13 @@ public class SommeilDaoJdbc implements SommeilDao {
     public List<Sommeil> filtrerParQualite(String qualite) throws SQLException {
         List<Sommeil> sommeils = new ArrayList<>();
         String sql = "SELECT * FROM sommeil WHERE qualite = ? ORDER BY date_nuit DESC";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement stmt = getConn().prepareStatement(sql)) {
             stmt.setString(1, qualite);
-
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    sommeils.add(mapResultSetToSommeil(rs));
+                    Sommeil sommeil = mapResultSetToSommeil(rs);
+                    sommeil.setNbReves(compterRevesDB(sommeil.getId()));
+                    sommeils.add(sommeil);
                 }
             }
         }
@@ -160,14 +147,14 @@ public class SommeilDaoJdbc implements SommeilDao {
     public List<Sommeil> filtrerParPeriode(LocalDate debut, LocalDate fin) throws SQLException {
         List<Sommeil> sommeils = new ArrayList<>();
         String sql = "SELECT * FROM sommeil WHERE date_nuit BETWEEN ? AND ? ORDER BY date_nuit DESC";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement stmt = getConn().prepareStatement(sql)) {
             stmt.setDate(1, Date.valueOf(debut));
             stmt.setDate(2, Date.valueOf(fin));
-
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    sommeils.add(mapResultSetToSommeil(rs));
+                    Sommeil sommeil = mapResultSetToSommeil(rs);
+                    sommeil.setNbReves(compterRevesDB(sommeil.getId()));
+                    sommeils.add(sommeil);
                 }
             }
         }
@@ -177,12 +164,9 @@ public class SommeilDaoJdbc implements SommeilDao {
     @Override
     public double calculerDureeMoyenne() throws SQLException {
         String sql = "SELECT AVG(duree_sommeil) as moyenne FROM sommeil";
-
-        try (Statement stmt = connection.createStatement();
+        try (Statement stmt = getConn().createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-            if (rs.next()) {
-                return rs.getDouble("moyenne");
-            }
+            if (rs.next()) return rs.getDouble("moyenne");
         }
         return 0;
     }
@@ -192,8 +176,7 @@ public class SommeilDaoJdbc implements SommeilDao {
         List<Object[]> stats = new ArrayList<>();
         String sql = "SELECT qualite, COUNT(*) as nombre, AVG(duree_sommeil) as duree_moy " +
                 "FROM sommeil GROUP BY qualite";
-
-        try (Statement stmt = connection.createStatement();
+        try (Statement stmt = getConn().createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 stats.add(new Object[]{
@@ -204,6 +187,18 @@ public class SommeilDaoJdbc implements SommeilDao {
             }
         }
         return stats;
+    }
+
+    private int compterRevesDB(int sommeilId) {
+        String sql = "SELECT COUNT(*) FROM reves WHERE sommeil_id = ?";
+        try (PreparedStatement ps = getConn().prepareStatement(sql)) {
+            ps.setInt(1, sommeilId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     private Sommeil mapResultSetToSommeil(ResultSet rs) throws SQLException {
@@ -225,6 +220,6 @@ public class SommeilDaoJdbc implements SommeilDao {
 
     @Override
     public Connection getConnection() {
-        return this.connection;
+        return getConn();
     }
 }

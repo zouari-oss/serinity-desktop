@@ -26,7 +26,6 @@ public class SommeilCardController {
     public void setData(Sommeil sommeil, SommeilController parent) {
         this.sommeil = sommeil;
         this.parentController = parent;
-
         afficherDonnees();
         configurerActions();
     }
@@ -35,34 +34,31 @@ public class SommeilCardController {
         dateLabel.setText(
                 sommeil.getDateNuit().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         );
-        dateLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
 
         qualiteLabel.setText(sommeil.getQualite());
-        qualiteLabel.setStyle("-fx-font-size: 13px; -fx-padding: 4 10; -fx-background-radius: 5; " +
-                getQualiteColor(sommeil.getQualite()));
+        qualiteLabel.getStyleClass().removeAll(
+                "qualite-excellente", "qualite-bonne", "qualite-moyenne", "qualite-mauvaise"
+        );
+        qualiteLabel.getStyleClass().add(getQualiteStyleClass(sommeil.getQualite()));
 
         heuresLabel.setText(String.format("Heures: %s -> %s",
                 sommeil.getHeureCoucher(), sommeil.getHeureReveil()));
-        heuresLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
 
         dureeLabel.setText(String.format("Duree: %.2f heures",
                 sommeil.getDureeSommeil()));
-        dureeLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
 
         interruptionsLabel.setText(String.format("Interruptions: %d",
                 sommeil.getInterruptions()));
-        interruptionsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
 
         humeurLabel.setText("Humeur: " +
                 (sommeil.getHumeurReveil() != null ? sommeil.getHumeurReveil() : "Non specifie"));
-        humeurLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #333;");
 
-        revesLabel.setText(String.format("%d reve(s)", sommeil.getNombreReves()));
-        revesLabel.setStyle("-fx-font-size: 12px; -fx-font-style: italic; -fx-text-fill: #666;");
+        revesLabel.setText(String.format("%d reve(s)", sommeil.getNbReves()));
 
         int score = sommeil.calculerScoreQualite();
         scoreLabel.setText("Score: " + score + "/100");
-        scoreLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; " + getScoreColor(score));
+        scoreLabel.getStyleClass().removeAll("score-excellent", "score-moyen", "score-faible");
+        scoreLabel.getStyleClass().add(getScoreStyleClass(score));
     }
 
     private void configurerActions() {
@@ -71,28 +67,19 @@ public class SommeilCardController {
         btnSupprimer.setOnAction(e -> parentController.supprimerSommeilPublic(sommeil));
     }
 
-    private String getQualiteColor(String qualite) {
+    private String getQualiteStyleClass(String qualite) {
         switch (qualite.toLowerCase()) {
-            case "excellente":
-                return "-fx-background-color: #4CAF50; -fx-text-fill: white;";
-            case "bonne":
-                return "-fx-background-color: #8BC34A; -fx-text-fill: white;";
-            case "moyenne":
-                return "-fx-background-color: #FF9800; -fx-text-fill: white;";
-            case "mauvaise":
-                return "-fx-background-color: #f44336; -fx-text-fill: white;";
-            default:
-                return "-fx-background-color: #9E9E9E; -fx-text-fill: white;";
+            case "excellente": return "qualite-excellente";
+            case "bonne":      return "qualite-bonne";
+            case "moyenne":    return "qualite-moyenne";
+            case "mauvaise":   return "qualite-mauvaise";
+            default:           return "qualite-moyenne";
         }
     }
 
-    private String getScoreColor(int score) {
-        if (score >= 80) {
-            return "-fx-text-fill: #4CAF50;";
-        } else if (score >= 60) {
-            return "-fx-text-fill: #FF9800;";
-        } else {
-            return "-fx-text-fill: #f44336;";
-        }
+    private String getScoreStyleClass(int score) {
+        if      (score >= 80) return "score-excellent";
+        else if (score >= 60) return "score-moyen";
+        else                  return "score-faible";
     }
 }

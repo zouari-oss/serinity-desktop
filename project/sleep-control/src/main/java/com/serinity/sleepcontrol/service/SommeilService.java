@@ -81,32 +81,17 @@ public class SommeilService {
      *   - Many-to-Many : table de jointure sommeil_reve
      */
     public int compterRevesParSommeil(int sommeilId) {
-        String sqlOneToMany = "SELECT COUNT(*) FROM reve WHERE sommeil_id = ?";
-        try (Connection conn = sommeilDao.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sqlOneToMany)) {
+        String sql = "SELECT COUNT(*) FROM reves WHERE sommeil_id = ?";
+        try (PreparedStatement ps = sommeilDao.getConnection().prepareStatement(sql)) {
             ps.setInt(1, sommeilId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        String sqlManyToMany = """
-        SELECT COUNT(*) FROM reve r
-        JOIN sommeil_reve sr ON r.id = sr.reve_id
-        WHERE sr.sommeil_id = ?
-        """;
-        try (Connection conn = sommeilDao.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sqlManyToMany)) {
-            ps.setInt(1, sommeilId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
         return 0;
     }
+
 
     /**
      * Charge le nombre de rêves dans chaque Sommeil de la liste.
