@@ -310,12 +310,12 @@ public class SommeilController {
             totalNuitsLabel.setText("Total: " + total + " nuits");
             dureeMoyLabel.setText(String.format("Durée moyenne: %.2f h", dureeMoyenne));
 
-            double scorePour10 = scoreMoyen / 10.0;
+            double scorePour10 = scoreMoyen / 100.0;
             if (scorePour10 < 0) scorePour10 = 0;
             if (scorePour10 > 1) scorePour10 = 1;
 
             scoreMoyBar.setProgress(scorePour10);
-            scoreMoyLabel.setText(String.format("Score moyen: %.1f/10", scoreMoyen));
+            scoreMoyLabel.setText(String.format("Score moyen: %.1f/100", scoreMoyen));
 
             scoreMoyBar.getStyleClass().removeAll("score-low", "score-mid", "score-high");
             if (scoreMoyen >= 7) {

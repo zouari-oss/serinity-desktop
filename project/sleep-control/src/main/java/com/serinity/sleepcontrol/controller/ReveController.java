@@ -2,6 +2,7 @@ package com.serinity.sleepcontrol.controller;
 
 import com.serinity.sleepcontrol.model.Reve;
 import com.serinity.sleepcontrol.service.ReveService;
+import com.serinity.sleepcontrol.service.SommeilService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,41 +21,50 @@ import java.util.Optional;
 
 public class ReveController {
 
-    @FXML private VBox mainContainer;
-    @FXML private TextField searchField;
+    // ─── FXML ────────────────────────────────────────────────────────────────────
+
+    @FXML private VBox             mainContainer;
+    @FXML private TextField        searchField;
     @FXML private ComboBox<String> filterType;
     @FXML private ComboBox<String> sortComboBox;
-    @FXML private CheckBox filterRecurrent;
-    @FXML private Button btnAjouter;
-    @FXML private Button btnRefresh;
-    @FXML private FlowPane cardsContainer;
+    @FXML private CheckBox         filterRecurrent;
+    @FXML private Button           btnAjouter;
+    @FXML private Button           btnRefresh;
+    @FXML private FlowPane         cardsContainer;
 
-    // nouveaux champs stats
-    @FXML private Label totalRevesLabel;
-    @FXML private Label intensiteMoyLabel;
-    @FXML private Label anxieteMoyLabel;
-    @FXML private ProgressBar anxieteMoyBar;
+    @FXML private Label            totalRevesLabel;
+    @FXML private Label            intensiteMoyLabel;
+    @FXML private Label            anxieteMoyLabel;
+    @FXML private ProgressBar      anxieteMoyBar;
 
-    private ReveService reveService;
-    private List<Reve> currentReves;
+    // ─── Services ────────────────────────────────────────────────────────────────
+
+    private ReveService    reveService;
+    private SommeilService sommeilService;  // ✅ nécessaire pour le formulaire
+    private List<Reve>     currentReves;
+
+    // ─── Initialisation ──────────────────────────────────────────────────────────
 
     @FXML
     public void initialize() {
         try {
-            reveService = new ReveService();
+            reveService    = new ReveService();
+            sommeilService = new SommeilService();  // ✅ instancié ici une seule fois
+
             initializeFilters();
             loadAllReves();
             setupListeners();
-            updateStats();
+
         } catch (Exception e) {
-            showError("Erreur de connexion", "Impossible de se connecter à la base de données");
+            showError("Erreur de connexion",
+                    "Impossible de se connecter à la base de données");
             e.printStackTrace();
         }
     }
 
     private void initializeFilters() {
         filterType.setItems(FXCollections.observableArrayList(
-                "Tous", "Normal", "Cauchemar", "Lucide", "Recurrent"
+                "Tous", "Normal", "Cauchemar", "Lucide", "Récurrent"
         ));
         filterType.setValue("Tous");
 
@@ -68,13 +78,16 @@ public class ReveController {
     }
 
     private void setupListeners() {
-        searchField.textProperty().addListener((obs, oldVal, newVal) -> rechercherReves(newVal));
-        filterType.setOnAction(e -> appliquerFiltres());
+        searchField.textProperty().addListener(
+                (obs, oldVal, newVal) -> rechercherReves(newVal));
+        filterType.setOnAction(e      -> appliquerFiltres());
         filterRecurrent.setOnAction(e -> appliquerFiltres());
-        sortComboBox.setOnAction(e -> appliquerTri());
-        btnAjouter.setOnAction(e -> ajouterReve());
-        btnRefresh.setOnAction(e -> rafraichir());
+        sortComboBox.setOnAction(e    -> appliquerTri());
+        btnAjouter.setOnAction(e      -> ajouterReve());
+        btnRefresh.setOnAction(e      -> rafraichir());
     }
+
+    // ─── Chargement ──────────────────────────────────────────────────────────────
 
     @FXML
     public void loadAllReves() {
@@ -87,6 +100,8 @@ public class ReveController {
             e.printStackTrace();
         }
     }
+
+    // ─── Affichage des cartes ─────────────────────────────────────────────────────
 
     private void afficherCards() {
         cardsContainer.getChildren().clear();
@@ -104,17 +119,73 @@ public class ReveController {
                         getClass().getResource("/view/fxml/reve-card.fxml")
                 );
                 VBox card = loader.load();
-
                 ReveCardController cardController = loader.getController();
                 cardController.setData(reve, this);
-
                 cardsContainer.getChildren().add(card);
             } catch (IOException e) {
-                System.err.println("Erreur lors du chargement de la carte: " + e.getMessage());
+                System.err.println("Erreur carte : " + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
+
+    // ─── Statistiques ─────────────────────────────────────────────────────────────
+
+    private void updateStats() {
+        try {
+            int    total          = currentReves != null ? currentReves.size() : 0;
+            double intensiteMoy   = reveService.calculerIntensiteMoyenne();
+            double anxieteMoy     = reveService.calculerAnxieteMoyenne();
+
+            totalRevesLabel.setText("Total: " + total + " rêves");
+            intensiteMoyLabel.setText(
+                    String.format("Intensité moyenne: %.1f/10", intensiteMoy));
+            anxieteMoyLabel.setText(
+                    String.format("Anxiété moyenne: %.1f/10", anxieteMoy));
+            anxieteMoyBar.setProgress(anxieteMoy / 10.0);
+
+            anxieteMoyBar.getStyleClass()
+                    .removeAll("anxiete-low", "anxiete-mid", "anxiete-high");
+            if      (anxieteMoy >= 7) anxieteMoyBar.getStyleClass().add("anxiete-high");
+            else if (anxieteMoy >= 4) anxieteMoyBar.getStyleClass().add("anxiete-mid");
+            else                      anxieteMoyBar.getStyleClass().add("anxiete-low");
+
+        } catch (SQLException e) {
+            totalRevesLabel.setText("Erreur statistiques");
+            intensiteMoyLabel.setText("");
+            anxieteMoyLabel.setText("");
+            anxieteMoyBar.setProgress(0);
+        }
+    }
+
+    // ─── Statistiques dédiées ─────────────────────────────────────────────────────
+
+    @FXML
+    private void ouvrirStatistiques() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/fxml/reve-stats.fxml")
+            );
+            Parent root = loader.load();
+
+            ReveStatsController statsCtrl = loader.getController();
+            statsCtrl.setReveService(reveService);
+
+            Stage stage = new Stage();
+            stage.setTitle("Statistiques des Rêves");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root, 700, 620));
+            stage.setMinWidth(600);
+            stage.setMinHeight(500);
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            showError("Erreur", "Impossible d'ouvrir les statistiques.");
+            e.printStackTrace();
+        }
+    }
+
+    // ─── Recherche & filtres ──────────────────────────────────────────────────────
 
     private void rechercherReves(String critere) {
         try {
@@ -134,7 +205,7 @@ public class ReveController {
     @FXML
     private void appliquerFiltres() {
         try {
-            String type = filterType.getValue();
+            String  type          = filterType.getValue();
             boolean recurrentOnly = filterRecurrent.isSelected();
 
             if ("Tous".equals(type) && !recurrentOnly) {
@@ -142,19 +213,13 @@ public class ReveController {
                 return;
             }
 
-            List<Reve> filtres = reveService.listerTous();
+            List<Reve> filtres = "Tous".equals(type)
+                    ? reveService.listerTous()
+                    : reveService.filtrerParType(type);
 
-            if (!"Tous".equals(type)) {
-                filtres = reveService.filtrerParType(type);
-            }
-
-            if (recurrentOnly) {
-                currentReves = filtres.stream()
-                        .filter(Reve::isRecurrent)
-                        .toList();
-            } else {
-                currentReves = filtres;
-            }
+            currentReves = recurrentOnly
+                    ? filtres.stream().filter(Reve::isRecurrent).toList()
+                    : filtres;
 
             afficherCards();
             updateStats();
@@ -168,36 +233,19 @@ public class ReveController {
     @FXML
     private void appliquerTri() {
         try {
-            String triOption = sortComboBox.getValue();
-
-            switch (triOption) {
-                case "Plus recent":
-                    currentReves = reveService.listerTous();
-                    break;
-                case "Plus ancien":
+            switch (sortComboBox.getValue()) {
+                case "Plus recent"         -> currentReves = reveService.listerTous();
+                case "Plus ancien"         -> {
                     currentReves = reveService.listerTous();
                     java.util.Collections.reverse(currentReves);
-                    break;
-                case "Intensite (elevee)":
-                    currentReves = reveService.trierParIntensite(false);
-                    break;
-                case "Intensite (faible)":
-                    currentReves = reveService.trierParIntensite(true);
-                    break;
-                case "Titre (A-Z)":
-                    currentReves = reveService.trierParTitre(true);
-                    break;
-                case "Titre (Z-A)":
-                    currentReves = reveService.trierParTitre(false);
-                    break;
-                case "Anxiete (elevee)":
-                    currentReves = reveService.trierParAnxiete(false);
-                    break;
-                case "Anxiete (faible)":
-                    currentReves = reveService.trierParAnxiete(true);
-                    break;
+                }
+                case "Intensite (elevee)"  -> currentReves = reveService.trierParIntensite(false);
+                case "Intensite (faible)"  -> currentReves = reveService.trierParIntensite(true);
+                case "Titre (A-Z)"         -> currentReves = reveService.trierParTitre(true);
+                case "Titre (Z-A)"         -> currentReves = reveService.trierParTitre(false);
+                case "Anxiete (elevee)"    -> currentReves = reveService.trierParAnxiete(false);
+                case "Anxiete (faible)"    -> currentReves = reveService.trierParAnxiete(true);
             }
-
             afficherCards();
             updateStats();
         } catch (SQLException e) {
@@ -206,64 +254,52 @@ public class ReveController {
         }
     }
 
-    public void voirDetailsPublic(Reve reve) {
-        voirDetails(reve);
-    }
+    // ─── Délégation depuis les cards ─────────────────────────────────────────────
 
-    public void modifierRevePublic(Reve reve) {
-        modifierReve(reve);
-    }
+    public void voirDetailsPublic(Reve reve)   { voirDetails(reve); }
+    public void modifierRevePublic(Reve reve)  { modifierReve(reve); }
+    public void supprimerRevePublic(Reve reve) { supprimerReve(reve); }
 
-    public void supprimerRevePublic(Reve reve) {
-        supprimerReve(reve);
-    }
+    // ─── Détails ─────────────────────────────────────────────────────────────────
 
     private void voirDetails(Reve reve) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Détails du Rêve");
-        alert.setHeaderText(reve.getTitre());
-
         String analyse = reveService.analyserReve(reve);
         String details = String.format(
-                "%s\n\n" +
-                        "Description:\n%s\n\n" +
-                        "Type: %s\n" +
-                        "Humeur: %s\n" +
-                        "Intensité: %d/10\n" +
-                        "Anxiété: %d/10\n" +
-                        "En couleur: %s\n" +
-                        "Récurrent: %s\n\n" +
-                        "Émotions: %s\n" +
-                        "Symboles: %s",
+                "%s\n\nDescription:\n%s\n\n"
+                        + "Type: %s\nHumeur: %s\n"
+                        + "Intensité: %d/10\nAnxiété: %d/10\n"
+                        + "En couleur: %s\nRécurrent: %s\n\n"
+                        + "Émotions: %s\nSymboles: %s",
                 analyse,
                 reve.getDescription(),
                 reve.getTypeReve(),
                 reve.getHumeur(),
                 reve.getIntensite(),
                 reve.calculerNiveauAnxiete(),
-                reve.isCouleur() ? "Oui" : "Non",
+                reve.isCouleur()   ? "Oui" : "Non",
                 reve.isRecurrent() ? "Oui" : "Non",
                 reve.getEmotions() != null ? reve.getEmotions() : "Aucune",
                 reve.getSymboles() != null ? reve.getSymboles() : "Aucun"
         );
 
-        TextArea textArea = new TextArea(details);
-        textArea.setWrapText(true);
-        textArea.setEditable(false);
-        textArea.setPrefRowCount(15);
+        TextArea ta = new TextArea(details);
+        ta.setWrapText(true);
+        ta.setEditable(false);
+        ta.setPrefRowCount(15);
 
-        alert.getDialogPane().setContent(textArea);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Détails du Rêve");
+        alert.setHeaderText(reve.getTitre());
+        alert.getDialogPane().setContent(ta);
         alert.showAndWait();
     }
 
-    @FXML
-    private void ajouterReve() {
-        ouvrirFormulaire(null);
-    }
+    // ─── Formulaire ajout / modification ─────────────────────────────────────────
 
-    private void modifierReve(Reve reve) {
-        ouvrirFormulaire(reve);
-    }
+    @FXML
+    private void ajouterReve() { ouvrirFormulaire(null); }
+
+    private void modifierReve(Reve reve) { ouvrirFormulaire(reve); }
 
     private void ouvrirFormulaire(Reve reve) {
         try {
@@ -273,23 +309,22 @@ public class ReveController {
             Parent root = loader.load();
 
             ReveFormController controller = loader.getController();
-            controller.setReveService(reveService);
+
+            // ✅ Ordre OBLIGATOIRE — ne pas changer
+            controller.setReveService(reveService);        // 1
+            controller.setSommeilService(sommeilService);  // 2 → peuple la ComboBox nuits
+            controller.setParentController(this);          // 3
 
             if (reve != null) {
-                controller.setReve(reve);
-            }
-
-            controller.setParentController(this);
+                controller.setReve(reve);                  // 4 → pré-sélectionne la nuit
+            }                                              //    toujours après setSommeilService()
 
             Stage stage = new Stage();
             stage.setTitle(reve == null ? "Ajouter un Rêve" : "Modifier le Rêve");
             stage.initModality(Modality.APPLICATION_MODAL);
-
-            Scene scene = new Scene(root, 600, 650);
-            stage.setScene(scene);
+            stage.setScene(new Scene(root, 600, 650));
             stage.setMinWidth(550);
             stage.setMinHeight(450);
-
             stage.showAndWait();
 
         } catch (IOException e) {
@@ -297,6 +332,8 @@ public class ReveController {
             e.printStackTrace();
         }
     }
+
+    // ─── Suppression ─────────────────────────────────────────────────────────────
 
     private void supprimerReve(Reve reve) {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
@@ -317,36 +354,7 @@ public class ReveController {
         }
     }
 
-    // ---- nouvelles stats graphiques ----
-    private void updateStats() {
-        try {
-            double intensiteMoyenne = reveService.calculerIntensiteMoyenne();
-            double anxieteMoyenne = reveService.calculerAnxieteMoyenne();
-            int total = currentReves != null ? currentReves.size() : 0;
-
-            totalRevesLabel.setText("Total: " + total + " rêves");
-            intensiteMoyLabel.setText(String.format("Intensité moyenne: %.1f/10", intensiteMoyenne));
-
-            anxieteMoyBar.setProgress(anxieteMoyenne / 10.0);
-            anxieteMoyLabel.setText(String.format("Anxiété moyenne: %.1f/10", anxieteMoyenne));
-
-            anxieteMoyBar.getStyleClass().removeAll("anxiete-low", "anxiete-mid", "anxiete-high");
-            if (anxieteMoyenne >= 7) {
-                anxieteMoyBar.getStyleClass().add("anxiete-high");
-            } else if (anxieteMoyenne >= 4) {
-                anxieteMoyBar.getStyleClass().add("anxiete-mid");
-            } else {
-                anxieteMoyBar.getStyleClass().add("anxiete-low");
-            }
-
-        } catch (SQLException e) {
-            totalRevesLabel.setText("Erreur statistiques");
-            intensiteMoyLabel.setText("");
-            anxieteMoyLabel.setText("");
-            anxieteMoyBar.setProgress(0);
-            anxieteMoyBar.getStyleClass().removeAll("anxiete-low", "anxiete-mid", "anxiete-high");
-        }
-    }
+    // ─── Rafraîchir ──────────────────────────────────────────────────────────────
 
     @FXML
     private void rafraichir() {
@@ -356,6 +364,8 @@ public class ReveController {
         sortComboBox.setValue("Plus recent");
         loadAllReves();
     }
+
+    // ─── Alertes ─────────────────────────────────────────────────────────────────
 
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

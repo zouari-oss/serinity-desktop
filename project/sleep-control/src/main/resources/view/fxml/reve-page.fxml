@@ -13,91 +13,87 @@
       style="-fx-background-color: #f5f7fa;">
 
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20" />
+        <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
     <!-- En-tête -->
     <HBox alignment="CENTER_LEFT" spacing="15.0">
-        <Label text="Gestion des Rêves" styleClass="page-header" />
-        <Region HBox.hgrow="ALWAYS" />
+        <Label text="Gestion des Rêves" styleClass="page-header"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnStats"
+                text="📊 Statistiques"
+                styleClass="btn-secondary"
+                onAction="#ouvrirStatistiques"/>
         <Button fx:id="btnAjouter"
                 text="+ Ajouter un Rêve"
                 styleClass="btn-primary"
-                onAction="#ajouterReve" />
+                onAction="#ajouterReve"/>
         <Button fx:id="btnRefresh"
                 text="⟳ Rafraîchir"
                 styleClass="btn-secondary"
-                onAction="#rafraichir" />
+                onAction="#rafraichir"/>
     </HBox>
 
     <!-- Filtres -->
     <VBox spacing="12.0" styleClass="filter-container">
         <padding>
-            <Insets top="15" right="15" bottom="15" left="15" />
+            <Insets top="15" right="15" bottom="15" left="15"/>
         </padding>
 
         <HBox alignment="CENTER_LEFT" spacing="10.0">
-            <Label text="Recherche:" styleClass="form-label" />
+            <Label text="Recherche:" styleClass="form-label"/>
             <TextField fx:id="searchField"
                        promptText="Rechercher par titre, description, émotions..."
                        prefWidth="400.0"
                        styleClass="form-control"
-                       HBox.hgrow="ALWAYS" />
+                       HBox.hgrow="ALWAYS"/>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="15.0">
             <VBox spacing="5.0">
-                <Label text="Type:" styleClass="form-label" />
-                <ComboBox fx:id="filterType" prefWidth="150.0" />
+                <Label text="Type:" styleClass="form-label"/>
+                <ComboBox fx:id="filterType" prefWidth="150.0"/>
             </VBox>
-
             <VBox spacing="5.0">
-                <Label text="Trier par:" styleClass="form-label" />
-                <ComboBox fx:id="sortComboBox" prefWidth="180.0" />
+                <Label text="Trier par:" styleClass="form-label"/>
+                <ComboBox fx:id="sortComboBox" prefWidth="180.0"/>
             </VBox>
-
             <VBox spacing="5.0">
-                <Label text=" " />
-                <CheckBox fx:id="filterRecurrent" text="Rêves récurrents uniquement" />
+                <Label text=" "/>
+                <CheckBox fx:id="filterRecurrent"
+                          text="Rêves récurrents uniquement"/>
             </VBox>
         </HBox>
     </VBox>
 
-    <!-- Zone statistiques dynamique -->
+    <!-- Stats résumé (simple, 3 labels) -->
     <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="stats-container">
         <padding>
-            <Insets top="10" right="15" bottom="10" left="15" />
+            <Insets top="10" right="15" bottom="10" left="15"/>
         </padding>
-
-        <!-- Total rêves -->
         <Label fx:id="totalRevesLabel"
                text="Total: 0 rêves"
-               styleClass="stat-badge-primary" />
-
-        <!-- Intensité moyenne -->
+               styleClass="stat-badge-primary"/>
         <Label fx:id="intensiteMoyLabel"
                text="Intensité moyenne: --/10"
-               styleClass="stat-badge-info" />
-
-        <!-- Anxiété moyenne avec barre -->
+               styleClass="stat-badge-info"/>
         <HBox alignment="CENTER_LEFT" spacing="8.0">
-            <ProgressBar fx:id="anxieteMoyBar" prefWidth="140.0" />
+            <ProgressBar fx:id="anxieteMoyBar" prefWidth="140.0"/>
             <Label fx:id="anxieteMoyLabel"
                    text="Anxiété moyenne: --/10"
-                   styleClass="stats-label" />
+                   styleClass="stats-label"/>
         </HBox>
     </HBox>
 
-    <!-- Liste des cartes -->
+    <!-- Cartes -->
     <ScrollPane fitToWidth="true"
                 VBox.vgrow="ALWAYS"
                 styleClass="cards-scroll-pane">
         <FlowPane fx:id="cardsContainer"
-                  hgap="15.0"
-                  vgap="15.0"
+                  hgap="15.0" vgap="15.0"
                   styleClass="cards-flow-pane">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10" />
+                <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
         </FlowPane>
     </ScrollPane>

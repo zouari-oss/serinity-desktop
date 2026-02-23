@@ -14,7 +14,7 @@
 
     <!-- Chargement du CSS ici, une seule fois -->
     <stylesheets>
-        <String fx:value="/css/reve-form.css"/>
+        <String fx:value="/view/styles/reve-form.css"/>
     </stylesheets>
 
     <VBox fx:id="mainContainer" spacing="20.0">

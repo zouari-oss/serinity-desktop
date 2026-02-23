@@ -764,3 +764,94 @@
 .score-high { -fx-accent: #4CAF50; }   /* bon sommeil */
 
 
+/* ══════════════════════════════════════════════════════════════
+   REVE PAGE — extensions
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Stat badges ─────────────────────────────────────────────── */
+.stat-badge-primary,
+.stat-badge-info,
+.stat-badge-danger,
+.stat-badge-success,
+.stat-badge-warning {
+    -fx-background-radius: 10;
+    -fx-padding: 8 14 8 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 1);
+}
+.stat-badge-primary { -fx-background-color: #8e44ad; }
+.stat-badge-info    { -fx-background-color: #2980b9; }
+.stat-badge-danger  { -fx-background-color: #c0392b; }
+.stat-badge-success { -fx-background-color: #27ae60; }
+.stat-badge-warning { -fx-background-color: #d68910; }
+
+.stat-badge-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(255,255,255,0.85);
+}
+.stat-badge-value {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+.stat-badge-value-small {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-wrap-text: true;
+}
+
+/* ── Barre anxiété ───────────────────────────────────────────── */
+.anxiete-bar { -fx-pref-height: 5; }
+.anxiete-bar .track {
+    -fx-background-color: rgba(255,255,255,0.3);
+    -fx-background-radius: 3;
+}
+.anxiete-bar.anxiete-low  .bar { -fx-background-color: #2ecc71; }
+.anxiete-bar.anxiete-mid  .bar { -fx-background-color: #f39c12; }
+.anxiete-bar.anxiete-high .bar { -fx-background-color: #e74c3c; }
+
+/* ── Bouton outline ──────────────────────────────────────────── */
+.btn-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: #8e44ad;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-text-fill: #8e44ad;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+.btn-outline:hover { -fx-background-color: #f4ecfc; }
+
+/* ── Combo filtre ────────────────────────────────────────────── */
+.filter-combo {
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #d5d8dc;
+    -fx-border-width: 1.5;
+}
+.filter-check { -fx-font-size: 13px; -fx-text-fill: #34495e; }
+
+/* ── Panel insights ──────────────────────────────────────────── */
+.insights-pane {
+    -fx-background-color: #faf5ff;
+    -fx-border-color: #d7bde2;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+.insights-pane > .title {
+    -fx-background-color: #f4ecfc;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6c3483;
+    -fx-background-radius: 8;
+}
+.insights-box { -fx-background-color: transparent; }
+.insight-item {
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 5 10;
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 1);
+}
