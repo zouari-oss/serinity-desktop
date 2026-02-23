@@ -12,13 +12,10 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane prefHeight="800.0" prefWidth="1200.0" styleClass="app-bg"
-  xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="com.serinity.accesscontrol.controller.UserHomeController">
+<BorderPane prefHeight="800.0" prefWidth="1200.0" styleClass="app-bg" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.accesscontrol.controller.UserHomeController">
 
   <top>
-    <HBox alignment="CENTER_LEFT" prefHeight="64.0" spacing="14.0" styleClass="topbar"
-      BorderPane.alignment="CENTER_LEFT">
+    <HBox alignment="CENTER_LEFT" prefHeight="64.0" spacing="14.0" styleClass="topbar" BorderPane.alignment="CENTER_LEFT">
 
       <padding>
         <Insets bottom="10" left="16" right="16" top="10" />
@@ -29,7 +26,7 @@
         <children>
           <ImageView fx:id="logoImg" fitHeight="55.0" fitWidth="52.0" preserveRatio="true">
             <image>
-              <Image url="@../assets/logo2.png" />
+              <Image url="@../assets/root/serinity-logo-without-bg-and-app-name.png" />
             </image>
           </ImageView>
           <Label styleClass="brand-title" text="%app.brand" />
@@ -38,18 +35,12 @@
 
       <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="nav">
         <children>
-          <Button fx:id="navBarDashboardButton" onAction="#onNavBarDashboardButtonAction"
-            styleClass="nav-btn" text="%nav.dashboard" />
-          <Button fx:id="navBarSleepButton" onAction="#onNavBarSleepButtonAction"
-            styleClass="nav-btn" text="%nav.sleep" />
-          <Button fx:id="navBarMoodButton" onAction="#onNavBarMoodButtonAction" styleClass="nav-btn"
-            text="%nav.mood" />
-          <Button fx:id="navBarSupportButton" onAction="#onNavBarSupportButtonAction"
-            styleClass="nav-btn" text="%nav.support" />
-          <Button fx:id="navBarExercisesButton" onAction="#onNavBarExercisesButtonAction"
-            styleClass="nav-btn" text="%nav.exercises" />
-          <Button fx:id="navBarAppointmentsButton" onAction="#onNavBarAppointmentsButtonAction"
-            styleClass="nav-btn" text="%nav.appointments" />
+          <Button fx:id="navBarDashboardButton" onAction="#onNavBarDashboardButtonAction" styleClass="nav-btn" text="%nav.dashboard" />
+          <Button fx:id="navBarSleepButton" onAction="#onNavBarSleepButtonAction" styleClass="nav-btn" text="%nav.sleep" />
+          <Button fx:id="navBarMoodButton" onAction="#onNavBarMoodButtonAction" styleClass="nav-btn" text="%nav.mood" />
+          <Button fx:id="navBarSupportButton" onAction="#onNavBarSupportButtonAction" styleClass="nav-btn" text="%nav.support" />
+          <Button fx:id="navBarExercisesButton" onAction="#onNavBarExercisesButtonAction" styleClass="nav-btn" text="%nav.exercises" />
+          <Button fx:id="navBarAppointmentsButton" onAction="#onNavBarAppointmentsButtonAction" styleClass="nav-btn" text="%nav.appointments" />
         </children>
       </HBox>
 
@@ -57,10 +48,8 @@
 
       <HBox alignment="CENTER_RIGHT" spacing="10.0">
         <children>
-          <Label fx:id="navBarUsernameLabel" prefHeight="18.0" prefWidth="172.0"
-            styleClass="user-name" />
-          <ImageView fx:id="navBarUserProfileImageView" fitHeight="40.0" fitWidth="40.0"
-            preserveRatio="true" styleClass="avatar">
+          <Label fx:id="navBarUsernameLabel" prefHeight="18.0" prefWidth="172.0" styleClass="user-name" />
+          <ImageView fx:id="navBarUserProfileImageView" fitHeight="40.0" fitWidth="40.0" preserveRatio="true" styleClass="avatar">
             <image>
               <Image url="@../assets/user-dashboard/user-default-profile.png" />
             </image>

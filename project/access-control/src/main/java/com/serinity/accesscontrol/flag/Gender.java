@@ -1,6 +1,9 @@
 // `Gender` package name
 package com.serinity.accesscontrol.flag;
 
+// `serinity` import(s)
+import com.serinity.accesscontrol.util.I18nUtil;
+
 /**
  * Represents the user gender
  *
@@ -20,6 +23,21 @@ package com.serinity.accesscontrol.flag;
  *      </a>
  */
 public enum Gender { // God made Adam and Eve, not Adam and Steve :)
-  MALE,
-  FEMALE
+  MALE("user.gender.male"),
+  FEMALE("user.gender.female");
+
+  private final String key;
+
+  private Gender(final String key) {
+    this.key = key;
+  }
+
+  public String getKey() {
+    return key;
+  }
+
+  @Override
+  public String toString() {
+    return I18nUtil.getValue(key);
+  }
 } // Gender enum

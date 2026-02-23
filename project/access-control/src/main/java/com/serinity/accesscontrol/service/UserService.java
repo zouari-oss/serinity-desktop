@@ -153,14 +153,18 @@ public final class UserService {
    */
   public static ServiceResult<User> signIn(final String usernameOrEmail, final String password) {
     final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
-    final AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
-    final UserRepository userRepository = new UserRepository(em);
 
-    if (!RegexValidator.isValidEmail(usernameOrEmail)) {
-      return ServiceResult.failure("Invalid email format");
+    User user = null;
+
+    if (!RegexValidator.isValidEmail(usernameOrEmail)) { // Will considered as username
+      final ProfileRepository profileRepository = new ProfileRepository(em);
+      Profile profile = profileRepository.findByUsername(usernameOrEmail);
+      user = profile.getUser();
+    } else { // It's an email
+      final UserRepository userRepository = new UserRepository(em);
+      user = userRepository.findUserByEmail(usernameOrEmail);
     }
 
-    final User user = userRepository.findUserByEmail(usernameOrEmail);
     if (user == null) {
       return ServiceResult.failure("User not found");
     }
@@ -169,6 +173,7 @@ public final class UserService {
       return ServiceResult.failure("Incorrect password");
     }
 
+    final AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
     final Optional<AuthSession> activeSession = authSessionRepository.findActiveSession(user);
     activeSession.ifPresent(authSessionRepository::delete);
 

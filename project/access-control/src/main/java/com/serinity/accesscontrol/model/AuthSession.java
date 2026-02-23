@@ -137,7 +137,6 @@ public final class AuthSession extends IdentifiableEntity {
   // #############################
   @PrePersist
   private void onCreate() {
-    System.out.println(expiresAt);
     if (this.expiresAt == null) {
       this.expiresAt = Instant.now().plus(Duration.ofDays(
           getUser().getRole().equals(UserRole.ADMIN)

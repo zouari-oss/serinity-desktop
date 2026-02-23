@@ -2,13 +2,23 @@
 package com.serinity.accesscontrol.controller;
 
 // `java` import(s)
+import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+// `zouarioss` import(s)
+import org.zouarioss.skinnedratorm.core.EntityManager;
+
 // `serinity` import(s)
+import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
+import com.serinity.accesscontrol.flag.Gender;
 import com.serinity.accesscontrol.flag.MessageStatus;
+import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
+import com.serinity.accesscontrol.repository.ProfileRepository;
+import com.serinity.accesscontrol.service.FreeImageHostClient;
 
 // `javafx` import(s)
 import javafx.application.Platform;
@@ -16,9 +26,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 
 /**
  * `user-dashboard.fxml` controller class
@@ -60,7 +73,7 @@ public final class UserDashboardController implements StatusMessageProvider {
   private TextField firstNameTextField; // Value injected by FXMLLoader
 
   @FXML // fx:id="genderComboBox"
-  private ComboBox<?> genderComboBox; // Value injected by FXMLLoader
+  private ComboBox<Gender> genderComboBox; // Value injected by FXMLLoader
 
   @FXML // fx:id="lastNameTextField"
   private TextField lastNameTextField; // Value injected by FXMLLoader
@@ -80,9 +93,14 @@ public final class UserDashboardController implements StatusMessageProvider {
   @FXML // fx:id="usernameTextField"
   private TextField usernameTextField; // Value injected by FXMLLoader
 
+  @FXML // fx:id="welcomeLabel"
+  private Label welcomeLabel; // Value injected by FXMLLoader
+
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
   private User user;
+
+  private Profile userProfile;
 
   // #############################
   // ### GETTER(S) & SETTER(S) ###
@@ -107,23 +125,94 @@ public final class UserDashboardController implements StatusMessageProvider {
     }
   }
 
+  // ##########################
+  // ### HELPER FUNCTION(S) ###
+  // ##########################
+
+  private String handleProfileImageUpload() {
+
+    final Image image = profileImageView.getImage();
+    if (image == null || image.getUrl() == null) {
+      return null;
+    }
+
+    final String imageUrl = image.getUrl();
+
+    try {
+      // Case 1: Local file, so upload required
+      if (imageUrl.startsWith("file:")) {
+        final File file = new File(new URI(imageUrl));
+        final String uploadedUrl = FreeImageHostClient.uploadImage(file);
+        if (uploadedUrl != null && !uploadedUrl.isBlank()) {
+          profileImageView.setImage(new Image(uploadedUrl));
+          return uploadedUrl;
+        }
+      }
+
+      // Case 2: Already uploaded (http/https)
+      if (imageUrl.startsWith("http")) {
+        return imageUrl;
+      }
+
+    } catch (final Exception e) {
+      e.printStackTrace();
+      showStatusMessage("Image upload failed.", MessageStatus.ERROR);
+    }
+
+    return null;
+  }
+
   // ##############################
   // ### SLOT HANDLER FUNCTIONS ###
   // ##############################
 
   @FXML
   void onBrowseImage(final ActionEvent event) {
+    final FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select a Profile Image");
+    fileChooser.getExtensionFilters().addAll(
+        new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
 
+    final File file = fileChooser.showOpenDialog(null);
+    if (file != null) {
+      profileImageView.setImage(new Image(file.toURI().toString()));
+    }
   }
 
   @FXML
   void onCancelButtonAction(final ActionEvent event) {
-
+    initUserInfoLater();
+    showStatusMessage("User information has been reset successfully!", MessageStatus.INFO);
   }
 
   @FXML
   void onSaveButtonAction(final ActionEvent event) {
+    final String userProfileUsername = usernameTextField.getText();
+    if (userProfileUsername.isBlank()) {
+      showStatusMessage("User information has been reset successfully!", MessageStatus.WARNING);
+      return;
+    }
 
+    userProfile.setFirstName(firstNameTextField.getText());
+    userProfile.setLastName(lastNameTextField.getText());
+    userProfile.setUsername(userProfileUsername);
+    userProfile.setPhone(phoneTextField.getText());
+    userProfile.setGender(genderComboBox.getValue());
+    userProfile.setCountry(countryTextField.getText());
+    userProfile.setState(stateTextField.getText());
+    userProfile.setAboutMe(aboutMeTextArea.getText());
+
+    final String finalImageUrl = handleProfileImageUpload();
+    if (finalImageUrl != null) {
+      userProfile.setProfileImageUrl(finalImageUrl);
+    }
+
+    // Persist
+    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    final ProfileRepository profileRepository = new ProfileRepository(em);
+    profileRepository.update(userProfile);
+
+    showStatusMessage("Profile updated successfully.", MessageStatus.SUCCESS);
   }
 
   // ##################################
@@ -155,15 +244,51 @@ public final class UserDashboardController implements StatusMessageProvider {
         : "fx:id=\"stateTextField\" was not injected: check your FXML file 'user-dashboard.fxml'.";
     assert usernameTextField != null
         : "fx:id=\"usernameTextField\" was not injected: check your FXML file 'user-dashboard.fxml'.";
+    assert welcomeLabel != null
+        : "fx:id=\"welcomeLabel\" was not injected: check your FXML file 'user-dashboard.fxml'.";
 
     // Custom initialization
     setStatusProvider(statusProvider);
+    initGenderComboBox();
 
     Platform.runLater(() -> { // NOTE: After controller initialized
-      // TODO: Init user data (profile) & setup the edit profile side
-      usernameTextField.setText(user.getEmail());
+      initUserInfoLater();
+      welcomeLabel.setText(welcomeLabel.getText() + userProfile.getUsername());
     });
 
     _LOGGER.info("User Dashboard Interface initialized successfully!");
   }
+
+  /*
+   * Init user data (profile) & setup the edit profile side
+   */
+  private void initUserInfoLater() {
+    // Retrive user data
+    if (userProfile == null) {
+      final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+      final ProfileRepository profileRepository = new ProfileRepository(em);
+      userProfile = profileRepository.findByUserId(user.getId());
+    }
+
+    // Set user info
+    firstNameTextField.setText(userProfile.getFirstName());
+    lastNameTextField.setText(userProfile.getLastName());
+    usernameTextField.setText(userProfile.getUsername());
+    phoneTextField.setText(userProfile.getPhone());
+    genderComboBox.setValue(userProfile.getGender());
+    countryTextField.setText(userProfile.getCountry());
+    stateTextField.setText(userProfile.getState());
+    aboutMeTextArea.setText(userProfile.getAboutMe());
+    profileImageView.setImage(
+        userProfile.getProfileImageUrl() == null || userProfile.getProfileImageUrl().isEmpty()
+            ? new Image("/assets/user-dashboard/user-default-profile.png")
+            : new Image(userProfile.getProfileImageUrl(), true));
+  }
+
+  private void initGenderComboBox() {
+    genderComboBox.getItems().addAll(
+        Gender.MALE,
+        Gender.FEMALE);
+  }
+
 } // UserDashboardController final class

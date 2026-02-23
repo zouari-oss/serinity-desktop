@@ -145,10 +145,12 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
   private void injectUserIntoDashboard(final Object controller, final User user) {
     if (controller instanceof final AdminDashboardController admin) {
       admin.setUser(user);
+      admin.setStatusProvider(this);
     }
 
-    if (controller instanceof final UserHomeController dash) {
-      dash.setUser(user);
+    if (controller instanceof final UserHomeController home) {
+      home.setUser(user);
+      home.setStatusProvider(this);
     }
   }
 

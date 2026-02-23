@@ -12,10 +12,23 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.accesscontrol.controller.UserDashboardController">
+<AnchorPane prefHeight="650.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/25"
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="com.serinity.accesscontrol.controller.UserDashboardController">
+  <VBox layoutX="14.0" layoutY="14.0">
+    <children>
+
+      <!-- Welcome -->
+      <Label fx:id="welcomeLabel" styleClass="welcome-label" text="%dashboard.welcome" />
+
+      <!-- Subtitle -->
+      <Label fx:id="welcomeSubtitleLabel" styleClass="welcome-subtitle" text="%dashboard.subtitle" />
+    </children>
+  </VBox>
 
   <!-- Right Side Edit Panel -->
-  <VBox prefWidth="400.0" spacing="15.0" styleClass="edit-profile-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+  <VBox prefWidth="400.0" spacing="15.0" styleClass="edit-profile-panel"
+    AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
     <!-- Title -->
     <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Edit Profile" />
@@ -26,7 +39,8 @@
     <VBox alignment="CENTER" spacing="8.0">
       <ImageView fx:id="profileImageView" fitHeight="120" fitWidth="120" preserveRatio="false" />
 
-      <Button fx:id="browseImageButton" onAction="#onBrowseImage" styleClass="btn-secondary" text="Browse Image" />
+      <Button fx:id="browseImageButton" onAction="#onBrowseImage" styleClass="btn-secondary"
+        text="Browse Image" />
     </VBox>
 
     <Separator />
@@ -46,15 +60,16 @@
 
     <!-- Buttons -->
     <HBox alignment="CENTER_RIGHT" spacing="10">
-      <Button fx:id="cancelButton" styleClass="btn-secondary" text="Cancel" />
+      <Button fx:id="cancelButton" onAction="#onCancelButtonAction" styleClass="btn-secondary"
+        text="Cancel" />
 
-      <Button fx:id="saveButton" styleClass="btn-primary" text="Save" />
+      <Button fx:id="saveButton" onAction="#onSaveButtonAction" styleClass="btn-primary" text="Save" />
     </HBox>
 
   </VBox>
-   <stylesheets>
-      <URL value="@../styles/styles.css" />
-      <URL value="@../styles/user-dashboard.css" />
-   </stylesheets>
+  <stylesheets>
+    <URL value="@../styles/styles.css" />
+    <URL value="@../styles/user-dashboard.css" />
+  </stylesheets>
 
 </AnchorPane>

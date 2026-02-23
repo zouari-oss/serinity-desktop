@@ -101,4 +101,13 @@ public class EnvironmentVariableLoader {
   public final static boolean isSmptTls() {
     return dotenv.get("SMTP_USE_TLS").equals("true");
   }
+
+  public final static String getImageRequestUrl() {
+    return dotenv.get("IMAGE_REQUEST_URL");
+  }
+
+  public final static String getImageApiKey() {
+    return dotenv.get("IMAGE_API_KEY");
+  }
+
 } // EnvironmentVariableLoader class

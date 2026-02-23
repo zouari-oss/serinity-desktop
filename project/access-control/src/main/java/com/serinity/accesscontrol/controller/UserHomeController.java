@@ -98,6 +98,11 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
   }
 
   @Override
+  public void setStatusProvider(final StatusMessageProvider provider) {
+    this.statusProvider = provider;
+  }
+
+  @Override
   public void showStatusMessage(final String message, final MessageStatus status) {
     if (statusProvider != null) {
       statusProvider.showStatusMessage(message, status);
@@ -176,7 +181,12 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
 
       // By default open user dashboard
       push(ResourceFile.USER_DAHBOARD_FXML.getFileName(),
-          controller -> ((UserDashboardController) controller).setUser(user));
+          controller -> {
+            if (controller instanceof final UserDashboardController dash) {
+              dash.setUser(user);
+              dash.setStatusProvider(this);
+            }
+          });
     });
 
     setStackHost(contentHostStackPane);
