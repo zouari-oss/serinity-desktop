@@ -1,0 +1,791 @@
+/* =========================================================
+   GLOBAL THEME
+========================================================= */
+
+.root{
+    -fx-font-family: "Segoe UI", "Inter", Arial;
+    -fx-background-color: #f4f7fb;
+}
+
+/* spacing helper */
+.content{
+    -fx-background-color: transparent;
+}
+
+/* =========================================================
+   TYPOGRAPHY
+========================================================= */
+
+.page-title{
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e2a38;
+}
+
+.subtitle{
+    -fx-text-fill: #6c7a89;
+    -fx-font-size: 13px;
+}
+
+.section-title{
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e2a38;
+}
+
+.label{
+    -fx-text-fill: #6c7a89;
+}
+
+/* =========================================================
+   HEADER CARD
+========================================================= */
+
+.header-card{
+    -fx-background-color: white;
+    -fx-padding: 18 22;
+    -fx-background-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 18,0,0,6);
+}
+
+/* =========================================================
+   SEARCH BAR
+========================================================= */
+
+.search-field{
+    -fx-background-color: #f1f4f9;
+    -fx-border-color: transparent;
+    -fx-background-radius: 12;
+    -fx-padding: 10 14;
+    -fx-font-size: 13px;
+}
+
+.search-field:focused{
+    -fx-background-color: white;
+    -fx-border-color: #0d6efd;
+    -fx-border-radius: 12;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primary-btn{
+    -fx-background-color: #0d6efd;
+    -fx-text-fill: white;
+    -fx-background-radius: 12;
+    -fx-font-weight: bold;
+    -fx-padding: 8 14;
+}
+
+.primary-btn:hover{
+    -fx-background-color: #0b5ed7;
+}
+
+.big-btn{
+    -fx-font-size: 14px;
+    -fx-padding: 12 18;
+}
+.content {
+    -fx-background-color: linear-gradient(to bottom, #f5f9ff, #eef3fb);
+}
+
+.text-area {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #d6e0f5;
+    -fx-border-width: 1.2;
+    -fx-font-size: 14px;
+}
+
+.primary-btn {
+    -fx-background-color: #2a7de1;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-padding: 10 20 10 20;
+}
+
+.primary-btn:hover {
+    -fx-background-color: #1f5fb0;
+}
+
+.label {
+    -fx-text-fill: #2c3e50;
+}
+
+#urgencyLabel {
+    -fx-font-size: 18px;
+    -fx-text-fill: #d9534f;
+    -fx-font-weight: bold;
+}
+.card-textarea {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 12;
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e50;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+}
+.secondary-btn{
+    -fx-background-color: #eef2f7;
+    -fx-text-fill: #2c3e50;
+    -fx-background-radius: 12;
+    -fx-padding: 8 14;
+}
+
+.secondary-btn:hover{
+    -fx-background-color: #dde4ec;
+}
+
+.danger-btn{
+    -fx-background-color: #ffe5e5;
+    -fx-text-fill: #c0392b;
+    -fx-background-radius: 12;
+}
+
+.danger-btn:hover{
+    -fx-background-color: #ffcccc;
+}
+
+/* =========================================================
+   GENERIC CARD
+========================================================= */
+
+.card{
+    -fx-background-color: white;
+    -fx-padding: 18;
+    -fx-background-radius: 16;
+    -fx-border-color: #edf1f7;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 14,0,0,6);
+}
+
+/* =========================================================
+   DOCTOR LIST CARDS
+========================================================= */
+
+.doctor-card{
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #edf1f7;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 15,0,0,6);
+}
+
+.doctor-card:hover{
+    -fx-effect: dropshadow(gaussian, rgba(13,110,253,0.22), 22,0,0,8);
+}
+
+.doctor-name{
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e2a38;
+}
+
+.doctor-speciality{
+    -fx-text-fill: #0d6efd;
+    -fx-font-weight: bold;
+}
+
+.doctor-phone{
+    -fx-text-fill: #6c7a89;
+}
+
+.doctor-address{
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 12px;
+}
+
+/* =========================================================
+   DOCTOR PROFILE PAGE
+========================================================= */
+
+.doctor-profile-card{
+    -fx-background-color: white;
+    -fx-padding: 22;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 18,0,0,6);
+}
+
+.doctor-avatar{
+    -fx-fill: linear-gradient(to bottom,#0d6efd,#0b5ed7);
+}
+
+.doctor-avatar-icon{
+    -fx-font-size: 28px;
+    -fx-text-fill: white;
+}
+
+.doctor-profile-name{
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.doctor-badge{
+    -fx-background-color: #e7f1ff;
+    -fx-text-fill: #0d6efd;
+    -fx-padding: 5 12;
+    -fx-background-radius: 12;
+    -fx-font-weight: bold;
+}
+
+.doctor-verified{
+    -fx-text-fill: #28a745;
+    -fx-font-size: 12px;
+}
+
+/* contact info */
+.doctor-contact-card{
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 14,0,0,4);
+}
+
+.icon{
+    -fx-font-size: 14px;
+}
+
+.contact-text{
+    -fx-text-fill: #2c3e50;
+}
+
+/* =========================================================
+   RDV FORM
+========================================================= */
+
+.rdv-card{
+    -fx-background-color: white;
+    -fx-padding: 26;
+    -fx-background-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20,0,0,6);
+}
+
+.input{
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #dce3ec;
+    -fx-padding: 10 12;
+}
+
+.input:focused{
+    -fx-border-color: #0d6efd;
+}
+
+/* =========================================================
+   RDV LIST CARDS
+========================================================= */
+
+.rdv-item{
+    -fx-background-color: white;
+    -fx-padding: 18;
+    -fx-background-radius: 16;
+    -fx-border-color: #edf1f7;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 14,0,0,6);
+}
+
+.rdv-item:hover{
+    -fx-effect: dropshadow(gaussian, rgba(13,110,253,0.25), 18,0,0,8);
+}
+
+.rdv-doctor{
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.rdv-date{
+    -fx-text-fill: #0d6efd;
+    -fx-font-weight: bold;
+}
+
+.rdv-motif{
+    -fx-text-fill: #34495e;
+}
+
+.rdv-status{
+    -fx-background-color: #fff3cd;
+    -fx-text-fill: #856404;
+    -fx-padding: 4 10;
+    -fx-background-radius: 10;
+}
+
+/* =========================================================
+   NAV BUTTONS
+========================================================= */
+
+.nav-rdv-btn{
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-background-color: #e7f1ff;
+    -fx-text-fill: #0d6efd;
+}
+
+.nav-rdv-btn:hover{
+    -fx-background-color: #d0e4ff;
+}
+
+.nav-doctor-btn{
+    -fx-font-weight: bold;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-title{
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.empty-subtitle{
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 13px;
+}
+.primary-btn{
+    -fx-background-color: #0d6efd;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.primary-btn:hover{
+    -fx-background-color: #0b5ed7;
+}
+
+.big-btn{
+    -fx-font-size: 15px;
+    -fx-padding: 12 22;
+}
+.secondary-btn{
+    -fx-background-color: #eef2f7;
+    -fx-text-fill: #2c3e50;
+    -fx-background-radius: 12;
+    -fx-padding: 8 14;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.secondary-btn:hover{
+    -fx-background-color: #dde4ec;
+}
+
+/* navigation button */
+.nav-doctor-btn{
+    -fx-border-color: #dce3ec;
+    -fx-border-radius: 12;
+}
+.toolbar{
+    -fx-background-color: white;
+    -fx-padding: 14 18;
+    -fx-background-radius: 16;
+    -fx-border-color: #edf1f7;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10,0,0,4);
+}
+
+.brand-title{
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: linear-gradient(to right,#0d6efd,#20c997);
+}
+/* bouton secondaire de base */
+.secondary-btn{
+    -fx-background-color: #eef2f7;
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-padding: 8 14;
+    -fx-cursor: hand;
+}
+
+.secondary-btn:hover{
+    -fx-background-color: #dde4ec;
+}
+
+/* bouton navigation MES RDV (plus médical/bleuté) */
+.nav-rdv-btn{
+    -fx-background-color: #e7f1ff;
+    -fx-text-fill: #0d6efd;
+    -fx-border-color: #cfe2ff;
+    -fx-border-radius: 12;
+}
+.content{
+    -fx-max-width: 1200;
+    -fx-alignment: TOP_CENTER;
+}
+
+.nav-rdv-btn:hover{
+    -fx-background-color: #d0e4ff;
+}
+/* ================= DOCTOR CARD ================= */
+
+.doctor-card{
+    -fx-background-color: white;
+    -fx-padding:18;
+    -fx-background-radius:14;
+    -fx-border-radius:14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 18,0,0,4);
+    -fx-transition: all 0.2s;
+}
+
+.doctor-card:hover{
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 28,0,0,8);
+    -fx-translate-y:-3;
+}
+
+/* HEADER */
+
+.doctor-card-header{
+    -fx-alignment:center-left;
+}
+
+.doctor-card-patient{
+    -fx-font-size:17px;
+    -fx-font-weight:bold;
+    -fx-text-fill:#1f2d3d;
+}
+
+/* STATUS BADGE */
+
+.doctor-card-status{
+    -fx-padding:4 12 4 12;
+    -fx-background-radius:20;
+    -fx-font-size:12px;
+    -fx-font-weight:bold;
+}
+
+/* COLORS */
+
+.status-wait{
+    -fx-background-color:#fff3cd;
+    -fx-text-fill:#856404;
+}
+
+.status-ok{
+    -fx-background-color:#d4edda;
+    -fx-text-fill:#155724;
+}
+
+.status-refused{
+    -fx-background-color:#f8d7da;
+    -fx-text-fill:#721c24;
+}
+
+.status-modified{
+    -fx-background-color:#d1ecf1;
+    -fx-text-fill:#0c5460;
+}
+
+/* BODY */
+
+.doctor-card-body{
+    -fx-padding:8 0 8 0;
+}
+
+.doctor-card-info{
+    -fx-font-size:13px;
+    -fx-text-fill:#5a6a7a;
+}
+
+.doctor-card-motif{
+    -fx-font-size:14px;
+    -fx-text-fill:#2f3e4e;
+}
+
+/* ACTIONS */
+
+.doctor-card-actions{
+    -fx-alignment:center-right;
+}
+
+/* BUTTONS */
+
+.btn-accept{
+    -fx-background-color:#2ecc71;
+    -fx-text-fill:white;
+    -fx-background-radius:8;
+    -fx-font-weight:bold;
+}
+
+.btn-accept:hover{
+    -fx-background-color:#27ae60;
+}
+
+.btn-refuse{
+    -fx-background-color:#e74c3c;
+    -fx-text-fill:white;
+    -fx-background-radius:8;
+    -fx-font-weight:bold;
+}
+
+.btn-refuse:hover{
+    -fx-background-color:#c0392b;
+}
+
+.btn-consult{
+    -fx-background-color:#3498db;
+    -fx-text-fill:white;
+    -fx-background-radius:8;
+    -fx-font-weight:bold;
+}
+
+.btn-consult:hover{
+    -fx-background-color:#2980b9;
+}
+.root{
+    -fx-font-family: "Segoe UI";
+    -fx-background-color: #f4f6fb;
+}
+
+.page-title{
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.doctor-card{
+    -fx-background-color: white;
+    -fx-padding: 14;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #e3e6ef;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10,0,0,3);
+}
+
+.btn-consult{
+    -fx-background-color: #2d8cff;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+.btn-refuse{
+    -fx-background-color: #ff5c5c;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+.btn-accept{
+    -fx-background-color: #28b463;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+.btn-consult{
+    -fx-background-color: #2ecc71;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+}
+
+.btn-refuse{
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+}
+/* =========================================================
+   PATIENT REPORT PAGE (DOSSIER MEDICAL)
+========================================================= */
+
+/* Header spacing */
+.content{
+    -fx-padding: 20 30 25 30;
+}
+
+/* Patient card improvement */
+.doctor-profile-card{
+    -fx-background-color: white;
+    -fx-padding: 22;
+    -fx-background-radius: 22;
+    -fx-border-radius: 22;
+    -fx-border-color: #e8edf5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20,0,0,8);
+}
+/* bouton dossier médical */
+.pdf-btn{
+    -fx-background-color:#f1f5ff;
+    -fx-text-fill:#0d6efd;
+    -fx-border-color:#cfe2ff;
+    -fx-border-radius:10;
+    -fx-background-radius:10;
+    -fx-font-weight:bold;
+}
+
+.pdf-btn:hover{
+    -fx-background-color:#e2ecff;
+}
+
+/* phone & email alignment */
+.contact-text{
+    -fx-text-fill: #34495e;
+    -fx-font-size: 13px;
+}
+
+/* Section title spacing */
+.section-title{
+    -fx-padding: 12 0 0 6;
+}
+
+/* =========================================================
+   CONSULTATION MEDICAL CARDS
+========================================================= */
+
+.doctor-card{
+    -fx-background-color: white;
+    -fx-padding: 16;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #e7edf6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 16,0,0,6);
+    -fx-pref-width: 320;
+}
+
+/* hover medical feeling */
+.doctor-card:hover{
+    -fx-effect: dropshadow(gaussian, rgba(13,110,253,0.22), 28,0,0,10);
+    -fx-translate-y: -3;
+}
+
+/* consultation date */
+.consult-date{
+    -fx-text-fill: #0d6efd;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+/* titles inside card */
+.consult-title{
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e2a38;
+    -fx-padding: 4 0 2 0;
+}
+
+/* diagnostic block */
+.consult-box{
+    -fx-background-color: #f4f7fb;
+    -fx-padding: 10 12;
+    -fx-background-radius: 12;
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 13px;
+}
+
+/* buttons area */
+.consult-actions{
+    -fx-padding: 6 0 0 0;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-title{
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.empty-subtitle{
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 13px;
+}
+
+/* =========================================================
+   SCROLLPANE FIX (IMPORTANT)
+========================================================= */
+
+/* remove ugly gray background */
+.scroll-pane{
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport{
+    -fx-background-color: transparent;
+}
+
+/* hide borders */
+.scroll-pane > .corner{
+    -fx-background-color: transparent;
+}
+
+/* scrollbar modern */
+.scroll-bar:vertical{
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb{
+    -fx-background-color: #d0d7e2;
+    -fx-background-radius: 10;
+}
+
+.scroll-bar .thumb:hover{
+    -fx-background-color: #b8c2d3;
+}
+/* =========================================================
+   CONSULTATION FORM (MEDICAL REPORT)
+========================================================= */
+
+.consult-input{
+    -fx-background-color: #f7f9fc;
+    -fx-border-color: #dce3ec;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 12;
+    -fx-font-size: 13px;
+}
+
+.consult-input:focused{
+    -fx-background-color: white;
+    -fx-border-color: #0d6efd;
+    -fx-effect: dropshadow(gaussian, rgba(13,110,253,0.18), 12,0,0,0);
+}
+
+/* nicer textarea scroll */
+.text-area .content{
+    -fx-background-color: transparent;
+}
+
+/* medical card spacing */
+.rdv-card{
+    -fx-background-color: white;
+    -fx-padding: 24;
+    -fx-background-radius: 22;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20,0,0,6);
+}
+/* ===== AI BUTTON BASE ===== */
+.ai-button {
+    -fx-background-color: linear-gradient(to right, #3a86ff, #00c2ff);
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 30;
+    -fx-padding: 10 22 10 22;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,194,255,0.45), 10, 0.2, 0, 3);
+    -fx-transition: all 0.25s;
+}
+
+/* HOVER */
+.ai-button:hover {
+    -fx-background-color: linear-gradient(to right, #4ea1ff, #2be7ff);
+    -fx-scale-x: 1.06;
+    -fx-scale-y: 1.06;
+    -fx-effect: dropshadow(gaussian, rgba(0,255,255,0.75), 18, 0.3, 0, 5);
+}
+
+/* PRESSED */
+.ai-button:pressed {
+    -fx-scale-x: 0.96;
+    -fx-scale-y: 0.96;
+    -fx-background-color: linear-gradient(to right, #2979ff, #00b0ff);
+}
+
+/* Glow animation class */
+.ai-glow {
+    -fx-effect: dropshadow(gaussian, rgba(0,255,255,0.9), 25, 0.4, 0, 0);
+}

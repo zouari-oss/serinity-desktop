@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="747e63f3-1f8d-44d5-a296-69bf2d2ea4f4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/Router.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/controllers/doctor/ConsultationFormController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/controllers/doctor/ConsultationListController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/controllers/doctor/DoctorDetailsController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/controllers/doctor/DoctorListController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/controllers/doctor/DoctorRdvController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/controllers/doctor/PatientReportController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/controllers/rdv/RdvFormController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/controllers/rdv/RdvListController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/controllers/rdv/RdvShowController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/models/Consultation.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/models/RapportMedical.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/models/RdvStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/models/RendezVous.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/models/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/models/UserRole.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/services/ConsultationService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/services/DoctorService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/services/EmailService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/services/EmailTemplate.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/services/MedicalReportPdfService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/services/RapportMedicalService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/services/RendezVousService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/services/UserLookupService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/utils/AppSession.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/utils/DateTimeUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/esprit/tn/oussema_javafx/utils/Mydatabase.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/css/app.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/doctor/consultation_form.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/doctor/consultations_list.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/doctor/doctor_details.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/doctor/doctor_list.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/doctor/doctor_rdv_list.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/doctor/patient_report.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/rdv/rdv_form.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/rdv/rdv_list.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/fxml/rdv/rdv_show.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/services/ConsultationServiceTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/services/RapportMedicalServiceTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/services/RendezVousServiceTest.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="3A4zPEey9qD2Et3qpmQsQqQwfT8" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Consultation&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.25557.131" />
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-IU-252.25557.131" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="747e63f3-1f8d-44d5-a296-69bf2d2ea4f4" name="Changes" comment="" />
+      <created>1759857780933</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1759857780933</updated>
+      <workItem from="1759857782193" duration="300000" />
+      <workItem from="1771866611834" duration="34000" />
+      <workItem from="1771866662853" duration="22000" />
+      <workItem from="1771866923777" duration="46000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

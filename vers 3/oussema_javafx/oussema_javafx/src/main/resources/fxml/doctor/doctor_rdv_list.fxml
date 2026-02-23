@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="esprit.tn.oussema_javafx.controllers.doctor.DoctorRdvController"
+      spacing="20"
+      styleClass="content">
+
+    <padding>
+        <Insets top="22" right="26" bottom="22" left="26"/>
+    </padding>
+
+    <!-- ===== HEADER TOOLBAR ===== -->
+    <HBox spacing="14" alignment="CENTER_LEFT" styleClass="toolbar">
+
+        <Label text="🩺 Gestion des Rendez-vous"
+               styleClass="page-title"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button text="🔄 Actualiser"
+                onAction="#refresh"
+                styleClass="secondary-btn"/>
+
+    </HBox>
+
+    <!-- ===== LIST ===== -->
+    <StackPane VBox.vgrow="ALWAYS">
+
+        <ScrollPane fitToWidth="true" styleClass="content">
+            <content>
+                <FlowPane fx:id="cardsPane"
+                          hgap="18"
+                          vgap="18"
+                          prefWrapLength="1050">
+
+                    <padding>
+                        <Insets top="10" right="10" bottom="25" left="10"/>
+                    </padding>
+
+                </FlowPane>
+            </content>
+        </ScrollPane>
+
+        <!-- EMPTY STATE -->
+        <VBox fx:id="emptyBox"
+              alignment="CENTER"
+              spacing="12"
+              visible="false">
+
+            <Label text="📭 Aucun rendez-vous pour le moment"
+                   styleClass="empty-title"/>
+
+            <Label text="Les demandes des patients apparaîtront ici"
+                   styleClass="empty-subtitle"/>
+
+        </VBox>
+
+    </StackPane>
+
+</VBox>
