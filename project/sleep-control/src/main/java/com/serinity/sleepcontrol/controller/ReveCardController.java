@@ -20,6 +20,7 @@ public class ReveCardController {
     @FXML private Button btnVoir;
     @FXML private Button btnModifier;
     @FXML private Button btnSupprimer;
+    @FXML private Button btnAnalyse;
 
     private Reve reve;
     private ReveController parentController;
@@ -85,6 +86,8 @@ public class ReveCardController {
         btnVoir.setOnAction(e -> parentController.voirDetailsPublic(reve));
         btnModifier.setOnAction(e -> parentController.modifierRevePublic(reve));
         btnSupprimer.setOnAction(e -> parentController.supprimerRevePublic(reve));
+        btnAnalyse.setOnAction(e -> parentController.analyserRevePublic(reve));
+
     }
 
     private String getTypeStyleClass(String type) {

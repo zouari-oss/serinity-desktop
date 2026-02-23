@@ -32,6 +32,11 @@
                 text="⟳ Rafraîchir"
                 styleClass="btn-secondary"
                 onAction="#rafraichir"/>
+
+        <Button text="🧠 Analyse IA"
+                styleClass="btn-secondary"
+                onAction="#ouvrirAnalyseIA"/>
+
     </HBox>
 
     <!-- Filtres -->

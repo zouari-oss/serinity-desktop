@@ -733,3 +733,13 @@
     -fx-text-fill: white;
     -fx-wrap-text: true;
 }
+.alerte-aucun    { -fx-background-color: #dcfce7; -fx-text-fill: #166534;
+                   -fx-background-radius: 8; -fx-padding: 4 10; -fx-font-weight: 700; }
+.alerte-faible   { -fx-background-color: #e0f2fe; -fx-text-fill: #0369a1;
+                   -fx-background-radius: 8; -fx-padding: 4 10; -fx-font-weight: 700; }
+.alerte-modere   { -fx-background-color: #fef9c3; -fx-text-fill: #854d0e;
+                   -fx-background-radius: 8; -fx-padding: 4 10; -fx-font-weight: 700; }
+.alerte-eleve    { -fx-background-color: #ffedd5; -fx-text-fill: #c2410c;
+                   -fx-background-radius: 8; -fx-padding: 4 10; -fx-font-weight: 700; }
+.alerte-critique { -fx-background-color: #fee2e2; -fx-text-fill: #b91c1c;
+                   -fx-background-radius: 8; -fx-padding: 4 10; -fx-font-weight: 700; }
