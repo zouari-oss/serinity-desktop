@@ -16,6 +16,7 @@
         <Insets top="20" right="20" bottom="20" left="20" />
     </padding>
 
+    <!-- En-tête -->
     <HBox alignment="CENTER_LEFT" spacing="15.0">
         <Label text="Gestion des Rêves" styleClass="page-header" />
         <Region HBox.hgrow="ALWAYS" />
@@ -29,6 +30,7 @@
                 onAction="#rafraichir" />
     </HBox>
 
+    <!-- Filtres -->
     <VBox spacing="12.0" styleClass="filter-container">
         <padding>
             <Insets top="15" right="15" bottom="15" left="15" />
@@ -61,15 +63,32 @@
         </HBox>
     </VBox>
 
-    <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="stats-container">
+    <!-- Zone statistiques dynamique -->
+    <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="stats-container">
         <padding>
             <Insets top="10" right="15" bottom="10" left="15" />
         </padding>
-        <Label fx:id="statsLabel"
-               styleClass="stats-label"
-               text="Chargement des statistiques..." />
+
+        <!-- Total rêves -->
+        <Label fx:id="totalRevesLabel"
+               text="Total: 0 rêves"
+               styleClass="stat-badge-primary" />
+
+        <!-- Intensité moyenne -->
+        <Label fx:id="intensiteMoyLabel"
+               text="Intensité moyenne: --/10"
+               styleClass="stat-badge-info" />
+
+        <!-- Anxiété moyenne avec barre -->
+        <HBox alignment="CENTER_LEFT" spacing="8.0">
+            <ProgressBar fx:id="anxieteMoyBar" prefWidth="140.0" />
+            <Label fx:id="anxieteMoyLabel"
+                   text="Anxiété moyenne: --/10"
+                   styleClass="stats-label" />
+        </HBox>
     </HBox>
 
+    <!-- Liste des cartes -->
     <ScrollPane fitToWidth="true"
                 VBox.vgrow="ALWAYS"
                 styleClass="cards-scroll-pane">
