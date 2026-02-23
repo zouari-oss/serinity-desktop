@@ -1,8 +1,10 @@
 package com.serinity.exercicecontrol.controller;
 
+import com.serinity.exercicecontrol.dao.RecommendationDAO;
 import com.serinity.exercicecontrol.dao.ScoringDAO;
 import com.serinity.exercicecontrol.model.Exercise;
 import com.serinity.exercicecontrol.service.ExerciseService;
+import com.serinity.exercicecontrol.service.RecommendationService;
 import com.serinity.exercicecontrol.service.ScoringService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -24,20 +26,31 @@ public class ExerciseListController {
     @FXML private ComboBox<Integer> cbLevel;
     @FXML private FlowPane cardsPane;
 
-    // ✅ Scoring UI (ajoutés dans ExerciseList.fxml)
+    // ✅ Scoring UI
     @FXML private Label lblScore;
     @FXML private Label lblStreak;
     @FXML private Label lblCompletion;
     @FXML private Label lblActive7d;
     @FXML private Label lblScorePill;
 
+    // ✅ Recommendation UI
+    @FXML private Label lblRecTitle;
+    @FXML private Label lblRecMeta;
+    @FXML private Label lblRecReason;
+    @FXML private Button btnStartRecommended;
+
     private final ExerciseService exerciseService = new ExerciseService();
 
-    // ✅ Scoring service
+    // ✅ Services
     private final ScoringService scoringService = new ScoringService(new ScoringDAO());
+    private final RecommendationService recommendationService = new RecommendationService(new RecommendationDAO());
 
-    // cache local pour filtrage UI
+    // cache local
     private List<Exercise> allExercises = new ArrayList<>();
+
+    // état recommendation
+    private Exercise recommendedExercise = null;
+    private int lastScore100 = 0;
 
     @FXML
     public void initialize() {
@@ -55,9 +68,7 @@ public class ExerciseListController {
         cbLevel.getSelectionModel().selectFirst();
 
         refresh();
-
-        // ✅ Charger le score au chargement
-        loadScore();
+        loadScoreAndRecommendation();
     }
 
     // ===================== Actions FXML =====================
@@ -65,7 +76,7 @@ public class ExerciseListController {
     @FXML
     private void onRefresh() {
         refresh();
-        loadScore(); // ✅ mettre à jour aussi après refresh
+        loadScoreAndRecommendation();
     }
 
     @FXML
@@ -75,8 +86,8 @@ public class ExerciseListController {
 
     @FXML
     private void onClearFilters() {
-        cbType.getSelectionModel().selectFirst();   // Tous
-        cbLevel.getSelectionModel().selectFirst();  // Tous (null)
+        cbType.getSelectionModel().selectFirst();
+        cbLevel.getSelectionModel().selectFirst();
         applyFiltersAndRender();
     }
 
@@ -87,10 +98,9 @@ public class ExerciseListController {
             Parent root = loader.load();
 
             ExerciseFormController ctrl = loader.getController();
-            // après sauvegarde: revenir à la liste et refresh
             ctrl.setModeCreateReturnToList(() -> {
                 refresh();
-                loadScore();
+                loadScoreAndRecommendation();
             });
 
             setContent(root);
@@ -100,7 +110,13 @@ public class ExerciseListController {
         }
     }
 
-    // ===================== Public API (appelée par ExerciseCardController) =====================
+    @FXML
+    private void onStartRecommended() {
+        if (recommendedExercise == null) return;
+        openDetails(recommendedExercise);
+    }
+
+    // ===================== Public API (ExerciseCardController) =====================
 
     public void openEdit(Exercise ex) {
         if (ex == null) return;
@@ -112,7 +128,7 @@ public class ExerciseListController {
             ExerciseFormController ctrl = loader.getController();
             ctrl.setModeEditReturnToList(ex, () -> {
                 refresh();
-                loadScore();
+                loadScoreAndRecommendation();
             });
 
             setContent(root);
@@ -152,7 +168,7 @@ public class ExerciseListController {
         try {
             exerciseService.deleteExercise(ex.getId());
             refresh();
-            loadScore();
+            loadScoreAndRecommendation();
         } catch (SQLException e) {
             e.printStackTrace();
             Alert a = new Alert(Alert.AlertType.ERROR);
@@ -169,7 +185,6 @@ public class ExerciseListController {
         try {
             allExercises = exerciseService.getAllExercises();
 
-            // alimenter combo Type dynamiquement (Tous + distinct types)
             Set<String> types = allExercises.stream()
                     .map(Exercise::getType)
                     .filter(Objects::nonNull)
@@ -181,7 +196,6 @@ public class ExerciseListController {
             cbType.getItems().setAll("Tous");
             cbType.getItems().addAll(types);
 
-            // garder sélection si possible
             if (selectedType != null && cbType.getItems().contains(selectedType)) {
                 cbType.setValue(selectedType);
             } else {
@@ -215,7 +229,6 @@ public class ExerciseListController {
 
     private void renderCards(List<Exercise> list) {
         cardsPane.getChildren().clear();
-
         for (Exercise ex : list) {
             cardsPane.getChildren().add(loadExerciseCard(ex));
         }
@@ -235,43 +248,75 @@ public class ExerciseListController {
         }
     }
 
-    // ===================== Scoring UI =====================
+    // ===================== Score + Recommendation UI =====================
 
-    private void loadScore() {
-        // Si jamais le FXML n'a pas encore été mis à jour, éviter crash
-        if (lblScore == null || lblScorePill == null) return;
+    private void loadScoreAndRecommendation() {
+        int userId = 1; // TODO: user connecté
+
+        // -------- SCORE --------
+        if (lblScore != null && lblScorePill != null) {
+            try {
+                ScoringService.ScoreResult score = scoringService.computeEngagementScore(userId);
+                lastScore100 = score.score100();
+
+                lblScore.setText(score.score100() + "/100 (" + score.levelText() + ")");
+                lblStreak.setText(score.streakDays() + " j");
+                lblCompletion.setText(score.completionRatePercent() + "%");
+                lblActive7d.setText(score.activeTime7dText());
+
+                lblScorePill.getStyleClass().removeAll("pill-success", "pill-warn", "pill-info");
+                if (!lblScorePill.getStyleClass().contains("pill")) lblScorePill.getStyleClass().add("pill");
+
+                if (score.score100() >= 70) {
+                    lblScorePill.setText("EXCELLENT");
+                    lblScorePill.getStyleClass().add("pill-success");
+                } else if (score.score100() >= 40) {
+                    lblScorePill.setText("BON");
+                    lblScorePill.getStyleClass().add("pill-info");
+                } else {
+                    lblScorePill.setText("À RENFORCER");
+                    lblScorePill.getStyleClass().add("pill-warn");
+                }
+            } catch (Exception e) {
+                lastScore100 = 0;
+            }
+        }
+
+        // -------- RECOMMENDATION --------
+        if (lblRecTitle == null || lblRecMeta == null || lblRecReason == null || btnStartRecommended == null) return;
 
         try {
-            int userId = 1; // TODO: user connecté
-            ScoringService.ScoreResult score = scoringService.computeEngagementScore(userId);
+            RecommendationService.RecommendationResult rec =
+                    recommendationService.recommend(userId, lastScore100, allExercises);
 
-            lblScore.setText(score.score100() + "/100 (" + score.levelText() + ")");
-            lblStreak.setText(score.streakDays() + " j");
-            lblCompletion.setText(score.completionRatePercent() + "%");
-            lblActive7d.setText(score.activeTime7dText());
-
-            lblScorePill.getStyleClass().removeAll("pill-success", "pill-warn", "pill-info");
-            if (!lblScorePill.getStyleClass().contains("pill")) lblScorePill.getStyleClass().add("pill");
-
-            if (score.score100() >= 70) {
-                lblScorePill.setText("EXCELLENT");
-                lblScorePill.getStyleClass().add("pill-success");
-            } else if (score.score100() >= 40) {
-                lblScorePill.setText("BON");
-                lblScorePill.getStyleClass().add("pill-info");
-            } else {
-                lblScorePill.setText("À RENFORCER");
-                lblScorePill.getStyleClass().add("pill-warn");
+            if (rec == null || rec.exercise() == null) {
+                recommendedExercise = null;
+                lblRecTitle.setText("—");
+                lblRecMeta.setText("—");
+                lblRecReason.setText("—");
+                btnStartRecommended.setDisable(true);
+                return;
             }
 
+            recommendedExercise = rec.exercise();
+
+            lblRecTitle.setText(safe(recommendedExercise.getTitle(), "Exercice recommandé"));
+            lblRecMeta.setText("Durée : " + recommendedExercise.getDurationMinutes() + " min • Niveau : " + recommendedExercise.getLevel());
+            lblRecReason.setText(safe(rec.reason(), "Recommandation basée sur votre activité récente."));
+
+            btnStartRecommended.setDisable(false);
+
         } catch (Exception e) {
-            // ne pas bloquer l'écran
-            lblScore.setText("—");
-            lblStreak.setText("—");
-            lblCompletion.setText("—");
-            lblActive7d.setText("—");
-            lblScorePill.setText("—");
+            recommendedExercise = null;
+            lblRecTitle.setText("—");
+            lblRecMeta.setText("—");
+            lblRecReason.setText("Impossible de générer une recommandation.");
+            btnStartRecommended.setDisable(true);
         }
+    }
+
+    private String safe(String s, String def) {
+        return (s == null || s.isBlank()) ? def : s;
     }
 
     // ===================== Template Host =====================

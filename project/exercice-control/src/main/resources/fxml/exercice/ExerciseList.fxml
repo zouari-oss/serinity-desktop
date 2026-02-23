@@ -55,6 +55,22 @@
         </HBox>
     </VBox>
 
+    <!-- ✅ Recommendation card -->
+    <VBox spacing="10" styleClass="card">
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="Recommandé pour vous" style="-fx-font-weight: 900; -fx-font-size: 14px;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnStartRecommended"
+                    text="Démarrer"
+                    onAction="#onStartRecommended"
+                    styleClass="primary-btn"/>
+        </HBox>
+
+        <Label fx:id="lblRecTitle" text="—" styleClass="card-title"/>
+        <Label fx:id="lblRecMeta" text="—" styleClass="muted-text"/>
+        <Label fx:id="lblRecReason" text="—" wrapText="true" styleClass="muted-text"/>
+    </VBox>
+
     <!-- Filters -->
     <VBox spacing="10" styleClass="card">
         <HBox spacing="10" alignment="CENTER_LEFT">
