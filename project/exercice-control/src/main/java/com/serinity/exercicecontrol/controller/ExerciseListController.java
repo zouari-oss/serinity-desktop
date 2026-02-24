@@ -3,102 +3,22 @@ package com.serinity.exercicecontrol.controller;
 import com.serinity.exercicecontrol.dao.RecommendationDAO;
 import com.serinity.exercicecontrol.dao.ScoringDAO;
 import com.serinity.exercicecontrol.model.Exercise;
-import com.serinity.exercicecontrol.service.*;
+import com.serinity.exercicecontrol.security.AuthContext;
+import com.serinity.exercicecontrol.service.ExerciseService;
+import com.serinity.exercicecontrol.service.RecommendationService;
+import com.serinity.exercicecontrol.service.ScoringService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.StackPane;
-
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -111,7 +31,12 @@ public class ExerciseListController {
     @FXML private Label lblCount;
     @FXML private ComboBox<String> cbType;
     @FXML private ComboBox<Integer> cbLevel;
-    @FXML private FlowPane cardsPane;
+
+    // ✅ Bouton Ajouter (IMPORTANT: mettre fx:id dans ExerciseList.fxml)
+    @FXML private Button btnAddExercise;
+
+    // ✅ Responsive grid
+    @FXML private TilePane cardsPane;
 
     // ✅ Ambiance Banner
     @FXML private StackPane ambianceBox;
@@ -141,8 +66,9 @@ public class ExerciseListController {
 
     @FXML
     public void initialize() {
+        // ✅ ADMIN: cacher bouton "Ajouter" si pas admin
+        applyAdminUI();
 
-        // combos
         cbType.setItems(FXCollections.observableArrayList("Tous"));
         cbType.getSelectionModel().selectFirst();
 
@@ -155,15 +81,57 @@ public class ExerciseListController {
         });
         cbLevel.getSelectionModel().selectFirst();
 
-        // ✅ préparer "cover" quand la box resize
+        // Banner cover resize
         if (ambianceBox != null) {
             ambianceBox.widthProperty().addListener((o, a, b) -> updateCoverViewport());
             ambianceBox.heightProperty().addListener((o, a, b) -> updateCoverViewport());
         }
 
+        // ✅ Responsive columns (TilePane)
+        Platform.runLater(() -> {
+            Scene scene = cardsPane.getScene();
+            if (scene != null) {
+                scene.widthProperty().addListener((o, a, b) -> updateColumns());
+                updateColumns();
+            } else {
+                cardsPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
+                    if (newScene != null) {
+                        newScene.widthProperty().addListener((o, a, b) -> updateColumns());
+                        updateColumns();
+                    }
+                });
+            }
+        });
+
         refresh();
         loadScoreAndRecommendation();
         loadAmbianceBanner();
+    }
+
+    private void applyAdminUI() {
+        boolean admin = AuthContext.isAdmin();
+        if (btnAddExercise != null) {
+            btnAddExercise.setVisible(admin);
+            btnAddExercise.setManaged(admin);
+            btnAddExercise.setDisable(!admin);
+        }
+    }
+
+    private boolean requireAdmin() {
+        if (AuthContext.isAdmin()) return true;
+        showError("Accès refusé", "Action réservée à l'ADMIN.");
+        return false;
+    }
+
+    private void updateColumns() {
+        if (cardsPane == null || cardsPane.getScene() == null) return;
+
+        double w = cardsPane.getScene().getWidth();
+        double tile = cardsPane.getPrefTileWidth(); // 320
+        double gap = cardsPane.getHgap();           // 18
+
+        int cols = (int) Math.max(1, Math.floor((w - 80) / (tile + gap)));
+        cardsPane.setPrefColumns(cols);
     }
 
     // ===================== Actions =====================
@@ -189,6 +157,8 @@ public class ExerciseListController {
 
     @FXML
     private void onAddExercise() {
+        if (!requireAdmin()) return;
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseForm.fxml"));
             Parent root = loader.load();
@@ -216,7 +186,9 @@ public class ExerciseListController {
     // ===================== API utilisée par ExerciseCardController =====================
 
     public void openEdit(Exercise ex) {
+        if (!requireAdmin()) return;
         if (ex == null) return;
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseForm.fxml"));
             Parent root = loader.load();
@@ -236,6 +208,7 @@ public class ExerciseListController {
     }
 
     public void deleteExercise(Exercise ex) {
+        if (!requireAdmin()) return;
         if (ex == null) return;
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -253,6 +226,8 @@ public class ExerciseListController {
         } catch (SQLException e) {
             e.printStackTrace();
             showError("Erreur", "Impossible de supprimer.\n" + e.getMessage());
+        } catch (SecurityException se) {
+            showError("Accès refusé", se.getMessage());
         }
     }
 
@@ -338,7 +313,7 @@ public class ExerciseListController {
         }
     }
 
-    // ===================== Ambiance Banner (LOCAL IMAGES) =====================
+    // ===================== Ambiance Banner =====================
 
     private void loadAmbianceBanner() {
         if (imgAmbiance == null || lblAmbianceText == null) return;
@@ -368,7 +343,6 @@ public class ExerciseListController {
             Image img = new Image(Objects.requireNonNull(getClass().getResource(imagePath)).toExternalForm());
             imgAmbiance.setImage(img);
 
-            // bind taille + faire "cover"
             imgAmbiance.fitWidthProperty().bind(ambianceBox.widthProperty());
             imgAmbiance.fitHeightProperty().bind(ambianceBox.heightProperty());
 
@@ -380,10 +354,6 @@ public class ExerciseListController {
         }
     }
 
-    /**
-     * Fait un rendu type "background-size: cover" :
-     * l'image remplit toute la box (crop au besoin) sans déformation.
-     */
     private void updateCoverViewport() {
         if (imgAmbiance == null || ambianceBox == null) return;
         Image img = imgAmbiance.getImage();
@@ -403,11 +373,9 @@ public class ExerciseListController {
         double viewW, viewH;
 
         if (imgRatio > boxRatio) {
-            // image plus large -> crop côtés
             viewH = imgH;
             viewW = imgH * boxRatio;
         } else {
-            // image plus haute -> crop haut/bas
             viewW = imgW;
             viewH = imgW / boxRatio;
         }
@@ -421,9 +389,8 @@ public class ExerciseListController {
     // ===================== Score + Recommendation =====================
 
     private void loadScoreAndRecommendation() {
-        int userId = 1; // TODO user connecté
+        int userId = (AuthContext.userId() > 0) ? AuthContext.userId() : 1;
 
-        // SCORE
         try {
             ScoringService.ScoreResult score = scoringService.computeEngagementScore(userId);
             lastScore100 = score.score100();
@@ -448,7 +415,6 @@ public class ExerciseListController {
             }
         } catch (Exception ignored) {}
 
-        // RECOMMENDATION
         try {
             RecommendationService.RecommendationResult rec =
                     recommendationService.recommend(userId, lastScore100, allExercises);
