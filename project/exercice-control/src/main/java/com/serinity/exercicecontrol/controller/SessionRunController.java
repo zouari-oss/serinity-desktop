@@ -2,8 +2,10 @@ package com.serinity.exercicecontrol.controller;
 
 import com.serinity.exercicecontrol.dao.SessionDAO;
 import com.serinity.exercicecontrol.model.Exercise;
+import com.serinity.exercicecontrol.service.AmbientSoundApiService;
 import com.serinity.exercicecontrol.service.SessionService;
 import com.serinity.exercicecontrol.service.SessionStatus;
+import com.serinity.exercicecontrol.service.WorldTimeApiService;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -11,10 +13,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Collections;
+import java.util.List;
 
 public class SessionRunController {
 
@@ -33,15 +40,30 @@ public class SessionRunController {
     @FXML private Button btnComplete;
     @FXML private Button btnAbort;
 
+    // ✅ API UI (doit matcher SessionRun.fxml)
+    @FXML private Label lblDayPhase;
+    @FXML private Label lblStation;
+    @FXML private Button btnSoundLoad;
+    @FXML private Button btnSoundPlay;
+    @FXML private Button btnSoundStop;
+
     private final SessionDAO sessionDAO = new SessionDAO();
     private final SessionService sessionService = new SessionService(sessionDAO);
+
+    private final WorldTimeApiService timeApi = new WorldTimeApiService();
+    private final AmbientSoundApiService soundApi = new AmbientSoundApiService();
 
     private int sessionId = -1;
     private Exercise exercise;
 
     private Timeline uiTimer;
 
-    // Appelé depuis ExerciseDetailsController après création + start
+    // sound state
+    private List<AmbientSoundApiService.Station> stations = Collections.emptyList();
+    private int stationIndex = 0;
+    private MediaPlayer ambientPlayer;
+
+    // Appelé depuis ExerciseDetailsController
     public void init(int sessionId, Exercise exercise) {
         this.sessionId = sessionId;
         this.exercise = exercise;
@@ -50,9 +72,115 @@ public class SessionRunController {
         lblGuidance.setText(exercise != null ? safe(exercise.getDescription(), "—") : "—");
         lblTarget.setText(exercise != null ? (exercise.getDurationMinutes() + " min") : "—");
 
+        initDayPhase();
+
+        // ✅ AUTO: charge automatiquement une station adaptée
+        onLoadAmbient();
+
+        // ✅ AUTO (optionnel mais demandé): démarre automatiquement la musique
+        // Si tu veux seulement charger sans jouer, commente la ligne suivante.
+        onPlayAmbient();
+
         refreshFromDb();
         startUiTimer();
     }
+
+    // ---------------- API: day phase ----------------
+
+    private void initDayPhase() {
+        if (lblDayPhase == null) return;
+
+        try {
+            var info = timeApi.fetchTime("Africa/Tunis");
+            lblDayPhase.setText(toFr(info.phase()));
+        } catch (Exception e) {
+            int hour = LocalTime.now().getHour();
+            lblDayPhase.setText(toFr(fromHour(hour)));
+        }
+    }
+
+    private WorldTimeApiService.DayPhase fromHour(int hour) {
+        if (hour >= 6 && hour < 12) return WorldTimeApiService.DayPhase.MORNING;
+        if (hour >= 12 && hour < 18) return WorldTimeApiService.DayPhase.AFTERNOON;
+        if (hour >= 18 && hour < 22) return WorldTimeApiService.DayPhase.EVENING;
+        return WorldTimeApiService.DayPhase.NIGHT;
+    }
+
+    private String toFr(WorldTimeApiService.DayPhase phase) {
+        return switch (phase) {
+            case MORNING -> "Matin";
+            case AFTERNOON -> "Après-midi";
+            case EVENING -> "Soir";
+            case NIGHT -> "Nuit";
+        };
+    }
+
+    // ---------------- API: ambient sounds ----------------
+
+    @FXML
+    private void onLoadAmbient() {
+        if (lblStation == null || btnSoundPlay == null) return;
+
+        try {
+            String phase = lblDayPhase == null ? "" : safe(lblDayPhase.getText(), "");
+
+            String query = switch (phase) {
+                case "Nuit" -> "sleep";
+                case "Soir" -> "meditation";
+                default -> "relax";
+            };
+
+            stations = soundApi.searchStations(query, 25);
+            stationIndex = 0;
+
+            if (stations.isEmpty()) {
+                lblStation.setText("Aucun résultat doux");
+                btnSoundPlay.setDisable(true);
+                return;
+            }
+
+            lblStation.setText(stations.get(0).name());
+            btnSoundPlay.setDisable(false);
+
+        } catch (Exception e) {
+            lblStation.setText("Erreur API");
+            btnSoundPlay.setDisable(true);
+        }
+    }
+
+    @FXML
+    private void onPlayAmbient() {
+        if (stations == null || stations.isEmpty()) return;
+
+        try {
+            stopAmbient();
+
+            AmbientSoundApiService.Station st = stations.get(stationIndex);
+            if (lblStation != null) lblStation.setText(st.name());
+
+            ambientPlayer = new MediaPlayer(new Media(st.streamUrl()));
+            ambientPlayer.play();
+
+        } catch (Exception e) {
+            if (lblStation != null) lblStation.setText("Stream non lisible");
+            stopAmbient();
+        }
+    }
+
+    @FXML
+    private void onStopAmbient() {
+        stopAmbient();
+    }
+
+    private void stopAmbient() {
+        if (ambientPlayer != null) {
+            try { ambientPlayer.stop(); } catch (Exception ignored) {}
+            try { ambientPlayer.dispose(); } catch (Exception ignored) {}
+            ambientPlayer = null;
+        }
+    }
+
+    // ---------------- Session actions ----------------
 
     @FXML
     private void onStart() {
@@ -87,10 +215,10 @@ public class SessionRunController {
     @FXML
     private void onComplete() {
         try {
-            String feedback = txtFeedback.getText();
-            sessionService.complete(sessionId, feedback);
+            sessionService.complete(sessionId, txtFeedback.getText());
             refreshFromDb();
             stopUiTimer();
+            stopAmbient();
             showInfo("Terminé", "Session terminée ✅");
         } catch (Exception e) {
             showError("Erreur", "Impossible de terminer.\n" + e.getMessage());
@@ -103,6 +231,7 @@ public class SessionRunController {
             sessionService.abort(sessionId);
             refreshFromDb();
             stopUiTimer();
+            stopAmbient();
         } catch (Exception e) {
             showError("Erreur", "Impossible de quitter.\n" + e.getMessage());
         }
@@ -110,7 +239,8 @@ public class SessionRunController {
 
     @FXML
     private void onBack() {
-        // Retour aux détails de l'exercice
+        stopAmbient();
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseDetails.fxml"));
             Parent root = loader.load();
@@ -129,25 +259,23 @@ public class SessionRunController {
 
     private void refreshFromDb() {
         try {
-            // NOTE: on peut lire avec FOR UPDATE sans transaction long => OK,
-            // mais mieux d’avoir une méthode findById (voir plus bas).
             var s = sessionDAO.findByIdForUpdate(sessionId);
             if (s == null) return;
 
             SessionStatus status = s.status();
             updatePill(status);
 
-            // Timer affiché = active_seconds + (now-last_resumed_at) si IN_PROGRESS
-            int active = s.activeSeconds();
+            long active = s.activeSeconds();
             if (status == SessionStatus.IN_PROGRESS && s.lastResumedAt() != null) {
-                active += Math.max(0, java.time.Duration.between(s.lastResumedAt(), LocalDateTime.now()).toSecondsPart()
-                        + (int) java.time.Duration.between(s.lastResumedAt(), LocalDateTime.now()).toMinutes() * 60);
+                long added = java.time.Duration.between(s.lastResumedAt(), LocalDateTime.now()).getSeconds();
+                if (added > 0) active += added;
             }
+            if (active < 0) active = 0;
 
-            lblTimer.setText(formatMMSS(active));
+            lblTimer.setText(formatMMSS((int) Math.min(Integer.MAX_VALUE, active)));
 
-            // Feedback
-            if (s.feedback() != null && !s.feedback().isBlank() && (txtFeedback.getText() == null || txtFeedback.getText().isBlank())) {
+            if (s.feedback() != null && !s.feedback().isBlank()
+                    && (txtFeedback.getText() == null || txtFeedback.getText().isBlank())) {
                 txtFeedback.setText(s.feedback());
             }
 
@@ -160,7 +288,6 @@ public class SessionRunController {
     }
 
     private void updateButtons(SessionStatus status) {
-        // Règle UX: on force reprise avant terminer
         switch (status) {
             case CREATED -> {
                 btnStart.setDisable(false);
@@ -183,7 +310,7 @@ public class SessionRunController {
                 btnComplete.setDisable(true);
                 btnAbort.setDisable(false);
             }
-            default -> { // COMPLETED / ABORTED / CANCELLED
+            default -> {
                 btnStart.setDisable(true);
                 btnPause.setDisable(true);
                 btnResume.setDisable(true);
@@ -194,7 +321,6 @@ public class SessionRunController {
     }
 
     private void updatePill(SessionStatus status) {
-        // reset classes
         lblStatusPill.getStyleClass().removeAll("pill-success", "pill-info", "pill-warn", "pill-error");
         if (!lblStatusPill.getStyleClass().contains("pill")) lblStatusPill.getStyleClass().add("pill");
 
