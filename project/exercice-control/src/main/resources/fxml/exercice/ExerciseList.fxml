@@ -2,94 +2,106 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.serinity.exercicecontrol.controller.ExerciseListController"
-      spacing="12"
-      styleClass="page-root">
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.exercicecontrol.controller.ExerciseListController"
+            fitToWidth="true"
+            styleClass="transparent-scroll">
 
-    <padding>
-        <Insets top="16" right="16" bottom="16" left="16"/>
-    </padding>
+    <content>
+        <VBox spacing="12" styleClass="page-root">
+            <padding>
+                <Insets top="16" right="16" bottom="16" left="16"/>
+            </padding>
 
-    <!-- Header -->
-    <HBox alignment="CENTER_LEFT" spacing="10">
-        <Label text="Exercices" styleClass="page-title"/>
-        <Label fx:id="lblCount" text="(0)" styleClass="muted-text"/>
-        <Region HBox.hgrow="ALWAYS"/>
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Exercices" styleClass="page-title"/>
+                <Label fx:id="lblCount" text="(0)" styleClass="muted-text"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Ajouter" onAction="#onAddExercise" styleClass="primary-btn"/>
+                <Button text="Actualiser" onAction="#onRefresh" styleClass="secondary-btn"/>
+            </HBox>
 
-        <Button text="Ajouter" onAction="#onAddExercise" styleClass="primary-btn"/>
-        <Button text="Actualiser" onAction="#onRefresh" styleClass="secondary-btn"/>
-    </HBox>
+            <!-- ✅ Ambiance Banner -->
+            <VBox spacing="10" styleClass="card">
+                <StackPane fx:id="ambianceBox" prefHeight="200" maxHeight="200" minHeight="200">
+                    <ImageView fx:id="imgAmbiance"
+                               smooth="true"
+                               preserveRatio="true"
+                               StackPane.alignment="CENTER"/>
+                </StackPane>
 
-    <!-- ✅ Score card (Scoring comportemental) -->
-    <VBox spacing="10" styleClass="card">
-        <HBox alignment="CENTER_LEFT" spacing="10">
-            <Label text="Votre progression" style="-fx-font-weight: 900; -fx-font-size: 14px;"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="lblScorePill" text="—" styleClass="pill pill-info"/>
-        </HBox>
-
-        <HBox spacing="16">
-            <VBox spacing="4" HBox.hgrow="ALWAYS">
-                <Label text="Score" styleClass="muted-text"/>
-                <Label fx:id="lblScore" text="—" styleClass="card-title"/>
+                <Label fx:id="lblAmbianceText"
+                       text="—"
+                       style="-fx-font-weight: 800; -fx-font-size: 16px;"/>
             </VBox>
 
-            <VBox spacing="4" HBox.hgrow="ALWAYS">
-                <Label text="Série" styleClass="muted-text"/>
-                <Label fx:id="lblStreak" text="—" styleClass="card-title"/>
+            <!-- ✅ Score card -->
+            <VBox spacing="10" styleClass="card">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Votre progression" style="-fx-font-weight: 900; -fx-font-size: 14px;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblScorePill" text="—" styleClass="pill pill-info"/>
+                </HBox>
+
+                <HBox spacing="16">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Score" styleClass="muted-text"/>
+                        <Label fx:id="lblScore" text="—" styleClass="card-title"/>
+                    </VBox>
+
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Série" styleClass="muted-text"/>
+                        <Label fx:id="lblStreak" text="—" styleClass="card-title"/>
+                    </VBox>
+
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Complétion" styleClass="muted-text"/>
+                        <Label fx:id="lblCompletion" text="—" styleClass="card-title"/>
+                    </VBox>
+
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Temps actif (7j)" styleClass="muted-text"/>
+                        <Label fx:id="lblActive7d" text="—" styleClass="card-title"/>
+                    </VBox>
+                </HBox>
             </VBox>
 
-            <VBox spacing="4" HBox.hgrow="ALWAYS">
-                <Label text="Complétion" styleClass="muted-text"/>
-                <Label fx:id="lblCompletion" text="—" styleClass="card-title"/>
+            <!-- ✅ Recommendation card -->
+            <VBox spacing="10" styleClass="card">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Recommandé pour vous" style="-fx-font-weight: 900; -fx-font-size: 14px;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnStartRecommended" text="Démarrer"
+                            onAction="#onStartRecommended" styleClass="primary-btn"/>
+                </HBox>
+
+                <Label fx:id="lblRecTitle" text="—" style="-fx-font-size: 16px; -fx-font-weight: 900;"/>
+                <Label fx:id="lblRecMeta" text="—" styleClass="muted-text"/>
+                <Label fx:id="lblRecReason" text="—" styleClass="muted-text"/>
             </VBox>
 
-            <VBox spacing="4" HBox.hgrow="ALWAYS">
-                <Label text="Temps actif (7j)" styleClass="muted-text"/>
-                <Label fx:id="lblActive7d" text="—" styleClass="card-title"/>
+            <!-- Filters -->
+            <VBox spacing="10" styleClass="card">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Type :" />
+                    <ComboBox fx:id="cbType" prefWidth="180" promptText="Tous"/>
+
+                    <Label text="Niveau :" />
+                    <ComboBox fx:id="cbLevel" prefWidth="120" promptText="Tous"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Button text="Appliquer" onAction="#onApplyFilters" styleClass="primary-btn"/>
+                    <Button text="Effacer" onAction="#onClearFilters" styleClass="secondary-btn"/>
+                </HBox>
             </VBox>
-        </HBox>
-    </VBox>
 
-    <!-- ✅ Recommendation card -->
-    <VBox spacing="10" styleClass="card">
-        <HBox alignment="CENTER_LEFT" spacing="10">
-            <Label text="Recommandé pour vous" style="-fx-font-weight: 900; -fx-font-size: 14px;"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button fx:id="btnStartRecommended"
-                    text="Démarrer"
-                    onAction="#onStartRecommended"
-                    styleClass="primary-btn"/>
-        </HBox>
-
-        <Label fx:id="lblRecTitle" text="—" styleClass="card-title"/>
-        <Label fx:id="lblRecMeta" text="—" styleClass="muted-text"/>
-        <Label fx:id="lblRecReason" text="—" wrapText="true" styleClass="muted-text"/>
-    </VBox>
-
-    <!-- Filters -->
-    <VBox spacing="10" styleClass="card">
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="Type :" />
-            <ComboBox fx:id="cbType" prefWidth="180" promptText="Tous"/>
-
-            <Label text="Niveau :" />
-            <ComboBox fx:id="cbLevel" prefWidth="120" promptText="Tous"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <Button text="Appliquer" onAction="#onApplyFilters" styleClass="primary-btn"/>
-            <Button text="Effacer" onAction="#onClearFilters" styleClass="secondary-btn"/>
-        </HBox>
-    </VBox>
-
-    <!-- Cards -->
-    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="transparent-scroll">
-        <content>
+            <!-- ✅ Exercises Cards (sans ScrollPane interne) -->
             <FlowPane fx:id="cardsPane"
                       hgap="18" vgap="18"
                       prefWrapLength="1100">
@@ -97,7 +109,7 @@
                     <Insets top="10" right="10" bottom="10" left="10"/>
                 </padding>
             </FlowPane>
-        </content>
-    </ScrollPane>
 
-</VBox>
+        </VBox>
+    </content>
+</ScrollPane>
