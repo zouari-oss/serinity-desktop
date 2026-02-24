@@ -4,44 +4,95 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.serinity.exercicecontrol.controller.ResourceFormController"
-      spacing="12"
-      styleClass="page-root">
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.exercicecontrol.controller.ResourceFormController"
+            fitToWidth="true"
+            styleClass="transparent-scroll">
 
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
+    <content>
+        <VBox spacing="16" styleClass="page-root">
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
 
-    <HBox alignment="CENTER_LEFT" spacing="10">
-        <Label fx:id="lblHeader" text="Ajouter une ressource" styleClass="page-title"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button text="Retour" onAction="#onBack" styleClass="secondary-btn"/>
-    </HBox>
+            <!-- HEADER MODERNE -->
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="details-header">
+                <VBox spacing="4">
+                    <Label fx:id="lblHeader" text="Ajouter une ressource" styleClass="details-title"/>
+                    <Label text="Ajoutez un média ou un contenu texte pour l’exercice" styleClass="muted"/>
+                </VBox>
 
-    <VBox spacing="10" styleClass="card">
+                <Region HBox.hgrow="ALWAYS"/>
 
-        <Label text="Titre"/>
-        <TextField fx:id="txtTitle" promptText="Ex: Audio respiration guidée"/>
+                <!-- ✅ fx:id attendu -->
+                <Button fx:id="btnBack" text="Retour" onAction="#onBack" styleClass="secondary-btn"/>
+            </HBox>
 
-        <Label text="Type média"/>
-        <ComboBox fx:id="cbMediaType" promptText="VIDEO / AUDIO / TEXTE" />
+            <!-- FORM CARD -->
+            <VBox spacing="14" styleClass="card">
 
-        <Label text="URL (optionnel)"/>
-        <TextField fx:id="txtUrl" promptText="https://..."/>
+                <GridPane hgap="14" vgap="12">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="18"/>
+                        <ColumnConstraints percentWidth="82"/>
+                    </columnConstraints>
 
-        <Label text="Contenu texte (optionnel)"/>
-        <TextArea fx:id="txtContent" promptText="Texte de la ressource..." wrapText="true" prefHeight="140"/>
+                    <!-- Titre -->
+                    <Label text="Titre" styleClass="form-label"
+                           GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="txtTitle"
+                               promptText="Ex: Audio respiration guidée"
+                               styleClass="modern-input"
+                               GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-        <Label text="Durée (secondes)"/>
-        <TextField fx:id="txtDurationSeconds" promptText="Ex: 120"/>
+                    <!-- Type média + Durée (même ligne) -->
+                    <Label text="Type média" styleClass="form-label"
+                           GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <HBox spacing="12"
+                          GridPane.rowIndex="1" GridPane.columnIndex="1">
 
-        <HBox spacing="10">
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button fx:id="btnSave" text="Enregistrer" onAction="#onSave" styleClass="primary-btn"/>
-        </HBox>
+                        <ComboBox fx:id="cbMediaType"
+                                  promptText="Choisir un type"
+                                  styleClass="modern-combo"
+                                  HBox.hgrow="ALWAYS"/>
 
-    </VBox>
+                        <!-- ✅ fx:id attendu: txtDurationSeconds -->
+                        <TextField fx:id="txtDurationSeconds"
+                                   promptText="Durée (sec) — ex: 120"
+                                   styleClass="modern-input"
+                                   prefWidth="220"/>
+                    </HBox>
 
-</VBox>
+                    <!-- URL -->
+                    <Label text="URL (optionnel)" styleClass="form-label"
+                           GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="txtUrl"
+                               promptText="https://..."
+                               styleClass="modern-input"
+                               GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <!-- Contenu texte -->
+                    <Label text="Contenu texte (optionnel)" styleClass="form-label"
+                           GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <TextArea fx:id="txtContent"
+                              promptText="Texte de la ressource..."
+                              wrapText="true"
+                              prefRowCount="8"
+                              styleClass="modern-textarea"
+                              GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <Separator/>
+
+                <!-- ACTIONS -->
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Button text="Annuler" onAction="#onBack" styleClass="secondary-btn"/>
+                    <Button fx:id="btnSave" text="Ajouter" onAction="#onSave" styleClass="primary-btn"/>
+                </HBox>
+
+            </VBox>
+
+        </VBox>
+    </content>
+</ScrollPane>
