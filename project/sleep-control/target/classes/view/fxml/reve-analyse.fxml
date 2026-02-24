@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.sleepcontrol.controller.ReveAnalyseController"
+      spacing="16.0"
+      stylesheets="@../styles/styles.css"
+      style="-fx-background-color: #f5f7fa;"
+      minWidth="620" minHeight="600">
+    <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="12.0">
+        <Label text="🧠 Analyse Psychologique des Rêves" styleClass="page-header"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="modeCombo" styleClass="combo-box"/>
+        <Button text="🔄 Analyser" styleClass="btn-secondary" onAction="#analyser"/>
+    </HBox>
+
+    <Label fx:id="lblMode" text="🔍 Analyse en cours..." styleClass="stat-card-subtitle"/>
+
+    <!-- Score + Profil + Impact + Alerte -->
+    <HBox spacing="12.0">
+        <VBox styleClass="stat-card, primary" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+            <Label text="🏆 SCORE PSY." styleClass="stat-card-title"/>
+            <Label fx:id="lblScore" text="–" styleClass="stat-card-value"/>
+            <ProgressBar fx:id="barScore" prefWidth="100" prefHeight="8"/>
+        </VBox>
+        <VBox styleClass="stat-card, info" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+            <Label text="🧠 PROFIL" styleClass="stat-card-title"/>
+            <Label fx:id="lblProfil" text="–" styleClass="stat-card-value-sm"/>
+        </VBox>
+        <VBox styleClass="stat-card, warning" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+            <Label text="💭 IMPACT" styleClass="stat-card-title"/>
+            <Label fx:id="lblImpact" text="–" styleClass="stat-card-value-sm"/>
+        </VBox>
+        <VBox styleClass="stat-card, accent" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <padding><Insets top="12" right="14" bottom="12" left="14"/></padding>
+            <Label text="⚠️ ALERTE" styleClass="stat-card-title"/>
+            <Label fx:id="lblAlerte" text="–" styleClass="stat-card-value-sm"/>
+        </VBox>
+    </HBox>
+
+    <HBox spacing="14.0" VBox.vgrow="ALWAYS">
+        <!-- Conclusion -->
+        <VBox styleClass="filter-container" spacing="10.0" HBox.hgrow="ALWAYS">
+            <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+            <Label text="📋 Conclusion psychologique" styleClass="section-title"/>
+            <TextArea fx:id="txtConclusion"
+                      wrapText="true"
+                      editable="false"
+                      prefHeight="180"
+                      styleClass="form-control"/>
+        </VBox>
+
+        <!-- Symboles -->
+        <VBox styleClass="filter-container" spacing="10.0" prefWidth="240">
+            <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+            <Label text="🔮 Symboles détectés" styleClass="section-title"/>
+            <ScrollPane fitToWidth="true" prefHeight="180" styleClass="scroll-pane">
+                <VBox fx:id="symbolesContainer" spacing="8"/>
+            </ScrollPane>
+        </VBox>
+    </HBox>
+
+    <!-- Recommandations -->
+    <VBox styleClass="filter-container" spacing="10.0">
+        <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+        <Label text="💡 Recommandations personnalisées" styleClass="section-title"/>
+        <FlowPane fx:id="recommandationsContainer" hgap="8" vgap="8"/>
+    </VBox>
+</VBox>

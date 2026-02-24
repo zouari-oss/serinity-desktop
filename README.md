@@ -2,7 +2,7 @@
 
 [![Contributors](https://img.shields.io/badge/CONTRIBUTORS-02-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/graphs/contributors)
 [![Forks](https://img.shields.io/badge/FORKS-00-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/network/members)
-[![Stargazers](https://img.shields.io/badge/STARS-03-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/stargazers)
+[![Stargazers](https://img.shields.io/badge/STARS-01-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/stargazers)
 [![Issues](https://img.shields.io/badge/ISSUES-00-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/issues)
 [![GPL3.0 License](https://img.shields.io/badge/LICENSE-GPL3.0-blue?style=plastic)](LICENSE)
 
@@ -44,12 +44,6 @@
   <img src="https://img.shields.io/badge/Machine%20Learning-102230?style=for-the-badge&logo=scikitlearn&logoColor=F7931E"/>
   <img src="https://img.shields.io/badge/MVC%20Architecture-34495E?style=for-the-badge"/>
   <img src="https://img.shields.io/badge/Open%20Source-3DA639?style=for-the-badge&logo=opensourceinitiative&logoColor=white"/>
-</p>
-
-<p align="center">
-  <a href="doc/" target="_blank">
-    <img src="res/img/app/app.gif" alt="snapshots.gif">
-  </a>
 </p>
 
 ## Overview
