@@ -6,6 +6,7 @@ import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.web.WebView;
 
 /**
@@ -96,6 +97,16 @@ public final class FXMLAnimationUtil {
       final boolean autoHide, final int hideDelaySeconds) {
     // Ensure the node is visible
     node.setVisible(true);
+
+    Scene scene = node.getScene();
+    if (scene == null)
+      return;
+
+    double sceneWidth = scene.getWidth();
+    double nodeWidth = node.getBoundsInParent().getWidth();
+
+    // Center horizontally
+    node.setLayoutX((sceneWidth - nodeWidth) / 2);
 
     // Slide down
     TranslateTransition slideDown = new TranslateTransition(Duration.millis(duration), node);

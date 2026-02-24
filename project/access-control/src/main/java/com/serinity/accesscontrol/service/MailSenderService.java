@@ -68,11 +68,17 @@ import com.serinity.accesscontrol.flag.ResourceFile;
  * email sending will fail.
  * </p>
  * 
- * @see EnvironmentVariableLoader
  * 
  * @version 1.0
  * @since 2026-02-16
  * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @see EnvironmentVariableLoader
+ *
+ *      <a
+ *      href=
+ *      "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/service/MailSenderService.java">
+ *      MailSenderService.java
+ *      </a>
  */
 public final class MailSenderService {
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager

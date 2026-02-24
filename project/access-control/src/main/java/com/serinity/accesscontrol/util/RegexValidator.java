@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
  * </p>
  * <ul>
  * <li>Email addresses</li>
+ * <li>Phone number</li>
  * <li>Passwords (strong policy)</li>
  * </ul>
  *
@@ -34,6 +35,10 @@ public final class RegexValidator {
   private static final Pattern EMAIL_PATTERN = Pattern.compile(
       "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
+  private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile(
+      "^\\+?[0-9]{7,15}$" // Allows optional '+' and 7-15 digits
+  );
+
   /*
    * INFO: At least:
    * - 8 character
@@ -47,6 +52,10 @@ public final class RegexValidator {
 
   public static boolean isValidEmail(final String email) {
     return email != null && EMAIL_PATTERN.matcher(email).matches();
+  }
+
+  public static boolean isValidPhoneNumber(final String phoneNumber) {
+    return phoneNumber != null && PHONE_NUMBER_PATTERN.matcher(phoneNumber).matches();
   }
 
   public static boolean isValidPassword(final String password) {

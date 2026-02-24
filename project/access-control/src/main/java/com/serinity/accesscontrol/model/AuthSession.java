@@ -108,7 +108,7 @@ public final class AuthSession extends IdentifiableEntity {
     return createdAt;
   }
 
-  public void setCreatedAt(Instant createdAt) {
+  public void setCreatedAt(final Instant createdAt) {
     this.createdAt = createdAt;
   }
 
@@ -116,8 +116,12 @@ public final class AuthSession extends IdentifiableEntity {
     return expiresAt;
   }
 
-  public void setExpiresAt(Instant expiresAt) {
+  public void setExpiresAt(final Instant expiresAt) {
     this.expiresAt = expiresAt;
+  }
+
+  public void setRevoked(final boolean revoked) {
+    this.revoked = revoked;
   }
 
   public boolean isRevoked() {
@@ -128,7 +132,7 @@ public final class AuthSession extends IdentifiableEntity {
     return user;
   }
 
-  public void setUser(User user) {
+  public void setUser(final User user) {
     this.user = user;
   }
 
@@ -137,7 +141,6 @@ public final class AuthSession extends IdentifiableEntity {
   // #############################
   @PrePersist
   private void onCreate() {
-    System.out.println(expiresAt);
     if (this.expiresAt == null) {
       this.expiresAt = Instant.now().plus(Duration.ofDays(
           getUser().getRole().equals(UserRole.ADMIN)

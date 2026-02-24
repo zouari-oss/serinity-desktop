@@ -40,6 +40,7 @@ public class App extends Application {
         this.getClass(),
         ResourceFile.ROOT_FXML.getFileName(),
         I18nUtil.getBundle()));
+    stage.centerOnScreen();
     stage.show();
     _LOGGER.info("App Launched successfully!");
   }

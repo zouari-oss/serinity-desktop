@@ -70,17 +70,9 @@ public final class ResetPasswordController implements StackNavigable, StatusMess
 
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
-  // #############################
-  // ### GETTER(S) & SETTER(S) ###
-  // #############################
-
   public void setStatusProvider(final StatusMessageProvider provider) {
     this.statusProvider = provider;
   }
-
-  // ############################
-  // ### OVERRIDE FUNCTION(S) ###
-  // ############################
 
   @Override
   public StackPane getStackHost() {
@@ -98,10 +90,6 @@ public final class ResetPasswordController implements StackNavigable, StatusMess
       statusProvider.showStatusMessage(message, status);
     }
   }
-
-  // ##############################
-  // ### SLOT HANDLER FUNCTIONS ###
-  // ##############################
 
   @FXML
   void onGoBackAction(final ActionEvent event) {
@@ -138,10 +126,6 @@ public final class ResetPasswordController implements StackNavigable, StatusMess
       showStatusMessage(serviceResult.getMessage(), MessageStatus.ERROR);
     }
   }
-
-  // ##################################
-  // ### INITIALIZATION FUNCTION(S) ###
-  // ##################################
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {

@@ -16,6 +16,7 @@ module com.serinity.accesscontrol {
   requires org.apache.logging.log4j;
   requires com.github.benmanes.caffeine;
   requires spring.security.crypto;
+  requires java.net.http;
 
   // --- Module exports ---
   exports com.serinity.accesscontrol;
