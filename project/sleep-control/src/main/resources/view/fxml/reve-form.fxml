@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.sleepcontrol.controller.ReveFormController"
+            fitToWidth="true" fitToHeight="true"
+            styleClass="form-scroll">
+
+    <!-- Chargement du CSS ici, une seule fois -->
+    <stylesheets>
+        <String fx:value="/view/styles/reve-form.css"/>
+    </stylesheets>
+
+    <VBox fx:id="mainContainer" spacing="20.0">
+        <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
+
+        <!-- En-tête -->
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="form-header">
+            <Label fx:id="headerIcon" text="💭" styleClass="header-icon"/>
+            <VBox spacing="5.0">
+                <Label fx:id="titleLabel" text="Enregistrer un Rêve" styleClass="header-title"/>
+                <Label fx:id="subtitleLabel" text="Capturez les détails de votre rêve" styleClass="header-subtitle"/>
+            </VBox>
+        </HBox>
+
+        <!-- Section : Sommeil associé -->
+        <VBox spacing="15.0" styleClass="form-card">
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label text="🛌" styleClass="section-icon-blue"/>
+                <Label text="Sommeil Associé" styleClass="section-title"/>
+            </HBox>
+            <Separator/>
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="📅" styleClass="field-icon"/>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Nuit concernée *" styleClass="field-label"/>
+                    <ComboBox fx:id="sommeilCombo" prefWidth="350.0"
+                              promptText="Choisir une nuit..."
+                              styleClass="field-default"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- Section : Détails du rêve -->
+        <VBox spacing="15.0" styleClass="form-card">
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label text="✨" styleClass="section-icon-purple"/>
+                <Label text="Détails du Rêve" styleClass="section-title"/>
+            </HBox>
+            <Separator/>
+
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="✏️" styleClass="field-icon"/>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Titre *" styleClass="field-label"/>
+                    <TextField fx:id="titreField"
+                               promptText="Ex: Vol au-dessus des nuages..."
+                               styleClass="field-default"/>
+                </VBox>
+            </HBox>
+
+            <HBox alignment="TOP_LEFT" spacing="15.0">
+                <Label text="📖" styleClass="field-icon"/>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Description *" styleClass="field-label"/>
+                    <TextArea fx:id="descriptionArea" prefHeight="100.0"
+                              promptText="Décrivez votre rêve en détail..."
+                              styleClass="field-default" wrapText="true"/>
+                    <Label fx:id="descCharCountLabel" text="0 / 2000 caractères"
+                           styleClass="char-count"/>
+                </VBox>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="🎭" styleClass="field-icon"/>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Type de rêve *" styleClass="field-label"/>
+                    <ComboBox fx:id="typeCombo" prefWidth="300.0"
+                              promptText="Sélectionner..." styleClass="field-default"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- Section : Ressenti & Intensité -->
+        <VBox spacing="15.0" styleClass="form-card">
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label text="💚" styleClass="section-icon-green"/>
+                <Label text="Ressenti &amp; Intensité" styleClass="section-title"/>
+            </HBox>
+            <Separator/>
+
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="😊" styleClass="field-icon"/>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Humeur ressentie *" styleClass="field-label"/>
+                    <ComboBox fx:id="humeurCombo" prefWidth="300.0"
+                              promptText="Sélectionner..." styleClass="field-default"/>
+                </VBox>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="⚡" styleClass="field-icon"/>
+                <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="12.0">
+                        <Label text="Intensité du rêve" styleClass="field-label"/>
+                        <!-- Classes multiples séparées par espace -->
+                        <Label fx:id="intensiteLabel" text="5"
+                               styleClass="intensite-base intensite-medium"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <Label text="1" styleClass="section-optional"/>
+                        <Slider fx:id="intensiteSlider" prefWidth="300.0" HBox.hgrow="ALWAYS"/>
+                        <Label text="10" styleClass="section-optional"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="30.0" style="-fx-padding: 5 0 0 35;">
+                <CheckBox fx:id="couleurCheck" text="🌈  Rêve en couleur" styleClass="check-field"/>
+                <CheckBox fx:id="recurrentCheck" text="🔁  Rêve récurrent" styleClass="check-field"/>
+            </HBox>
+        </VBox>
+
+        <!-- Section : Détails supplémentaires -->
+        <VBox spacing="15.0" styleClass="form-card">
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label text="🔍" styleClass="section-icon-orange"/>
+                <Label text="Détails Supplémentaires" styleClass="section-title"/>
+                <Label text="(optionnel)" styleClass="section-optional"/>
+            </HBox>
+            <Separator/>
+
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="💫" styleClass="field-icon"/>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Émotions" styleClass="field-label"/>
+                    <TextField fx:id="emotionsField"
+                               promptText="Ex: joie, peur, tristesse..."
+                               styleClass="field-default"/>
+                </VBox>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label text="🔮" styleClass="field-icon"/>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label text="Symboles" styleClass="field-label"/>
+                    <TextField fx:id="symbolesField"
+                               promptText="Ex: eau, feu, forêt..."
+                               styleClass="field-default"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- Boutons -->
+        <HBox alignment="CENTER" spacing="20.0" style="-fx-padding: 20 0 0 0;">
+            <Button fx:id="btnCancel" text="✖ Annuler" onAction="#annuler"
+                    prefHeight="45.0" prefWidth="160.0" styleClass="btn-cancel">
+                <font><Font name="System Bold" size="15.0"/></font>
+            </Button>
+            <Button fx:id="btnSave" text="✓ Sauvegarder" onAction="#sauvegarder"
+                    prefHeight="45.0" prefWidth="160.0" styleClass="btn-save">
+                <font><Font name="System Bold" size="15.0"/></font>
+            </Button>
+        </HBox>
+
+        <HBox alignment="CENTER">
+            <Label text="* Champs obligatoires" styleClass="required-note"/>
+        </HBox>
+    </VBox>
+</ScrollPane>
