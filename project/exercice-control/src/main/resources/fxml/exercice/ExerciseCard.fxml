@@ -17,7 +17,11 @@
 
     <!-- Top -->
     <HBox alignment="CENTER_LEFT" spacing="10">
-        <Label fx:id="lblTitle" text="Titre" styleClass="exercise-title"/>
+        <Label fx:id="lblTitle"
+               text="Titre"
+               styleClass="exercise-title"
+               wrapText="false"
+               maxWidth="220"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Label fx:id="lblBadge" text="Niveau 3" styleClass="badge"/>
     </HBox>
@@ -28,13 +32,21 @@
         <Label fx:id="lblDuration" text="Durée : - min" styleClass="exercise-meta"/>
     </VBox>
 
-    <Region VBox.vgrow="ALWAYS"/>
-
-    <!-- Actions -->
+    <!-- Actions (admin-only for edit/delete) -->
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button text="Voir" onAction="#onOpenDetails" styleClass="secondary-btn"/>
-        <Button text="Modifier" onAction="#onEdit" styleClass="secondary-btn"/>
-        <Button text="Supprimer" onAction="#onDelete" styleClass="danger-btn"/>
+
+        <!-- ✅ fx:id ajouté -->
+        <Button fx:id="btnEdit"
+                text="Modifier"
+                onAction="#onEdit"
+                styleClass="secondary-btn"/>
+
+        <!-- ✅ fx:id ajouté -->
+        <Button fx:id="btnDelete"
+                text="Supprimer"
+                onAction="#onDelete"
+                styleClass="danger-btn"/>
     </HBox>
 
 </VBox>
