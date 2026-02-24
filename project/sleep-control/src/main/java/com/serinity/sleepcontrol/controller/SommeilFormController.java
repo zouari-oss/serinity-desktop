@@ -86,10 +86,10 @@ public class SommeilFormController {
 
     private void initComboBoxes() {
         qualiteCombo.setItems(FXCollections.observableArrayList(
-                "⭐⭐⭐⭐ Excellente",
-                "⭐⭐⭐ Bonne",
-                "⭐⭐ Moyenne",
-                "⭐ Mauvaise"
+                "Excellente",
+                "Bonne",
+                "Moyenne",
+                "Mauvaise"
         ));
         qualiteCombo.setPromptText("Sélectionner...");
 

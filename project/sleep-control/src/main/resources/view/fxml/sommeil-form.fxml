@@ -38,29 +38,32 @@
                     <DatePicker fx:id="dateNuitPicker" prefWidth="300.0" style="-fx-background-radius: 8; -fx-border-color: #4a90e2; -fx-border-radius: 8;" />
                 </VBox>
             </HBox>
+              <Label style="-fx-font-weight: bold; -fx-text-fill: #34495e;" text="Heure de coucher*" />
 
             <!-- Heure de coucher -->
             <HBox alignment="CENTER_LEFT" spacing="15.0">
-                <Label style="-fx-font-size: 20px;" text="🛏️" />
                 <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                    <Label style="-fx-font-weight: bold; -fx-text-fill: #34495e;" text="Heure de coucher *" />
                     <HBox alignment="CENTER_LEFT" spacing="10.0">
-                        <Spinner fx:id="heureCoucherHeure" editable="true" prefWidth="90.0" style="-fx-background-radius: 8;" />
+                      <Label style="-fx-font-size: 20px;" text="🛏️" />
+                        <Spinner fx:id="heureCoucherHeure" editable="true" prefWidth="90.0" style="-fx-background-radius: 10;" />
                         <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #4a90e2;" text=":" />
                         <Spinner fx:id="heureCoucherMinute" editable="true" prefWidth="90.0" style="-fx-background-radius: 8;" />
                     </HBox>
                 </VBox>
             </HBox>
+              <Label style="-fx-font-weight: bold; -fx-text-fill: #34495e;" text="Heure de reveil *" />
 
             <!-- Heure de réveil -->
             <HBox alignment="CENTER_LEFT" spacing="15.0">
-                <Label style="-fx-font-size: 20px;" text="⏰" />
-                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                    <Label style="-fx-font-weight: bold; -fx-text-fill: #34495e;" text="Heure de réveil *" />
+                <VBox prefHeight="54.0" prefWidth="378.0" spacing="5.0" HBox.hgrow="ALWAYS">
                     <HBox alignment="CENTER_LEFT" spacing="10.0">
-                        <Spinner fx:id="heureReveilHeure" editable="true" prefWidth="90.0" style="-fx-background-radius: 8;" />
+                      <Label prefHeight="30.0" prefWidth="34.0" style="-fx-font-size: 20px;" text="⏰" />
+                        <Spinner fx:id="heureReveilHeure" editable="true" prefWidth="90.0" style="-fx-background-radius: 8;">
+                     <opaqueInsets>
+                        <Insets left="20.0" />
+                     </opaqueInsets></Spinner>
                         <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #4a90e2;" text=":" />
-                        <Spinner fx:id="heureReveilMinute" editable="true" prefWidth="90.0" style="-fx-background-radius: 8;" />
+                        <Spinner fx:id="heureReveilMinute" editable="true" prefHeight="26.0" prefWidth="95.0" style="-fx-background-radius: 8;" />
                     </HBox>
                 </VBox>
             </HBox>

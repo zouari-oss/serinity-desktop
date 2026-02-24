@@ -1,18 +1,28 @@
 package com.serinity.sleepcontrol.service;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.serinity.sleepcontrol.dao.SommeilDao;
 import com.serinity.sleepcontrol.dao.impl.SommeilDaoJdbc;
 import com.serinity.sleepcontrol.model.Sommeil;
 
-import java.sql.*;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SommeilService {
 
     private final SommeilDao sommeilDao;
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     public SommeilService() {
         this.sommeilDao = new SommeilDaoJdbc();
@@ -21,10 +31,6 @@ public class SommeilService {
     public SommeilService(SommeilDao sommeilDao) {
         this.sommeilDao = sommeilDao;
     }
-
-    // ═══════════════════════════════════════════════════════════
-    //  CRUD
-    // ═══════════════════════════════════════════════════════════
 
     public void creer(Sommeil sommeil) throws SQLException {
         if (sommeil == null)
@@ -70,21 +76,11 @@ public class SommeilService {
     public List<Sommeil> listerTousAvecReves()   throws SQLException { return listerTous(); }
     public Sommeil trouverParIdAvecReves(int id) throws SQLException { return trouverParId(id); }
 
-    // ═══════════════════════════════════════════════════════════
-    //  RÊVES ASSOCIÉS — MÉTHODE MANQUANTE
-    // ═══════════════════════════════════════════════════════════
-
-    /**
-     * Compte le nombre de rêves associés à une nuit de sommeil.
-     * Adapte automatiquement selon la relation :
-     *   - One-to-Many  : reve.sommeil_id = sommeilId
-     *   - Many-to-Many : table de jointure sommeil_reve
-     */
     public int compterRevesParSommeil(int sommeilId) {
         String sql = "SELECT COUNT(*) FROM reves WHERE sommeil_id = ?";
-        try (PreparedStatement ps = sommeilDao.getConnection().prepareStatement(sql)) {
+        try (var ps = sommeilDao.getConnection().prepareStatement(sql)) {
             ps.setInt(1, sommeilId);
-            ResultSet rs = ps.executeQuery();
+            var rs = ps.executeQuery();
             if (rs.next()) return rs.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -92,20 +88,11 @@ public class SommeilService {
         return 0;
     }
 
-
-    /**
-     * Charge le nombre de rêves dans chaque Sommeil de la liste.
-     * Appelle cette méthode après listerTous() pour enrichir les cards.
-     */
     public List<Sommeil> listerTousAvecNbReves() throws SQLException {
         List<Sommeil> sommeils = listerTous();
         sommeils.forEach(s -> s.setNbReves(compterRevesParSommeil(s.getId())));
         return sommeils;
     }
-
-    // ═══════════════════════════════════════════════════════════
-    //  RECHERCHE & FILTRES
-    // ═══════════════════════════════════════════════════════════
 
     public List<Sommeil> rechercherDynamique(String critere) throws SQLException {
         if (critere == null || critere.trim().isEmpty()) return listerTous();
@@ -178,10 +165,6 @@ public class SommeilService {
                 .collect(Collectors.toList());
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  TRIS
-    // ═══════════════════════════════════════════════════════════
-
     public List<Sommeil> trierParDate(boolean croissant) throws SQLException {
         Comparator<Sommeil> c = Comparator.comparing(Sommeil::getDateNuit);
         return listerTous().stream().sorted(croissant ? c : c.reversed()).collect(Collectors.toList());
@@ -208,10 +191,6 @@ public class SommeilService {
         Comparator<Sommeil> c = Comparator.comparingInt(Sommeil::calculerScoreQualite);
         return listerTous().stream().sorted(croissant ? c : c.reversed()).collect(Collectors.toList());
     }
-
-    // ═══════════════════════════════════════════════════════════
-    //  STATISTIQUES DE BASE
-    // ═══════════════════════════════════════════════════════════
 
     public double calculerDureeMoyenne() throws SQLException {
         return sommeilDao.calculerDureeMoyenne();
@@ -264,10 +243,6 @@ public class SommeilService {
         return filtrerParPeriode(debut, fin).size();
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  STATISTIQUES TEMPORELLES
-    // ═══════════════════════════════════════════════════════════
-
     public Map<String, Object> statistiquesSemaine() throws SQLException {
         List<Sommeil> s = filtrerParPeriode(LocalDate.now().minusDays(7), LocalDate.now());
         Map<String, Object> stats = new HashMap<>();
@@ -304,10 +279,6 @@ public class SommeilService {
                         (a, b) -> a, TreeMap::new));
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  ANALYSE D'UNE NUIT
-    // ═══════════════════════════════════════════════════════════
-
     public String analyserQualiteSommeil(Sommeil sommeil) {
         if (sommeil == null) return "Aucune donnée";
         StringBuilder a = new StringBuilder();
@@ -327,10 +298,6 @@ public class SommeilService {
         else                  a.append("Nuit difficile (score: " + score + "/100).");
         return a.toString();
     }
-
-    // ═══════════════════════════════════════════════════════════
-    //  SCORE BIEN-ÊTRE & RÉSILIENCE
-    // ═══════════════════════════════════════════════════════════
 
     public int calculerScoreBienEtre() throws SQLException {
         List<Sommeil> s = listerTous();
@@ -370,10 +337,6 @@ public class SommeilService {
         return "Rythme préoccupant";
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  CLASSEMENT PAR NIVEAU
-    // ═══════════════════════════════════════════════════════════
-
     public Map<String, List<Sommeil>> classerParNiveau() throws SQLException {
         Map<String, List<Sommeil>> classes = new LinkedHashMap<>();
         classes.put("🟢 BON",    new ArrayList<>());
@@ -388,10 +351,6 @@ public class SommeilService {
         return classes;
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  DÉTECTION D'ANOMALIES
-    // ═══════════════════════════════════════════════════════════
-
     public List<Sommeil> detecterAnomalies() throws SQLException {
         List<Sommeil> s = listerTous();
         if (s.size() < 3) return Collections.emptyList();
@@ -404,10 +363,6 @@ public class SommeilService {
                         || n.getInterruptions() > (moyInter + 2 * sdInter))
                 .collect(Collectors.toList());
     }
-
-    // ═══════════════════════════════════════════════════════════
-    //  RÉGULARITÉ DES HORAIRES
-    // ═══════════════════════════════════════════════════════════
 
     public double calculerRegulariteHoraires() throws SQLException {
         List<Sommeil> s = listerTous().stream()
@@ -431,10 +386,6 @@ public class SommeilService {
         return "Horaires irréguliers (>" + String.format("%.0f", ecartTypeMinutes) + " min)";
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  DETTE DE SOMMEIL
-    // ═══════════════════════════════════════════════════════════
-
     public double calculerDetteSommeil() throws SQLException {
         LocalDate fin   = LocalDate.now();
         LocalDate debut = fin.minusDays(7);
@@ -450,10 +401,6 @@ public class SommeilService {
         else if (dette <= 7)  return "Dette modérée ("  + String.format("%.1f", dette) + "h)";
         return "Dette sévère (" + String.format("%.1f", dette) + "h) — récupérez !";
     }
-
-    // ═══════════════════════════════════════════════════════════
-    //  EFFICACITÉ DU SOMMEIL
-    // ═══════════════════════════════════════════════════════════
 
     public double calculerEfficaciteSommeil(Sommeil sommeil) {
         if (sommeil == null) return 0;
@@ -475,10 +422,6 @@ public class SommeilService {
         if (pct >= 75) return "Efficacité acceptable";
         return "Efficacité faible — réduisez les interruptions";
     }
-
-    // ═══════════════════════════════════════════════════════════
-    //  TENDANCES
-    // ═══════════════════════════════════════════════════════════
 
     public Map<String, String> identifierTendances(LocalDate debut, LocalDate fin)
             throws SQLException {
@@ -504,10 +447,6 @@ public class SommeilService {
         return "➡️ Stable";
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  PROFIL CHRONOBIOLOGIQUE
-    // ═══════════════════════════════════════════════════════════
-
     public String determinerProfilChronobiologique() throws SQLException {
         List<Sommeil> s = listerTous().stream()
                 .filter(n -> n.getHeureCoucher() != null).collect(Collectors.toList());
@@ -524,10 +463,6 @@ public class SommeilService {
         else if (heure < 24) return "🌙 Chronotype intermédiaire (22h–minuit)";
         return "🦉 Chronotype tardif (couche après minuit)";
     }
-
-    // ═══════════════════════════════════════════════════════════
-    //  RECOMMANDATIONS
-    // ═══════════════════════════════════════════════════════════
 
     public List<String> genererRecommandations() throws SQLException {
         List<String> rec = new ArrayList<>();
@@ -547,10 +482,6 @@ public class SommeilService {
         if (rec.isEmpty())       rec.add("Votre sommeil est de bonne qualité — continuez ainsi !");
         return rec;
     }
-
-    // ═══════════════════════════════════════════════════════════
-    //  INSIGHTS
-    // ═══════════════════════════════════════════════════════════
 
     public List<String> obtenirInsights() throws SQLException {
         List<String> insights = new ArrayList<>();
@@ -575,10 +506,6 @@ public class SommeilService {
                 .ifPresent(e -> insights.add("📊 Qualité dominante : " + e.getKey() + " (" + e.getValue() + " nuits)"));
         return insights;
     }
-
-    // ═══════════════════════════════════════════════════════════
-    //  RAPPORTS
-    // ═══════════════════════════════════════════════════════════
 
     public String genererRapportDetaille(Sommeil sommeil) {
         if (sommeil == null) return "Aucune donnée";
@@ -622,7 +549,56 @@ public class SommeilService {
         return sb.toString();
     }
 
-    // ─── Utilitaires privés ──────────────────────────────────────────────────────
+    public void exporterSommeilsPdf(List<Sommeil> sommeils, String cheminFichier) throws IOException {
+        PdfWriter writer = new PdfWriter(cheminFichier);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+
+        document.add(new Paragraph("Rapport de Sommeil")
+                .setFontSize(20)
+                .setBold()
+                .setTextAlignment(TextAlignment.CENTER));
+
+        document.add(new Paragraph("\n"));
+
+        if (sommeils == null || sommeils.isEmpty()) {
+            document.add(new Paragraph("Aucune donnée de sommeil disponible."));
+        } else {
+            Table table = new Table(new float[]{2, 2, 2, 2, 2});
+            table.setWidth(500);
+
+            table.addHeaderCell("Date");
+            table.addHeaderCell("Heure coucher");
+            table.addHeaderCell("Heure réveil");
+            table.addHeaderCell("Durée (h)");
+            table.addHeaderCell("Qualité");
+
+            for (Sommeil s : sommeils) {
+                table.addCell(
+                        s.getDateNuit() != null
+                                ? s.getDateNuit().format(DATE_FORMATTER)
+                                : "—"
+                );
+                table.addCell(
+                        s.getHeureCoucher() != null
+                                ? s.getHeureCoucher().format(TIME_FORMATTER)
+                                : "—"
+                );
+                table.addCell(
+                        s.getHeureReveil() != null
+                                ? s.getHeureReveil().format(TIME_FORMATTER)
+                                : "—"
+                );
+                table.addCell(String.format("%.1f", s.getDureeSommeil()));
+                table.addCell(s.getQualite() != null ? s.getQualite() : "—");
+            }
+
+            document.add(table);
+        }
+
+        document.close();
+    }
+
 
     private double calculerEcartTypeDuree(List<Sommeil> sommeils) {
         if (sommeils.isEmpty()) return 0;

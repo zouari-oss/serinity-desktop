@@ -41,6 +41,11 @@
                 styleClass="btn-secondary"
                 onAction="#rafraichir" />
 
+        <Button text="📄 Exporter PDF"
+                styleClass="btn-secondary"
+                onAction="#exporterPdf"/>
+
+
 
 
     </HBox>

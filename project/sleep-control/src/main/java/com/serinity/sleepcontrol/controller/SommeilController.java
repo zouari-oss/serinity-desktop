@@ -12,6 +12,10 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import java.io.File;
+
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -48,6 +52,29 @@ public class SommeilController {
             updateStats();
         } catch (Exception e) {
             showError("Erreur de connexion", "Impossible de se connecter a la base de donnees");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void exporterPdf() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Enregistrer le rapport de sommeil");
+            fileChooser.setInitialFileName("rapport_sommeil.pdf");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("PDF", "*.pdf")
+            );
+
+            Stage stage = (Stage) mainContainer.getScene().getWindow();
+            File file = fileChooser.showSaveDialog(stage);
+
+            if (file != null) {
+                sommeilService.exporterSommeilsPdf(currentSommeils, file.getAbsolutePath());
+                showSuccess("Succès", "Rapport PDF exporté avec succès !");
+            }
+        } catch (Exception e) {
+            showError("Erreur", "Impossible d'exporter le PDF : " + e.getMessage());
             e.printStackTrace();
         }
     }

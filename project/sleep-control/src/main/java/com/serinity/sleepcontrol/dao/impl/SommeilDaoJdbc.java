@@ -28,6 +28,7 @@ public class SommeilDaoJdbc implements SommeilDao {
             stmt.setTime(3, Time.valueOf(sommeil.getHeureReveil()));
             stmt.setString(4, sommeil.getQualite());
             stmt.setString(5, sommeil.getCommentaire());
+            // dureeSommeil déjà calculée dans le modèle (setHeureCoucher/Reveil)
             stmt.setDouble(6, sommeil.getDureeSommeil());
             stmt.setInt(7, sommeil.getInterruptions());
             stmt.setString(8, sommeil.getHumeurReveil());
@@ -36,7 +37,9 @@ public class SommeilDaoJdbc implements SommeilDao {
             stmt.setString(11, sommeil.getNiveauBruit());
             stmt.executeUpdate();
             try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) sommeil.setId(rs.getInt(1));
+                if (rs.next()) {
+                    sommeil.setId(rs.getInt(1));
+                }
             }
         }
     }
@@ -166,7 +169,9 @@ public class SommeilDaoJdbc implements SommeilDao {
         String sql = "SELECT AVG(duree_sommeil) as moyenne FROM sommeil";
         try (Statement stmt = getConn().createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-            if (rs.next()) return rs.getDouble("moyenne");
+            if (rs.next()) {
+                return rs.getDouble("moyenne");
+            }
         }
         return 0;
     }
@@ -194,7 +199,9 @@ public class SommeilDaoJdbc implements SommeilDao {
         try (PreparedStatement ps = getConn().prepareStatement(sql)) {
             ps.setInt(1, sommeilId);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1);
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -209,7 +216,6 @@ public class SommeilDaoJdbc implements SommeilDao {
         sommeil.setHeureReveil(rs.getTime("heure_reveil").toLocalTime());
         sommeil.setQualite(rs.getString("qualite"));
         sommeil.setCommentaire(rs.getString("commentaire"));
-        sommeil.setDureeSommeil(rs.getDouble("duree_sommeil"));
         sommeil.setInterruptions(rs.getInt("interruptions"));
         sommeil.setHumeurReveil(rs.getString("humeur_reveil"));
         sommeil.setEnvironnement(rs.getString("environnement"));

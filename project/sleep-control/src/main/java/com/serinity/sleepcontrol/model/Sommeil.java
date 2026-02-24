@@ -62,16 +62,13 @@ public class Sommeil {
     }
 
     public double calculerDuree() {
-        if (heureCoucher != null && heureReveil != null) {
-            Duration duration;
-            if (heureReveil.isBefore(heureCoucher)) {
-                duration = Duration.between(heureCoucher, heureReveil.plusHours(24));
-            } else {
-                duration = Duration.between(heureCoucher, heureReveil);
-            }
-            return Math.round(duration.toMinutes() / 60.0 * 100.0) / 100.0;
-        }
-        return 0;
+        if (heureCoucher == null || heureReveil == null) return 0;
+
+        long minutes = Duration.between(heureCoucher, heureReveil).toMinutes();
+
+        if (minutes < 0) minutes += 24 * 60;
+
+        return Math.round((minutes / 60.0) * 100.0) / 100.0;
     }
 
     public void ajouterReve(Reve reve) {
@@ -123,19 +120,21 @@ public class Sommeil {
             score -= interruptions * 3;
         }
 
-        switch (qualite.toLowerCase()) {
-            case "excellente":
-                score += 15;
-                break;
-            case "bonne":
-                score += 10;
-                break;
-            case "moyenne":
-                score += 0;
-                break;
-            case "mauvaise":
-                score -= 10;
-                break;
+        if (qualite != null) {
+            switch (qualite.toLowerCase()) {
+                case "excellente":
+                    score += 15;
+                    break;
+                case "bonne":
+                    score += 10;
+                    break;
+                case "moyenne":
+                    score += 0;
+                    break;
+                case "mauvaise":
+                    score -= 10;
+                    break;
+            }
         }
 
         return Math.max(0, Math.min(100, score));
@@ -144,7 +143,9 @@ public class Sommeil {
     public String genererRapport() {
         StringBuilder rapport = new StringBuilder();
         rapport.append("=== Rapport de Sommeil ===\n");
-        rapport.append("Date: ").append(dateNuit.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))).append("\n");
+        if (dateNuit != null) {
+            rapport.append("Date: ").append(dateNuit.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))).append("\n");
+        }
         rapport.append("Coucher: ").append(heureCoucher).append(" - Réveil: ").append(heureReveil).append("\n");
         rapport.append("Durée: ").append(String.format("%.2f", dureeSommeil)).append(" heures\n");
         rapport.append("Qualité: ").append(qualite).append("\n");
@@ -204,6 +205,10 @@ public class Sommeil {
                 reve.setSommeil(this);
             }
         }
+    }
+
+    public String getQualiteSommeil() {
+        return qualite;
     }
 
     @Override
