@@ -1,36 +1,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.serinity</groupId>
+  <!-- Super & Child GAV properties -->
+  <parent>
+    <groupId>com.serinity</groupId>
+    <artifactId>serinity</artifactId>
+    <version>1.0.0</version>
+  </parent>
   <artifactId>exercice-control</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  <name>exercice-control</name>
+  <!-- !Super & Child GAV properties -->
 
-  <properties>
-    <maven.compiler.release>17</maven.compiler.release>
-    <javafx.version>17.0.10</javafx.version>
-    <junit.jupiter.version>5.10.2</junit.jupiter.version>
-  </properties>
+  <!-- Module properties -->
+  <name>exercice-control</name>
+  <url>http://serinity.dev</url>
+  <!-- !Module properties -->
 
   <dependencies>
-
-    <!-- JavaFX -->
+    <!-- org.openjfx.javafx-controls -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>17.0.10</version>
     </dependency>
+    <!-- !org.openjfx.javafx-controls -->
 
+    <!-- org.openjfx.javafx-fxml -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
-      <version>${javafx.version}</version>
     </dependency>
+    <!-- !org.openjfx.javafx-fxml -->
 
     <!-- MySQL JDBC Driver -->
     <dependency>
@@ -39,62 +39,64 @@
       <version>8.4.0</version>
     </dependency>
 
-    <!-- JUnit 5 -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.jupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-
+    <!-- org.junit.jupiter.junit-jupiter-engine -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
+    <!-- !org.junit.jupiter.junit-jupiter-engine -->
+
+    <!-- org.openjfx.javafx-media -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
-      <version>17.0.10</version>
     </dependency>
-
+    <!-- !org.openjfx.javafx-media -->
   </dependencies>
 
   <build>
     <plugins>
-
-      <!-- Compiler (JPMS friendly) -->
+      <!-- org.apache.maven.plugins.maven-compiler-plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
-        <configuration>
-          <release>${maven.compiler.release}</release>
-        </configuration>
       </plugin>
+      <!-- !org.apache.maven.plugins.maven-compiler-plugin -->
 
-      <!-- JavaFX runner (puts JavaFX on module-path correctly) -->
+      <!-- org.openjfx.javafx-maven-plugin -->
       <plugin>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
-        <version>0.0.8</version>
-        <configuration>
-          <!-- CHANGE this to your real main class (the one that extends Application) -->
-          <mainClass>com.serinity.exercicecontrol.MainApp</mainClass>
-        </configuration>
+        <executions>
+          <execution>
+            <!-- Default configuration for running -->
+            <!-- Usage: mvn clean javafx:run -->
+            <id>default-cli</id>
+            <configuration>
+              <mainClass>com.serinity.exercicecontrol.App</mainClass>
+              <options>
+                <option>--enable-native-access=javafx.graphics</option>
+                <option>--enable-native-access=javafx.web</option>
+              </options>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
+      <!-- !org.openjfx.javafx-maven-plugin -->
 
-      <!-- Surefire -->
+      <!-- org.apache.maven.plugins.maven-surefire-plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
         <configuration>
+          <systemPropertyVariables>
+            <javafx.version>${javafx.version}</javafx.version> <!-- To include javaFx version to test -->
+          </systemPropertyVariables>
           <useModulePath>false</useModulePath>
         </configuration>
       </plugin>
-
+      <!-- !org.apache.maven.plugins.maven-surefire-plugin -->
     </plugins>
   </build>
 

@@ -72,6 +72,7 @@
     <module>mood-control</module>
     <module>access-control</module>
     <module>sleep-control</module>
+    <module>exercice-control</module>
   </modules>
   <!-- !Modules properties -->
 
@@ -100,6 +101,14 @@
         <version>${javafx.version}</version>
       </dependency>
       <!-- !org.openjfx.javafx-web -->
+
+      <!-- org.openjfx.javafx-media -->
+      <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-media</artifactId>
+        <version>${javafx.version}</version>
+      </dependency>
+      <!-- !org.openjfx.javafx-media -->
 
       <!-- org.junit.jupiter.junit-jupiter-engine -->
       <dependency>
