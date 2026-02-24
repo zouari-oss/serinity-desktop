@@ -3,7 +3,6 @@ package com.serinity.exercicecontrol.controller;
 import com.serinity.exercicecontrol.dao.RecommendationDAO;
 import com.serinity.exercicecontrol.dao.ScoringDAO;
 import com.serinity.exercicecontrol.model.Exercise;
-import com.serinity.exercicecontrol.security.AuthContext;
 import com.serinity.exercicecontrol.service.ExerciseService;
 import com.serinity.exercicecontrol.service.RecommendationService;
 import com.serinity.exercicecontrol.service.ScoringService;
@@ -31,9 +30,6 @@ public class ExerciseListController {
     @FXML private Label lblCount;
     @FXML private ComboBox<String> cbType;
     @FXML private ComboBox<Integer> cbLevel;
-
-    // ✅ Bouton Ajouter (IMPORTANT: mettre fx:id dans ExerciseList.fxml)
-    @FXML private Button btnAddExercise;
 
     // ✅ Responsive grid
     @FXML private TilePane cardsPane;
@@ -66,9 +62,6 @@ public class ExerciseListController {
 
     @FXML
     public void initialize() {
-        // ✅ ADMIN: cacher bouton "Ajouter" si pas admin
-        applyAdminUI();
-
         cbType.setItems(FXCollections.observableArrayList("Tous"));
         cbType.getSelectionModel().selectFirst();
 
@@ -77,7 +70,9 @@ public class ExerciseListController {
         cbLevel.getItems().addAll(1, 2, 3, 4, 5);
         cbLevel.setConverter(new javafx.util.StringConverter<>() {
             @Override public String toString(Integer v) { return v == null ? "Tous" : String.valueOf(v); }
-            @Override public Integer fromString(String s) { return (s == null || s.equalsIgnoreCase("Tous")) ? null : Integer.valueOf(s); }
+            @Override public Integer fromString(String s) {
+                return (s == null || s.equalsIgnoreCase("Tous")) ? null : Integer.valueOf(s);
+            }
         });
         cbLevel.getSelectionModel().selectFirst();
 
@@ -108,21 +103,6 @@ public class ExerciseListController {
         loadAmbianceBanner();
     }
 
-    private void applyAdminUI() {
-        boolean admin = AuthContext.isAdmin();
-        if (btnAddExercise != null) {
-            btnAddExercise.setVisible(admin);
-            btnAddExercise.setManaged(admin);
-            btnAddExercise.setDisable(!admin);
-        }
-    }
-
-    private boolean requireAdmin() {
-        if (AuthContext.isAdmin()) return true;
-        showError("Accès refusé", "Action réservée à l'ADMIN.");
-        return false;
-    }
-
     private void updateColumns() {
         if (cardsPane == null || cardsPane.getScene() == null) return;
 
@@ -130,6 +110,7 @@ public class ExerciseListController {
         double tile = cardsPane.getPrefTileWidth(); // 320
         double gap = cardsPane.getHgap();           // 18
 
+        // marge approximative (padding page + scrollbars)
         int cols = (int) Math.max(1, Math.floor((w - 80) / (tile + gap)));
         cardsPane.setPrefColumns(cols);
     }
@@ -157,8 +138,6 @@ public class ExerciseListController {
 
     @FXML
     private void onAddExercise() {
-        if (!requireAdmin()) return;
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseForm.fxml"));
             Parent root = loader.load();
@@ -186,7 +165,6 @@ public class ExerciseListController {
     // ===================== API utilisée par ExerciseCardController =====================
 
     public void openEdit(Exercise ex) {
-        if (!requireAdmin()) return;
         if (ex == null) return;
 
         try {
@@ -208,7 +186,6 @@ public class ExerciseListController {
     }
 
     public void deleteExercise(Exercise ex) {
-        if (!requireAdmin()) return;
         if (ex == null) return;
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -226,13 +203,12 @@ public class ExerciseListController {
         } catch (SQLException e) {
             e.printStackTrace();
             showError("Erreur", "Impossible de supprimer.\n" + e.getMessage());
-        } catch (SecurityException se) {
-            showError("Accès refusé", se.getMessage());
         }
     }
 
     public void openDetails(Exercise ex) {
         if (ex == null) return;
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseDetails.fxml"));
             Parent root = loader.load();
@@ -389,7 +365,7 @@ public class ExerciseListController {
     // ===================== Score + Recommendation =====================
 
     private void loadScoreAndRecommendation() {
-        int userId = (AuthContext.userId() > 0) ? AuthContext.userId() : 1;
+        int userId = 1; // TODO user connecté
 
         try {
             ScoringService.ScoreResult score = scoringService.computeEngagementScore(userId);

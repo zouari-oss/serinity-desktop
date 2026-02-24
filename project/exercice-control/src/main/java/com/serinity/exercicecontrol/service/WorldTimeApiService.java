@@ -1,12 +1,9 @@
 package com.serinity.exercicecontrol.service;
 
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.http.*;
 import java.time.OffsetDateTime;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 public class WorldTimeApiService {
 
@@ -15,29 +12,20 @@ public class WorldTimeApiService {
     public WorldTimeInfo fetchTime(String timezone) {
         try {
             String url = "https://worldtimeapi.org/api/timezone/" + timezone;
-
-            HttpRequest req = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .GET()
-                    .build();
-
+            HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
             HttpResponse<String> res = http.send(req, HttpResponse.BodyHandlers.ofString());
-            if (res.statusCode() != 200) {
-                throw new RuntimeException("WorldTimeAPI HTTP " + res.statusCode());
-            }
+            if (res.statusCode() != 200) throw new RuntimeException("HTTP " + res.statusCode());
 
             String json = res.body();
             String datetime = extract(json, "\"datetime\"\\s*:\\s*\"(.*?)\"");
-            String tz = extract(json, "\"timezone\"\\s*:\\s*\"(.*?)\"");
-
             OffsetDateTime odt = OffsetDateTime.parse(datetime);
+
             int hour = odt.getHour();
-
             DayPhase phase = dayPhase(hour);
-            return new WorldTimeInfo(tz, odt, hour, phase);
 
+            return new WorldTimeInfo(timezone, odt, hour, phase);
         } catch (Exception e) {
-            throw new RuntimeException("Erreur WorldTimeAPI: " + e.getMessage(), e);
+            throw new RuntimeException("WorldTimeAPI: " + e.getMessage(), e);
         }
     }
 
@@ -49,8 +37,7 @@ public class WorldTimeApiService {
     }
 
     private String extract(String json, String regex) {
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(json);
+        Matcher m = Pattern.compile(regex).matcher(json);
         if (!m.find()) return null;
         return m.group(1).replace("\\/", "/");
     }

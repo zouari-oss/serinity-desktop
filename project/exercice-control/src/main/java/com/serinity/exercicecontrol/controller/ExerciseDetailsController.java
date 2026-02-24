@@ -3,7 +3,6 @@ package com.serinity.exercicecontrol.controller;
 import com.serinity.exercicecontrol.dao.SessionDAO;
 import com.serinity.exercicecontrol.model.Exercise;
 import com.serinity.exercicecontrol.model.Resource;
-import com.serinity.exercicecontrol.security.AuthContext;
 import com.serinity.exercicecontrol.service.ExerciseService;
 import com.serinity.exercicecontrol.service.ResourceService;
 import com.serinity.exercicecontrol.service.SessionService;
@@ -50,14 +49,6 @@ public class ExerciseDetailsController {
         lblLevel.setText("Niveau : " + exercise.getLevel());
         lblDuration.setText("Durée : " + exercise.getDurationMinutes() + " min");
         txtDescription.setText(exercise.getDescription() == null ? "" : exercise.getDescription());
-    }
-
-    // ===================== ADMIN GUARD =====================
-
-    private boolean requireAdmin() {
-        if (AuthContext.isAdmin()) return true;
-        showError("Accès refusé", "Action réservée à l'ADMIN.");
-        return false;
     }
 
     // ===================== RESOURCES CRUD (UI) =====================
@@ -107,7 +98,6 @@ public class ExerciseDetailsController {
 
     @FXML
     private void onAddResource() {
-        if (!requireAdmin()) return;
         if (exercise == null) return;
 
         try {
@@ -125,7 +115,6 @@ public class ExerciseDetailsController {
     }
 
     public void openEditResource(Resource r) {
-        if (!requireAdmin()) return;
         if (exercise == null || r == null) return;
 
         try {
@@ -143,7 +132,6 @@ public class ExerciseDetailsController {
     }
 
     public void deleteResource(Resource r) {
-        if (!requireAdmin()) return;
         if (r == null) return;
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -166,7 +154,6 @@ public class ExerciseDetailsController {
 
     @FXML
     private void onEditExercise() {
-        if (!requireAdmin()) return;
         if (exercise == null) return;
 
         try {
@@ -185,7 +172,6 @@ public class ExerciseDetailsController {
 
     @FXML
     private void onDeleteExercise() {
-        if (!requireAdmin()) return;
         if (exercise == null) return;
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -201,8 +187,6 @@ public class ExerciseDetailsController {
         } catch (SQLException e) {
             e.printStackTrace();
             showError("Erreur BD", "Impossible de supprimer.\n" + e.getMessage());
-        } catch (SecurityException se) {
-            showError("Accès refusé", se.getMessage());
         }
     }
 
@@ -212,8 +196,7 @@ public class ExerciseDetailsController {
         if (exercise == null) return;
 
         try {
-            // ✅ Remplace par l'utilisateur connecté
-            int userId = (AuthContext.userId() > 0) ? AuthContext.userId() : 1;
+            int userId = 1; // TODO: remplacer par l'utilisateur connecté
 
             SessionDAO dao = new SessionDAO();
             SessionService service = new SessionService(dao);
