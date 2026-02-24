@@ -1,10 +1,10 @@
-package com.serinity.forumcontrol.HardcodedUser;
+package com.serinity.forumcontrol.CurrentUser;
 
-public final class FakeUser {
+public final class CurrentUser {
 
     private static final String CURRENT_USER_ID = "5";
 
-    private FakeUser() {}
+    private CurrentUser() {}
 
     public static String getCurrentUserId() {
         return CURRENT_USER_ID;

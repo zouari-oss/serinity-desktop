@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="rootCard" styleClass="category-card" spacing="8" style="-fx-background-color:white;              -fx-padding:16;              -fx-background-radius:14;              -fx-border-radius:14;              -fx-border-color:#dddddd;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.12" fx:controller="com.serinity.forumcontrol.Controllers.CategoryCardController">
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label fx:id="lfoukLabel" style="-fx-text-fill:#2b2a2a;" HBox.hgrow="ALWAYS" />
+        <Region HBox.hgrow="ALWAYS"/>
+        <MenuButton fx:id="menuButton"
+                    text="⋮"
+                    style="-fx-background-color: transparent;
+                           -fx-font-size: 20;
+                           -fx-font-weight: bold;
+                           -fx-text-fill: #666;"
+                    onMouseClicked="#handleMenuClick">
+        </MenuButton>
+    </HBox>
+
+    <Label fx:id="titleLabel" style="-fx-font-size:18; -fx-font-weight:bold;" />
+
+    <Label fx:id="metaLabel" style="-fx-text-fill:gray;" />
+
+</VBox>

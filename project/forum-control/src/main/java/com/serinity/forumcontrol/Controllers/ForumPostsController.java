@@ -1,6 +1,6 @@
 package com.serinity.forumcontrol.Controllers;
 
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
+import com.serinity.forumcontrol.CurrentUser.CurrentUser;
 import com.serinity.forumcontrol.Models.Category;
 import com.serinity.forumcontrol.Models.ThreadStatus;
 import com.serinity.forumcontrol.Models.ThreadType;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ForumPostsController {
-    private FakeUser user;
+    private CurrentUser user;
     String currentUserId = user.getCurrentUserId();
     @FXML private VBox cardsContainer;
     @FXML private Button categoriesButton;
@@ -40,6 +40,7 @@ public class ForumPostsController {
     @FXML private Button myThreadsButton;
     @FXML private Button followedButton;
     @FXML private Button archivedButton;
+    @FXML private Button statisticsButton;
     @FXML private BorderPane rootPane;
     @FXML private TextField searchField;
     @FXML private Button clearSearchButton;
@@ -177,11 +178,17 @@ public class ForumPostsController {
                 categoriesButton.setManaged(true);
                 newCategoryButton.setVisible(true);
                 newCategoryButton.setManaged(true);
+                statisticsButton.setVisible(true);
+                statisticsButton.setManaged(true);
+
             } else {
                 categoriesButton.setVisible(false);
                 categoriesButton.setManaged(false);
                 newCategoryButton.setVisible(false);
                 newCategoryButton.setManaged(false);
+                statisticsButton.setVisible(false);
+                statisticsButton.setManaged(false);
+
             }
 
         } catch (Exception e) {
@@ -192,6 +199,35 @@ public class ForumPostsController {
             newCategoryButton.setVisible(false);
             newCategoryButton.setManaged(false);
         }
+    }
+    @FXML
+    private void onStatistics() {
+        setActiveNavButton(statisticsButton);
+        try {
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/fxml/forum/StatisticsView.fxml")
+        );
+        Parent addThreadView = loader.load();
+
+        BorderPane borderPane = findBorderPane();
+
+        if (borderPane != null) {
+            borderPane.setCenter(addThreadView);
+
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+        showAlert("Error Loading View",
+                "Could not load New Thread form.\n\n" +
+                        "Error: " + e.getMessage() + "\n\n" +
+                        "Check that AddThread.fxml is at: /fxml/forum/AddThread.fxml",
+                Alert.AlertType.ERROR);
+    } catch (Exception e) {
+        e.printStackTrace();
+        showAlert("Unexpected Error",
+                "An unexpected error occurred: " + e.getMessage(),
+                Alert.AlertType.ERROR);
+    }
     }
     @FXML
     private void onNewThread() {
@@ -574,6 +610,7 @@ public class ForumPostsController {
         resetNavButton(followedButton);
         resetNavButton(archivedButton);
         resetNavButton(categoriesButton);
+        resetNavButton(statisticsButton);
 
         if (activeButton != null) {
             activeButton.setStyle(
@@ -784,9 +821,6 @@ public class ForumPostsController {
         }
     }
 
-    /**
-     * Show notifications panel as popup overlay
-     */
     private void showNotificationsPopup(Parent notificationsPanel) {
         // Get the root of the scene
         Node sceneRoot = notificationsButton.getScene().getRoot();

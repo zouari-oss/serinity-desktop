@@ -1,10 +1,9 @@
 package com.serinity.forumcontrol.Controllers;
 
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
+import com.serinity.forumcontrol.CurrentUser.CurrentUser;
 import com.serinity.forumcontrol.Models.ThreadStatus;
 import com.serinity.forumcontrol.Services.ServiceReply;
 import com.serinity.forumcontrol.Services.ServiceThread;
-import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,14 +12,13 @@ import javafx.scene.control.*;
 import com.serinity.forumcontrol.Models.Thread;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.Optional;
 
 public class ThreadCardController {
-    private FakeUser user;
+    private CurrentUser user;
     String currentUserId = user.getCurrentUserId();
     @FXML
     private VBox rootCard;
