@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.exercicecontrol.controller.SessionRunController"
+            fitToWidth="true"
+            styleClass="transparent-scroll">
+
+    <content>
+        <VBox spacing="16" styleClass="page-root">
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
+
+            <!-- HEADER -->
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="session-header">
+                <Button text="← Retour" onAction="#onBack" styleClass="secondary-btn"/>
+                <VBox spacing="2">
+                    <Label fx:id="lblTitle" text="Session — ..." styleClass="session-title"/>
+                    <Label text="Suivi en temps réel" styleClass="muted"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <!-- ✅ match controller -->
+                <Label fx:id="lblStatusPill" text="EN COURS" styleClass="pill pill-info"/>
+            </HBox>
+
+            <!-- TOP METRICS -->
+            <HBox spacing="14">
+                <VBox spacing="6" styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Temps actif" styleClass="muted"/>
+                    <!-- ✅ match controller -->
+                    <Label fx:id="lblTimer" text="00:00" styleClass="metric-value"/>
+                </VBox>
+
+                <VBox spacing="6" styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Objectif" styleClass="muted"/>
+                    <!-- ✅ match controller -->
+                    <Label fx:id="lblTarget" text="—" styleClass="metric-value"/>
+                </VBox>
+
+                <VBox spacing="6" styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Moment" styleClass="muted"/>
+                    <!-- ✅ match controller -->
+                    <Label fx:id="lblDayPhase" text="—" styleClass="metric-value"/>
+                </VBox>
+            </HBox>
+
+            <!-- MAIN GRID -->
+            <GridPane hgap="14" vgap="14">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="58"/>
+                    <ColumnConstraints percentWidth="42"/>
+                </columnConstraints>
+
+                <!-- Consigne -->
+                <VBox spacing="10" styleClass="card" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                    <Label text="Consigne" styleClass="section-title"/>
+                    <!-- ✅ match controller -->
+                    <Label fx:id="lblGuidance"
+                           text="—"
+                           wrapText="true"
+                           styleClass="body-text"/>
+                </VBox>
+
+                <!-- Ambiance sonore -->
+                <VBox spacing="10" styleClass="audio-card" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Ambiance sonore" styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <!-- ✅ pas dans controller avant, donc on retire fx:id -->
+                        <Label text="Nature" styleClass="chip"/>
+                    </HBox>
+
+                    <!-- ✅ match controller -->
+                    <Label fx:id="lblStation"
+                           text="—"
+                           styleClass="audio-title"/>
+
+                    <Label text="Choisie selon le moment de la journée"
+                           styleClass="muted"
+                           wrapText="true"/>
+
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <!-- ✅ match controller + méthodes -->
+                        <Button fx:id="btnSoundLoad" text="Charger" onAction="#onLoadAmbient" styleClass="secondary-btn"/>
+                        <Button fx:id="btnSoundPlay" text="Play" onAction="#onPlayAmbient" styleClass="primary-btn"/>
+                        <Button fx:id="btnSoundStop" text="Stop" onAction="#onStopAmbient" styleClass="danger-btn"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Feedback -->
+                <VBox spacing="10" styleClass="card" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                    <Label text="Feedback (optionnel)" styleClass="section-title"/>
+                    <TextArea fx:id="txtFeedback"
+                              promptText="Comment vous sentez-vous après l’exercice ?"
+                              wrapText="true"
+                              prefRowCount="4"
+                              styleClass="modern-textarea"/>
+                </VBox>
+            </GridPane>
+
+            <!-- BOTTOM ACTION BAR -->
+            <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="bottom-bar">
+                <!-- ✅ match controller -->
+                <Button fx:id="btnStart" text="Démarrer" onAction="#onStart" styleClass="primary-btn"/>
+                <Button fx:id="btnPause" text="Pause" onAction="#onPause" styleClass="secondary-btn"/>
+                <Button fx:id="btnResume" text="Reprendre" onAction="#onResume" styleClass="secondary-btn"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- ✅ match controller -->
+                <Button fx:id="btnComplete" text="Terminer" onAction="#onComplete" styleClass="primary-btn"/>
+                <Button fx:id="btnAbort" text="Quitter" onAction="#onAbort" styleClass="danger-btn"/>
+            </HBox>
+
+        </VBox>
+    </content>
+</ScrollPane>

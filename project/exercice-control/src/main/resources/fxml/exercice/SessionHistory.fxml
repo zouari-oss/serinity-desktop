@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.exercicecontrol.controller.SessionHistoryController"
+      spacing="16"
+      styleClass="page-root">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Button text="← Retour" onAction="#onBack" styleClass="secondary-btn"/>
+        <Label fx:id="lblTitle" text="Historique" styleClass="page-title"/>
+        <Label fx:id="lblCount" text="(0)" styleClass="muted-text"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Actualiser" onAction="#onRefresh" styleClass="secondary-btn"/>
+    </HBox>
+
+    <!-- History cards (no table, no ID) -->
+    <VBox styleClass="table-card">
+        <ListView fx:id="historyList"
+                  styleClass="history-list"
+                  prefHeight="560"/>
+    </VBox>
+
+</VBox>

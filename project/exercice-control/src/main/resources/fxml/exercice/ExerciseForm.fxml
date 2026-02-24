@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.exercicecontrol.controller.ExerciseFormController"
+            fitToWidth="true"
+            styleClass="transparent-scroll">
+
+    <content>
+        <VBox spacing="16" styleClass="page-root">
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
+
+            <!-- HEADER MODERNE -->
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="details-header">
+                <VBox spacing="4">
+                    <!-- ✅ fx:id attendu -->
+                    <Label fx:id="lblHeader" text="Ajouter un exercice" styleClass="details-title"/>
+                    <Label text="Renseignez les informations de l’exercice" styleClass="muted"/>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button text="Retour" onAction="#onBack" styleClass="secondary-btn"/>
+            </HBox>
+
+            <!-- FORM CARD -->
+            <VBox spacing="14" styleClass="card">
+
+                <GridPane hgap="14" vgap="12">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="18"/>
+                        <ColumnConstraints percentWidth="82"/>
+                    </columnConstraints>
+
+                    <!-- Titre -->
+                    <Label text="Titre" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="txtTitle"
+                               promptText="Ex: Respiration guidée"
+                               styleClass="modern-input"
+                               GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <!-- Type + Niveau (sur la même ligne) -->
+                    <Label text="Type" styleClass="form-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <HBox spacing="12" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                        <ComboBox fx:id="cbType"
+                                  promptText="Choisir un type"
+                                  styleClass="modern-combo"
+                                  HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="cbLevel"
+                                  promptText="Niveau"
+                                  styleClass="modern-combo"
+                                  prefWidth="180"/>
+                    </HBox>
+
+                    <!-- Durée -->
+                    <Label text="Durée (min)" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="txtDuration"
+                               promptText="Ex: 5"
+                               styleClass="modern-input"
+                               GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <!-- Description -->
+                    <Label text="Description" styleClass="form-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <TextArea fx:id="txtDescription"
+                              promptText="Décris l'exercice..."
+                              wrapText="true"
+                              prefRowCount="7"
+                              styleClass="modern-textarea"
+                              GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <Separator/>
+
+                <!-- ACTIONS -->
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Button text="Annuler" onAction="#onBack" styleClass="secondary-btn"/>
+                    <!-- ✅ fx:id + handler attendus -->
+                    <Button fx:id="btnSave" text="Ajouter" onAction="#onSave" styleClass="primary-btn"/>
+                </HBox>
+
+            </VBox>
+
+        </VBox>
+    </content>
+</ScrollPane>
