@@ -4,7 +4,7 @@ import com.serinity.forumcontrol.Models.Thread;
 import com.serinity.forumcontrol.Models.ThreadType;
 import com.serinity.forumcontrol.Models.ThreadStatus;
 import com.serinity.forumcontrol.Utils.MyDataBase;
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
+import com.serinity.forumcontrol.CurrentUser.CurrentUser;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class ServiceThread implements Services<Thread> {
 
     @Override
     public void add(Thread thread) {
-        thread.setUserId(String.valueOf(FakeUser.getCurrentUserId()));
+        thread.setUserId(String.valueOf(CurrentUser.getCurrentUserId()));
 
         String req = "INSERT INTO `threads` (`category_id`, `user_id`, `title`, `content`,`image_url`, `type`, `status`, `is_pinned`) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
 

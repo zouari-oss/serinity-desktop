@@ -1,6 +1,6 @@
 package com.serinity.forumcontrol.Controllers;
 
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
+import com.serinity.forumcontrol.CurrentUser.CurrentUser;
 import com.serinity.forumcontrol.Models.Category;
 import com.serinity.forumcontrol.Models.ThreadType;
 import com.serinity.forumcontrol.Models.ThreadStatus;
@@ -38,7 +38,7 @@ public class AddThreadController {
     @FXML private Button removeImageButton;
     @FXML private Label imageStatusLabel;
 
-    private FakeUser user;
+    private CurrentUser user;
     private String currentUserId = user.getCurrentUserId();
     private final ServiceThread threadService = new ServiceThread();
     private final ServiceCategory categoryService = new ServiceCategory();

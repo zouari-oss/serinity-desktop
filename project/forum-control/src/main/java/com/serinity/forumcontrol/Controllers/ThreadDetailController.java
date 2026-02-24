@@ -1,6 +1,6 @@
 package com.serinity.forumcontrol.Controllers;
 
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
+import com.serinity.forumcontrol.CurrentUser.CurrentUser;
 import com.serinity.forumcontrol.Models.Reply;
 import com.serinity.forumcontrol.Models.ThreadStatus;
 import com.serinity.forumcontrol.Services.ServicePostInteraction;
@@ -16,7 +16,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import com.serinity.forumcontrol.Models.Thread;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,7 +24,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class ThreadDetailController {
-    private FakeUser user ;
+    private CurrentUser user ;
     String currentUserId = user.getCurrentUserId();
     @FXML private Label titleLabel;
     @FXML private Label metaLabel;

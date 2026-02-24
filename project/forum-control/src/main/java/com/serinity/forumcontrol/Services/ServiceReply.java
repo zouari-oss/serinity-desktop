@@ -3,7 +3,7 @@ package com.serinity.forumcontrol.Services;
 import com.serinity.forumcontrol.Interfaces.Services;
 import com.serinity.forumcontrol.Models.Reply;
 import com.serinity.forumcontrol.Utils.MyDataBase;
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
+import com.serinity.forumcontrol.CurrentUser.CurrentUser;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class ServiceReply implements Services<Reply> {
 
     @Override
     public void add(Reply reply) {
-        reply.setUserId(String.valueOf(FakeUser.getCurrentUserId()));
+        reply.setUserId(String.valueOf(CurrentUser.getCurrentUserId()));
 
         String req = "INSERT INTO `replies` (`thread_id`, `user_id`, `parent_id`, `content`) VALUES (?, ?, ?, ?)";
         ServiceThread servicethread = new ServiceThread();
