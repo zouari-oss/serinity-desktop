@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="14"
+  styleClass="wizard-card"
+  xmlns="http://javafx.com/javafx/21"
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="com.serinity.moodcontrol.controller.StepInfluencesController">
+
+  <padding>
+    <Insets top="22" right="22" bottom="22" left="22" />
+  </padding>
+
+  <Label text="%wizard.step.influences.question"
+    styleClass="wizard-question" />
+
+  <Label text="%wizard.step.influences.sub"
+    styleClass="wizard-sub" />
+
+  <Region minHeight="8" />
+
+  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="chip-scroll">
+    <content>
+      <FlowPane fx:id="chipPane"
+        hgap="10" vgap="10"
+        prefWrapLength="720"
+        styleClass="chip-pane">
+        <padding>
+          <Insets top="6" right="6" bottom="6" left="6" />
+        </padding>
+      </FlowPane>
+    </content>
+  </ScrollPane>
+
+  <StackPane alignment="CENTER_LEFT">
+    <Label fx:id="limitLabel" text=""
+      styleClass="wizard-sub" />
+  </StackPane>
+
+</VBox>

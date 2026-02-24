@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.exercicecontrol.controller.ExerciseListController"
+            fitToWidth="true"
+            styleClass="transparent-scroll">
+
+    <content>
+        <VBox spacing="18" styleClass="page-root">
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
+
+            <!-- ================= HEADER ================= -->
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label text="Exercices" styleClass="page-title"/>
+                <Label fx:id="lblCount" text="(0)" styleClass="muted-text"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Ajouter"
+                        onAction="#onAddExercise"
+                        styleClass="primary-btn"/>
+                <Button text="Actualiser"
+                        onAction="#onRefresh"
+                        styleClass="secondary-btn"/>
+            </HBox>
+
+            <!-- ================= HERO BANNER ================= -->
+            <StackPane fx:id="ambianceBox" styleClass="hero-banner">
+
+                <ImageView fx:id="imgAmbiance"
+                           preserveRatio="false"
+                           smooth="true"
+                           fitHeight="220"/>
+
+                <!-- Overlay sombre -->
+                <Region styleClass="hero-overlay"/>
+
+                <!-- Texte en bas gauche -->
+                <VBox spacing="6"
+                      styleClass="hero-content"
+                      StackPane.alignment="BOTTOM_LEFT">
+
+                    <Label text="Ambiance actuelle"
+                           styleClass="hero-subtitle"/>
+
+                    <Label fx:id="lblAmbianceText"
+                           text="—"
+                           styleClass="hero-title"/>
+                </VBox>
+            </StackPane>
+
+            <!-- ================= PROGRESS ================= -->
+            <HBox spacing="14" styleClass="progress-card">
+
+                <Region prefWidth="6" styleClass="progress-accent"/>
+
+                <VBox spacing="14" HBox.hgrow="ALWAYS">
+
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Votre progression"
+                               styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="lblScorePill"
+                               text="—"
+                               styleClass="pill"/>
+                    </HBox>
+
+                    <HBox spacing="60">
+
+                        <VBox spacing="4">
+                            <Label text="Score" styleClass="muted"/>
+                            <Label fx:id="lblScore"
+                                   text="—"
+                                   styleClass="value"/>
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="Série" styleClass="muted"/>
+                            <Label fx:id="lblStreak"
+                                   text="—"
+                                   styleClass="value"/>
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="Complétion" styleClass="muted"/>
+                            <Label fx:id="lblCompletion"
+                                   text="—"
+                                   styleClass="value"/>
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="Temps actif (7j)" styleClass="muted"/>
+                            <Label fx:id="lblActive7d"
+                                   text="—"
+                                   styleClass="value"/>
+                        </VBox>
+
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <!-- ================= RECOMMENDATION ================= -->
+            <HBox spacing="14" styleClass="recommend-card">
+
+                <Region prefWidth="6" styleClass="recommend-accent"/>
+
+                <VBox spacing="12" HBox.hgrow="ALWAYS">
+
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Recommandé pour vous"
+                               styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnStartRecommended"
+                                text="Démarrer"
+                                onAction="#onStartRecommended"
+                                styleClass="primary-btn"/>
+                    </HBox>
+
+                    <Label fx:id="lblRecTitle"
+                           text="—"
+                           styleClass="recommend-title"/>
+
+                    <Label fx:id="lblRecMeta"
+                           text="—"
+                           styleClass="muted"/>
+
+                    <Label fx:id="lblRecReason"
+                           text="—"
+                           styleClass="muted"/>
+
+                </VBox>
+            </HBox>
+
+            <!-- ================= FILTERS ================= -->
+            <HBox spacing="12"
+                  alignment="CENTER_LEFT"
+                  styleClass="card">
+
+                <Label text="Type :" styleClass="muted-text"/>
+                <ComboBox fx:id="cbType" prefWidth="220"/>
+
+                <Label text="Niveau :" styleClass="muted-text"/>
+                <ComboBox fx:id="cbLevel" prefWidth="160"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button text="Appliquer"
+                        onAction="#onApplyFilters"
+                        styleClass="primary-btn"/>
+
+                <Button text="Effacer"
+                        onAction="#onClearFilters"
+                        styleClass="secondary-btn"/>
+            </HBox>
+
+            <!-- ================= CARDS GRID ================= -->
+            <TilePane fx:id="cardsPane"
+                      hgap="20"
+                      vgap="20"
+                      prefTileWidth="320"
+                      tileAlignment="TOP_LEFT">
+
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+            </TilePane>
+
+        </VBox>
+    </content>
+</ScrollPane>

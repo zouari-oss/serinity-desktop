@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.exercicecontrol.controller.ResourceCardController"
+      spacing="10"
+      styleClass="card"
+      prefWidth="320">
+
+    <padding>
+        <Insets top="14" right="14" bottom="14" left="14"/>
+    </padding>
+
+    <Label fx:id="lblTitle"
+           style="-fx-font-weight: 900; -fx-font-size: 15px;"/>
+
+    <Label fx:id="lblMeta" styleClass="muted-text" wrapText="true"/>
+
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="btnEdit" text="Modifier" onAction="#onEdit" styleClass="secondary-btn"/>
+        <Button fx:id="btnDelete" text="Supprimer" onAction="#onDelete" styleClass="danger-btn"/>
+    </HBox>
+
+</VBox>

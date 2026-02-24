@@ -1,0 +1,19 @@
+* {
+  -fx-font-family: "Segoe UI", system-ui, Arial;
+
+  -color-primary: #2F6F6D;
+  -color-secondary: #E6F2F1;
+  -color-accent: #88BDBC;
+
+  -bg-color: #F9FAFB;
+  -text-primary: #1F2933;
+  -text-primary: #5F6C7B;
+
+  -color-success: #4CAF50;
+  -color-warning: #F4B400;
+  -color-error: #D9534F;
+}
+
+.app-bg {
+  -fx-background-color: -bg-color;
+}
