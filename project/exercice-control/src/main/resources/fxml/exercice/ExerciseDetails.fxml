@@ -4,94 +4,125 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.serinity.exercicecontrol.controller.ExerciseDetailsController"
-      spacing="15"
-      styleClass="page-root">
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.exercicecontrol.controller.ExerciseDetailsController"
+            fitToWidth="true"
+            styleClass="transparent-scroll">
 
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
-
-    <!-- ================= HEADER ================= -->
-    <HBox alignment="CENTER_LEFT" spacing="10">
-        <Label fx:id="lblTitle" styleClass="page-title"/>
-        <Region HBox.hgrow="ALWAYS"/>
-
-        <Button text="Modifier l'exercice"
-                onAction="#onEditExercise"
-                styleClass="secondary-btn"/>
-
-        <Button text="Supprimer"
-                onAction="#onDeleteExercise"
-                styleClass="danger-btn"/>
-    </HBox>
-
-    <!-- ================= INFO CARD ================= -->
-    <VBox spacing="10" styleClass="card">
-        <Label fx:id="lblType"/>
-        <Label fx:id="lblLevel"/>
-        <Label fx:id="lblDuration"/>
-
-        <Label text="Description :" style="-fx-font-weight: 800;"/>
-        <TextArea fx:id="txtDescription"
-                  editable="false"
-                  wrapText="true"
-                  prefHeight="120"
-                  focusTraversable="false"/>
-    </VBox>
-
-    <!-- ================= RESOURCES CARD ================= -->
-    <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS">
-
-        <HBox alignment="CENTER_LEFT" spacing="10">
-            <Label text="Ressources" style="-fx-font-weight: 900; -fx-font-size: 14px;"/>
-            <Label fx:id="lblResourcesInfo" text="(0)" styleClass="muted-text"/>
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <Button text="Ajouter une ressource"
-                    onAction="#onAddResource"
-                    styleClass="primary-btn"/>
-
-            <Button text="Actualiser"
-                    onAction="#onRefreshResources"
-                    styleClass="secondary-btn"/>
-        </HBox>
-
-        <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" styleClass="transparent-scroll">
+    <content>
+        <VBox spacing="16" styleClass="page-root">
             <padding>
-                <Insets top="6" right="2" bottom="2" left="2"/>
+                <Insets top="18" right="18" bottom="18" left="18"/>
             </padding>
-            <content>
+
+            <!-- ===== HEADER MODERNE ===== -->
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="details-header">
+                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                    <Label fx:id="lblTitle"
+                           text="Respiration guidée"
+                           styleClass="details-title"/>
+
+                    <!-- Chips (visuel seulement, pas besoin de fx:id) -->
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Type" styleClass="chip chip-soft"/>
+                        <Label text="Niveau" styleClass="chip chip-soft"/>
+                        <Label text="Durée" styleClass="chip chip-soft"/>
+                    </HBox>
+                </VBox>
+
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="Modifier l'exercice"
+                            onAction="#onEditExercise"
+                            styleClass="secondary-btn"/>
+                    <Button text="Supprimer"
+                            onAction="#onDeleteExercise"
+                            styleClass="danger-btn"/>
+                </HBox>
+            </HBox>
+
+            <!-- ===== INFOS (Type/Niveau/Durée) ===== -->
+            <HBox spacing="14">
+                <VBox spacing="6" styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Type" styleClass="muted"/>
+                    <!-- ✅ controller: lblType contient déjà "Type : ..." -->
+                    <Label fx:id="lblType" text="Type : -" styleClass="metric-value"/>
+                </VBox>
+
+                <VBox spacing="6" styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Niveau" styleClass="muted"/>
+                    <!-- ✅ controller: lblLevel contient déjà "Niveau : ..." -->
+                    <Label fx:id="lblLevel" text="Niveau : -" styleClass="metric-value"/>
+                </VBox>
+
+                <VBox spacing="6" styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Durée" styleClass="muted"/>
+                    <!-- ✅ controller: lblDuration contient déjà "Durée : ..." -->
+                    <Label fx:id="lblDuration" text="Durée : -" styleClass="metric-value"/>
+                </VBox>
+            </HBox>
+
+            <!-- ===== DESCRIPTION ===== -->
+            <VBox spacing="10" styleClass="card">
+                <Label text="Description" styleClass="section-title"/>
+
+                <!-- ✅ fx:id attendu -->
+                <TextArea fx:id="txtDescription"
+                          wrapText="true"
+                          editable="false"
+                          prefRowCount="6"
+                          styleClass="modern-textarea"/>
+            </VBox>
+
+            <!-- ===== RESSOURCES ===== -->
+            <VBox spacing="12" styleClass="card">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Ressources" styleClass="section-title"/>
+
+                    <!-- ✅ fx:id attendu -->
+                    <Label fx:id="lblResourcesInfo" text="(0)" styleClass="muted"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Button text="Ajouter une ressource"
+                            onAction="#onAddResource"
+                            styleClass="primary-btn"/>
+
+                    <Button text="Actualiser"
+                            onAction="#onRefreshResources"
+                            styleClass="secondary-btn"/>
+                </HBox>
+
+                <!-- zone grille de cards -->
                 <TilePane fx:id="resourcesPane"
-                          hgap="18" vgap="18"
-                          prefColumns="3"
+                          hgap="14"
+                          vgap="14"
+                          prefTileWidth="320"
                           tileAlignment="TOP_LEFT"
-                          prefTileWidth="280"
-                          prefTileHeight="160"/>
-            </content>
-        </ScrollPane>
+                          styleClass="resources-grid">
+                    <padding>
+                        <Insets top="6" right="6" bottom="6" left="6"/>
+                    </padding>
+                </TilePane>
+            </VBox>
 
-    </VBox>
+            <!-- ===== BARRE ACTIONS BAS ===== -->
+            <HBox spacing="10" alignment="CENTER_LEFT" styleClass="bottom-bar">
+                <Button text="Démarrer l'exercice"
+                        onAction="#onStart"
+                        styleClass="primary-btn"/>
 
-    <!-- ================= ACTIONS ================= -->
-    <HBox spacing="10">
-        <Button fx:id="btnStart"
-                text="Démarrer l'exercice"
-                styleClass="primary-btn"
-                onAction="#onStart"/>
+                <Button text="Voir historique"
+                        onAction="#onOpenHistory"
+                        styleClass="secondary-btn"/>
 
-        <Button text="Voir historique"
-                styleClass="secondary-btn"
-                onAction="#onOpenHistory"/>
+                <Region HBox.hgrow="ALWAYS"/>
 
-        <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Retour"
+                        onAction="#onBack"
+                        styleClass="secondary-btn"/>
+            </HBox>
 
-        <Button fx:id="btnBack"
-                text="Retour"
-                styleClass="secondary-btn"
-                onAction="#onBack"/>
-    </HBox>
-
-</VBox>
+        </VBox>
+    </content>
+</ScrollPane>
