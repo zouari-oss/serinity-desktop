@@ -358,16 +358,10 @@ public class ReveService {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  SCORE BIEN-ÊTRE ONIRIQUE  (nouveau)
+    //  SCORE BIEN-ÊTRE ONIRIQUE
     // ═══════════════════════════════════════════════════════════
 
-    /**
-     * Score composite 0→100 :
-     *   40% intensité inversée (calme = bon)
-     *   30% absence de cauchemars
-     *   20% absence d'anxiété
-     *   10% proportion de rêves lucides
-     */
+
     public int calculerScoreBienEtreOnirique() throws SQLException {
         List<Reve> reves = listerTous();
         if (reves.isEmpty()) return 0;
@@ -395,7 +389,7 @@ public class ReveService {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  INDEX RÉSILIENCE  (nouveau)
+    //  INDEX RÉSILIENCE
     // ═══════════════════════════════════════════════════════════
 
     /** Ratio rêves non-anxiogènes (anxiété < 4) → 0.0 à 1.0 */
@@ -416,7 +410,7 @@ public class ReveService {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  CLASSIFICATION PAR RISQUE  (nouveau)
+    //  CLASSIFICATION PAR RISQUE
     // ═══════════════════════════════════════════════════════════
 
     /**
@@ -439,7 +433,7 @@ public class ReveService {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  DÉTECTION D'ANOMALIES  (nouveau)
+    //  DÉTECTION D'ANOMALIES
     // ═══════════════════════════════════════════════════════════
 
     /**
@@ -462,7 +456,7 @@ public class ReveService {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  THÈMES RÉCURRENTS  (nouveau)
+    //  THÈMES RÉCURRENTS
     // ═══════════════════════════════════════════════════════════
 
     /**
@@ -482,7 +476,7 @@ public class ReveService {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  RÊVES SIMILAIRES  (nouveau)
+    //  RÊVES SIMILAIRES
     // ═══════════════════════════════════════════════════════════
 
     /**
@@ -516,7 +510,7 @@ public class ReveService {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  INSIGHTS  (nouveau)
+    //  INSIGHTS
     // ═══════════════════════════════════════════════════════════
 
     /**
@@ -531,28 +525,28 @@ public class ReveService {
         }
 
         int score = calculerScoreBienEtreOnirique();
-        insights.add("🏆 Score de bien-être onirique : " + score + "/100 — " + libelleBienEtre(score));
+        insights.add(" Score de bien-être onirique : " + score + "/100 — " + libelleBienEtre(score));
 
         double pctCauchemars = calculerPourcentageCauchemars();
         if (pctCauchemars > 30)
-            insights.add("⚠️ " + String.format("%.0f%%", pctCauchemars) + " de vos rêves sont des cauchemars");
+            insights.add(" " + String.format("%.0f%%", pctCauchemars) + " de vos rêves sont des cauchemars");
 
         double anxieteMoy = calculerAnxieteMoyenne();
         if (anxieteMoy >= 6)
-            insights.add("😰 Anxiété onirique élevée : " + String.format("%.1f", anxieteMoy) + "/10");
+            insights.add(" Anxiété onirique élevée : " + String.format("%.1f", anxieteMoy) + "/10");
 
         long nbLucides = reves.stream().filter(Reve::estLucide).count();
         if (nbLucides > 0)
-            insights.add("🌟 " + nbLucides + " rêve(s) lucide(s) — capacité de contrôle développée");
+            insights.add(" " + nbLucides + " rêve(s) lucide(s) — capacité de contrôle développée");
 
         Map<String, Long> themes = detecterThemesRecurrents(2);
         if (!themes.isEmpty()) {
             String top = themes.keySet().iterator().next();
-            insights.add("🔮 Thème le plus récurrent : \"" + top + "\"");
+            insights.add(" Thème le plus récurrent : \"" + top + "\"");
         }
 
         double resilience = calculerIndexResilience();
-        insights.add("💪 Résilience : " + String.format("%.0f%%", resilience * 100)
+        insights.add(" Résilience : " + String.format("%.0f%%", resilience * 100)
                 + " — " + libelleResilience(resilience));
 
         Map<String, Double> parType = intensiteMoyenneParType();
@@ -567,7 +561,7 @@ public class ReveService {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  RAPPORT DÉTAILLÉ D'UN RÊVE  (nouveau)
+    //  RAPPORT DÉTAILLÉ D'UN RÊVE
     // ═══════════════════════════════════════════════════════════
 
     public String genererRapportDetaille(Reve reve) {
@@ -601,7 +595,7 @@ public class ReveService {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  RAPPORT GLOBAL  (nouveau)
+    //  RAPPORT GLOBAL
     // ═══════════════════════════════════════════════════════════
 
     public String genererRapportGlobal() throws SQLException {

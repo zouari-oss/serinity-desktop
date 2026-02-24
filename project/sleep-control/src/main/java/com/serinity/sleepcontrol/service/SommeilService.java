@@ -492,15 +492,15 @@ public class SommeilService {
         double regularite = calculerRegulariteHoraires();
         double efficacite = calculerEfficaciteMoyenne();
         double resilience = calculerIndexResilience();
-        insights.add("🏆 Score de bien-être : " + score + "/100 — " + libelleScore(score));
-        insights.add("💤 Dette de sommeil (7j) : " + libelleDette(dette));
-        insights.add("⏰ Régularité : " + libelleRegularite(regularite));
-        insights.add("⚡ Efficacité moyenne : " + String.format("%.1f%%", efficacite) + " — " + libelleEfficacite(efficacite));
-        insights.add("💪 Résilience : " + String.format("%.0f%%", resilience * 100) + " — " + libelleResilience(resilience));
+        insights.add(" Score de bien-être : " + score + "/100 — " + libelleScore(score));
+        insights.add(" Dette de sommeil (7j) : " + libelleDette(dette));
+        insights.add(" Régularité : " + libelleRegularite(regularite));
+        insights.add(" Efficacité moyenne : " + String.format("%.1f%%", efficacite) + " — " + libelleEfficacite(efficacite));
+        insights.add(" Résilience : " + String.format("%.0f%%", resilience * 100) + " — " + libelleResilience(resilience));
         insights.add(determinerProfilChronobiologique());
         Sommeil meilleure = trouverMeilleurSommeil();
         if (meilleure != null)
-            insights.add("🌟 Meilleure nuit : " + meilleure.getDateNuit() + " (score " + meilleure.calculerScoreQualite() + "/100)");
+            insights.add(" Meilleure nuit : " + meilleure.getDateNuit() + " (score " + meilleure.calculerScoreQualite() + "/100)");
         compterParQualite().entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .ifPresent(e -> insights.add("📊 Qualité dominante : " + e.getKey() + " (" + e.getValue() + " nuits)"));

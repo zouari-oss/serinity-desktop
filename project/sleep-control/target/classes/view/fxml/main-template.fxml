@@ -33,7 +33,7 @@
                     <Button fx:id="btnDashboard" onAction="#onNavClick" styleClass="nav-btn nav-btn-active" text="Dashboard" />
 
                     <!-- 2. Sleep → MenuButton Gérer sommeil -->
-                    <MenuButton fx:id="menuSleep" styleClass="nav-menu-btn" text="Gérer sommeil" textFill="WHITE">
+                    <MenuButton fx:id="menuSleep" styleClass="nav-menu-btn" text="Sommeil" textFill="WHITE">
                         <items>
                             <MenuItem fx:id="menuItemSommeil" onAction="#onMenuSommeil" text="Sommeil" />
                             <MenuItem fx:id="menuItemReve" onAction="#onMenuReve" text="Rêves" />

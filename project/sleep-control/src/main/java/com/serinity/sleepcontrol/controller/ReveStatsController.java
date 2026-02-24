@@ -127,16 +127,16 @@ public class ReveStatsController {
 
         reveService.obtenirInsights().forEach(insight -> {
             String lower     = insight.toLowerCase();
-            String emoji     = "💡";
+            String emoji     = "";
             String chipStyle = "insight-chip-neutral";
 
             if (lower.contains("cauchemar") || lower.contains("anxiété")
                     || lower.contains("élevé") || lower.contains("critique")) {
-                emoji     = "⚠️";
+                emoji     = "⚠";
                 chipStyle = "insight-chip-strong";
             } else if (lower.contains("excellent") || lower.contains("bon")
                     || lower.contains("lucide")    || lower.contains("positif")) {
-                emoji     = "✅";
+                emoji     = "";
                 chipStyle = "insight-chip-good";
             }
 
@@ -148,7 +148,7 @@ public class ReveStatsController {
         });
 
         if (insightsContainer.getChildren().isEmpty()) {
-            Label empty = new Label("💡  Enregistrez plus de rêves pour obtenir des insights.");
+            Label empty = new Label("  Enregistrez plus de rêves pour obtenir des insights.");
             empty.getStyleClass().addAll("insight-chip", "insight-chip-neutral");
             empty.setWrapText(true);
             insightsContainer.getChildren().add(empty);

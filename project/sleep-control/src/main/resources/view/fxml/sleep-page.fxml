@@ -1,49 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.serinity.sleepcontrol.controller.SommeilController"
-      fx:id="mainContainer"
-      stylesheets="@../styles/styles.css"
-      spacing="18.0"
-      style="-fx-background-color: #f5f7fa;">
+<VBox fx:id="mainContainer" spacing="18.0" style="-fx-background-color: #f5f7fa;" stylesheets="@../styles/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.sleepcontrol.controller.SommeilController">
 
     <padding>
-        <Insets top="18" right="18" bottom="18" left="18" />
+        <Insets bottom="18" left="18" right="18" top="18" />
     </padding>
 
     <!-- En-tête -->
     <HBox alignment="CENTER_LEFT" spacing="12.0">
-        <Label text="Gestion du Sommeil" styleClass="page-header" />
+        <Label styleClass="page-header" text="Gestion du Sommeil" />
         <Region HBox.hgrow="ALWAYS" />
 
         <!-- ✅ Bouton stats ajouté -->
-        <Button fx:id="btnStats"
-                text="📊 Statistiques"
-                styleClass="btn-secondary"
-                onAction="#ouvrirStatistiques" />
+        <Button fx:id="btnStats" onAction="#ouvrirStatistiques" styleClass="btn-secondary" text="📊 Statistiques" />
 
-        <Button fx:id="btnAjouter"
-                text="+ Ajouter Sommeil"
-                styleClass="btn-primary"
-                onAction="#ajouterSommeil" />
+        <Button fx:id="btnAjouter" onAction="#ajouterSommeil" styleClass="btn-primary" text="+ Ajouter Sommeil" />
 
-        <Button text="🌤️ Météo"
-                styleClass="btn-secondary"
-                onAction="#ouvrirMeteo"/>
+        <Button onAction="#ouvrirMeteo" styleClass="btn-secondary" text="🌤 Météo" />
 
-        <Button fx:id="btnRefresh"
-                text="⟳ Rafraichir"
-                styleClass="btn-secondary"
-                onAction="#rafraichir" />
+        <Button fx:id="btnRefresh" onAction="#rafraichir" styleClass="btn-secondary" text="⟳ Rafraichir" />
 
-        <Button text="📄 Exporter PDF"
-                styleClass="btn-secondary"
-                onAction="#exporterPdf"/>
+        <Button onAction="#exporterPdf" styleClass="btn-secondary" text="📄 Exporter PDF" />
 
 
 
@@ -53,59 +34,39 @@
     <!-- Filtres -->
     <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="filter-container">
         <padding>
-            <Insets top="12" right="12" bottom="12" left="12" />
+            <Insets bottom="12" left="12" right="12" top="12" />
         </padding>
 
-        <TextField fx:id="searchField"
-                   prefWidth="280.0"
-                   promptText="Rechercher..."
-                   styleClass="form-control" />
+        <TextField fx:id="searchField" prefWidth="280.0" promptText="Rechercher..." styleClass="form-control" />
 
-        <Label text="Qualité:" styleClass="form-label" />
-        <ComboBox fx:id="filterQualite"
-                  prefWidth="140.0"
-                  promptText="Sélectionner"
-                  styleClass="combo-box" />
+        <Label styleClass="form-label" text="Qualité:" />
+        <ComboBox fx:id="filterQualite" prefWidth="140.0" promptText="Sélectionner" styleClass="combo-box" />
 
-        <Label text="Trier par:" styleClass="form-label" />
-        <ComboBox fx:id="sortComboBox"
-                  prefWidth="160.0"
-                  promptText="Sélectionner"
-                  styleClass="combo-box" />
+        <Label styleClass="form-label" text="Trier par:" />
+        <ComboBox fx:id="sortComboBox" prefWidth="160.0" promptText="Sélectionner" styleClass="combo-box" />
     </HBox>
 
     <!-- Zone statistiques dynamique -->
     <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="stats-container">
         <padding>
-            <Insets top="12" right="12" bottom="12" left="12" />
+            <Insets bottom="12" left="12" right="12" top="12" />
         </padding>
 
-        <Label fx:id="totalNuitsLabel"
-               text="Total: 0 nuits"
-               styleClass="stat-badge-primary" />
+        <Label fx:id="totalNuitsLabel" styleClass="stat-badge-primary" text="Total: 0 nuits" />
 
-        <Label fx:id="dureeMoyLabel"
-               text="Durée moyenne: -- h"
-               styleClass="stat-badge-info" />
+        <Label fx:id="dureeMoyLabel" styleClass="stat-badge-info" text="Durée moyenne: -- h" />
 
         <HBox alignment="CENTER_LEFT" spacing="8.0">
             <ProgressBar fx:id="scoreMoyBar" prefWidth="160.0" />
-            <Label fx:id="scoreMoyLabel"
-                   text="Score moyen: --/100"
-                   styleClass="stats-label" />
+            <Label fx:id="scoreMoyLabel" styleClass="stats-label" text="Score moyen: --/100" />
         </HBox>
     </HBox>
 
     <!-- Liste des cartes -->
-    <ScrollPane fitToWidth="true"
-                styleClass="cards-scroll-pane"
-                VBox.vgrow="ALWAYS">
-        <FlowPane fx:id="cardsContainer"
-                  hgap="15.0"
-                  vgap="15.0"
-                  styleClass="cards-flow-pane">
+    <ScrollPane fitToWidth="true" styleClass="cards-scroll-pane" VBox.vgrow="ALWAYS">
+        <FlowPane fx:id="cardsContainer" hgap="15.0" styleClass="cards-flow-pane" vgap="15.0">
             <padding>
-                <Insets top="8" right="8" bottom="8" left="8" />
+                <Insets bottom="8" left="8" right="8" top="8" />
             </padding>
         </FlowPane>
     </ScrollPane>
