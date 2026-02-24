@@ -175,7 +175,7 @@ public class ReveController {
             ctrl.setReveService(reveService);
             ctrl.demarrerAnalyseGlobale();
             Stage stage = new Stage();
-            stage.setTitle("🧠 Analyse IA des Rêves");
+            stage.setTitle("Analyse IA des Rêves");
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root, 750, 680));
             stage.show();
@@ -197,7 +197,7 @@ public class ReveController {
             ctrl.setReveService(reveService);
             ctrl.setReveUnique(reve);
             Stage stage = new Stage();
-            stage.setTitle("🧠 Analyse IA — " + reve.getTitre());
+            stage.setTitle(" Analyse IA — " + reve.getTitre());
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root, 750, 680));
             stage.show();

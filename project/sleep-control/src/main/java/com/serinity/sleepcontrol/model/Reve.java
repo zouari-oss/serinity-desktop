@@ -1,9 +1,7 @@
 package com.serinity.sleepcontrol.model;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Reve {
@@ -26,6 +24,10 @@ public class Reve {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    // ─────────────────────────────────────────────────────────────
+    //  CONSTRUCTEURS
+    // ─────────────────────────────────────────────────────────────
+
     public Reve() {
         this.couleur = true;
         this.recurrent = false;
@@ -35,181 +37,237 @@ public class Reve {
 
     public Reve(String titre, String description, String humeur, String typeReve) {
         this();
-        this.titre = titre;
-        this.description = description;
-        this.humeur = humeur;
-        this.typeReve = typeReve;
+        setTitre(titre);
+        setDescription(description);
+        setHumeur(humeur);
+        setTypeReve(typeReve);
     }
 
     public Reve(String titre, String description, String humeur, String typeReve,
                 int intensite, boolean couleur, String emotions, String symboles,
                 boolean recurrent, Sommeil sommeil) {
         this();
-        this.titre = titre;
-        this.description = description;
-        this.humeur = humeur;
-        this.typeReve = typeReve;
-        this.intensite = intensite;
-        this.couleur = couleur;
-        this.emotions = emotions;
-        this.symboles = symboles;
-        this.recurrent = recurrent;
+        setTitre(titre);
+        setDescription(description);
+        setHumeur(humeur);
+        setTypeReve(typeReve);
+        setIntensite(intensite);
+        setCouleur(couleur);
+        setEmotions(emotions);
+        setSymboles(symboles);
+        setRecurrent(recurrent);
         setSommeil(sommeil);
     }
 
+    // ─────────────────────────────────────────────────────────────
+    //  NORMALISATION (anti-emoji / anti-espaces / anti-casse)
+    // ─────────────────────────────────────────────────────────────
+
+    /**
+     * Nettoie un label UI comme "😱 Cauchemar" -> "cauchemar"
+     * - enlève les caractères non-lettres au début (emoji, icônes)
+     * - trim
+     * - lowerCase (avec locale pour accents FR)
+     */
+    private static String normLabel(String s) {
+        if (s == null) return "";
+        String t = s.trim();
+        // retire tout ce qui n'est pas une lettre au début (emoji, symboles, etc.)
+        t = t.replaceFirst("^[^A-Za-zÀ-ÿ]+", "").trim();
+        return t.toLowerCase(Locale.FRENCH);
+    }
+
+    /**
+     * Nettoie une liste texte (émotions/symboles) en séparant par virgule,
+     * en trim, en supprimant les vides, et en supprimant les doublons.
+     */
+    private static List<String> splitCleanDistinct(String s) {
+        if (s == null || s.trim().isEmpty()) return List.of();
+        return Arrays.stream(s.split(","))
+                .map(String::trim)
+                .filter(v -> !v.isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  TYPES & HUMEURS (robustes même avec emojis)
+    // ─────────────────────────────────────────────────────────────
+
     public boolean estCauchemar() {
-        return "Cauchemar".equalsIgnoreCase(typeReve);
+        String t = normLabel(typeReve);
+        return t.contains("cauchemar");
     }
 
     public boolean estLucide() {
-        return "Lucide".equalsIgnoreCase(typeReve);
+        String t = normLabel(typeReve);
+        return t.contains("lucide");
     }
 
+    public boolean estRecurrentType() {
+        String t = normLabel(typeReve);
+        return t.contains("récurrent") || t.contains("recurrent");
+    }
+
+    public boolean estNormal() {
+        String t = normLabel(typeReve);
+        return t.contains("normal");
+    }
+
+    public boolean humeurAnxieuseOuEffrayee() {
+        String h = normLabel(humeur);
+        return h.contains("anxieux") || h.contains("anxieuse")
+                || h.contains("effray") || h.contains("peur");
+    }
+
+    public boolean humeurTriste() {
+        String h = normLabel(humeur);
+        return h.contains("triste");
+    }
+
+    public boolean humeurNeutre() {
+        String h = normLabel(humeur);
+        return h.contains("neutre");
+    }
+
+    public boolean humeurJoyeuse() {
+        String h = normLabel(humeur);
+        return h.contains("joyeux") || h.contains("joyeuse")
+                || h.contains("excité") || h.contains("excite")
+                || h.contains("paisible");
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  ANXIÉTÉ (cohérente avec emojis + type)
+    // ─────────────────────────────────────────────────────────────
+
+    /**
+     * Score anxiété 0..10 basé sur:
+     * - cauchemar => +5
+     * - humeur anxieux/effrayé => +3, triste => +2
+     * - intensité >= 8 => +2
+     */
     public int calculerNiveauAnxiete() {
         int niveau = 0;
 
-        if (estCauchemar()) {
-            niveau += 5;
-        }
+        if (estCauchemar()) niveau += 5;
 
-        if (humeur != null) {
-            if (humeur.equalsIgnoreCase("Anxieux") || humeur.equalsIgnoreCase("Effrayé")) {
-                niveau += 3;
-            } else if (humeur.equalsIgnoreCase("Triste")) {
-                niveau += 2;
-            }
-        }
+        if (humeurAnxieuseOuEffrayee()) niveau += 3;
+        else if (humeurTriste()) niveau += 2;
 
-        if (intensite >= 8) {
-            niveau += 2;
-        }
+        if (intensite >= 8) niveau += 2;
 
         return Math.min(10, niveau);
     }
 
+    // ─────────────────────────────────────────────────────────────
+    //  LISTES ÉMOTIONS / SYMBOLES
+    // ─────────────────────────────────────────────────────────────
+
     public List<String> getEmotionsList() {
-        if (emotions == null || emotions.trim().isEmpty()) {
-            return List.of();
-        }
-        return Arrays.stream(emotions.split(","))
-                .map(String::trim)
-                .collect(Collectors.toList());
+        return splitCleanDistinct(emotions);
     }
 
     public List<String> getSymbolesList() {
-        if (symboles == null || symboles.trim().isEmpty()) {
-            return List.of();
-        }
-        return Arrays.stream(symboles.split(","))
-                .map(String::trim)
-                .collect(Collectors.toList());
+        return splitCleanDistinct(symboles);
     }
 
     public void ajouterEmotion(String emotion) {
-        if (emotion != null && !emotion.trim().isEmpty()) {
-            if (this.emotions == null || this.emotions.isEmpty()) {
-                this.emotions = emotion;
-            } else if (!getEmotionsList().contains(emotion)) {
-                this.emotions += ", " + emotion;
-            }
+        String e = emotion == null ? "" : emotion.trim();
+        if (e.isEmpty()) return;
+
+        List<String> list = new ArrayList<>(getEmotionsList());
+        if (list.stream().noneMatch(x -> x.equalsIgnoreCase(e))) {
+            list.add(e);
         }
+        this.emotions = String.join(", ", list);
     }
 
     public void ajouterSymbole(String symbole) {
-        if (symbole != null && !symbole.trim().isEmpty()) {
-            if (this.symboles == null || this.symboles.isEmpty()) {
-                this.symboles = symbole;
-            } else if (!getSymbolesList().contains(symbole)) {
-                this.symboles += ", " + symbole;
-            }
+        String s = symbole == null ? "" : symbole.trim();
+        if (s.isEmpty()) return;
+
+        List<String> list = new ArrayList<>(getSymbolesList());
+        if (list.stream().noneMatch(x -> x.equalsIgnoreCase(s))) {
+            list.add(s);
         }
+        this.symboles = String.join(", ", list);
     }
 
+    // ─────────────────────────────────────────────────────────────
+    //  TEXTE / RAPPORT
+    // ─────────────────────────────────────────────────────────────
+
     public String genererResume() {
-        String resume = titre != null ? titre : "Sans titre";
-        resume += " (" + typeReve + ")";
-        if (estCauchemar()) {
-            resume += " ⚠️";
-        } else if (estLucide()) {
-            resume += " ✨";
-        }
+        String resume = (titre != null && !titre.isBlank()) ? titre : "Sans titre";
+        resume += " (" + (typeReve != null ? typeReve : "—") + ")";
+
+        if (estCauchemar()) resume += " ⚠️";
+        else if (estLucide()) resume += " ✨";
+
         return resume;
     }
 
     public String genererRapportDetaille() {
         StringBuilder rapport = new StringBuilder();
         rapport.append("=== Rapport de Rêve ===\n");
-        rapport.append("Titre: ").append(titre).append("\n");
-        rapport.append("Type: ").append(typeReve).append("\n");
+        rapport.append("Titre: ").append(titre != null ? titre : "—").append("\n");
+        rapport.append("Type: ").append(typeReve != null ? typeReve : "—").append("\n");
         rapport.append("Intensité: ").append(intensite).append("/10\n");
-        rapport.append("Humeur: ").append(humeur).append("\n");
+        rapport.append("Humeur: ").append(humeur != null ? humeur : "—").append("\n");
         rapport.append("En couleur: ").append(couleur ? "Oui" : "Non").append("\n");
         rapport.append("Récurrent: ").append(recurrent ? "Oui" : "Non").append("\n");
         rapport.append("Niveau d'anxiété: ").append(calculerNiveauAnxiete()).append("/10\n");
 
-        if (emotions != null && !emotions.isEmpty()) {
+        if (emotions != null && !emotions.isBlank()) {
             rapport.append("Émotions: ").append(emotions).append("\n");
         }
-
-        if (symboles != null && !symboles.isEmpty()) {
+        if (symboles != null && !symboles.isBlank()) {
             rapport.append("Symboles: ").append(symboles).append("\n");
         }
 
-        rapport.append("\nDescription:\n").append(description);
-
+        rapport.append("\nDescription:\n").append(description != null ? description : "—");
         return rapport.toString();
     }
 
+    // ─────────────────────────────────────────────────────────────
+    //  VALIDATION
+    // ─────────────────────────────────────────────────────────────
+
     public boolean estValide() {
-        return titre != null && !titre.trim().isEmpty() &&
-                description != null && !description.trim().isEmpty() &&
-                intensite >= 1 && intensite <= 10 &&
-                typeReve != null && !typeReve.trim().isEmpty();
+        return titre != null && !titre.trim().isEmpty()
+                && description != null && !description.trim().isEmpty()
+                && intensite >= 1 && intensite <= 10
+                && typeReve != null && !typeReve.trim().isEmpty()
+                && humeur != null && !humeur.trim().isEmpty()
+                && sommeilId > 0;
     }
 
-    public int getId() {
-        return id;
-    }
+    // ─────────────────────────────────────────────────────────────
+    //  GETTERS / SETTERS
+    // ─────────────────────────────────────────────────────────────
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public int getId() { return id; }
 
-    public String getTitre() {
-        return titre;
-    }
+    public void setId(int id) { this.id = id; }
 
-    public void setTitre(String titre) {
-        this.titre = titre;
-    }
+    public String getTitre() { return titre; }
 
-    public String getDescription() {
-        return description;
-    }
+    public void setTitre(String titre) { this.titre = titre; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public String getDescription() { return description; }
 
-    public String getHumeur() {
-        return humeur;
-    }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setHumeur(String humeur) {
-        this.humeur = humeur;
-    }
+    public String getHumeur() { return humeur; }
 
-    public String getTypeReve() {
-        return typeReve;
-    }
+    public void setHumeur(String humeur) { this.humeur = humeur; }
 
-    public void setTypeReve(String typeReve) {
-        this.typeReve = typeReve;
-    }
+    public String getTypeReve() { return typeReve; }
 
-    public int getIntensite() {
-        return intensite;
-    }
+    public void setTypeReve(String typeReve) { this.typeReve = typeReve; }
+
+    public int getIntensite() { return intensite; }
 
     public void setIntensite(int intensite) {
         if (intensite < 1 || intensite > 10) {
@@ -218,41 +276,28 @@ public class Reve {
         this.intensite = intensite;
     }
 
-    public boolean isCouleur() {
-        return couleur;
-    }
+    public boolean isCouleur() { return couleur; }
 
-    public void setCouleur(boolean couleur) {
-        this.couleur = couleur;
-    }
+    public void setCouleur(boolean couleur) { this.couleur = couleur; }
 
-    public String getEmotions() {
-        return emotions;
-    }
+    public String getEmotions() { return emotions; }
 
     public void setEmotions(String emotions) {
-        this.emotions = emotions;
+        // garde tel quel, mais tu pourrais aussi normaliser espaces
+        this.emotions = (emotions != null && emotions.isBlank()) ? null : emotions;
     }
 
-    public String getSymboles() {
-        return symboles;
-    }
+    public String getSymboles() { return symboles; }
 
     public void setSymboles(String symboles) {
-        this.symboles = symboles;
+        this.symboles = (symboles != null && symboles.isBlank()) ? null : symboles;
     }
 
-    public boolean isRecurrent() {
-        return recurrent;
-    }
+    public boolean isRecurrent() { return recurrent; }
 
-    public void setRecurrent(boolean recurrent) {
-        this.recurrent = recurrent;
-    }
+    public void setRecurrent(boolean recurrent) { this.recurrent = recurrent; }
 
-    public Sommeil getSommeil() {
-        return sommeil;
-    }
+    public Sommeil getSommeil() { return sommeil; }
 
     public void setSommeil(Sommeil sommeil) {
         if (this.sommeil != null && this.sommeil != sommeil) {
@@ -271,34 +316,26 @@ public class Reve {
         }
     }
 
-    public int getSommeilId() {
-        return sommeilId;
-    }
+    public int getSommeilId() { return sommeilId; }
 
-    public void setSommeilId(int sommeilId) {
-        this.sommeilId = sommeilId;
-    }
+    public void setSommeilId(int sommeilId) { this.sommeilId = sommeilId; }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    // ─────────────────────────────────────────────────────────────
+    //  EQUALS / HASHCODE / TOSTRING
+    // ─────────────────────────────────────────────────────────────
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Reve)) return false;
         Reve reve = (Reve) o;
         return id == reve.id;
     }

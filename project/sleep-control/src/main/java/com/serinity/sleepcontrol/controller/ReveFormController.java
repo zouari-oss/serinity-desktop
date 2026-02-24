@@ -424,7 +424,7 @@ public class ReveFormController {
     private void applyAlertStyle(Alert alert, String cssClass) {
         DialogPane dp = alert.getDialogPane();
         dp.getStylesheets().add(
-                getClass().getResource("/css/reve-form.css").toExternalForm()
+                getClass().getResource("/view/styles/reve-form.css").toExternalForm()
         );
         dp.getStyleClass().add(cssClass);
     }

@@ -157,16 +157,16 @@ public class SommeilStatsController {
 
         sommeilService.obtenirInsights().forEach(insight -> {
             String lower     = insight.toLowerCase();
-            String emoji     = "💡";
+            String emoji     = "";
             String chipStyle = "insight-chip-neutral";
 
             if (lower.contains("dette") || lower.contains("sévère")
                     || lower.contains("critique") || lower.contains("insuffisant")) {
-                emoji     = "⚠️";
+                emoji     = "⚠";
                 chipStyle = "insight-chip-strong";
             } else if (lower.contains("excellent") || lower.contains("bon")
                     || lower.contains("régulier")  || lower.contains("optimal")) {
-                emoji     = "✅";
+                emoji     = "";
                 chipStyle = "insight-chip-good";
             }
 
