@@ -1,0 +1,34 @@
+@startuml
+actor User
+participant "RegisterView (JavaFX UI)" as View
+participant "RegisterController" as Controller
+participant "AuthService" as Service
+participant "UserDAO" as DAO
+database "Database" as DB
+
+User -> View : Enter name, email, password\nClick Register
+View -> Controller : handleRegister(data)
+
+Controller -> Service : registerUser(data)
+
+Service -> DAO : findUserByEmail(email)
+DAO -> DB : SELECT * FROM users WHERE email=?
+DB --> DAO : user record / null
+DAO --> Service : result
+
+alt Email already exists
+    Service --> Controller : Registration Failed
+    Controller -> View : showError("Email already exists")
+
+else New email
+    Service -> Service : hashPassword(password)
+    Service -> DAO : saveUser(user)
+    DAO -> DB : INSERT INTO users
+    DB --> DAO : success
+    DAO --> Service : user saved
+
+    Service --> Controller : Registration Success
+    Controller -> View : showLoginScreen()
+    View --> User : Registration successful
+end
+@enduml
