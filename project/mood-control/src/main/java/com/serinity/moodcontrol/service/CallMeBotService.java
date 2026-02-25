@@ -18,7 +18,7 @@ public class CallMeBotService {
     public CallMeBotService() {
         this.client = new CallMeBotClient();
         this.dotenv = Dotenv.configure()
-                .directory(".")
+                .directory("mood-control")
                 .filename(".env")
                 .ignoreIfMissing()
                 .load();

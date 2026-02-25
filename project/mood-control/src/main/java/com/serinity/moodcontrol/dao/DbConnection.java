@@ -9,8 +9,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 public final class DbConnection {
 
     private static final Dotenv dotenv = Dotenv.configure()
-            .directory(".")
-            .filename(".env.development")
+            .directory("mood-control")
+            .filename(".env")
             .ignoreIfMalformed()
             .ignoreIfMissing()
             .load();
