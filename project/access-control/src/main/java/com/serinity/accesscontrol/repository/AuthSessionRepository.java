@@ -3,6 +3,7 @@ package com.serinity.accesscontrol.repository;
 
 // `java` import(s)
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -66,7 +67,7 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
           .where("user_id", userId)
           .getResultList();
     } catch (final Exception e) {
-      return null;
+      return Collections.emptyList();
     }
   }
 

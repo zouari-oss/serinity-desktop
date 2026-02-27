@@ -180,7 +180,7 @@ public final class UserService {
       authSessionRepository.update(session);
     });
 
-    AuthSession newAuthSession = new AuthSession();
+    final AuthSession newAuthSession = new AuthSession();
     newAuthSession.setUser(user);
 
     final AuditLog auditLog = new AuditLog();

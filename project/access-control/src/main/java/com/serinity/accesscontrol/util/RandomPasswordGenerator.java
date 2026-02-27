@@ -3,7 +3,6 @@ package com.serinity.accesscontrol.util;
 
 // `java` import(s)
 import java.security.SecureRandom;
-import java.util.Random;
 
 /*
  * See https://medium.com/@dark.786.mode/creating-strong-passwords-made-easy-with-java-a-step-by-step-guide-5ab6833b07c6
@@ -26,8 +25,8 @@ import java.util.Random;
  * </p>
  *
  * <pre>{@code
- * String code = RandomPasswordGenerator.generate();       // 6 chars
- * String pwd  = RandomPasswordGenerator.generate(12);     // 12 chars
+ * String code = RandomPasswordGenerator.generate(); // 6 chars
+ * String pwd = RandomPasswordGenerator.generate(12); // 12 chars
  * }</pre>
  *
  * @author @ZouariOmar (zouariomar20@gmail.com)
@@ -48,6 +47,7 @@ public class RandomPasswordGenerator {
   private static final String SPECIAL_CHARACTERS = "!@#$%^&*()-_=+[]{}|;:,.<>?";
   private static final String ALL_CHARACTERS = UPPER_CASE + LOWER_CASE + NUMBERS + SPECIAL_CHARACTERS;
   private static final int DEFAULT_PASSWORD_LENGTH = 6;
+  private static final SecureRandom RANDOM = new SecureRandom();
 
   /**
    * Generates a random password of the default length (6 characters).
@@ -66,18 +66,17 @@ public class RandomPasswordGenerator {
    */
   public static String generate(final int length) {
     final StringBuilder passwordBuilder = new StringBuilder();
-    final Random random = new SecureRandom();
 
     // Fill the password with random characters from all sets.
     for (int i = 0; i < length; ++i) {
-      final char randomChar = getRandomCharacter(ALL_CHARACTERS, random);
+      final char randomChar = getRandomCharacter(ALL_CHARACTERS, RANDOM);
       passwordBuilder.append(randomChar);
     }
 
     return passwordBuilder.toString();
   }
 
-  private static char getRandomCharacter(final String characterSet, final Random random) {
+  private static char getRandomCharacter(final String characterSet, final SecureRandom random) {
     return characterSet.charAt(random.nextInt(characterSet.length()));
   }
 } // RandomPasswordGenerator final class

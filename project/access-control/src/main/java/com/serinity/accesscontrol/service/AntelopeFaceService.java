@@ -142,6 +142,7 @@ public final class AntelopeFaceService {
   public void close() throws OrtException {
     detectionSession.close();
     recognitionSession.close();
+    env.close();
   }
 
   /**

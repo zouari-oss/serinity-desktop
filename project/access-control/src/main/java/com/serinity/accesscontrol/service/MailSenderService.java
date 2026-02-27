@@ -135,7 +135,7 @@ public final class MailSenderService {
         .replace("{{email}}", toEmail)
         .replace("{{generated-code}}", generatedCode);
     send(toEmail, "Reset Your Password", htmlContent);
-    _LOGGER.info("Password reset email send it successfully! - {}, {}, {}", username, toEmail, generatedCode);
+    _LOGGER.info("Password reset email sent successfully to: {}", toEmail);
   }
 
   /**

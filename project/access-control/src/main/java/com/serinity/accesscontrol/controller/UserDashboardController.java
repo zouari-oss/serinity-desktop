@@ -6,7 +6,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -21,11 +20,9 @@ import com.serinity.accesscontrol.flag.Gender;
 import com.serinity.accesscontrol.flag.MessageStatus;
 import com.serinity.accesscontrol.flag.ResourceFile;
 import com.serinity.accesscontrol.model.AuditLog;
-import com.serinity.accesscontrol.model.AuthSession;
 import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.AuditLogRepository;
-import com.serinity.accesscontrol.repository.AuthSessionRepository;
 import com.serinity.accesscontrol.repository.ProfileRepository;
 import com.serinity.accesscontrol.repository.UserFaceRepository;
 import com.serinity.accesscontrol.repository.UserRepository;
@@ -192,13 +189,7 @@ public final class UserDashboardController implements StatusMessageProvider {
 
   public void loadActivityCards() {
     final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
-    final AuditLogRepository auditLogRepository = new AuditLogRepository(em);
-    final List<AuthSession> authSessions = new AuthSessionRepository(em).findByUserId(user.getId());
-    final List<AuditLog> allLogs = new ArrayList<>();
-    for (final AuthSession session : authSessions) {
-      final List<AuditLog> logs = auditLogRepository.findByAuthSessionId(session.getId());
-      allLogs.addAll(logs);
-    }
+    final List<AuditLog> allLogs = new AuditLogRepository(em).findAllByUserId(user.getId());
 
     // Sort by `created_at` column
     allLogs.sort(Comparator.comparing(AuditLog::getCreatedAt).reversed());
