@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -33,7 +34,7 @@
     <center>
         <StackPane fx:id="moodHost" styleClass="mood-host">
 
-            <!-- This VBox will size with the StackPane as long as max sizes are Infinity -->
+            <!-- Main page content -->
             <VBox alignment="TOP_CENTER"
                   spacing="16"
                   fillWidth="true"
@@ -42,30 +43,25 @@
                 <padding>
                     <Insets bottom="26" left="26" right="26" top="26"/>
                 </padding>
+                <!-- Right-side: hint pill with icon BELOW it -->
+                <VBox alignment="CENTER_RIGHT" spacing="6">
 
-                <!-- ===== DAILY ZEN ===== -->
-                <HBox spacing="14"
-                      maxWidth="Infinity"
-                      styleClass="boost-card">
-                    <VBox spacing="6" HBox.hgrow="ALWAYS">
-                        <Label styleClass="boost-title" text="%mood.zen.title"/>
-                        <Label fx:id="zenQuoteText"
-                               styleClass="boost-quote"
-                               text="%mood.zen.loading"
-                               wrapText="true"/>
-                        <Label fx:id="zenQuoteAuthor"
-                               styleClass="boost-author"
-                               text=""/>
-                    </VBox>
+                    <Button styleClass="icon-btn"
+                            onAction="#onOpenInsights"
+                            accessibleText="%mood.insights.title">
+                        <graphic>
+                            <ImageView id="insights_icon"
+                                       fitWidth="50"
+                                       fitHeight="50"
+                                       preserveRatio="true"
+                                       pickOnBounds="true"
+                                       styleClass="clickable-icon"/>
+                        </graphic>
+                    </Button>
+                </VBox>
+                <Region prefHeight="8" minHeight="8"/>
 
-                    <Button fx:id="btnNewQuote"
-                            styleClass="boost-refresh"
-                            text="%mood.zen.refresh"/>
-                </HBox>
-
-                <!-- Spacer grows inside VBox -->
-                <Region prefHeight="18" minHeight="18"/>
-                <!-- Cards row grows to fill remaining height -->
+                <!-- Cards row -->
                 <HBox alignment="CENTER"
                       spacing="18"
                       maxWidth="Infinity"
@@ -152,9 +148,109 @@
                     </StackPane>
 
                 </HBox>
+
                 <Region prefHeight="20" minHeight="20"/>
 
+                <!-- ===== DAILY ZEN ===== -->
+                <HBox spacing="14"
+                      maxWidth="Infinity"
+                      styleClass="boost-card">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label styleClass="boost-title" text="%mood.zen.title"/>
+                        <Label fx:id="zenQuoteText"
+                               styleClass="boost-quote"
+                               text="%mood.zen.loading"
+                               wrapText="true"/>
+                        <Label fx:id="zenQuoteAuthor"
+                               styleClass="boost-author"
+                               text=""/>
+                    </VBox>
+
+                    <Button fx:id="btnNewQuote"
+                            styleClass="boost-refresh"
+                            text="%mood.zen.refresh"/>
+                </HBox>
             </VBox>
+
+            <!--INSIGHTS -->
+
+            <!-- Overlay -->
+            <StackPane fx:id="insightsOverlay"
+                       visible="false"
+                       managed="false"
+                       styleClass="sheet-overlay"
+                       StackPane.alignment="CENTER"
+                       onMouseClicked="#onCloseInsights"/>
+
+            <!-- Right-side sheet (20% wider: 520 -> 624) -->
+            <VBox fx:id="insightsSheet"
+                  visible="false"
+                  managed="false"
+                  prefWidth="624"
+                  maxWidth="624"
+                  styleClass="sheet"
+                  StackPane.alignment="CENTER_RIGHT">
+
+                <HBox alignment="CENTER_LEFT" spacing="10" styleClass="sheet-header">
+                    <Label text="%mood.insights.title" styleClass="sheet-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="✕"
+                            styleClass="sheet-close"
+                            onAction="#onCloseInsights"/>
+                </HBox>
+
+                <Label fx:id="insightsStatusLabel"
+                       text="%mood.insights.loading"
+                       styleClass="sheet-subtitle"/>
+
+                <HBox spacing="14.0" styleClass="insights-grid" VBox.vgrow="ALWAYS">
+                    <!-- Influences -->
+                    <VBox spacing="8.0" HBox.hgrow="ALWAYS" styleClass="insight-panel">
+                        <Label text="%mood.insights.influences" styleClass="insight-col-title"/>
+
+                        <!-- Header row -->
+                        <HBox spacing="10" styleClass="insight-header-row">
+                            <Label text="%insight.col.name" styleClass="insight-h-name"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="%insight.col.count" styleClass="insight-h-num"/>
+                            <Label text="%insight.col.avg" styleClass="insight-h-num"/>
+                            <Label text="%insight.col.low" styleClass="insight-h-num"/>
+                        </HBox>
+
+                        <ListView fx:id="influenceImpactList"
+                                  prefHeight="260.0"
+                                  VBox.vgrow="ALWAYS"
+                                  styleClass="insight-list"/>
+                    </VBox>
+
+                    <!-- Emotions -->
+                    <VBox spacing="8.0" HBox.hgrow="ALWAYS" styleClass="insight-panel">
+                        <Label text="%mood.insights.emotions" styleClass="insight-col-title"/>
+
+                        <!-- Header row -->
+                        <HBox spacing="10" styleClass="insight-header-row">
+                            <Label text="%insight.col.name" styleClass="insight-h-name"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="%insight.col.count" styleClass="insight-h-num"/>
+                            <Label text="%insight.col.avg" styleClass="insight-h-num"/>
+                            <Label text="%insight.col.low" styleClass="insight-h-num"/>
+                        </HBox>
+
+                        <ListView fx:id="emotionImpactList"
+                                  prefHeight="260.0"
+                                  VBox.vgrow="ALWAYS"
+                                  styleClass="insight-list"/>
+                    </VBox>
+                </HBox>
+
+                <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="sheet-footer">
+                    <Button text="%btn.refresh"
+                            onAction="#onRefreshInsights"
+                            styleClass="btn-pill"/>
+                </HBox>
+
+            </VBox>
+
         </StackPane>
     </center>
 
