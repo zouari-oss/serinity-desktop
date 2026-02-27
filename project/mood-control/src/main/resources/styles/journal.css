@@ -116,3 +116,59 @@
     -fx-padding: 0 2 0 0;
     -fx-alignment: CENTER_RIGHT;
 }
+/* ===== AI Emotion chips ===== */
+.ai-tags-pane {
+    -fx-padding: 2 0 0 0;
+}
+
+.ai-chip {
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: 700;
+    -fx-border-width: 1;
+}
+
+/* Calm & Clinical (soft tints, readable text) */
+.ai-chip-joy {
+    -fx-background-color: rgba(255, 215, 102, 0.30);
+    -fx-border-color: rgba(255, 215, 102, 0.55);
+    -fx-text-fill: #6B4E00;
+}
+
+.ai-chip-sadness {
+    -fx-background-color: rgba(86, 120, 190, 0.22);
+    -fx-border-color: rgba(86, 120, 190, 0.45);
+    -fx-text-fill: #2C4674;
+}
+
+.ai-chip-anger {
+    -fx-background-color: rgba(217, 83, 79, 0.20);
+    -fx-border-color: rgba(217, 83, 79, 0.42);
+    -fx-text-fill: #7A1E1B;
+}
+
+.ai-chip-fear {
+    -fx-background-color: rgba(148, 104, 198, 0.22);
+    -fx-border-color: rgba(148, 104, 198, 0.45);
+    -fx-text-fill: #4B2C6B;
+}
+
+.ai-chip-stress {
+    -fx-background-color: rgba(255, 165, 90, 0.22);
+    -fx-border-color: rgba(255, 165, 90, 0.45);
+    -fx-text-fill: #6B3B00;
+}
+
+.ai-chip-affection {
+    -fx-background-color: rgba(47, 127, 122, 0.18);
+    -fx-border-color: rgba(47, 127, 122, 0.40);
+    -fx-text-fill: #1F5E5A;
+}
+
+.ai-chip-surprise {
+    -fx-background-color: rgba(79, 128, 255, 0.18);
+    -fx-border-color: rgba(79, 128, 255, 0.40);
+    -fx-text-fill: #1C3F8A;
+}
