@@ -15,6 +15,7 @@ import org.zouarioss.skinnedratorm.core.EntityManager;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
+import com.serinity.accesscontrol.controller.base.StageTitled;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.flag.Gender;
 import com.serinity.accesscontrol.flag.MessageStatus;
@@ -65,7 +66,13 @@ import javafx.stage.Stage;
  *        UserDashboardController.java
  *        </a>
  */
-public final class UserDashboardController implements StatusMessageProvider {
+public final class UserDashboardController implements StatusMessageProvider, StageTitled {
+
+  @Override
+  public String getSceneTitleKey() {
+    return "app.scene.title.dashboard";
+  }
+
 
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(UserDashboardController.class);

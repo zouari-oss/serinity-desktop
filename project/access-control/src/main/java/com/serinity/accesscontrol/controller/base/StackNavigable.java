@@ -8,7 +8,9 @@ import com.serinity.accesscontrol.util.FXMLLoaderUtil;
 import com.serinity.accesscontrol.util.I18nUtil;
 
 // `javafx` import(s)
+import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 /**
  * Provides stack-based navigation (push, replace, pop) for controllers
@@ -97,7 +99,12 @@ public interface StackNavigable {
       controllerInitializer.accept(controller);
     }
 
+    // Store controller on root node so pop() can retrieve it for title restore
+    view.getRoot().setUserData(controller);
     host.getChildren().add(view.getRoot());
+
+    // Update stage title if the new controller declares one
+    applySceneTitle(host, controller);
   }
 
   default <T> void push(final String fxml) {
@@ -119,7 +126,8 @@ public interface StackNavigable {
   }
 
   /**
-   * Pop the top view from the stack.
+   * Pop the top view from the stack and restore the stage title of the
+   * view now on top (if it implements {@link StageTitled}).
    */
   default void pop() {
     final StackPane host = getStackHost();
@@ -129,5 +137,22 @@ public interface StackNavigable {
     if (!host.getChildren().isEmpty()) {
       host.getChildren().remove(host.getChildren().size() - 1);
     }
+
+    // Restore the title of the view now on top
+    if (!host.getChildren().isEmpty()) {
+      final Node top = host.getChildren().get(host.getChildren().size() - 1);
+      if (top.getUserData() != null) {
+        applySceneTitle(host, top.getUserData());
+      }
+    }
+  }
+
+  /** Updates the stage title if {@code controller} implements {@link StageTitled}. */
+  private static void applySceneTitle(final StackPane host, final Object controller) {
+    if (!(controller instanceof StageTitled titled))
+      return;
+    if (host.getScene() == null)
+      return;
+    ((Stage) host.getScene().getWindow()).setTitle(I18nUtil.getValue(titled.getSceneTitleKey()));
   }
 } // StackNavigable interface

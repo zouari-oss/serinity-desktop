@@ -15,6 +15,7 @@ import org.zouarioss.skinnedratorm.core.EntityManager;
 // `serinity` import(s)
 import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
 import com.serinity.accesscontrol.controller.base.StackNavigable;
+import com.serinity.accesscontrol.controller.base.StageTitled;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.flag.AccountStatus;
 import com.serinity.accesscontrol.flag.MessageStatus;
@@ -48,7 +49,13 @@ import javafx.scene.layout.VBox;
  *        AdminUsersManagmentController.java
  *        </a>
  */
-public final class AdminUsersManagmentController implements StackNavigable, StatusMessageProvider {
+public final class AdminUsersManagmentController implements StackNavigable, StatusMessageProvider, StageTitled {
+
+  @Override
+  public String getSceneTitleKey() {
+    return "app.scene.title.user_management";
+  }
+
 
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;

@@ -290,7 +290,7 @@ public final class CameraDesktopController {
         Thread.currentThread().interrupt();
       }
     }
-    // Shut down inference executor and wait for any running inference to complete
+    // Shutdown inference executor and wait for any running inference to complete
     inferenceExecutor.shutdown();
     try {
       inferenceExecutor.awaitTermination(3000, TimeUnit.MILLISECONDS);

@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.controller.base.StackNavigable;
+import com.serinity.accesscontrol.controller.base.StageTitled;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.dto.ServiceResult;
 import com.serinity.accesscontrol.flag.MessageStatus;
@@ -47,7 +48,13 @@ import javafx.stage.Stage;
  *        LoginController.java
  *        </a>
  */
-public final class LoginController implements StackNavigable, StatusMessageProvider {
+public final class LoginController implements StackNavigable, StatusMessageProvider, StageTitled {
+
+  @Override
+  public String getSceneTitleKey() {
+    return "app.scene.title.sign_in";
+  }
+
 
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;
