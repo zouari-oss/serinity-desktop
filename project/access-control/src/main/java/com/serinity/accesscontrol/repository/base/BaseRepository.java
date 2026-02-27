@@ -50,6 +50,10 @@ public abstract class BaseRepository<T, ID> {
     } catch (final Exception e) {
       _LOGGER.error("Failed to persist entity: {}", entity, e);
     }
+  }
+
+  /**
+   * Updates an existing entity in the database.
    *
    * @param entity the entity with updated field values
    */
@@ -110,3 +114,6 @@ public abstract class BaseRepository<T, ID> {
     } catch (final Exception e) {
       _LOGGER.error("Failed to find all entities of type: {}", entityClass.getSimpleName(), e);
       throw new RuntimeException(e);
+    }
+  }
+} // BaseRepository abstract class

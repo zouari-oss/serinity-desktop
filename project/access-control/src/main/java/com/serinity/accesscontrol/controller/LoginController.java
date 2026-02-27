@@ -140,6 +140,7 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
 
     final CameraDesktopController cameraController = loader.getController();
     cameraController.setRecognizeMode(user -> {
+      UserService.signInWithFace(user);
       push(user.getRole().equals(UserRole.ADMIN)
           ? ResourceFile.ADMIN_DASHBOARD_FXML.getFileName()
           : ResourceFile.USER_HOME_FXML.getFileName(),
@@ -147,7 +148,7 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
     });
 
     final Stage stage = new Stage();
-    stage.setTitle("Face ID Verification");
+    stage.setTitle(I18nUtil.getValue("camera.stage.title.face_id_verification"));
     stage.setScene(new Scene(loader.getRoot()));
     stage.setResizable(false);
     stage.initModality(Modality.APPLICATION_MODAL);

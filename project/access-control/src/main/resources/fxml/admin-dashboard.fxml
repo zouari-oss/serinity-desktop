@@ -27,29 +27,29 @@
           </image>
         </ImageView>
 
-        <Label styleClass="logo" text="SERINITY" />
+        <Label styleClass="logo" text="%app.brand" />
       </VBox>
 
       <Button fx:id="overviewButton" onAction="#onOverviewButtonAction" styleClass="sidebar-btn"
-        text="Overview" />
+        text="%admin.nav.overview" />
 
       <Button fx:id="usersManagmentButton" onAction="#onUsersManagmentButtonAction"
-        styleClass="sidebar-btn" text="Users Management" />
+        styleClass="sidebar-btn" text="%admin.nav.users_management" />
 
       <Button fx:id="profileAndSettingsButton" onAction="#onProfileAndSettingsButtonAction"
-        styleClass="sidebar-btn" text="Profile &amp; Settings" />
+        styleClass="sidebar-btn" text="%admin.nav.profile_settings" />
 
       <Pane VBox.vgrow="ALWAYS" />
 
       <Button fx:id="logoutButton" onAction="#onLogoutButtonAction" styleClass="logout-btn"
-        text="Logout" />
+        text="%admin.button.logout" />
 
     </VBox>
 
     <HBox prefHeight="60.0" styleClass="header" AnchorPane.leftAnchor="220.0"
       AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
-      <Label fx:id="pageTitleLabel" styleClass="header-title" text="Dashboard Overview" />
+      <Label fx:id="pageTitleLabel" styleClass="header-title" text="%admin.page.title.dashboard" />
     </HBox>
 
     <StackPane fx:id="contentAreaStackPane" styleClass="content-area" AnchorPane.bottomAnchor="0.0"

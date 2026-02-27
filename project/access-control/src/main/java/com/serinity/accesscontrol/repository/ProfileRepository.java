@@ -49,6 +49,11 @@ public final class ProfileRepository extends BaseRepository<Profile, Long> {
     } catch (final Exception e) {
       _LOGGER.error("Failed to find profile by username: {}", username, e);
       throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Finds the profile associated with a given user.
    *
    * @param userId the UUID of the owner {@link com.serinity.accesscontrol.model.User}
    * @return the matching {@link Profile}
@@ -62,3 +67,6 @@ public final class ProfileRepository extends BaseRepository<Profile, Long> {
     } catch (final Exception e) {
       _LOGGER.error("Failed to find profile by userId: {}", userId, e);
       throw new RuntimeException(e);
+    }
+  }
+} // ProfileRepository final class

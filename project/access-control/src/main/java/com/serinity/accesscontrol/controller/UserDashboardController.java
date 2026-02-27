@@ -5,6 +5,7 @@ package com.serinity.accesscontrol.controller;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -84,16 +85,16 @@ public final class UserDashboardController implements StatusMessageProvider {
 
     final HBox topRow = new HBox(15, action, os);
 
-    final Label hostname = new Label("Hostname: " + log.getHostname());
+    final Label hostname = new Label(I18nUtil.getValue("activity.hostname") + log.getHostname());
     hostname.getStyleClass().add("activity-meta");
 
-    final Label ip = new Label("Private IP: " + log.getPrivateIpAddress());
+    final Label ip = new Label(I18nUtil.getValue("activity.private_ip") + log.getPrivateIpAddress());
     ip.getStyleClass().add("activity-meta");
 
-    final Label mac = new Label("MAC: " + log.getMacAddress());
+    final Label mac = new Label(I18nUtil.getValue("activity.mac") + log.getMacAddress());
     mac.getStyleClass().add("activity-meta");
 
-    final Label location = new Label("Location: " + log.getLocation());
+    final Label location = new Label(I18nUtil.getValue("activity.location") + log.getLocation());
     location.getStyleClass().add("activity-meta");
 
     final Label date = new Label(log.getCreatedAt().toString());
@@ -234,12 +235,12 @@ public final class UserDashboardController implements StatusMessageProvider {
         user.setFaceRecognitionEnabled(true);
         userRepository.update(user);
         toggle.setSelected(true);
-        toggle.setText("Disable Face ID");
-        showStatusMessage("Face ID registered successfully!", MessageStatus.SUCCESS);
+        toggle.setText(I18nUtil.getValue("user.dashboard.face_id.disable"));
+        showStatusMessage(I18nUtil.getValue("status.face_id.registered"), MessageStatus.SUCCESS);
       });
 
       final Stage stage = new Stage();
-      stage.setTitle("Face ID Enrollment");
+      stage.setTitle(I18nUtil.getValue("camera.stage.title.enrollment"));
       stage.setScene(new Scene(view.getRoot()));
       stage.setResizable(false);
       stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
@@ -248,7 +249,7 @@ public final class UserDashboardController implements StatusMessageProvider {
       stage.setOnHidden(e -> {
         if (!user.isFaceRecognitionEnabled()) {
           toggle.setSelected(false);
-          toggle.setText("Enable Face ID");
+          toggle.setText(I18nUtil.getValue("user.dashboard.face_id.enable"));
         }
       });
 
@@ -262,28 +263,28 @@ public final class UserDashboardController implements StatusMessageProvider {
       }
       user.setFaceRecognitionEnabled(false);
       userRepository.update(user);
-      toggle.setText("Enable Face ID");
-      showStatusMessage("Face ID disabled.", MessageStatus.INFO);
+      toggle.setText(I18nUtil.getValue("user.dashboard.face_id.enable"));
+      showStatusMessage(I18nUtil.getValue("status.face_id.disabled"), MessageStatus.INFO);
     }
   }
 
   @FXML
   void onCancelButtonAction(final ActionEvent event) {
     initUserInfoLater();
-    showStatusMessage("User information has been reset successfully!", MessageStatus.INFO);
+    showStatusMessage(I18nUtil.getValue("status.profile.reset"), MessageStatus.INFO);
   }
 
   @FXML
   void onSaveButtonAction(final ActionEvent event) {
     final String userProfileUsername = usernameTextField.getText();
     if (userProfileUsername.isBlank()) {
-      showStatusMessage("User information has been reset successfully!", MessageStatus.WARNING);
+      showStatusMessage(I18nUtil.getValue("status.profile.username_blank"), MessageStatus.WARNING);
       return;
     }
 
     final String phoneNumber = phoneTextField.getText();
-    if (!RegexValidator.isValidPhoneNumber(phoneNumber)) {
-      showStatusMessage("Invalid Phone Number Format!", MessageStatus.WARNING);
+    if (phoneNumber != null && !RegexValidator.isValidPhoneNumber(phoneNumber)) {
+      showStatusMessage(I18nUtil.getValue("status.profile.invalid_phone"), MessageStatus.WARNING);
       return;
     }
 
@@ -309,7 +310,7 @@ public final class UserDashboardController implements StatusMessageProvider {
     // update profile completion
     updateProfileCompletion();
 
-    showStatusMessage("Profile updated successfully.", MessageStatus.SUCCESS);
+    showStatusMessage(I18nUtil.getValue("status.profile.updated"), MessageStatus.SUCCESS);
   }
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -356,7 +357,9 @@ public final class UserDashboardController implements StatusMessageProvider {
       loadActivityCards();
       // Sync toggle state with user's face recognition setting
       faceRecognitionToggleButton.setSelected(user.isFaceRecognitionEnabled());
-      faceRecognitionToggleButton.setText(user.isFaceRecognitionEnabled() ? "Disable Face ID" : "Enable Face ID");
+      faceRecognitionToggleButton.setText(user.isFaceRecognitionEnabled()
+          ? I18nUtil.getValue("user.dashboard.face_id.disable")
+          : I18nUtil.getValue("user.dashboard.face_id.enable"));
     });
 
     _LOGGER.info("User Dashboard Interface initialized successfully!");
@@ -402,7 +405,9 @@ public final class UserDashboardController implements StatusMessageProvider {
   private String handleProfileImageUpload() {
 
     final Image image = profileImageView.getImage();
-    if (image == null || image.getUrl() == null) {
+    if (image == null
+        || image.getUrl() == null
+        || image.getUrl().equals(ResourceFile.USER_DEFAUL_PROFILE_PNG.getFileName())) {
       return null;
     }
 
@@ -426,7 +431,7 @@ public final class UserDashboardController implements StatusMessageProvider {
 
     } catch (final Exception e) {
       _LOGGER.error("Image upload failed.", e);
-      showStatusMessage("Image upload failed.", MessageStatus.ERROR);
+      showStatusMessage(I18nUtil.getValue("status.image.upload_failed"), MessageStatus.ERROR);
     }
 
     return null;
@@ -454,7 +459,7 @@ public final class UserDashboardController implements StatusMessageProvider {
     aboutMeTextArea.setText(userProfile.getAboutMe());
     profileImageView.setImage(
         userProfile.getProfileImageUrl() == null || userProfile.getProfileImageUrl().isEmpty()
-            ? new Image("/assets/user-dashboard/user-default-profile.png")
+            ? new Image(ResourceFile.USER_DEFAUL_PROFILE_PNG.getFileName())
             : new Image(userProfile.getProfileImageUrl(), true));
   }
 

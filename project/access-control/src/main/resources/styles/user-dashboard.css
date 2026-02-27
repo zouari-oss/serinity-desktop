@@ -233,8 +233,6 @@ TextArea {
   -fx-background-radius: 20;
   -fx-text-fill: #333;
   -fx-font-size: 12px;
-  -fx-pref-width: 60px;
-  -fx-pref-height: 25px;
 }
 
 .toggle-button:selected {

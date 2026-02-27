@@ -12,8 +12,8 @@
     <ImageView fx:id="cameraImageView" fitHeight="460.0" fitWidth="500.0" pickOnBounds="true"
       preserveRatio="true" />
     <Button layoutX="174.0" layoutY="466.0" mnemonicParsing="false" onAction="#onStartButtonAction"
-      prefHeight="26.0" prefWidth="70.0" text="Start" />
+      prefHeight="26.0" prefWidth="70.0" text="%camera.button.start" />
     <Button layoutX="256.0" layoutY="466.0" mnemonicParsing="false" onAction="#onStopButtonAction"
-      prefHeight="26.0" prefWidth="70.0" text="Stop" />
+      prefHeight="26.0" prefWidth="70.0" text="%camera.button.stop" />
   </children>
 </AnchorPane>
