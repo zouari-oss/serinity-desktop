@@ -56,10 +56,21 @@ public final class I18nUtil {
   private I18nUtil() {
   }
 
+  /**
+   * Returns the localized string for the given message key.
+   *
+   * @param key the i18n message key (e.g., {@code "greeting"})
+   * @return the localized string value
+   */
   public static String getValue(String key) {
     return bundle.getString(key);
   }
 
+  /**
+   * Changes the active locale and reloads the resource bundle accordingly.
+   *
+   * @param locale the new {@link Locale} to apply
+   */
   public static void setLocale(Locale locale) {
     currentLocale = locale;
 
@@ -68,14 +79,30 @@ public final class I18nUtil {
         currentLocale);
   }
 
+  /**
+   * Returns the currently active {@link Locale}.
+   *
+   * @return the current locale
+   */
   public static Locale getLocale() {
     return currentLocale;
   }
 
+  /**
+   * Returns the currently loaded {@link ResourceBundle}.
+   *
+   * @return the active resource bundle
+   */
   public static ResourceBundle getBundle() {
     return bundle;
   }
 
+  /**
+   * Returns the list of supported {@link Locale} instances loaded from
+   * the {@code supported-languages} property bundle.
+   *
+   * @return list of supported locales
+   */
   public static List<Locale> getSupportedLanguages() {
     ResourceBundle config = ResourceBundle.getBundle(PropertyBundle.SUPPORTED_LANGUAGES_BUNDLE.getBaseName());
 
@@ -86,6 +113,12 @@ public final class I18nUtil {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Returns the list of supported language tags (e.g., {@code "en"}, {@code "fr"})
+   * as plain strings, suitable for populating UI combo-boxes.
+   *
+   * @return list of supported language tag strings
+   */
   public static List<String> getSupportedLanguagesToString() {
     ResourceBundle config = ResourceBundle.getBundle(PropertyBundle.SUPPORTED_LANGUAGES_BUNDLE.getBaseName());
 
@@ -100,6 +133,15 @@ public final class I18nUtil {
    * "https://github.com/zouari-oss/serinity-desktop/pull/1#discussion_r2741228244">
    * discussion_r2741228244
    * </a>
+   */
+  /**
+   * Applies the best matching supported locale to the current runtime locale.
+   *
+   * <p>
+   * First tries an exact match; if none is found, falls back to matching
+   * by language tag only (e.g., {@code en_US} → {@code en}).
+   * If no match is found at all, the current locale remains unchanged.
+   * </p>
    */
   public static void applySupportedLocale() {
     List<Locale> supportedLocales = getSupportedLanguages();

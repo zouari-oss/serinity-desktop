@@ -21,6 +21,12 @@ import java.util.Base64;
 public final class RefreshTokenGenerator {
   private static final SecureRandom RANDOM = new SecureRandom();
 
+  /**
+   * Generates a cryptographically secure, URL-safe, base64-encoded refresh
+   * token of 512 bits (64 bytes).
+   *
+   * @return a new unique refresh token string
+   */
   public static String generate() {
     final byte[] bytes = new byte[64]; // 512 bits
     RANDOM.nextBytes(bytes);
