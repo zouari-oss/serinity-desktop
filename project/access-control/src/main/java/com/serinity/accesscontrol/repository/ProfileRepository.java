@@ -27,6 +27,8 @@ import com.serinity.accesscontrol.repository.base.BaseRepository;
  *      </a>
  */
 public final class ProfileRepository extends BaseRepository<Profile, Long> {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(ProfileRepository.class);
   public ProfileRepository(final EntityManager em) {
     super(em, Profile.class);
   }
@@ -45,13 +47,8 @@ public final class ProfileRepository extends BaseRepository<Profile, Long> {
           .getSingleResult();
 
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Failed to find profile by username: {}", username, e);
       throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * Finds the profile associated with a given user.
    *
    * @param userId the UUID of the owner {@link com.serinity.accesscontrol.model.User}
    * @return the matching {@link Profile}
@@ -63,8 +60,5 @@ public final class ProfileRepository extends BaseRepository<Profile, Long> {
           .where("user_id", userId)
           .getSingleResult();
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Failed to find profile by userId: {}", userId, e);
       throw new RuntimeException(e);
-    }
-  }
-} // ProfileRepository final class

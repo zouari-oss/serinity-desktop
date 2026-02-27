@@ -48,6 +48,8 @@ import io.github.cdimascio.dotenv.DotenvException;
  *        </a>
  */
 public class EnvironmentVariableLoader {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(EnvironmentVariableLoader.class);
   private final static Dotenv dotenv;
 
   static {
@@ -57,7 +59,7 @@ public class EnvironmentVariableLoader {
           .ignoreIfMissing()
           .load();
     } catch (final DotenvException e) {
-      e.printStackTrace();
+      _LOGGER.fatal("Failed to load .env configuration", e);
       throw new RuntimeException();
     }
   }

@@ -26,6 +26,8 @@ import org.opencv.videoio.VideoCapture;
  */
 public final class CameraDesktopService {
 
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(CameraDesktopService.class);
   private static final ReentrantLock lock = new ReentrantLock();
 
   static {
@@ -78,7 +80,7 @@ public final class CameraDesktopService {
           final Mat frame = captureFrame();
           frameConsumer.accept(frame);
         } catch (final Exception e) {
-          e.printStackTrace();
+          _LOGGER.error("Camera capture error", e);
         }
       }
     }, "Camera-Thread").start();

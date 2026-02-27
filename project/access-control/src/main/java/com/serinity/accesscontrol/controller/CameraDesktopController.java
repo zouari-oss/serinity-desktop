@@ -57,6 +57,9 @@ import javafx.stage.Stage;
  */
 public final class CameraDesktopController {
 
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(CameraDesktopController.class);
+
   private enum Mode {
     RECOGNIZE, ENROLL
   }
@@ -132,12 +135,8 @@ public final class CameraDesktopController {
       cameraService.startCapture(this::processFrame, running);
 
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Failed to start camera or face service", e);
     }
-  }
-
-  @FXML
-  void onStopButtonAction(final ActionEvent event) {
     stopCamera();
   }
 
@@ -193,7 +192,7 @@ public final class CameraDesktopController {
       }
 
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Error processing camera frame", e);
     }
   }
 
@@ -273,7 +272,7 @@ public final class CameraDesktopController {
       if (faceService != null)
         faceService.close();
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Error closing face service", e);
     }
   }
 

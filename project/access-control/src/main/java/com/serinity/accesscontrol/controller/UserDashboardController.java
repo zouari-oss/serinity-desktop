@@ -425,7 +425,7 @@ public final class UserDashboardController implements StatusMessageProvider {
       }
 
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Image upload failed.", e);
       showStatusMessage("Image upload failed.", MessageStatus.ERROR);
     }
 

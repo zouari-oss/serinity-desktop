@@ -23,6 +23,8 @@ import org.zouarioss.skinnedratorm.engine.QueryBuilder;
  *        </a>
  */
 public abstract class BaseRepository<T, ID> {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(BaseRepository.class);
   protected final EntityManager em;
   protected final Class<T> entityClass;
 
@@ -46,12 +48,8 @@ public abstract class BaseRepository<T, ID> {
     try {
       em.persist(entity);
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Failed to persist entity: {}", entity, e);
     }
-  }
-
-  /**
-   * Updates an existing entity in the database.
    *
    * @param entity the entity with updated field values
    */
@@ -59,7 +57,7 @@ public abstract class BaseRepository<T, ID> {
     try {
       em.update(entity);
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Failed to update entity: {}", entity, e);
     }
   }
 
@@ -73,7 +71,7 @@ public abstract class BaseRepository<T, ID> {
     try {
       return Optional.ofNullable(em.findById(entityClass, id));
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Failed to find entity by id: {}", id, e);
       throw new RuntimeException(e);
     }
   }
@@ -87,7 +85,7 @@ public abstract class BaseRepository<T, ID> {
     try {
       em.delete(entity);
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Failed to delete entity: {}", entity, e);
     }
   }
 
@@ -110,8 +108,5 @@ public abstract class BaseRepository<T, ID> {
       return new QueryBuilder<>(entityClass, em.getConnection())
           .getResultList();
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Failed to find all entities of type: {}", entityClass.getSimpleName(), e);
       throw new RuntimeException(e);
-    }
-  }
-} // BaseRepository abstract class

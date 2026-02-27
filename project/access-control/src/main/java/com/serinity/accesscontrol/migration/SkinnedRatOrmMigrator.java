@@ -62,6 +62,8 @@ import com.serinity.accesscontrol.model.UserFace;
  *        </a>
  */
 public final class SkinnedRatOrmMigrator {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(SkinnedRatOrmMigrator.class);
   private static final SchemaGenerator generator = new SchemaGenerator(
       SkinnedRatOrmEntityManager.getConnection(),
       SQLDialect.MYSQL);
@@ -93,7 +95,7 @@ public final class SkinnedRatOrmMigrator {
       generator.createTable(AuditLog.class);
       generator.createTable(UserFace.class);
     } catch (Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Schema migration failed", e);
       throw new RuntimeException(e);
     }
   }

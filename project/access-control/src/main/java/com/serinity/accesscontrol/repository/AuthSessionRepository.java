@@ -31,6 +31,8 @@ import com.serinity.accesscontrol.repository.base.BaseRepository;
  *      </a>
  */
 public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(AuthSessionRepository.class);
   public AuthSessionRepository(final EntityManager em) {
     super(em, AuthSession.class);
   }
@@ -101,7 +103,7 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
       return Optional.ofNullable(session);
 
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.warn("No active session found for user: {}", user.getId());
       return Optional.empty();
     }
   }

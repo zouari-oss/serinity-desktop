@@ -116,8 +116,7 @@ public final class MailSenderService {
           );
       _LOGGER.info("Email send it successfully! - {}, {}", toEmail, subject);
     } catch (final MailException e) {
-      e.printStackTrace();
-      _LOGGER.warn("Email sending error! - {}, {}", toEmail, subject);
+      _LOGGER.error("Email sending error! - {}, {}", toEmail, subject, e);
       throw new RuntimeException(e);
     }
   }
