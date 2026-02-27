@@ -1,9 +1,11 @@
 package com.serinity.moodcontrol.service;
 
+import com.serinity.moodcontrol.ai.JournalAiTagger;
 import com.serinity.moodcontrol.dao.JournalEntryDao;
 import com.serinity.moodcontrol.model.JournalEntry;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class JournalService {
@@ -14,10 +16,16 @@ public class JournalService {
 
     private final JournalEntryDao dao;
     private final GuidedSerializer serializer;
+    private final JournalAiTagger aiTagger;
 
     public JournalService(JournalEntryDao dao, GuidedSerializer serializer) {
+        this(dao, serializer, new JournalAiTagger());
+    }
+
+    public JournalService(JournalEntryDao dao, GuidedSerializer serializer, JournalAiTagger aiTagger) {
         this.dao = Objects.requireNonNull(dao);
         this.serializer = Objects.requireNonNull(serializer);
+        this.aiTagger = Objects.requireNonNull(aiTagger);
     }
 
     /** @return null if OK, otherwise an error message */
@@ -33,7 +41,15 @@ public class JournalService {
         e.setContent(serializer.serialize(a1.trim(), a2.trim(), a3.trim()));
 
         try {
-            dao.insert(e);
+            long id = dao.insert(e);
+            if (id <= 0) return "Database error while saving.";
+
+            // Auto-generate AI tags
+            String aiJson = aiTagger.suggestTagsJson(e.getContent());
+            LocalDateTime genAt = aiTagger.nowGeneratedAt();
+
+            dao.updateAiFields(id, userId, aiJson, JournalAiTagger.MODEL_VERSION, genAt);
+
             return null;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -70,7 +86,15 @@ public class JournalService {
         e.setContent(newContent);
 
         try {
-            dao.update(e);
+            boolean ok = dao.update(e);
+            if (!ok) return "Entry not found.";
+
+            // AI tags
+            String aiJson = aiTagger.suggestTagsJson(e.getContent());
+            LocalDateTime genAt = aiTagger.nowGeneratedAt();
+
+            dao.updateAiFields(e.getId(), userId, aiJson, JournalAiTagger.MODEL_VERSION, genAt);
+
             return null;
         } catch (SQLException ex) {
             ex.printStackTrace();

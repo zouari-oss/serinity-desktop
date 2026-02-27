@@ -11,6 +11,11 @@ public class JournalEntry {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    // AI
+    private String aiTags;
+    private String aiModelVersion;
+    private LocalDateTime aiGeneratedAt;
+
     public JournalEntry() {}
 
     public JournalEntry(String userId, String title, String content) {
@@ -36,4 +41,13 @@ public class JournalEntry {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getAiTags() { return aiTags; }
+    public void setAiTags(String aiTags) { this.aiTags = aiTags; }
+
+    public String getAiModelVersion() { return aiModelVersion; }
+    public void setAiModelVersion(String aiModelVersion) { this.aiModelVersion = aiModelVersion; }
+
+    public LocalDateTime getAiGeneratedAt() { return aiGeneratedAt; }
+    public void setAiGeneratedAt(LocalDateTime aiGeneratedAt) { this.aiGeneratedAt = aiGeneratedAt; }
 }

@@ -65,6 +65,14 @@
       </dependency>
       <!-- com.fasterxml.jackson.core.jackson-databind -->
 
+      <!-- nz.ac.waikato.cms.weka.weka-stable -->
+      <dependency>
+          <groupId>nz.ac.waikato.cms.weka</groupId>
+          <artifactId>weka-stable</artifactId>
+          <version>3.8.6</version>
+      </dependency>
+      <!-- nz.ac.waikato.cms.weka.weka-stable -->
+
   </dependencies>
 
   <build>
