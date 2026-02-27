@@ -194,6 +194,37 @@ public final class UserService {
   }
 
   /**
+   * Creates a new authenticated session for a user who was identified via face
+   * recognition, revoking any previously active session, and records the login
+   * in the audit log with action {@link AuditAction#USER_FACE_LOGIN}.
+   *
+   * @param user the {@link User} identified by the face recognition system
+   * @return a {@link ServiceResult} containing the authenticated {@link User}
+   */
+  public static ServiceResult<User> signInWithFace(final User user) {
+    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    final AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
+
+    final Optional<AuthSession> activeSession = authSessionRepository.findActiveSession(user);
+    activeSession.ifPresent(session -> {
+      session.setRevoked(true);
+      authSessionRepository.update(session);
+    });
+
+    final AuthSession newAuthSession = new AuthSession();
+    newAuthSession.setUser(user);
+
+    final AuditLog auditLog = new AuditLog();
+    auditLog.setAction(AuditAction.USER_FACE_LOGIN.getValue());
+    auditLog.setSession(newAuthSession);
+
+    authSessionRepository.save(newAuthSession);
+    new AuditLogRepository(em).save(auditLog);
+
+    return ServiceResult.success(user, "User signed in via face recognition!");
+  }
+
+  /**
    * Initiates a password reset flow by sending a one-time code to the user's
    * email address.
    *

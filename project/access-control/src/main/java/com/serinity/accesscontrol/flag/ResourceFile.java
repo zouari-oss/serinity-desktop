@@ -40,7 +40,10 @@ public enum ResourceFile {
 
   // ONNX FILE(s)
   ANTELOPEV2_SCRFD_10G_BNKPS_ONNX("antelopev2/scrfd_10g_bnkps.onnx"),
-  ANTELOPEV2_GLINTR100_ONNX("antelopev2/glintr100.onnx");
+  ANTELOPEV2_GLINTR100_ONNX("antelopev2/glintr100.onnx"),
+
+  // IMAGE(s)
+  USER_DEFAUL_PROFILE_PNG("/assets/user-dashboard/user-default-profile.png");
 
   private final String fileName;
 
