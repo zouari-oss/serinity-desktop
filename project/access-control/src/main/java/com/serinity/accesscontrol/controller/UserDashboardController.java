@@ -18,6 +18,7 @@ import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.flag.Gender;
 import com.serinity.accesscontrol.flag.MessageStatus;
+import com.serinity.accesscontrol.flag.ResourceFile;
 import com.serinity.accesscontrol.model.AuditLog;
 import com.serinity.accesscontrol.model.AuthSession;
 import com.serinity.accesscontrol.model.Profile;
@@ -25,7 +26,12 @@ import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.AuditLogRepository;
 import com.serinity.accesscontrol.repository.AuthSessionRepository;
 import com.serinity.accesscontrol.repository.ProfileRepository;
+import com.serinity.accesscontrol.repository.UserFaceRepository;
+import com.serinity.accesscontrol.repository.UserRepository;
+import com.serinity.accesscontrol.model.UserFace;
 import com.serinity.accesscontrol.service.FreeImageHostClient;
+import com.serinity.accesscontrol.util.FXMLLoaderUtil;
+import com.serinity.accesscontrol.util.I18nUtil;
 import com.serinity.accesscontrol.util.RegexValidator;
 
 // `javafx` import(s)
@@ -33,18 +39,20 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  * `user-dashboard.fxml` controller class
@@ -153,6 +161,9 @@ public final class UserDashboardController implements StatusMessageProvider {
   @FXML // fx:id="welcomeLabel"
   private Label welcomeLabel; // Value injected by FXMLLoader
 
+  @FXML // fx:id="faceRecognitionToggleButton"
+  private ToggleButton faceRecognitionToggleButton; // Value injected by FXMLLoader
+
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
   private User user;
@@ -202,6 +213,57 @@ public final class UserDashboardController implements StatusMessageProvider {
     final File file = fileChooser.showOpenDialog(null);
     if (file != null) {
       profileImageView.setImage(new Image(file.toURI().toString()));
+    }
+  }
+
+  @FXML
+  void onFaceRecognitionTogglrButtonAction(ActionEvent event) {
+    final ToggleButton toggle = (ToggleButton) event.getSource();
+    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    final UserFaceRepository userFaceRepository = new UserFaceRepository(em);
+    final UserRepository userRepository = new UserRepository(em);
+
+    if (toggle.isSelected()) {
+      // Open camera popup in enroll mode
+      final FXMLLoaderUtil.ViewLoader<CameraDesktopController> view = FXMLLoaderUtil.loadView(
+          getClass(),
+          ResourceFile.CAMERA_DESKTOP_FXML.getFileName(),
+          I18nUtil.getBundle());
+
+      view.getController().setEnrollMode(user, () -> {
+        user.setFaceRecognitionEnabled(true);
+        userRepository.update(user);
+        toggle.setSelected(true);
+        toggle.setText("Disable Face ID");
+        showStatusMessage("Face ID registered successfully!", MessageStatus.SUCCESS);
+      });
+
+      final Stage stage = new Stage();
+      stage.setTitle("Face ID Enrollment");
+      stage.setScene(new Scene(view.getRoot()));
+      stage.setResizable(false);
+      stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+
+      // If user closes without enrolling, revert toggle
+      stage.setOnHidden(e -> {
+        if (!user.isFaceRecognitionEnabled()) {
+          toggle.setSelected(false);
+          toggle.setText("Enable Face ID");
+        }
+      });
+
+      stage.show();
+
+    } else {
+      // Remove stored face and disable flag
+      final UserFace existing = userFaceRepository.findByUserId(user.getId());
+      if (existing != null) {
+        userFaceRepository.delete(existing);
+      }
+      user.setFaceRecognitionEnabled(false);
+      userRepository.update(user);
+      toggle.setText("Enable Face ID");
+      showStatusMessage("Face ID disabled.", MessageStatus.INFO);
     }
   }
 
@@ -293,6 +355,9 @@ public final class UserDashboardController implements StatusMessageProvider {
       updateProfileCompletion();
       welcomeLabel.setText(welcomeLabel.getText() + userProfile.getUsername());
       loadActivityCards();
+      // Sync toggle state with user's face recognition setting
+      faceRecognitionToggleButton.setSelected(user.isFaceRecognitionEnabled());
+      faceRecognitionToggleButton.setText(user.isFaceRecognitionEnabled() ? "Disable Face ID" : "Enable Face ID");
     });
 
     _LOGGER.info("User Dashboard Interface initialized successfully!");
@@ -302,21 +367,21 @@ public final class UserDashboardController implements StatusMessageProvider {
     final int totalFields = 8;
     int filledFields = 0;
 
-    if (!firstNameTextField.getText().isEmpty())
+    if (!nullSafe(firstNameTextField.getText()).isEmpty())
       filledFields++;
-    if (!lastNameTextField.getText().isEmpty())
+    if (!nullSafe(lastNameTextField.getText()).isEmpty())
       filledFields++;
-    if (!usernameTextField.getText().isEmpty())
+    if (!nullSafe(usernameTextField.getText()).isEmpty())
       filledFields++;
-    if (!phoneTextField.getText().isEmpty())
+    if (!nullSafe(phoneTextField.getText()).isEmpty())
       filledFields++;
     if (genderComboBox.getValue() != null)
       filledFields++;
-    if (!countryTextField.getText().isEmpty())
+    if (!nullSafe(countryTextField.getText()).isEmpty())
       filledFields++;
-    if (!stateTextField.getText().isEmpty())
+    if (!nullSafe(stateTextField.getText()).isEmpty())
       filledFields++;
-    if (!aboutMeTextArea.getText().isEmpty())
+    if (!nullSafe(aboutMeTextArea.getText()).isEmpty())
       filledFields++;
 
     final double percentage = (double) filledFields / totalFields;
@@ -398,5 +463,9 @@ public final class UserDashboardController implements StatusMessageProvider {
     genderComboBox.getItems().addAll(
         Gender.MALE,
         Gender.FEMALE);
+  }
+
+  private static String nullSafe(String s) {
+    return s != null ? s : "";
   }
 } // UserDashboardController final class

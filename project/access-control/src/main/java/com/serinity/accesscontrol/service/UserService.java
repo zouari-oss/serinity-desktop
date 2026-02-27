@@ -187,12 +187,25 @@ public final class UserService {
     auditLog.setAction(AuditAction.USER_LOGIN.getValue());
     auditLog.setSession(newAuthSession);
 
-    new AuditLogRepository(em).save(auditLog);
     authSessionRepository.save(newAuthSession);
+    new AuditLogRepository(em).save(auditLog);
 
     return ServiceResult.success(user, "User signed in successfully!");
   }
 
+  /**
+   * Initiates a password reset flow by sending a one-time code to the user's
+   * email address.
+   *
+   * <p>
+   * The generated code is cached for 10 minutes. The user must call
+   * {@link #confirmResetMail(String, String, String)} with the correct code
+   * within that window to update their password.
+   * </p>
+   *
+   * @param email the email address of the account to reset
+   * @return a {@link ServiceResult} indicating success or failure with a message
+   */
   public static ServiceResult<Void> sendResetMail(final String email) {
     if (!RegexValidator.isValidEmail(email)) {
       _LOGGER.warn("Invalid Email! - {}", email);
@@ -231,6 +244,20 @@ public final class UserService {
     }
   }
 
+  /**
+   * Confirms a password reset by verifying the one-time code and applying the
+   * new password.
+   *
+   * <p>
+   * The reset code must match the one previously sent via
+   * {@link #sendResetMail(String)} and must not have expired (10-minute TTL).
+   * </p>
+   *
+   * @param email       the email address of the account to reset
+   * @param inputCode   the one-time code entered by the user
+   * @param newPassword the desired new password (must meet complexity rules)
+   * @return a {@link ServiceResult} indicating success or failure with a message
+   */
   public static ServiceResult<Void> confirmResetMail(
       final String email,
       final String inputCode,

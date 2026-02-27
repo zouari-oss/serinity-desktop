@@ -75,4 +75,4 @@ public enum AuditAction {
   public String toString() {
     return value;
   }
-}
+} // AuditAction enum

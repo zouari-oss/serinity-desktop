@@ -64,6 +64,8 @@
     <json.version>20240303</json.version>
     <itext7-core.version>8.0.2</itext7-core.version>
     <okhttp.version>4.12.0</okhttp.version>
+    <opencv.version>4.13.0</opencv.version>
+    <onnxruntime.version>1.24.2</onnxruntime.version>
   </properties>
   <!-- !Custom properties -->
 
@@ -209,6 +211,26 @@
         <type>pom</type>
       </dependency>
       <!-- !com.itextpdf.itext7-core -->
+
+      <!-- org.opencv.opencv -->
+      <!-- Source: https://mvnrepository.com/artifact/org.opencv/opencv -->
+      <dependency>
+        <groupId>org.opencv</groupId>
+        <artifactId>opencv</artifactId>
+        <version>${opencv.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <!-- !org.opencv.opencv -->
+
+      <!-- com.microsoft.onnxruntime.onnxruntime -->
+      <!-- Source: https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime -->
+      <dependency>
+        <groupId>com.microsoft.onnxruntime</groupId>
+        <artifactId>onnxruntime</artifactId>
+        <version>${onnxruntime.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <!-- !com.microsoft.onnxruntime.onnxruntime -->
     </dependencies>
   </dependencyManagement>
 

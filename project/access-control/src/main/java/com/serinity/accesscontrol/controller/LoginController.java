@@ -15,20 +15,24 @@ import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.service.UserService;
 import com.serinity.accesscontrol.util.FXMLAnimationUtil;
+import com.serinity.accesscontrol.util.FXMLLoaderUtil;
+import com.serinity.accesscontrol.util.I18nUtil;
 
 // `javafx` import(s)
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  * `login.fxml` controller class
@@ -51,23 +55,8 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
   @FXML // URL location of the FXML file that was given to the FXMLLoader
   private URL location;
 
-  @FXML // fx:id="faceIdImageView"
-  private ImageView faceIdImageView; // Value injected by FXMLLoader
-
-  @FXML // fx:id="footerLabel"
-  private Label footerLabel; // Value injected by FXMLLoader
-
   @FXML // fx:id="forgetPasswordHyperlink"
   private Hyperlink forgetPasswordHyperlink; // Value injected by FXMLLoader
-
-  @FXML // fx:id="languageComboBox"
-  private ComboBox<String> languageComboBox; // Value injected by FXMLLoader
-
-  @FXML // fx:id="loginIconImageView"
-  private ImageView loginIconImageView; // Value injected by FXMLLoader
-
-  @FXML // fx:id="loginIconImageView1"
-  private ImageView loginIconImageView1; // Value injected by FXMLLoader
 
   @FXML // fx:id="loginInterface"
   private AnchorPane loginInterface; // Value injected by FXMLLoader
@@ -99,11 +88,11 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
   @FXML // fx:id="signUpPasswordField"
   private PasswordField signUpPasswordField; // Value injected by FXMLLoader
 
-  @FXML // fx:id="singnUpEmailTextField"
-  private TextField singnUpEmailTextField; // Value injected by FXMLLoader
-
   @FXML // fx:id="signUpUserRoleComboBox"
   private ComboBox<UserRole> signUpUserRoleComboBox; // Value injected by FXMLLoader
+
+  @FXML // fx:id="singnUpEmailTextField"
+  private TextField singnUpEmailTextField; // Value injected by FXMLLoader
 
   @FXML // fx:id="usernameOrEmail"
   private TextField usernameOrEmail; // Value injected by FXMLLoader
@@ -111,6 +100,10 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
   private StackPane stackHost; // Will be injected by RootController
 
   private StatusMessageProvider statusProvider; // Delegate to RootController
+
+  // ############################
+  // ### OVERRIDE FUNCTION(S) ###
+  // ############################
 
   @Override
   public StackPane getStackHost() {
@@ -132,6 +125,33 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
     if (statusProvider != null) {
       statusProvider.showStatusMessage(message, status);
     }
+  }
+
+  // ########################
+  // ### SLOT FUNCTION(S) ###
+  // ########################
+
+  @FXML
+  void onFaceIdAction(final ActionEvent event) {
+    final FXMLLoaderUtil.ViewLoader<CameraDesktopController> loader = FXMLLoaderUtil.loadView(
+        getClass(),
+        ResourceFile.CAMERA_DESKTOP_FXML.getFileName(),
+        I18nUtil.getBundle());
+
+    final CameraDesktopController cameraController = loader.getController();
+    cameraController.setRecognizeMode(user -> {
+      push(user.getRole().equals(UserRole.ADMIN)
+          ? ResourceFile.ADMIN_DASHBOARD_FXML.getFileName()
+          : ResourceFile.USER_HOME_FXML.getFileName(),
+          controller -> injectUserIntoDashboard(controller, user));
+    });
+
+    final Stage stage = new Stage();
+    stage.setTitle("Face ID Verification");
+    stage.setScene(new Scene(loader.getRoot()));
+    stage.setResizable(false);
+    stage.initModality(Modality.APPLICATION_MODAL);
+    stage.show();
   }
 
   @FXML
@@ -201,13 +221,14 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
         true);
   }
 
+  // ##################################
+  // ### INITIALIZATION FUNCTION(S) ###
+  // ##################################
+
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {
-    assert faceIdImageView != null : "fx:id=\"faceIdImageView\" was not injected: check your FXML file 'login.fxml'.";
-    assert footerLabel != null : "fx:id=\"footerLabel\" was not injected: check your FXML file 'login.fxml'.";
     assert forgetPasswordHyperlink != null
         : "fx:id=\"forgetPasswordHyperlink\" was not injected: check your FXML file 'login.fxml'.";
-    assert languageComboBox != null : "fx:id=\"languageComboBox\" was not injected: check your FXML file 'login.fxml'.";
     assert loginInterface != null : "fx:id=\"loginInterface\" was not injected: check your FXML file 'login.fxml'.";
     assert loginSideWebView != null : "fx:id=\"loginSideWebView\" was not injected: check your FXML file 'login.fxml'.";
     assert loginWelcomeLabel1 != null
@@ -221,20 +242,16 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
     assert signUpHyperlink != null : "fx:id=\"signUpHyperlink\" was not injected: check your FXML file 'login.fxml'.";
     assert signUpPasswordField != null
         : "fx:id=\"signUpPasswordField\" was not injected: check your FXML file 'login.fxml'.";
+    assert signUpUserRoleComboBox != null
+        : "fx:id=\"signUpUserRoleComboBox\" was not injected: check your FXML file 'login.fxml'.";
     assert singnUpEmailTextField != null
         : "fx:id=\"singnUpEmailTextField\" was not injected: check your FXML file 'login.fxml'.";
-    assert signUpUserRoleComboBox != null
-        : "fx:id=\"userRoleComboBox\" was not injected: check your FXML file 'login.fxml'.";
     assert usernameOrEmail != null : "fx:id=\"usernameOrEmail\" was not injected: check your FXML file 'login.fxml'.";
 
     // Custom initialization
     signUpUserRoleComboBoxInit();
     loginSideWebViewInit();
   }
-
-  // ##################################
-  // ### INITIALIZATION FUNCTION(S) ###
-  // ##################################
 
   private void injectUserIntoDashboard(final Object controller, final User user) {
     if (controller instanceof final AdminDashboardController admin) {

@@ -106,6 +106,24 @@
       <scope>compile</scope>
     </dependency>
     <!-- !org.springframework.security.spring-security-crypto -->
+
+    <!-- org.opencv.opencv -->
+    <!-- Source: https://mvnrepository.com/artifact/org.opencv/opencv -->
+    <dependency>
+      <groupId>org.opencv</groupId>
+      <artifactId>opencv</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !org.opencv.opencv -->
+
+    <!-- com.microsoft.onnxruntime.onnxruntime -->
+    <!-- Source: https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime -->
+    <dependency>
+      <groupId>com.microsoft.onnxruntime</groupId>
+      <artifactId>onnxruntime</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !com.microsoft.onnxruntime.onnxruntime -->
   </dependencies>
 
   <build>
@@ -142,8 +160,11 @@
             <configuration>
               <mainClass>com.serinity.accesscontrol/com.serinity.accesscontrol.App</mainClass>
               <options>
+                <option>--enable-native-access=com.serinity.accesscontrol</option>
                 <option>--enable-native-access=javafx.graphics</option>
                 <option>--enable-native-access=javafx.web</option>
+                <option>--enable-native-access=com.microsoft.onnxruntime</option>
+                <option>--enable-native-access=org.opencv</option>
               </options>
             </configuration>
           </execution>
