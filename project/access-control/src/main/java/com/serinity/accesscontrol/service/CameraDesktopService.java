@@ -27,12 +27,15 @@ import org.opencv.videoio.VideoCapture;
 public final class CameraDesktopService {
 
   private static final ReentrantLock lock = new ReentrantLock();
-  private static boolean open;
+
+  static {
+    System.loadLibrary(Core.NATIVE_LIBRARY_NAME); // Load opencv lib (`libopencv_java4130.so`)
+  }
+
+  private boolean open;
   private final VideoCapture capture;
 
   public CameraDesktopService(final int cameraIndex) {
-    System.loadLibrary(Core.NATIVE_LIBRARY_NAME); // Load opencv lib (`libopencv_java4130.so`)
-
     lock.lock();
 
     try {

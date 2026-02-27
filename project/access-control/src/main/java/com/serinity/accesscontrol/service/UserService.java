@@ -50,7 +50,7 @@ import com.serinity.accesscontrol.util.RegexValidator;
 public final class UserService {
 
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
-      .getLogger(MailSenderService.class);
+      .getLogger(UserService.class);
 
   private static final com.github.benmanes.caffeine.cache.Cache<String, String> resetCodeCache = com.github.benmanes.caffeine.cache.Caffeine
       .newBuilder()
@@ -158,8 +158,8 @@ public final class UserService {
 
     if (!RegexValidator.isValidEmail(usernameOrEmail)) { // Will considered as username
       final ProfileRepository profileRepository = new ProfileRepository(em);
-      Profile profile = profileRepository.findByUsername(usernameOrEmail);
-      user = profile.getUser();
+      final Profile profile = profileRepository.findByUsername(usernameOrEmail);
+      user = (profile != null) ? profile.getUser() : null;
     } else { // It's an email
       final UserRepository userRepository = new UserRepository(em);
       user = userRepository.findUserByEmail(usernameOrEmail);

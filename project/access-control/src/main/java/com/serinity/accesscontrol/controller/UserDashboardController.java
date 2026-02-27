@@ -347,7 +347,6 @@ public final class UserDashboardController implements StatusMessageProvider {
         : "fx:id=\"welcomeLabel\" was not injected: check your FXML file 'user-dashboard.fxml'.";
 
     // Custom initialization
-    setStatusProvider(statusProvider);
     initGenderComboBox();
 
     Platform.runLater(() -> { // NOTE: After controller initialized

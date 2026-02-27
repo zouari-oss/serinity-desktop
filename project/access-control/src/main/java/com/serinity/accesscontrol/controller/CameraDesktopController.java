@@ -83,8 +83,8 @@ public final class CameraDesktopController {
   private long enrollStartTime = 0;
   private Mat bestCrop = null;
   private float bestScore = -1f;
-  private long lastInferenceTime = 0;
-  private Rect lastFaceRect = null; // cached for drawing on skipped frames
+  private volatile long lastInferenceTime = 0;
+  private volatile Rect lastFaceRect = null; // cached for drawing on skipped frames
   private Mode mode = Mode.RECOGNIZE;
   private User enrollUser;
   private Runnable onEnrollSuccess;
@@ -125,10 +125,7 @@ public final class CameraDesktopController {
     try {
       final UserFaceRepository userFaceRepository = new UserFaceRepository(
           SkinnedRatOrmEntityManager.getEntityManager());
-      faceService = new AntelopeFaceService(
-          "antelopev2/scrfd_10g_bnkps.onnx",
-          "antelopev2/glintr100.onnx",
-          userFaceRepository);
+      faceService = new AntelopeFaceService(userFaceRepository);
 
       cameraService = new CameraDesktopService(0);
       running.set(true);
@@ -175,8 +172,7 @@ public final class CameraDesktopController {
       }
 
       // Push display frame (non-blocking — drop if JavaFX is still busy)
-      final Mat displayFrame = frame;
-      Platform.runLater(() -> cameraImageView.setImage(OpenCvUtil.matToImage(displayFrame)));
+      Platform.runLater(() -> cameraImageView.setImage(OpenCvUtil.matToImage(frame)));
 
       // Only act on inference results
       if (!runInference || face == null || crop == null)

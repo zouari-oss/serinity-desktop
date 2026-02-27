@@ -71,10 +71,7 @@ public final class AntelopeFaceService {
   private final String[] scoreOutputNames = new String[3];
   private final String[] bboxOutputNames = new String[3];
 
-  public AntelopeFaceService(
-      final String scrfdModelPath,
-      final String arcfaceModelPath,
-      final UserFaceRepository userFaceRepository) throws Exception {
+  public AntelopeFaceService(final UserFaceRepository userFaceRepository) throws Exception {
     this.userFaceRepository = userFaceRepository;
 
     env = OrtEnvironment.getEnvironment();
@@ -178,11 +175,10 @@ public final class AntelopeFaceService {
           final float[][] bboxData = (float[][]) bboxVal.getValue();
 
           final int fh = DETECTION_INPUT_SIZE / stride;
-          final int fw = DETECTION_INPUT_SIZE / stride;
 
           int idx = 0;
           outer: for (int y = 0; y < fh; y++) {
-            for (int x = 0; x < fw; x++) {
+            for (int x = 0; x < fh; x++) {
               for (int a = 0; a < NUM_ANCHORS; a++) {
                 if (idx >= scoreData.length)
                   break outer;

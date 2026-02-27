@@ -264,4 +264,4 @@ public final class AntelopeUtil {
     final float inter = (x2 - x1) * (y2 - y1);
     return inter / (a.width * a.height + b.width * b.height - inter);
   }
-} // `AntelopeFaceService` final class
+} // `AntelopeUtil` final class
