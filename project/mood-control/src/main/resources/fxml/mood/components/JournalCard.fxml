@@ -13,9 +13,16 @@
 
     <HBox alignment="CENTER_LEFT" spacing="12">
 
-        <VBox spacing="4">
+        <VBox spacing="6">
             <Label fx:id="titleLabel" styleClass="journal-card-title"/>
             <Label fx:id="metaLabel" styleClass="journal-card-meta"/>
+
+            <!-- AI emotion chips -->
+            <FlowPane fx:id="aiTagsPane"
+                      hgap="6"
+                      vgap="6"
+                      prefWrapLength="260"
+                      styleClass="ai-tags-pane"/>
         </VBox>
 
         <Region HBox.hgrow="ALWAYS"/>

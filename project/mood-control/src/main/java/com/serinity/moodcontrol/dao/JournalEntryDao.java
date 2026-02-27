@@ -17,7 +17,8 @@ public class JournalEntryDao {
     public List<JournalEntry> findAll(final String userId) throws SQLException {
         Objects.requireNonNull(userId, "userId");
 
-        final String sql = "SELECT id, user_id, title, content, created_at, updated_at " +
+        final String sql = "SELECT id, user_id, title, content, created_at, updated_at, " +
+                "ai_tags, ai_model_version, ai_generated_at " +
                 "FROM journal_entry WHERE user_id=? ORDER BY created_at DESC";
 
         final List<JournalEntry> out = new ArrayList<>();
@@ -36,6 +37,12 @@ public class JournalEntryDao {
                     e.setContent(rs.getString("content"));
                     e.setCreatedAt(toLdt(rs.getTimestamp("created_at")));
                     e.setUpdatedAt(toLdt(rs.getTimestamp("updated_at")));
+
+                    // AI fields
+                    e.setAiTags(rs.getString("ai_tags"));
+                    e.setAiModelVersion(rs.getString("ai_model_version"));
+                    e.setAiGeneratedAt(toLdt(rs.getTimestamp("ai_generated_at")));
+
                     out.add(e);
                 }
             }
@@ -47,7 +54,8 @@ public class JournalEntryDao {
     public JournalEntry findById(final long id, final String userId) throws SQLException {
         Objects.requireNonNull(userId, "userId");
 
-        final String sql = "SELECT id, user_id, title, content, created_at, updated_at " +
+        final String sql = "SELECT id, user_id, title, content, created_at, updated_at, " +
+                "ai_tags, ai_model_version, ai_generated_at " +
                 "FROM journal_entry WHERE id=? AND user_id=?";
 
         final Connection cn = DbConnection.getConnection(); // DO NOT close (singleton)
@@ -67,6 +75,12 @@ public class JournalEntryDao {
                 e.setContent(rs.getString("content"));
                 e.setCreatedAt(toLdt(rs.getTimestamp("created_at")));
                 e.setUpdatedAt(toLdt(rs.getTimestamp("updated_at")));
+
+                // AI fields
+                e.setAiTags(rs.getString("ai_tags"));
+                e.setAiModelVersion(rs.getString("ai_model_version"));
+                e.setAiGeneratedAt(toLdt(rs.getTimestamp("ai_generated_at")));
+
                 return e;
             }
         }
@@ -109,6 +123,34 @@ public class JournalEntryDao {
             ps.setString(2, e.getContent());
             ps.setLong(3, e.getId());
             ps.setString(4, e.getUserId());
+
+            return ps.executeUpdate() == 1;
+        }
+    }
+
+
+    public boolean updateAiFields(
+            final long id,
+            final String userId,
+            final String aiTagsJson,
+            final String aiModelVersion,
+            final LocalDateTime aiGeneratedAt
+    ) throws SQLException {
+
+        Objects.requireNonNull(userId, "userId");
+
+        final String sql = "UPDATE journal_entry " +
+                "SET ai_tags=?, ai_model_version=?, ai_generated_at=? " +
+                "WHERE id=? AND user_id=?";
+
+        final Connection cn = DbConnection.getConnection(); // DO NOT close (singleton)
+        try (PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, aiTagsJson);
+            ps.setString(2, aiModelVersion);
+            if (aiGeneratedAt == null) ps.setTimestamp(3, null);
+            else ps.setTimestamp(3, Timestamp.valueOf(aiGeneratedAt));
+            ps.setLong(4, id);
+            ps.setString(5, userId);
 
             return ps.executeUpdate() == 1;
         }

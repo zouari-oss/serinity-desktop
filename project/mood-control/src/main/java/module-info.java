@@ -11,6 +11,8 @@ module com.serinity.moodcontrol {
 
     requires com.fasterxml.jackson.databind;
 
+    requires weka.stable;
+
     opens com.serinity.moodcontrol.controller to javafx.fxml;
 
     opens com.serinity.moodcontrol.api.zenquotes.dto to com.fasterxml.jackson.databind;

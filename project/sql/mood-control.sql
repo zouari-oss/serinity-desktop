@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 21, 2026 at 10:14 PM
+-- Generation Time: Feb 27, 2026 at 04:33 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -124,17 +124,27 @@ CREATE TABLE `journal_entry` (
   `title` varchar(255) NOT NULL,
   `content` text NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `ai_tags` longtext DEFAULT NULL,
+  `ai_model_version` varchar(32) DEFAULT NULL,
+  `ai_generated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `journal_entry`
 --
 
-INSERT INTO `journal_entry` (`id`, `user_id`, `title`, `content`, `created_at`, `updated_at`) VALUES
-(3, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'Chillin', 'Q1[journal.prompt.context]\nA1: yerrr\n\nQ2[journal.prompt.inner]\nA2: wahanenin\n\nQ3[journal.prompt.meaning]\nA3: fasho\n', '2026-02-03 04:27:17', '2026-02-21 03:14:58'),
-(4, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'frustration !!', 'Q1[journal.prompt.context]\nA1: bellfam, projet, javaFX, come, national anthem.\n\nQ2[journal.prompt.inner]\nA2: fhemnty edheka, grimace, la vie, missing significant other , females.\n\nQ3[journal.prompt.meaning]\nA3: l\'amour ou tchichi, tablia rose bechkir bnawar brown/pink. black / white / blue women with flower or dragon tattos\n', '2026-02-09 18:03:24', '2026-02-21 03:15:10'),
-(6, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'mauvas journe', 'Q1[journal.prompt.context]\nA1: un jour tré mavais\n\nQ2[journal.prompt.inner]\nA2: colére\n\nQ3[journal.prompt.meaning]\nA3: pas de controle\n', '2026-02-16 17:37:11', '2026-02-21 03:15:21');
+INSERT INTO `journal_entry` (`id`, `user_id`, `title`, `content`, `created_at`, `updated_at`, `ai_tags`, `ai_model_version`, `ai_generated_at`) VALUES
+(3, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'Chillin', 'Q1[journal.prompt.context]\nA1: yerrr\n\nQ2[journal.prompt.inner]\nA2: wahanenin\n\nQ3[journal.prompt.meaning]\nA3: fasho\n', '2026-02-03 04:27:17', '2026-02-21 03:14:58', NULL, NULL, NULL),
+(4, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'frustration !!', 'Q1[journal.prompt.context]\nA1: bellfam, projet, javaFX, come, national anthem\n\nQ2[journal.prompt.inner]\nA2: fhemnty edheka, grimace, la vie, missing significant other , females.\n\nQ3[journal.prompt.meaning]\nA3: l\'amour ou tchichi, tablia rose bechkir bnawar brown/pink. black / white / blue women with flower or dragon tattos\n', '2026-02-09 18:03:24', '2026-02-27 16:24:31', '[{\"tag\":\"sadness\",\"score\":0.994},{\"tag\":\"anger\",\"score\":0.006},{\"tag\":\"stress\",\"score\":0.0}]', 'weka-smo-v1', '2026-02-27 16:24:31'),
+(6, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'mauvas journe', 'Q1[journal.prompt.context]\nA1: un jour tré mavais\n\nQ2[journal.prompt.inner]\nA2: colére\n\nQ3[journal.prompt.meaning]\nA3: pas de controle\n', '2026-02-16 17:37:11', '2026-02-21 03:15:21', NULL, NULL, NULL),
+(32, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'stress test.', 'Q1[journal.prompt.context]\nA1: I am stressed about exams and I worry a lot.\n\nQ2[journal.prompt.inner]\nA2: I had a panic moment today and I feel anxious and tired, exhausted and sleepy.\n\nQ3[journal.prompt.meaning]\nA3: I feel sad and lonely, and also angry and annoyed about everything.\n', '2026-02-23 00:42:53', '2026-02-23 00:45:03', '[{\"tag\":\"anxiety\",\"score\":0.8},{\"tag\":\"fatigue\",\"score\":0.6},{\"tag\":\"sadness\",\"score\":0.4}]', 'nlp-keyword-knn-placeholder-v1', '2026-02-23 00:45:03'),
+(33, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'so angry', 'Q1[journal.prompt.context]\nA1: my group, just makes me so angry and frustrated	.\n\nQ2[journal.prompt.inner]\nA2: anger, frustration, dissapointment\n\nQ3[journal.prompt.meaning]\nA3: might fight idk\n', '2026-02-23 00:49:01', '2026-02-23 00:49:01', '[{\"tag\":\"anger\",\"score\":0.2}]', 'nlp-keyword-knn-placeholder-v1', '2026-02-23 00:49:01'),
+(37, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'yerrr', 'Q1[journal.prompt.context]\nA1: yerrr\n\nQ2[journal.prompt.inner]\nA2: yerrr\n\nQ3[journal.prompt.meaning]\nA3: yerrr\n', '2026-02-25 08:02:28', '2026-02-25 08:02:28', NULL, NULL, NULL),
+(38, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'Small win', 'Q1[journal.prompt.context]\nA1: I finally solved a problem that was blocking me and it felt so good.\n\nQ2[journal.prompt.inner]\nA2: It’s not a huge thing, but I feel lighter and proud of myself for not giving up.\n\nQ3[journal.prompt.meaning]\nA3: feel better and proud of myself\n', '2026-02-27 15:47:45', '2026-02-27 15:55:13', '[{\"tag\":\"joy\",\"score\":0.994}]', 'weka-smo-v1', '2026-02-27 15:55:13'),
+(39, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'Deadline moved up', 'Q1[journal.prompt.context]\nA1: Our project deadline got moved up and my task list exploded. I’ve been jumping between files and messages all day and I still feel behind.\n\nQ2[journal.prompt.inner]\nA2: I feel pressure in my chest and my mind keeps running “what if we don’t finish” scenarios. I’m also annoyed because it feels like the plan changed without anyone thinking about how much work is left.\n\nQ3[journal.prompt.meaning]\nA3: I think I need to stop multitasking, pick the next smallest step, and ask for clearer roles. I don’t want to burn out, but I also don’t want to disappoint the team.\n', '2026-02-27 16:07:50', '2026-02-27 16:07:50', '[{\"tag\":\"stress\",\"score\":0.994}]', 'weka-smo-v1', '2026-02-27 16:07:50'),
+(40, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'Pressure + worry + resentment', 'Q1[journal.prompt.context]\nA1: The deadline got moved up and I’m already behind. I’m trying to fix bugs while also coordinating with the team and it’s a mess\n\nQ2[journal.prompt.inner]\nA2: I’m honestly worried we’re going to fail this deliverable. My chest feels tight and I keep thinking about how bad it’ll look. I’m also angry because the plan changed\n\nQ3[journal.prompt.meaning]\nA3: I need to stop spiraling and ask for clearer ownership tonight. If we don’t reset the plan, I’m scared this will crash and burn.\n', '2026-02-27 16:10:09', '2026-02-27 16:21:06', '[{\"tag\":\"stress\",\"score\":0.994},{\"tag\":\"fear\",\"score\":0.006},{\"tag\":\"anger\",\"score\":0.0}]', 'weka-smo-v1', '2026-02-27 16:21:06'),
+(41, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'chill day', 'Q1[journal.prompt.context]\nA1: just finished my univerity project, finally get to rest up.\n\nQ2[journal.prompt.inner]\nA2: feels good man, chill af.\n\nQ3[journal.prompt.meaning]\nA3: means i get to get some rest , kick my feet up, focus on other subjects.\n', '2026-02-27 16:27:48', '2026-02-27 16:28:56', '[{\"tag\":\"joy\",\"score\":0.99397},{\"tag\":\"stress\",\"score\":0.00598},{\"tag\":\"surprise\",\"score\":5.0E-5}]', 'weka-smo-v1', '2026-02-27 16:28:56');
 
 -- --------------------------------------------------------
 
@@ -189,7 +199,10 @@ INSERT INTO `mood_entry` (`id`, `user_id`, `entry_date`, `moment_type`, `mood_le
 (40, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', '2026-02-12 01:55:45', 'MOMENT', 1, '2026-02-21 05:04:50'),
 (42, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', '2026-02-15 20:00:17', 'MOMENT', 1, '2026-02-21 05:04:46'),
 (43, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', '2026-02-16 19:39:27', 'MOMENT', 2, '2026-02-21 05:04:41'),
-(46, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', '2026-02-17 16:27:02', 'MOMENT', 5, '2026-02-21 05:04:36');
+(46, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', '2026-02-17 16:27:02', 'MOMENT', 5, '2026-02-21 05:04:36'),
+(51, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', '2026-02-22 08:03:44', 'DAY', 1, '2026-02-22 08:03:44'),
+(52, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', '2026-02-22 08:07:39', 'MOMENT', 1, '2026-02-22 08:07:39'),
+(53, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', '2026-02-22 08:30:35', 'DAY', 1, '2026-02-22 08:30:35');
 
 -- --------------------------------------------------------
 
@@ -307,7 +320,10 @@ INSERT INTO `mood_entry_emotion` (`mood_entry_id`, `emotion_id`) VALUES
 (46, 5),
 (46, 6),
 (46, 8),
-(46, 9);
+(46, 9),
+(51, 23),
+(52, 26),
+(53, 21);
 
 -- --------------------------------------------------------
 
@@ -412,7 +428,10 @@ INSERT INTO `mood_entry_influence` (`mood_entry_id`, `influence_id`) VALUES
 (43, 15),
 (46, 2),
 (46, 5),
-(46, 6);
+(46, 6),
+(51, 10),
+(52, 25),
+(53, 4);
 
 --
 -- Indexes for dumped tables
@@ -480,7 +499,7 @@ ALTER TABLE `influence`
 -- AUTO_INCREMENT for table `journal_entry`
 --
 ALTER TABLE `journal_entry`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `mood_entry`
