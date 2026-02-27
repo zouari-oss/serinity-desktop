@@ -33,6 +33,7 @@ import com.serinity.accesscontrol.repository.base.BaseRepository;
 public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(AuthSessionRepository.class);
+
   public AuthSessionRepository(final EntityManager em) {
     super(em, AuthSession.class);
   }
@@ -95,7 +96,7 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
    */
   public Optional<AuthSession> findActiveSession(final User user) {
     try {
-      AuthSession session = em.createQuery(AuthSession.class)
+      final AuthSession session = em.createQuery(AuthSession.class)
           .where("user_id", user.getId())
           .where("revoked", false)
           .where("expires_at", ">", Instant.now())

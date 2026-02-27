@@ -53,16 +53,13 @@ public final class I18nUtil {
       PropertyBundle.DEFAULT_MESSAGES_BUNDLE.getBaseName(),
       currentLocale);
 
-  private I18nUtil() {
-  }
-
   /**
    * Returns the localized string for the given message key.
    *
    * @param key the i18n message key (e.g., {@code "greeting"})
    * @return the localized string value
    */
-  public static String getValue(String key) {
+  public static String getValue(final String key) {
     return bundle.getString(key);
   }
 
@@ -71,7 +68,7 @@ public final class I18nUtil {
    *
    * @param locale the new {@link Locale} to apply
    */
-  public static void setLocale(Locale locale) {
+  public static void setLocale(final Locale locale) {
     currentLocale = locale;
 
     bundle = ResourceBundle.getBundle(
@@ -104,7 +101,7 @@ public final class I18nUtil {
    * @return list of supported locales
    */
   public static List<Locale> getSupportedLanguages() {
-    ResourceBundle config = ResourceBundle.getBundle(PropertyBundle.SUPPORTED_LANGUAGES_BUNDLE.getBaseName());
+    final ResourceBundle config = ResourceBundle.getBundle(PropertyBundle.SUPPORTED_LANGUAGES_BUNDLE.getBaseName());
 
     return List.of(config.getString(MessageKey.LANGUAGES.getValue()).split(","))
         .stream()
@@ -114,13 +111,14 @@ public final class I18nUtil {
   }
 
   /**
-   * Returns the list of supported language tags (e.g., {@code "en"}, {@code "fr"})
+   * Returns the list of supported language tags (e.g., {@code "en"},
+   * {@code "fr"})
    * as plain strings, suitable for populating UI combo-boxes.
    *
    * @return list of supported language tag strings
    */
   public static List<String> getSupportedLanguagesToString() {
-    ResourceBundle config = ResourceBundle.getBundle(PropertyBundle.SUPPORTED_LANGUAGES_BUNDLE.getBaseName());
+    final ResourceBundle config = ResourceBundle.getBundle(PropertyBundle.SUPPORTED_LANGUAGES_BUNDLE.getBaseName());
 
     return List.of(config.getString(MessageKey.LANGUAGES.getValue()).split(","))
         .stream()
@@ -144,7 +142,7 @@ public final class I18nUtil {
    * </p>
    */
   public static void applySupportedLocale() {
-    List<Locale> supportedLocales = getSupportedLanguages();
+    final List<Locale> supportedLocales = getSupportedLanguages();
 
     // First, check for an exact locale match.
     if (supportedLocales.contains(currentLocale)) {
@@ -152,12 +150,15 @@ public final class I18nUtil {
     }
 
     // Next, try to match by language only (e.g., "en_US" matches supported "en").
-    String currentLanguage = currentLocale.getLanguage();
-    for (Locale supportedLocale : supportedLocales) {
+    final String currentLanguage = currentLocale.getLanguage();
+    for (final Locale supportedLocale : supportedLocales) {
       if (supportedLocale.getLanguage().equals(currentLanguage)) {
         setLocale(supportedLocale);
         return;
       }
     }
+  }
+
+  private I18nUtil() {
   }
 } // I18nUtil class

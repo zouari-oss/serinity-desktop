@@ -51,6 +51,7 @@ import java.sql.*;
 public class SkinnedRatOrmEntityManager {
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(SkinnedRatOrmEntityManager.class);
+
   /**
    * Creates and returns a new JDBC {@link Connection} using credentials loaded
    * from environment variables, with auto-commit enabled.
@@ -60,13 +61,13 @@ public class SkinnedRatOrmEntityManager {
    */
   public static Connection getConnection() {
     try {
-      Connection connection = DriverManager.getConnection(
+      final Connection connection = DriverManager.getConnection(
           EnvironmentVariableLoader.getDatabaseUrl(),
           EnvironmentVariableLoader.getDatabaseUsername(),
           EnvironmentVariableLoader.getDatabasePassword());
       connection.setAutoCommit(true);
       return connection;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       _LOGGER.error("Failed to establish database connection", e);
       throw new RuntimeException(e);
     }
@@ -88,7 +89,7 @@ public class SkinnedRatOrmEntityManager {
       throw new RuntimeException(e);
     }
 
-    Connection connection = getConnection();
+    final Connection connection = getConnection();
     return new EntityManager(connection);
   }
 } // SkinnedRatOrmEntityManager class

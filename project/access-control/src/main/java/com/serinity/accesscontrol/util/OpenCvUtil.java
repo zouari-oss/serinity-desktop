@@ -44,8 +44,8 @@ public final class OpenCvUtil {
    * @param frame the OpenCV image matrix to convert
    * @return a JavaFX {@link javafx.scene.image.Image} ready for display
    */
-  public static Image matToImage(Mat frame) {
-    MatOfByte buffer = new MatOfByte();
+  public static Image matToImage(final Mat frame) {
+    final MatOfByte buffer = new MatOfByte();
     Imgcodecs.imencode(".png", frame, buffer);
     return new Image(new ByteArrayInputStream(buffer.toArray()));
   }

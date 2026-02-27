@@ -82,6 +82,68 @@ public final class AntelopeFaceService {
     resolveOutputNames();
   }
 
+  /** Returns the bounding box of the largest detected face, or {@code null}. */
+  public Rect detectBestFace(final Mat frame) throws Exception {
+    final List<Rect> faces = detectFaces(frame);
+    if (faces.isEmpty())
+      return null;
+    return Collections.max(faces, (a, b) -> Integer.compare((int) a.area(), (int) b.area()));
+  }
+
+  /** Crops the face region from the frame, clamped to frame boundaries. */
+  public Mat cropFaceSafely(final Mat frame, final Rect face) {
+    final int x = Math.max(0, face.x);
+    final int y = Math.max(0, face.y);
+    final int w = Math.min(face.width, frame.cols() - x);
+    final int h = Math.min(face.height, frame.rows() - y);
+    return new Mat(frame, new Rect(x, y, w, h));
+  }
+
+  /**
+   * Detects and recognizes a face in the full frame in one call.
+   * Returns the matched {@link User} or {@code null}.
+   */
+  public User recognizeUser(final Mat face) throws Exception {
+    final float[] embedding = extractEmbedding(face);
+    final List<UserFace> allFaces = userFaceRepository.findAll();
+
+    User bestUser = null;
+    double bestSimilarity = SIMILARITY_THRESHOLD;
+    for (final UserFace userFace : allFaces) {
+      final User candidate = userFace.getUser();
+      if (candidate == null || !candidate.isFaceRecognitionEnabled())
+        continue;
+      final float[] stored = AntelopeUtil.bytesToFloats(userFace.getEmbedding());
+      final double sim = AntelopeUtil.cosineSimilarity(embedding, stored);
+      if (sim > bestSimilarity) {
+        bestSimilarity = sim;
+        bestUser = candidate;
+      }
+    }
+    return bestUser;
+  }
+
+  /** Extracts a 512-d L2-normalized ArcFace embedding from a face crop. */
+  public float[] extractEmbedding(final Mat face) throws Exception {
+    final Mat aligned = AntelopeUtil.recognitionPreprocess(face);
+    final float[][][][] tensorData = AntelopeUtil.recognitionMatToTensor(aligned);
+    try (OnnxTensor tensor = OnnxTensor.createTensor(env, tensorData)) {
+      final OrtSession.Result result;
+      synchronized (recognitionSession) {
+        result = recognitionSession.run(Collections.singletonMap(recognitionInputName, tensor));
+      }
+      try (result) {
+        final float[][] output = (float[][]) result.get(0).getValue();
+        return AntelopeUtil.l2Normalize(output[0]);
+      }
+    }
+  }
+
+  public void close() throws OrtException {
+    detectionSession.close();
+    recognitionSession.close();
+  }
+
   /**
    * Identifies score and bbox output names by their tensor shape:
    * score → [N, 1], bbox → [N, 4], kps → [N, 10]
@@ -90,7 +152,7 @@ public final class AntelopeFaceService {
   private void resolveOutputNames() throws OrtException {
     final int[] anchorCounts = new int[STRIDES.length];
     for (int i = 0; i < STRIDES.length; i++) {
-      int cells = DETECTION_INPUT_SIZE / STRIDES[i];
+      final int cells = DETECTION_INPUT_SIZE / STRIDES[i];
       anchorCounts[i] = cells * cells * NUM_ANCHORS;
     }
 
@@ -101,7 +163,7 @@ public final class AntelopeFaceService {
         result = detectionSession.run(Collections.singletonMap(detectionInputName, tensor));
       }
       try (result) {
-        for (Map.Entry<String, NodeInfo> entry : detectionSession.getOutputInfo().entrySet()) {
+        for (final Map.Entry<String, NodeInfo> entry : detectionSession.getOutputInfo().entrySet()) {
           final String name = entry.getKey();
           final OnnxValue val = result.get(name).orElse(null);
           if (val == null)
@@ -122,25 +184,6 @@ public final class AntelopeFaceService {
         }
       }
     }
-  }
-
-  /* ===================== DETECTION ===================== */
-
-  /** Returns the bounding box of the largest detected face, or {@code null}. */
-  public Rect detectBestFace(final Mat frame) throws Exception {
-    final List<Rect> faces = detectFaces(frame);
-    if (faces.isEmpty())
-      return null;
-    return Collections.max(faces, (a, b) -> Integer.compare((int) a.area(), (int) b.area()));
-  }
-
-  /** Crops the face region from the frame, clamped to frame boundaries. */
-  public Mat cropFaceSafely(final Mat frame, final Rect face) {
-    final int x = Math.max(0, face.x);
-    final int y = Math.max(0, face.y);
-    final int w = Math.min(face.width, frame.cols() - x);
-    final int h = Math.min(face.height, frame.rows() - y);
-    return new Mat(frame, new Rect(x, y, w, h));
   }
 
   private List<Rect> detectFaces(final Mat frame) throws Exception {
@@ -206,50 +249,5 @@ public final class AntelopeFaceService {
       }
     }
     return AntelopeUtil.applyNMS(boxes, scores);
-  }
-
-  /**
-   * Detects and recognizes a face in the full frame in one call.
-   * Returns the matched {@link User} or {@code null}.
-   */
-  public User recognizeUser(final Mat face) throws Exception {
-    final float[] embedding = extractEmbedding(face);
-    final List<UserFace> allFaces = userFaceRepository.findAll();
-
-    User bestUser = null;
-    double bestSimilarity = SIMILARITY_THRESHOLD;
-    for (final UserFace userFace : allFaces) {
-      final User candidate = userFace.getUser();
-      if (candidate == null || !candidate.isFaceRecognitionEnabled())
-        continue;
-      final float[] stored = AntelopeUtil.bytesToFloats(userFace.getEmbedding());
-      final double sim = AntelopeUtil.cosineSimilarity(embedding, stored);
-      if (sim > bestSimilarity) {
-        bestSimilarity = sim;
-        bestUser = candidate;
-      }
-    }
-    return bestUser;
-  }
-
-  /** Extracts a 512-d L2-normalized ArcFace embedding from a face crop. */
-  public float[] extractEmbedding(final Mat face) throws Exception {
-    final Mat aligned = AntelopeUtil.recognitionPreprocess(face);
-    final float[][][][] tensorData = AntelopeUtil.recognitionMatToTensor(aligned);
-    try (OnnxTensor tensor = OnnxTensor.createTensor(env, tensorData)) {
-      final OrtSession.Result result;
-      synchronized (recognitionSession) {
-        result = recognitionSession.run(Collections.singletonMap(recognitionInputName, tensor));
-      }
-      try (result) {
-        final float[][] output = (float[][]) result.get(0).getValue();
-        return AntelopeUtil.l2Normalize(output[0]);
-      }
-    }
-  }
-
-  public void close() throws OrtException {
-    detectionSession.close();
-    recognitionSession.close();
   }
 } // AntelopeFaceService final class

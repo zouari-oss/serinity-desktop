@@ -34,7 +34,7 @@ public enum SupportedLanguage {
 
   private final Locale locale;
 
-  SupportedLanguage(Locale locale) {
+  SupportedLanguage(final Locale locale) {
     this.locale = locale;
   }
 

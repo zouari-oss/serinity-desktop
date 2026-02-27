@@ -59,12 +59,12 @@ import javafx.stage.Stage;
  */
 public final class CameraDesktopController {
 
-  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
-      .getLogger(CameraDesktopController.class);
-
   private enum Mode {
     RECOGNIZE, ENROLL
   }
+
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(CameraDesktopController.class);
 
   // Enroll: best face capture over ENROLL_DURATION_MS
   private static final long ENROLL_DURATION_MS = 5_000;
@@ -229,7 +229,8 @@ public final class CameraDesktopController {
     // Update countdown on UI
     Platform.runLater(() -> {
       final Stage stage = (Stage) cameraImageView.getScene().getWindow();
-      stage.setTitle(MessageFormat.format(I18nUtil.getValue("camera.stage.enrollment.countdown"), Math.max(0, remaining)));
+      stage.setTitle(
+          MessageFormat.format(I18nUtil.getValue("camera.stage.enrollment.countdown"), Math.max(0, remaining)));
     });
 
     // Time is up — save best capture

@@ -94,7 +94,7 @@ public final class SkinnedRatOrmMigrator {
       generator.createTable(Profile.class);
       generator.createTable(AuditLog.class);
       generator.createTable(UserFace.class);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       _LOGGER.error("Schema migration failed", e);
       throw new RuntimeException(e);
     }

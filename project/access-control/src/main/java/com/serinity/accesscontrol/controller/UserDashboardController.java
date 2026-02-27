@@ -108,6 +108,10 @@ public final class UserDashboardController implements StatusMessageProvider {
     return card;
   }
 
+  private static String nullSafe(final String s) {
+    return s != null ? s : "";
+  }
+
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;
 
@@ -140,9 +144,9 @@ public final class UserDashboardController implements StatusMessageProvider {
 
   @FXML // fx:id="phoneTextField"
   private TextField phoneTextField; // Value injected by FXMLLoader
-
   @FXML // fx:id="profileCompletionBar"
   private ProgressBar profileCompletionBar; // Value injected by FXMLLoader
+
   @FXML // fx:id="profileCompletionLabel"
   private Label profileCompletionLabel; // Value injected by FXMLLoader
 
@@ -218,7 +222,7 @@ public final class UserDashboardController implements StatusMessageProvider {
   }
 
   @FXML
-  void onFaceRecognitionTogglrButtonAction(ActionEvent event) {
+  void onFaceRecognitionTogglrButtonAction(final ActionEvent event) {
     final ToggleButton toggle = (ToggleButton) event.getSource();
     final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
     final UserFaceRepository userFaceRepository = new UserFaceRepository(em);
@@ -467,9 +471,5 @@ public final class UserDashboardController implements StatusMessageProvider {
     genderComboBox.getItems().addAll(
         Gender.MALE,
         Gender.FEMALE);
-  }
-
-  private static String nullSafe(String s) {
-    return s != null ? s : "";
   }
 } // UserDashboardController final class

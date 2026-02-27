@@ -73,7 +73,7 @@ public final class UserFace extends TimestampedEntity {
   public UserFace() {
   }
 
-  public UserFace(User user, byte[] embedding) {
+  public UserFace(final User user, final byte[] embedding) {
     this.user = user;
     this.embedding = embedding;
   }
@@ -86,7 +86,7 @@ public final class UserFace extends TimestampedEntity {
     return user;
   }
 
-  public void setUser(User user) {
+  public void setUser(final User user) {
     this.user = user;
   }
 
@@ -94,7 +94,7 @@ public final class UserFace extends TimestampedEntity {
     return embedding;
   }
 
-  public void setEmbedding(byte[] embedding) {
+  public void setEmbedding(final byte[] embedding) {
     this.embedding = embedding;
   }
 } // `UserFace` final class
