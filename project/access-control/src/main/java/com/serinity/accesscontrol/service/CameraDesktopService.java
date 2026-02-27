@@ -73,8 +73,8 @@ public final class CameraDesktopService {
    * @param frameConsumer callback invoked with each captured {@link Mat} frame
    * @param running       atomic flag; set to {@code false} to stop the loop
    */
-  public void startCapture(final Consumer<Mat> frameConsumer, final AtomicBoolean running) {
-    new Thread(() -> {
+  public Thread startCapture(final Consumer<Mat> frameConsumer, final AtomicBoolean running) {
+    final Thread thread = new Thread(() -> {
       while (running.get() && isOpen()) {
         try {
           final Mat frame = captureFrame();
@@ -83,7 +83,9 @@ public final class CameraDesktopService {
           _LOGGER.error("Camera capture error", e);
         }
       }
-    }, "Camera-Thread").start();
+    }, "Camera-Thread");
+    thread.start();
+    return thread;
   }
 
   /**

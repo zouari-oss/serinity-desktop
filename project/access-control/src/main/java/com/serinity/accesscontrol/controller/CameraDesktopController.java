@@ -5,6 +5,9 @@ package com.serinity.accesscontrol.controller;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -69,9 +72,6 @@ public final class CameraDesktopController {
   // Enroll: best face capture over ENROLL_DURATION_MS
   private static final long ENROLL_DURATION_MS = 5_000;
 
-  // Throttle: run ONNX inference at most every INFERENCE_INTERVAL_MS
-  private static final long INFERENCE_INTERVAL_MS = 400;
-
   @FXML
   private ResourceBundle resources;
 
@@ -83,12 +83,17 @@ public final class CameraDesktopController {
 
   private CameraDesktopService cameraService;
   private AntelopeFaceService faceService;
+
+  private Thread captureThread;
+  private final ExecutorService inferenceExecutor = Executors.newSingleThreadExecutor(
+      r -> new Thread(r, "Inference-Thread"));
+  private final AtomicBoolean inferenceRunning = new AtomicBoolean(false);
   private final AtomicBoolean running = new AtomicBoolean(false);
   private final AtomicBoolean enrolling = new AtomicBoolean(false);
+
   private long enrollStartTime = 0;
   private Mat bestCrop = null;
   private float bestScore = -1f;
-  private volatile long lastInferenceTime = 0;
   private volatile Rect lastFaceRect = null; // cached for drawing on skipped frames
   private Mode mode = Mode.RECOGNIZE;
   private User enrollUser;
@@ -125,6 +130,7 @@ public final class CameraDesktopController {
   @FXML
   void onStopButtonAction(final ActionEvent event) {
     stopCamera();
+    closeStage();
   }
 
   @FXML
@@ -139,7 +145,7 @@ public final class CameraDesktopController {
 
       cameraService = new CameraDesktopService(0);
       running.set(true);
-      cameraService.startCapture(this::processFrame, running);
+      captureThread = cameraService.startCapture(this::processFrame, running);
 
     } catch (final Exception e) {
       _LOGGER.error("Failed to start camera or face service", e);
@@ -153,35 +159,37 @@ public final class CameraDesktopController {
   }
 
   private void processFrame(final Mat frame) {
-    try {
-      final long now = System.currentTimeMillis();
-      final boolean runInference = (now - lastInferenceTime) >= INFERENCE_INTERVAL_MS;
+    // Draw cached face rect so display is always up to date regardless of inference
+    final Rect rect = lastFaceRect;
+    if (rect != null) {
+      Imgproc.rectangle(frame, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
+    }
 
-      Rect face = null;
-      Mat crop = null;
+    // Display at full camera FPS (non-blocking)
+    Platform.runLater(() -> cameraImageView.setImage(OpenCvUtil.matToImage(frame)));
 
-      if (runInference) {
-        lastInferenceTime = now;
-        face = faceService.detectBestFace(frame);
-        lastFaceRect = face;
-        if (face != null) {
-          crop = faceService.cropFaceSafely(frame, face);
+    // Submit inference only when previous one has finished — never blocks capture
+    if (inferenceRunning.compareAndSet(false, true)) {
+      final Mat inferenceFrame = frame.clone();
+      inferenceExecutor.submit(() -> {
+        try {
+          runInference(inferenceFrame);
+        } finally {
+          inferenceRunning.set(false);
         }
-      } else {
-        face = lastFaceRect; // use cached rect for drawing
-      }
+      });
+    }
+  }
 
-      // Draw cached/current face rect
-      if (face != null) {
-        Imgproc.rectangle(frame, face.tl(), face.br(), new Scalar(0, 255, 0), 2);
-      }
+  private void runInference(final Mat frame) {
+    try {
+      final Rect face = faceService.detectBestFace(frame);
+      lastFaceRect = face;
 
-      // Push display frame (non-blocking — drop if JavaFX is still busy)
-      Platform.runLater(() -> cameraImageView.setImage(OpenCvUtil.matToImage(frame)));
-
-      // Only act on inference results
-      if (!runInference || face == null || crop == null)
+      if (face == null)
         return;
+
+      final Mat crop = faceService.cropFaceSafely(frame, face);
 
       if (mode == Mode.ENROLL) {
         handleEnrollFrame(face, crop);
@@ -196,9 +204,8 @@ public final class CameraDesktopController {
           });
         }
       }
-
     } catch (final Exception e) {
-      _LOGGER.error("Error processing camera frame", e);
+      _LOGGER.error("Error in face inference", e);
     }
   }
 
@@ -208,7 +215,7 @@ public final class CameraDesktopController {
 
     final long now = System.currentTimeMillis();
 
-    // Start the 5-second window on first detection
+    // Start the 5s window on first detection
     if (enrollStartTime == 0) {
       enrollStartTime = now;
       bestCrop = null;
@@ -275,6 +282,21 @@ public final class CameraDesktopController {
     running.set(false);
     if (cameraService != null)
       cameraService.close();
+    // Wait for the capture thread to finish its current frame
+    if (captureThread != null) {
+      try {
+        captureThread.join(2000);
+      } catch (final InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+    }
+    // Shut down inference executor and wait for any running inference to complete
+    inferenceExecutor.shutdown();
+    try {
+      inferenceExecutor.awaitTermination(3000, TimeUnit.MILLISECONDS);
+    } catch (final InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
     try {
       if (faceService != null)
         faceService.close();
