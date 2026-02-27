@@ -3,6 +3,7 @@ package com.serinity.accesscontrol.controller;
 
 // `java` import(s)
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -21,6 +22,7 @@ import com.serinity.accesscontrol.repository.UserFaceRepository;
 import com.serinity.accesscontrol.service.AntelopeFaceService;
 import com.serinity.accesscontrol.service.CameraDesktopService;
 import com.serinity.accesscontrol.util.AntelopeUtil;
+import com.serinity.accesscontrol.util.I18nUtil;
 import com.serinity.accesscontrol.util.OpenCvUtil;
 
 // `javafx` import(s)
@@ -121,6 +123,11 @@ public final class CameraDesktopController {
   }
 
   @FXML
+  void onStopButtonAction(final ActionEvent event) {
+    stopCamera();
+  }
+
+  @FXML
   void onStartButtonAction(final ActionEvent event) {
     if (running.get())
       return;
@@ -137,7 +144,6 @@ public final class CameraDesktopController {
     } catch (final Exception e) {
       _LOGGER.error("Failed to start camera or face service", e);
     }
-    stopCamera();
   }
 
   @FXML
@@ -223,7 +229,7 @@ public final class CameraDesktopController {
     // Update countdown on UI
     Platform.runLater(() -> {
       final Stage stage = (Stage) cameraImageView.getScene().getWindow();
-      stage.setTitle("Face Enrollment — " + Math.max(0, remaining) + "s remaining");
+      stage.setTitle(MessageFormat.format(I18nUtil.getValue("camera.stage.enrollment.countdown"), Math.max(0, remaining)));
     });
 
     // Time is up — save best capture
@@ -236,7 +242,7 @@ public final class CameraDesktopController {
         enrollStartTime = 0;
         Platform.runLater(() -> {
           final Stage stage = (Stage) cameraImageView.getScene().getWindow();
-          stage.setTitle("Face Enrollment — No face detected, try again");
+          stage.setTitle(I18nUtil.getValue("camera.stage.enrollment.no_face"));
         });
       }
     }
