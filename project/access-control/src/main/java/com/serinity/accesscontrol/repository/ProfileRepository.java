@@ -31,6 +31,13 @@ public final class ProfileRepository extends BaseRepository<Profile, Long> {
     super(em, Profile.class);
   }
 
+  /**
+   * Finds a profile by its unique generated username.
+   *
+   * @param username the auto-generated username
+   * @return the matching {@link Profile}
+   * @throws RuntimeException if the profile is not found or a DB error occurs
+   */
   public Profile findByUsername(final String username) {
     try {
       return em.createQuery(Profile.class)
@@ -43,6 +50,13 @@ public final class ProfileRepository extends BaseRepository<Profile, Long> {
     }
   }
 
+  /**
+   * Finds the profile associated with a given user.
+   *
+   * @param userId the UUID of the owner {@link com.serinity.accesscontrol.model.User}
+   * @return the matching {@link Profile}
+   * @throws RuntimeException if the profile is not found or a DB error occurs
+   */
   public Profile findByUserId(final UUID userId) {
     try {
       return em.createQuery(Profile.class)

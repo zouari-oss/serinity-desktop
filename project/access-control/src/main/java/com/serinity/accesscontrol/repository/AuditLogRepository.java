@@ -58,6 +58,12 @@ public final class AuditLogRepository extends BaseRepository<AuditLog, Long> {
     super(em, AuditLog.class);
   }
 
+  /**
+   * Returns all audit log entries associated with a given session.
+   *
+   * @param authSessionId the UUID of the {@link com.serinity.accesscontrol.model.AuthSession}
+   * @return list of audit logs for the session, or {@code null} on error
+   */
   public List<AuditLog> findByAuthSessionId(final UUID authSessionId) {
     try {
       return em.createQuery(AuditLog.class)

@@ -11,6 +11,7 @@ import com.serinity.accesscontrol.model.AuditLog;
 import com.serinity.accesscontrol.model.AuthSession;
 import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
+import com.serinity.accesscontrol.model.UserFace;
 
 /**
  * Database schema migration utility for the Access Control module.
@@ -65,6 +66,17 @@ public final class SkinnedRatOrmMigrator {
       SkinnedRatOrmEntityManager.getConnection(),
       SQLDialect.MYSQL);
 
+  /**
+   * Runs the full schema migration: drops all managed tables then recreates
+   * them in dependency order.
+   *
+   * <p>
+   * <strong>WARN:</strong> This is a destructive operation. All existing data
+   * in the managed tables will be permanently lost.
+   * </p>
+   *
+   * @throws RuntimeException if any DDL operation fails
+   */
   public static void migrate() {
     try {
       // Drop old tables
@@ -72,12 +84,14 @@ public final class SkinnedRatOrmMigrator {
       generator.dropTable(Profile.class);
       generator.dropTable(AuthSession.class);
       generator.dropTable(User.class);
+      generator.dropTable(UserFace.class);
 
       // Create tables
       generator.createTable(User.class);
       generator.createTable(AuthSession.class);
       generator.createTable(Profile.class);
       generator.createTable(AuditLog.class);
+      generator.createTable(UserFace.class);
     } catch (Exception e) {
       e.printStackTrace();
       throw new RuntimeException(e);

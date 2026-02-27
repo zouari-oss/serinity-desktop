@@ -35,6 +35,12 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
     super(em, AuthSession.class);
   }
 
+  /**
+   * Finds an {@link AuthSession} by its refresh token value.
+   *
+   * @param refreshToken the refresh token to look up
+   * @return the matching session, or {@code null} if not found
+   */
   public AuthSession findByRefreshToken(final String refreshToken) {
     try {
       return em.createQuery(AuthSession.class)
@@ -45,6 +51,12 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
     }
   }
 
+  /**
+   * Returns all sessions belonging to a given user.
+   *
+   * @param userId the UUID of the user
+   * @return list of sessions for the user, or {@code null} on error
+   */
   public List<AuthSession> findByUserId(final UUID userId) {
     try {
       return em.createQuery(AuthSession.class)
@@ -55,6 +67,12 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
     }
   }
 
+  /**
+   * Finds a valid (non-revoked, non-expired) session by refresh token.
+   *
+   * @param refreshToken the refresh token to validate
+   * @return the active session, or {@code null} if none found
+   */
   public AuthSession findValidByRefreshToken(final String refreshToken) {
     try {
       return em.createQuery(AuthSession.class)
@@ -67,6 +85,12 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
     }
   }
 
+  /**
+   * Finds the currently active (non-revoked, non-expired) session for a user.
+   *
+   * @param user the user whose active session to find
+   * @return an {@link Optional} containing the active session, or empty if none
+   */
   public Optional<AuthSession> findActiveSession(final User user) {
     try {
       AuthSession session = em.createQuery(AuthSession.class)
@@ -82,6 +106,13 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
     }
   }
 
+  /**
+   * Checks whether the user has at least one active (non-revoked, non-expired)
+   * session.
+   *
+   * @param user the user to check
+   * @return {@code true} if an active session exists
+   */
   public boolean existsActiveSession(final User user) {
     try {
       return em.createQuery(AuthSession.class)

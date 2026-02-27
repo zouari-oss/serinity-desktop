@@ -45,6 +45,12 @@ public final class UserRepository extends BaseRepository<User, Long> {
     super(em, User.class);
   }
 
+  /**
+   * Finds a user by their email address.
+   *
+   * @param email the user's email address
+   * @return the matching {@link User}, or {@code null} if not found
+   */
   public User findUserByEmail(final String email) {
     try {
       return em.createQuery(User.class)

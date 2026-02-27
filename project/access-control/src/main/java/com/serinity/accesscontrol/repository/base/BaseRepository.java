@@ -26,11 +26,22 @@ public abstract class BaseRepository<T, ID> {
   protected final EntityManager em;
   protected final Class<T> entityClass;
 
+  /**
+   * Constructs a repository for the given entity class.
+   *
+   * @param em          the ORM {@link EntityManager} to use for DB operations
+   * @param entityClass the entity class managed by this repository
+   */
   public BaseRepository(final EntityManager em, final Class<T> entityClass) {
     this.em = em;
     this.entityClass = entityClass;
   }
 
+  /**
+   * Persists a new entity to the database.
+   *
+   * @param entity the entity to save
+   */
   public void save(final T entity) {
     try {
       em.persist(entity);
@@ -39,6 +50,11 @@ public abstract class BaseRepository<T, ID> {
     }
   }
 
+  /**
+   * Updates an existing entity in the database.
+   *
+   * @param entity the entity with updated field values
+   */
   public void update(final T entity) {
     try {
       em.update(entity);
@@ -47,6 +63,12 @@ public abstract class BaseRepository<T, ID> {
     }
   }
 
+  /**
+   * Finds an entity by its primary key.
+   *
+   * @param id the primary key value
+   * @return an {@link Optional} containing the entity, or empty if not found
+   */
   public Optional<T> findById(final ID id) {
     try {
       return Optional.ofNullable(em.findById(entityClass, id));
@@ -56,6 +78,11 @@ public abstract class BaseRepository<T, ID> {
     }
   }
 
+  /**
+   * Deletes an entity from the database.
+   *
+   * @param entity the entity instance to remove
+   */
   public void delete(final T entity) {
     try {
       em.delete(entity);
@@ -64,10 +91,20 @@ public abstract class BaseRepository<T, ID> {
     }
   }
 
+  /**
+   * Deletes an entity identified by its primary key, if it exists.
+   *
+   * @param id the primary key of the entity to delete
+   */
   public void deleteById(final ID id) {
     findById(id).ifPresent(this::delete);
   }
 
+  /**
+   * Returns all entities of this type from the database.
+   *
+   * @return a list of all persisted entities; never {@code null}
+   */
   public List<T> findAll() {
     try {
       return new QueryBuilder<>(entityClass, em.getConnection())

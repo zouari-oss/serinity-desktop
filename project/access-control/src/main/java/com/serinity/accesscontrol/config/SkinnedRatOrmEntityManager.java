@@ -49,6 +49,13 @@ import java.sql.*;
  *        </a>
  */
 public class SkinnedRatOrmEntityManager {
+  /**
+   * Creates and returns a new JDBC {@link Connection} using credentials loaded
+   * from environment variables, with auto-commit enabled.
+   *
+   * @return a new {@link Connection} ready for use
+   * @throws RuntimeException if the connection cannot be established
+   */
   public static Connection getConnection() {
     try {
       Connection connection = DriverManager.getConnection(
@@ -63,6 +70,14 @@ public class SkinnedRatOrmEntityManager {
     }
   }
 
+  /**
+   * Loads the configured JDBC driver and returns an initialized
+   * {@link EntityManager} backed by a fresh database connection.
+   *
+   * @return a fully configured {@link EntityManager}
+   * @throws RuntimeException if the JDBC driver class is not found or the
+   *                          connection cannot be established
+   */
   public static EntityManager getEntityManager() {
     try {
       Class.forName(EnvironmentVariableLoader.getJdbcDriver());

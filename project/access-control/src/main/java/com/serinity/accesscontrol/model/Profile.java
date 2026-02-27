@@ -1,4 +1,4 @@
-// `User` package name
+// `Profile` package name
 package com.serinity.accesscontrol.model;
 
 // `zouarioss` import(s)
@@ -19,8 +19,6 @@ import com.serinity.accesscontrol.model.base.TimestampedEntity;
 import com.serinity.accesscontrol.util.UsernameGenerator;
 
 /**
- * Profile.java
- *
  * Represents a user's profile in the system. Contains personal information,
  * contact details, and metadata related to the user's account. Each
  * {@link Profile} is associated with exactly one
