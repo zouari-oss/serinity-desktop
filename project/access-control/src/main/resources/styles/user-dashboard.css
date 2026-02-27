@@ -226,3 +226,28 @@ TextArea {
   -fx-text-fill: #9ca3af;
   -fx-font-size: 11px;
 }
+
+/* Toggle Button for Face Recognition */
+.toggle-button {
+  -fx-background-color: #ddd;
+  -fx-background-radius: 20;
+  -fx-text-fill: #333;
+  -fx-font-size: 12px;
+  -fx-pref-width: 60px;
+  -fx-pref-height: 25px;
+}
+
+.toggle-button:selected {
+  -fx-background-color: #4CAF50;
+  -fx-text-fill: white;
+}
+
+/* Label for Face Recognition Toggle */
+.face-login-label {
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #333;
+  /* dark grey text */
+  -fx-padding: 0 10 0 0;
+  /* some space to the right before toggle */
+}

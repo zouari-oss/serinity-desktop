@@ -9,14 +9,13 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/25"
-  xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="com.serinity.accesscontrol.controller.UserDashboardController">
+<AnchorPane prefHeight="650.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.accesscontrol.controller.UserDashboardController">
 
   <VBox layoutX="14.0" layoutY="14.0">
     <children>
@@ -29,35 +28,35 @@
   </VBox>
 
   <!-- Activity / Session Cards Section -->
-  <VBox layoutX="14.0" layoutY="99.0" prefHeight="401.0" prefWidth="766.0" spacing="15.0"
-    AnchorPane.bottomAnchor="243.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="420.0"
-    AnchorPane.topAnchor="99.0">
+  <VBox layoutX="14.0" layoutY="99.0" prefHeight="401.0" prefWidth="766.0" spacing="15.0" AnchorPane.bottomAnchor="243.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="420.0" AnchorPane.topAnchor="99.0">
 
     <Label styleClass="section-title" text="Recent Activity" />
 
     <ScrollPane fitToWidth="true" styleClass="activity-scroll" VBox.vgrow="ALWAYS">
       <content>
-        <VBox fx:id="activityCardsContainerVBox" spacing="12.0"
-          styleClass="activity-cards-container" />
+        <VBox fx:id="activityCardsContainerVBox" spacing="12.0" styleClass="activity-cards-container" />
       </content>
     </ScrollPane>
 
   </VBox>
 
+  <!-- Face Recognition Toggle -->
+  <HBox alignment="CENTER_LEFT" layoutX="453.0" layoutY="685.0" prefHeight="33.0" prefWidth="327.0" spacing="10">
+    <Label prefHeight="18.0" prefWidth="259.0" style="-fx-font-size: 14px;" styleClass="face-login-label" text="Enable Face Recognition Login" />
+      <ToggleButton fx:id="faceRecognitionToggleButton" mnemonicParsing="false" onAction="#onFaceRecognitionTogglrButtonAction" prefWidth="92.0" text="ToggleButton" />
+  </HBox>
+
   <!-- Profile completion section -->
-  <VBox layoutX="14.0" layoutY="664.0" spacing="5.0" AnchorPane.bottomAnchor="14.0"
-    AnchorPane.leftAnchor="14.0">
+  <VBox layoutX="14.0" layoutY="664.0" spacing="5.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0">
     <Label styleClass="profile-completion-title" text="Profile Completion" />
 
     <ProgressBar fx:id="profileCompletionBar" prefWidth="350.0" progress="0.0" />
 
-    <Label fx:id="profileCompletionLabel" style="-fx-font-size: 12px;"
-      styleClass="profile-percentage-label" text="0%" />
+    <Label fx:id="profileCompletionLabel" style="-fx-font-size: 12px;" styleClass="profile-percentage-label" text="0%" />
   </VBox>
 
   <!-- Right Side Edit Panel -->
-  <VBox prefWidth="400.0" spacing="15.0" styleClass="edit-profile-panel"
-    AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+  <VBox prefWidth="400.0" spacing="15.0" styleClass="edit-profile-panel" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
     <!-- Title -->
     <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Edit Profile" />
@@ -68,8 +67,7 @@
     <VBox alignment="CENTER" spacing="8.0">
       <ImageView fx:id="profileImageView" fitHeight="120" fitWidth="120" preserveRatio="false" />
 
-      <Button fx:id="browseImageButton" onAction="#onBrowseImage" styleClass="btn-secondary"
-        text="Browse Image" />
+      <Button fx:id="browseImageButton" onAction="#onBrowseImage" styleClass="btn-secondary" text="Browse Image" />
     </VBox>
 
     <Separator />
@@ -89,8 +87,7 @@
 
     <!-- Buttons -->
     <HBox alignment="CENTER_RIGHT" spacing="10">
-      <Button fx:id="cancelButton" onAction="#onCancelButtonAction" styleClass="btn-secondary"
-        text="Cancel" />
+      <Button fx:id="cancelButton" onAction="#onCancelButtonAction" styleClass="btn-secondary" text="Cancel" />
 
       <Button fx:id="saveButton" onAction="#onSaveButtonAction" styleClass="btn-primary" text="Save" />
     </HBox>
