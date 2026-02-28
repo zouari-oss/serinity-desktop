@@ -24,6 +24,7 @@ package com.serinity.accesscontrol.flag;
  *        </a>
  */
 public enum ResourceFile {
+  // FXML FILE(s)
   ROOT_FXML("/fxml/root.fxml"),
   LOGIN_FXML("/fxml/login.fxml"),
   USER_HOME_FXML("/fxml/user-home.fxml"),
@@ -31,8 +32,18 @@ public enum ResourceFile {
   ADMIN_DASHBOARD_FXML("/fxml/admin-dashboard.fxml"),
   ADMIN_USERS_MANAGMENT_FXML("/fxml/admin-users-management.fxml"),
   RESET_PASSWORD_FXML("/fxml/reset-password.fxml"),
+  CAMERA_DESKTOP_FXML("/fxml/camera-desktop.fxml"),
+
+  // HTML FILE(s)
   LOGIN_SIDE_HTML("/html/login-side.html"),
-  FORGET_PASSWORD_HTML("/html/forgot-password.html");
+  FORGET_PASSWORD_HTML("/html/forgot-password.html"),
+
+  // ONNX FILE(s)
+  ANTELOPEV2_SCRFD_10G_BNKPS_ONNX("antelopev2/scrfd_10g_bnkps.onnx"),
+  ANTELOPEV2_GLINTR100_ONNX("antelopev2/glintr100.onnx"),
+
+  // IMAGE(s)
+  USER_DEFAUL_PROFILE_PNG("/assets/user-dashboard/user-default-profile.png");
 
   private final String fileName;
 

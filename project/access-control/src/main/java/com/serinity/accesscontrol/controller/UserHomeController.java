@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.controller.base.StackNavigable;
+import com.serinity.accesscontrol.controller.base.StageTitled;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.flag.MessageStatus;
 import com.serinity.accesscontrol.flag.ResourceFile;
@@ -35,7 +36,13 @@ import javafx.stage.Stage;
  *        UserHomeController.java
  *        </a>
  */
-public final class UserHomeController implements StackNavigable, StatusMessageProvider {
+public final class UserHomeController implements StackNavigable, StatusMessageProvider, StageTitled {
+
+  @Override
+  public String getSceneTitleKey() {
+    return "app.scene.title.home";
+  }
+
 
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(UserHomeController.class);
@@ -176,6 +183,6 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
     setStackHost(contentHostStackPane);
     setStatusProvider(statusProvider);
 
-    _LOGGER.info("User Dashboard Interface initialized successfully!");
+    _LOGGER.info("User Home Interface initialized successfully!");
   }
 } // UserHomeController final class

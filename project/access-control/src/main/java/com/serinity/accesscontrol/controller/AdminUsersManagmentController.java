@@ -3,6 +3,7 @@ package com.serinity.accesscontrol.controller;
 
 // `java` import(s)
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -14,12 +15,14 @@ import org.zouarioss.skinnedratorm.core.EntityManager;
 // `serinity` import(s)
 import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
 import com.serinity.accesscontrol.controller.base.StackNavigable;
+import com.serinity.accesscontrol.controller.base.StageTitled;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.flag.AccountStatus;
 import com.serinity.accesscontrol.flag.MessageStatus;
 import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.UserRepository;
+import com.serinity.accesscontrol.util.I18nUtil;
 
 // `javafx` import(s)
 import javafx.event.ActionEvent;
@@ -46,7 +49,13 @@ import javafx.scene.layout.VBox;
  *        AdminUsersManagmentController.java
  *        </a>
  */
-public final class AdminUsersManagmentController implements StackNavigable, StatusMessageProvider {
+public final class AdminUsersManagmentController implements StackNavigable, StatusMessageProvider, StageTitled {
+
+  @Override
+  public String getSceneTitleKey() {
+    return "app.scene.title.user_management";
+  }
+
 
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;
@@ -96,11 +105,11 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
   public void usersManagmentInit() {
     // Initialize filter dropdown
     roleFilterComboBox.getItems().addAll(
-        "ALL",
+        I18nUtil.getValue("admin.user.filter.all"),
         UserRole.ADMIN.toString(),
         UserRole.PATIENT.toString(),
         UserRole.THERAPIST.toString());
-    roleFilterComboBox.setValue("ALL");
+    roleFilterComboBox.setValue(I18nUtil.getValue("admin.user.filter.all"));
 
     // Add sample users
     final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
@@ -152,7 +161,7 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
 
     final List<User> filtered = allUsers.stream()
         .filter(u -> u.getEmail().toLowerCase().contains(lowerKeyword))
-        .filter(u -> "ALL".equals(selectedRole) || u.getRole().toString().equalsIgnoreCase(selectedRole))
+        .filter(u -> I18nUtil.getValue("admin.user.filter.all").equals(selectedRole) || u.getRole().toString().equalsIgnoreCase(selectedRole))
         .collect(Collectors.toList());
 
     loadUsers(filtered);
@@ -180,7 +189,7 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     final Label emailLabel = new Label(user.getEmail());
     emailLabel.getStyleClass().add("user-email");
 
-    final Label roleLabel = new Label("Role: " + user.getRole().toString());
+    final Label roleLabel = new Label(I18nUtil.getValue("admin.user.role_prefix") + user.getRole().toString());
     roleLabel.getStyleClass().add("user-role");
 
     final Label statusLabel = new Label(user.getAccountStatus().toString());
@@ -193,13 +202,13 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     }
 
     // ================= ACTION BUTTONS =================
-    final Button deleteButton = new Button("Delete");
+    final Button deleteButton = new Button(I18nUtil.getValue("admin.user.button.delete"));
     deleteButton.getStyleClass().add("danger-btn");
 
     final Button toggleStatusButton = new Button(
         "ACTIVE".equalsIgnoreCase(user.getAccountStatus().toString())
-            ? "Disable"
-            : "Enable");
+            ? I18nUtil.getValue("admin.user.button.disable")
+            : I18nUtil.getValue("admin.user.button.enable"));
     toggleStatusButton.getStyleClass().add("secondary-btn");
 
     // Delete action
@@ -209,7 +218,7 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
       repo.delete(user);
 
       allUsers.remove(user);
-      showStatusMessage("User " + user.getEmail() + " has been deleted successfully!", MessageStatus.INFO);
+      showStatusMessage(MessageFormat.format(I18nUtil.getValue("status.user.deleted"), user.getEmail()), MessageStatus.INFO);
       loadUsers(allUsers); // refresh UI
     });
 
@@ -224,7 +233,7 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
               : AccountStatus.ACTIVE);
 
       repo.update(user);
-      showStatusMessage("User " + user.getEmail() + " has been deleted successfully!", MessageStatus.INFO);
+      showStatusMessage(MessageFormat.format(I18nUtil.getValue("status.user.status_updated"), user.getEmail()), MessageStatus.INFO);
       loadUsers(allUsers); // refresh UI
     });
 

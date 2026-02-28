@@ -60,6 +60,9 @@ public final class User extends TimestampedEntity {
   @Column(name = "account_status", nullable = false)
   private AccountStatus accountStatus; // Pre-persist
 
+  @Column(name = "face_recognition_enabled", nullable = false)
+  private boolean faceRecognitionEnabled; // Pre-persist
+
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, optional = false) // User must have a profile
   private Profile profile;
 
@@ -105,6 +108,14 @@ public final class User extends TimestampedEntity {
 
   public void setAccountStatus(final AccountStatus accountStatus) {
     this.accountStatus = accountStatus;
+  }
+
+  public boolean isFaceRecognitionEnabled() {
+    return faceRecognitionEnabled;
+  }
+
+  public void setFaceRecognitionEnabled(final boolean faceRecognitionEnabled) {
+    this.faceRecognitionEnabled = faceRecognitionEnabled;
   }
 
   // #############################

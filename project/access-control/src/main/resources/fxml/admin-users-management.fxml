@@ -15,9 +15,9 @@
   <HBox alignment="CENTER_LEFT" spacing="15" styleClass="users-toolbar" AnchorPane.leftAnchor="20.0"
     AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="15.0">
     <TextField fx:id="searchTextField" onAction="#onSearchTextFieldAction"
-      promptText="Search by email..." styleClass="search-field" HBox.hgrow="ALWAYS" />
+      promptText="%admin.users.search_placeholder" styleClass="search-field" HBox.hgrow="ALWAYS" />
     <ComboBox fx:id="roleFilterComboBox" onAction="#onRoleFilterComboBoxAction"
-      promptText="Filter by Role" styleClass="filter-box" />
+      promptText="%admin.users.filter_by_role" styleClass="filter-box" />
   </HBox>
 
   <ScrollPane fitToWidth="true" styleClass="users-scroll" AnchorPane.bottomAnchor="20.0"

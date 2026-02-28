@@ -136,37 +136,37 @@ public class FreeImageHostClient {
   /**
    * Uploads an image file to FreeImage.host and returns the public URL.
    */
-  public static String uploadImage(File imageFile) throws IOException, InterruptedException {
+  public static String uploadImage(final File imageFile) throws IOException, InterruptedException {
     if (!imageFile.exists()) {
       throw new IllegalArgumentException("File does not exist: " + imageFile.getAbsolutePath());
     }
 
-    byte[] fileBytes = Files.readAllBytes(imageFile.toPath());
-    String boundary = "Boundary-" + System.currentTimeMillis();
-    String CRLF = "\r\n";
+    final byte[] fileBytes = Files.readAllBytes(imageFile.toPath());
+    final String boundary = "Boundary-" + System.currentTimeMillis();
+    final String CRLF = "\r\n";
 
     // Build multipart header
-    StringBuilder builder = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     builder.append("--").append(boundary).append(CRLF);
     builder.append("Content-Disposition: form-data; name=\"source\"; filename=\"")
         .append(imageFile.getName()).append("\"").append(CRLF);
     builder.append("Content-Type: application/octet-stream").append(CRLF).append(CRLF);
 
-    byte[] headerBytes = builder.toString().getBytes();
-    byte[] footerBytes = (CRLF + "--" + boundary + "--" + CRLF).getBytes();
-    byte[] requestBody = new byte[headerBytes.length + fileBytes.length + footerBytes.length];
+    final byte[] headerBytes = builder.toString().getBytes();
+    final byte[] footerBytes = (CRLF + "--" + boundary + "--" + CRLF).getBytes();
+    final byte[] requestBody = new byte[headerBytes.length + fileBytes.length + footerBytes.length];
 
     System.arraycopy(headerBytes, 0, requestBody, 0, headerBytes.length);
     System.arraycopy(fileBytes, 0, requestBody, headerBytes.length, fileBytes.length);
     System.arraycopy(footerBytes, 0, requestBody, headerBytes.length + fileBytes.length, footerBytes.length);
 
-    HttpRequest request = HttpRequest.newBuilder()
+    final HttpRequest request = HttpRequest.newBuilder()
         .uri(URI.create(IMAGE_REQUEST_URL + "?key=" + IMAGE_API_KEY))
         .header("Content-Type", "multipart/form-data; boundary=" + boundary)
         .POST(BodyPublishers.ofByteArray(requestBody))
         .build();
 
-    HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
     return extractImageUrl(response.body());
   }
@@ -174,19 +174,19 @@ public class FreeImageHostClient {
   /**
    * Extracts "url" field from FreeImage.host JSON response using regex.
    */
-  public static String extractImageUrl(String jsonResponse) {
-    int imageIndex = jsonResponse.indexOf("\"image\":{");
+  public static String extractImageUrl(final String jsonResponse) {
+    final int imageIndex = jsonResponse.indexOf("\"image\":{");
     if (imageIndex == -1) {
       throw new IllegalStateException("Image object not found in response: " + jsonResponse);
     }
 
     // Start from first { after `"image":`
-    int braceStart = jsonResponse.indexOf("{", imageIndex);
+    final int braceStart = jsonResponse.indexOf("{", imageIndex);
     int braceCount = 0;
     int endIndex = -1;
 
     for (int i = braceStart; i < jsonResponse.length(); i++) {
-      char c = jsonResponse.charAt(i);
+      final char c = jsonResponse.charAt(i);
       if (c == '{')
         braceCount++;
       else if (c == '}')
@@ -200,16 +200,16 @@ public class FreeImageHostClient {
     if (endIndex == -1)
       throw new IllegalStateException("Malformed JSON: " + jsonResponse);
 
-    String imageJson = jsonResponse.substring(braceStart, endIndex + 1);
+    final String imageJson = jsonResponse.substring(braceStart, endIndex + 1);
 
     // Look for top-level "url"
-    int urlIndex = imageJson.indexOf("\"url\":\"");
+    final int urlIndex = imageJson.indexOf("\"url\":\"");
     if (urlIndex == -1)
       throw new IllegalStateException("Image URL not found in response: " + jsonResponse);
 
-    int urlStart = urlIndex + "\"url\":\"".length();
-    int urlEnd = imageJson.indexOf("\"", urlStart);
-    String url = imageJson.substring(urlStart, urlEnd);
+    final int urlStart = urlIndex + "\"url\":\"".length();
+    final int urlEnd = imageJson.indexOf("\"", urlStart);
+    final String url = imageJson.substring(urlStart, urlEnd);
 
     // Clean escape sequences
     return url.replace("\\/", "/");

@@ -17,6 +17,9 @@ module com.serinity.accesscontrol {
   requires com.github.benmanes.caffeine;
   requires spring.security.crypto;
   requires java.net.http;
+  requires com.microsoft.onnxruntime;
+  requires org.opencv;
+  requires javafx.graphics;
 
   // --- Module exports ---
   exports com.serinity.accesscontrol;

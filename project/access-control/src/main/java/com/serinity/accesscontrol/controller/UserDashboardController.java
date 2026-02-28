@@ -5,7 +5,7 @@ package com.serinity.accesscontrol.controller;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
+import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -15,17 +15,22 @@ import org.zouarioss.skinnedratorm.core.EntityManager;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.config.SkinnedRatOrmEntityManager;
+import com.serinity.accesscontrol.controller.base.StageTitled;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.flag.Gender;
 import com.serinity.accesscontrol.flag.MessageStatus;
+import com.serinity.accesscontrol.flag.ResourceFile;
 import com.serinity.accesscontrol.model.AuditLog;
-import com.serinity.accesscontrol.model.AuthSession;
 import com.serinity.accesscontrol.model.Profile;
 import com.serinity.accesscontrol.model.User;
 import com.serinity.accesscontrol.repository.AuditLogRepository;
-import com.serinity.accesscontrol.repository.AuthSessionRepository;
 import com.serinity.accesscontrol.repository.ProfileRepository;
+import com.serinity.accesscontrol.repository.UserFaceRepository;
+import com.serinity.accesscontrol.repository.UserRepository;
+import com.serinity.accesscontrol.model.UserFace;
 import com.serinity.accesscontrol.service.FreeImageHostClient;
+import com.serinity.accesscontrol.util.FXMLLoaderUtil;
+import com.serinity.accesscontrol.util.I18nUtil;
 import com.serinity.accesscontrol.util.RegexValidator;
 
 // `javafx` import(s)
@@ -33,18 +38,20 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  * `user-dashboard.fxml` controller class
@@ -59,7 +66,13 @@ import javafx.stage.FileChooser;
  *        UserDashboardController.java
  *        </a>
  */
-public final class UserDashboardController implements StatusMessageProvider {
+public final class UserDashboardController implements StatusMessageProvider, StageTitled {
+
+  @Override
+  public String getSceneTitleKey() {
+    return "app.scene.title.dashboard";
+  }
+
 
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(UserDashboardController.class);
@@ -76,16 +89,16 @@ public final class UserDashboardController implements StatusMessageProvider {
 
     final HBox topRow = new HBox(15, action, os);
 
-    final Label hostname = new Label("Hostname: " + log.getHostname());
+    final Label hostname = new Label(I18nUtil.getValue("activity.hostname") + log.getHostname());
     hostname.getStyleClass().add("activity-meta");
 
-    final Label ip = new Label("Private IP: " + log.getPrivateIpAddress());
+    final Label ip = new Label(I18nUtil.getValue("activity.private_ip") + log.getPrivateIpAddress());
     ip.getStyleClass().add("activity-meta");
 
-    final Label mac = new Label("MAC: " + log.getMacAddress());
+    final Label mac = new Label(I18nUtil.getValue("activity.mac") + log.getMacAddress());
     mac.getStyleClass().add("activity-meta");
 
-    final Label location = new Label("Location: " + log.getLocation());
+    final Label location = new Label(I18nUtil.getValue("activity.location") + log.getLocation());
     location.getStyleClass().add("activity-meta");
 
     final Label date = new Label(log.getCreatedAt().toString());
@@ -97,6 +110,10 @@ public final class UserDashboardController implements StatusMessageProvider {
     card.getChildren().addAll(topRow, hostname, ip, mac, location, bottomRow);
 
     return card;
+  }
+
+  private static String nullSafe(final String s) {
+    return s != null ? s : "";
   }
 
   @FXML // ResourceBundle that was given to the FXMLLoader
@@ -131,9 +148,9 @@ public final class UserDashboardController implements StatusMessageProvider {
 
   @FXML // fx:id="phoneTextField"
   private TextField phoneTextField; // Value injected by FXMLLoader
-
   @FXML // fx:id="profileCompletionBar"
   private ProgressBar profileCompletionBar; // Value injected by FXMLLoader
+
   @FXML // fx:id="profileCompletionLabel"
   private Label profileCompletionLabel; // Value injected by FXMLLoader
 
@@ -152,6 +169,9 @@ public final class UserDashboardController implements StatusMessageProvider {
 
   @FXML // fx:id="welcomeLabel"
   private Label welcomeLabel; // Value injected by FXMLLoader
+
+  @FXML // fx:id="faceRecognitionToggleButton"
+  private ToggleButton faceRecognitionToggleButton; // Value injected by FXMLLoader
 
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
@@ -176,13 +196,7 @@ public final class UserDashboardController implements StatusMessageProvider {
 
   public void loadActivityCards() {
     final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
-    final AuditLogRepository auditLogRepository = new AuditLogRepository(em);
-    final List<AuthSession> authSessions = new AuthSessionRepository(em).findByUserId(user.getId());
-    final List<AuditLog> allLogs = new ArrayList<>();
-    for (final AuthSession session : authSessions) {
-      final List<AuditLog> logs = auditLogRepository.findByAuthSessionId(session.getId());
-      allLogs.addAll(logs);
-    }
+    final List<AuditLog> allLogs = new AuditLogRepository(em).findAllByUserId(user.getId());
 
     // Sort by `created_at` column
     allLogs.sort(Comparator.comparing(AuditLog::getCreatedAt).reversed());
@@ -206,22 +220,73 @@ public final class UserDashboardController implements StatusMessageProvider {
   }
 
   @FXML
+  void onFaceRecognitionTogglrButtonAction(final ActionEvent event) {
+    final ToggleButton toggle = (ToggleButton) event.getSource();
+    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    final UserFaceRepository userFaceRepository = new UserFaceRepository(em);
+    final UserRepository userRepository = new UserRepository(em);
+
+    if (toggle.isSelected()) {
+      // Open camera popup in enroll mode
+      final FXMLLoaderUtil.ViewLoader<CameraDesktopController> view = FXMLLoaderUtil.loadView(
+          getClass(),
+          ResourceFile.CAMERA_DESKTOP_FXML.getFileName(),
+          I18nUtil.getBundle());
+
+      view.getController().setEnrollMode(user, () -> {
+        user.setFaceRecognitionEnabled(true);
+        userRepository.update(user);
+        toggle.setSelected(true);
+        toggle.setText(I18nUtil.getValue("user.dashboard.face_id.disable"));
+        showStatusMessage(I18nUtil.getValue("status.face_id.registered"), MessageStatus.SUCCESS);
+      });
+
+      final Stage stage = new Stage();
+      stage.setTitle(I18nUtil.getValue("camera.stage.title.enrollment"));
+      stage.setScene(new Scene(view.getRoot()));
+      stage.setResizable(false);
+      stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+
+      // If user closes without enrolling, revert toggle
+      stage.setOnHidden(e -> {
+        if (!user.isFaceRecognitionEnabled()) {
+          toggle.setSelected(false);
+          toggle.setText(I18nUtil.getValue("user.dashboard.face_id.enable"));
+        }
+      });
+
+      stage.show();
+
+    } else {
+      // Remove stored face and disable flag
+      final UserFace existing = userFaceRepository.findByUserId(user.getId());
+      if (existing != null) {
+        userFaceRepository.delete(existing);
+      }
+      user.setFaceRecognitionEnabled(false);
+      userRepository.update(user);
+      toggle.setText(I18nUtil.getValue("user.dashboard.face_id.enable"));
+      showStatusMessage(I18nUtil.getValue("status.face_id.disabled"), MessageStatus.INFO);
+    }
+  }
+
+  @FXML
   void onCancelButtonAction(final ActionEvent event) {
     initUserInfoLater();
-    showStatusMessage("User information has been reset successfully!", MessageStatus.INFO);
+    showStatusMessage(I18nUtil.getValue("status.profile.reset"), MessageStatus.INFO);
   }
 
   @FXML
   void onSaveButtonAction(final ActionEvent event) {
     final String userProfileUsername = usernameTextField.getText();
     if (userProfileUsername.isBlank()) {
-      showStatusMessage("User information has been reset successfully!", MessageStatus.WARNING);
+      showStatusMessage(I18nUtil.getValue("status.profile.username_blank"), MessageStatus.WARNING);
       return;
     }
 
     final String phoneNumber = phoneTextField.getText();
-    if (!RegexValidator.isValidPhoneNumber(phoneNumber)) {
-      showStatusMessage("Invalid Phone Number Format!", MessageStatus.WARNING);
+    if (phoneNumber != null && !RegexValidator.isValidPhoneNumber(phoneNumber)) {
+      showStatusMessage(I18nUtil.getValue("status.profile.invalid_phone"), MessageStatus.WARNING);
       return;
     }
 
@@ -247,7 +312,7 @@ public final class UserDashboardController implements StatusMessageProvider {
     // update profile completion
     updateProfileCompletion();
 
-    showStatusMessage("Profile updated successfully.", MessageStatus.SUCCESS);
+    showStatusMessage(I18nUtil.getValue("status.profile.updated"), MessageStatus.SUCCESS);
   }
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -285,7 +350,6 @@ public final class UserDashboardController implements StatusMessageProvider {
         : "fx:id=\"welcomeLabel\" was not injected: check your FXML file 'user-dashboard.fxml'.";
 
     // Custom initialization
-    setStatusProvider(statusProvider);
     initGenderComboBox();
 
     Platform.runLater(() -> { // NOTE: After controller initialized
@@ -293,6 +357,11 @@ public final class UserDashboardController implements StatusMessageProvider {
       updateProfileCompletion();
       welcomeLabel.setText(welcomeLabel.getText() + userProfile.getUsername());
       loadActivityCards();
+      // Sync toggle state with user's face recognition setting
+      faceRecognitionToggleButton.setSelected(user.isFaceRecognitionEnabled());
+      faceRecognitionToggleButton.setText(user.isFaceRecognitionEnabled()
+          ? I18nUtil.getValue("user.dashboard.face_id.disable")
+          : I18nUtil.getValue("user.dashboard.face_id.enable"));
     });
 
     _LOGGER.info("User Dashboard Interface initialized successfully!");
@@ -302,21 +371,21 @@ public final class UserDashboardController implements StatusMessageProvider {
     final int totalFields = 8;
     int filledFields = 0;
 
-    if (!firstNameTextField.getText().isEmpty())
+    if (!nullSafe(firstNameTextField.getText()).isEmpty())
       filledFields++;
-    if (!lastNameTextField.getText().isEmpty())
+    if (!nullSafe(lastNameTextField.getText()).isEmpty())
       filledFields++;
-    if (!usernameTextField.getText().isEmpty())
+    if (!nullSafe(usernameTextField.getText()).isEmpty())
       filledFields++;
-    if (!phoneTextField.getText().isEmpty())
+    if (!nullSafe(phoneTextField.getText()).isEmpty())
       filledFields++;
     if (genderComboBox.getValue() != null)
       filledFields++;
-    if (!countryTextField.getText().isEmpty())
+    if (!nullSafe(countryTextField.getText()).isEmpty())
       filledFields++;
-    if (!stateTextField.getText().isEmpty())
+    if (!nullSafe(stateTextField.getText()).isEmpty())
       filledFields++;
-    if (!aboutMeTextArea.getText().isEmpty())
+    if (!nullSafe(aboutMeTextArea.getText()).isEmpty())
       filledFields++;
 
     final double percentage = (double) filledFields / totalFields;
@@ -338,7 +407,9 @@ public final class UserDashboardController implements StatusMessageProvider {
   private String handleProfileImageUpload() {
 
     final Image image = profileImageView.getImage();
-    if (image == null || image.getUrl() == null) {
+    if (image == null
+        || image.getUrl() == null
+        || image.getUrl().equals(ResourceFile.USER_DEFAUL_PROFILE_PNG.getFileName())) {
       return null;
     }
 
@@ -361,8 +432,8 @@ public final class UserDashboardController implements StatusMessageProvider {
       }
 
     } catch (final Exception e) {
-      e.printStackTrace();
-      showStatusMessage("Image upload failed.", MessageStatus.ERROR);
+      _LOGGER.error("Image upload failed.", e);
+      showStatusMessage(I18nUtil.getValue("status.image.upload_failed"), MessageStatus.ERROR);
     }
 
     return null;
@@ -390,7 +461,7 @@ public final class UserDashboardController implements StatusMessageProvider {
     aboutMeTextArea.setText(userProfile.getAboutMe());
     profileImageView.setImage(
         userProfile.getProfileImageUrl() == null || userProfile.getProfileImageUrl().isEmpty()
-            ? new Image("/assets/user-dashboard/user-default-profile.png")
+            ? new Image(ResourceFile.USER_DEFAUL_PROFILE_PNG.getFileName())
             : new Image(userProfile.getProfileImageUrl(), true));
   }
 

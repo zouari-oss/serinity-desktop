@@ -105,11 +105,12 @@ public final class RootController implements StackNavigable, StatusMessageProvid
             ? SupportedLanguage.FR.getLocale() // To `fr`
             : SupportedLanguage.EN.getLocale()); // To `en`
 
-    ((Stage) loginInterface.getScene().getWindow())
-        .setScene(FXMLLoaderUtil.loadScene(
-            getClass(),
-            ResourceFile.ROOT_FXML.getFileName(),
-            I18nUtil.getBundle()));
+    final Stage stage = (Stage) loginInterface.getScene().getWindow();
+    stage.setScene(FXMLLoaderUtil.loadScene(
+        getClass(),
+        ResourceFile.ROOT_FXML.getFileName(),
+        I18nUtil.getBundle()));
+    stage.setTitle(I18nUtil.getValue("app.scene.title.sign_in"));
   }
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -132,10 +133,12 @@ public final class RootController implements StackNavigable, StatusMessageProvid
         ResourceFile.LOGIN_FXML.getFileName(),
         I18nUtil.getBundle());
 
+    final LoginController loginController = view.getController();
     // inject RootController into LoginController
-    view.getController().setStackHost(rootStackPane);
-    view.getController().setStatusProvider(this);
+    loginController.setStackHost(rootStackPane);
+    loginController.setStatusProvider(this);
 
+    view.getRoot().setUserData(loginController);
     rootStackPane.getChildren().add(view.getRoot());
   }
 

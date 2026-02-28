@@ -98,26 +98,26 @@ public final class FXMLAnimationUtil {
     // Ensure the node is visible
     node.setVisible(true);
 
-    Scene scene = node.getScene();
+    final Scene scene = node.getScene();
     if (scene == null)
       return;
 
-    double sceneWidth = scene.getWidth();
-    double nodeWidth = node.getBoundsInParent().getWidth();
+    final double sceneWidth = scene.getWidth();
+    final double nodeWidth = node.getBoundsInParent().getWidth();
 
     // Center horizontally
     node.setLayoutX((sceneWidth - nodeWidth) / 2);
 
     // Slide down
-    TranslateTransition slideDown = new TranslateTransition(Duration.millis(duration), node);
+    final TranslateTransition slideDown = new TranslateTransition(Duration.millis(duration), node);
     slideDown.setFromY(-distance);
     slideDown.setToY(0);
     slideDown.play();
 
     if (autoHide) {
-      PauseTransition wait = new PauseTransition(Duration.seconds(hideDelaySeconds));
+      final PauseTransition wait = new PauseTransition(Duration.seconds(hideDelaySeconds));
       wait.setOnFinished(e -> {
-        TranslateTransition slideUp = new TranslateTransition(Duration.millis(duration), node);
+        final TranslateTransition slideUp = new TranslateTransition(Duration.millis(duration), node);
         slideUp.setFromY(0);
         slideUp.setToY(-distance);
         slideUp.setOnFinished(ev -> node.setVisible(false));

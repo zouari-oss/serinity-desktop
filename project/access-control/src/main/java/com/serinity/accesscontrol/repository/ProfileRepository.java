@@ -27,10 +27,19 @@ import com.serinity.accesscontrol.repository.base.BaseRepository;
  *      </a>
  */
 public final class ProfileRepository extends BaseRepository<Profile, Long> {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(ProfileRepository.class);
   public ProfileRepository(final EntityManager em) {
     super(em, Profile.class);
   }
 
+  /**
+   * Finds a profile by its unique generated username.
+   *
+   * @param username the auto-generated username
+   * @return the matching {@link Profile}
+   * @throws RuntimeException if the profile is not found or a DB error occurs
+   */
   public Profile findByUsername(final String username) {
     try {
       return em.createQuery(Profile.class)
@@ -38,18 +47,25 @@ public final class ProfileRepository extends BaseRepository<Profile, Long> {
           .getSingleResult();
 
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Failed to find profile by username: {}", username, e);
       throw new RuntimeException(e);
     }
   }
 
+  /**
+   * Finds the profile associated with a given user.
+   *
+   * @param userId the UUID of the owner {@link com.serinity.accesscontrol.model.User}
+   * @return the matching {@link Profile}
+   * @throws RuntimeException if the profile is not found or a DB error occurs
+   */
   public Profile findByUserId(final UUID userId) {
     try {
       return em.createQuery(Profile.class)
           .where("user_id", userId)
           .getSingleResult();
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.error("Failed to find profile by userId: {}", userId, e);
       throw new RuntimeException(e);
     }
   }

@@ -1,0 +1,37 @@
+@startuml
+title Connexion Par Reconnaissance Faciale - Application JavaFX Desktop - Serinity
+
+actor Utilisateur
+participant "Interface JavaFX" as UI
+participant "Module Capture\n(Webcam)" as CAM
+participant "API Backend" as API
+participant "Service Reconnaissance Faciale" as FRS
+database "Base de Données Utilisateurs" as DB
+participant "Gestionnaire de Session" as SM
+
+Utilisateur -> UI : Cliquer sur "Connexion par Face"
+UI -> CAM : Activer la webcam
+CAM -> Utilisateur : Afficher aperçu caméra
+Utilisateur -> CAM : Capturer l'image
+
+CAM -> UI : Retour de l'image capturée
+UI -> API : POST /connexion-face (image)
+
+API -> FRS : Envoyer image pour analyse
+FRS -> FRS : Extraire les caractéristiques faciales
+FRS -> DB : Récupérer les empreintes faciales stockées
+FRS -> FRS : Comparer les visages
+
+alt Correspondance trouvée
+    FRS -> API : Retourner userId
+    API -> SM : Créer session / générer token
+    SM -> API : Session créée
+    API -> UI : Connexion réussie
+    UI -> Utilisateur : Ouvrir tableau de bord
+else Aucune correspondance
+    FRS -> API : Échec correspondance
+    API -> UI : Échec authentification
+    UI -> Utilisateur : Afficher message d'erreur
+end
+
+@enduml

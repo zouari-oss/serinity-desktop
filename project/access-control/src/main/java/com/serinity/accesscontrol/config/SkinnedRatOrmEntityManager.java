@@ -49,29 +49,47 @@ import java.sql.*;
  *        </a>
  */
 public class SkinnedRatOrmEntityManager {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(SkinnedRatOrmEntityManager.class);
+
+  /**
+   * Creates and returns a new JDBC {@link Connection} using credentials loaded
+   * from environment variables, with auto-commit enabled.
+   *
+   * @return a new {@link Connection} ready for use
+   * @throws RuntimeException if the connection cannot be established
+   */
   public static Connection getConnection() {
     try {
-      Connection connection = DriverManager.getConnection(
+      final Connection connection = DriverManager.getConnection(
           EnvironmentVariableLoader.getDatabaseUrl(),
           EnvironmentVariableLoader.getDatabaseUsername(),
           EnvironmentVariableLoader.getDatabasePassword());
       connection.setAutoCommit(true);
       return connection;
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (final Exception e) {
+      _LOGGER.error("Failed to establish database connection", e);
       throw new RuntimeException(e);
     }
   }
 
+  /**
+   * Loads the configured JDBC driver and returns an initialized
+   * {@link EntityManager} backed by a fresh database connection.
+   *
+   * @return a fully configured {@link EntityManager}
+   * @throws RuntimeException if the JDBC driver class is not found or the
+   *                          connection cannot be established
+   */
   public static EntityManager getEntityManager() {
     try {
       Class.forName(EnvironmentVariableLoader.getJdbcDriver());
     } catch (final ClassNotFoundException e) {
-      e.printStackTrace();
+      _LOGGER.error("JDBC driver not found", e);
       throw new RuntimeException(e);
     }
 
-    Connection connection = getConnection();
+    final Connection connection = getConnection();
     return new EntityManager(connection);
   }
 } // SkinnedRatOrmEntityManager class

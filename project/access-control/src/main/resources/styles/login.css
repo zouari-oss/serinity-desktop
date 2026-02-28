@@ -41,3 +41,31 @@
   -fx-text-fill: #555555;
   -fx-font-weight: normal;
 }
+
+/* ================ Face recognition button ==================== */
+.faceRecButton {
+  -fx-background-color: transparent;
+  -fx-background-radius: 8px;
+  -fx-cursor: hand;
+  -fx-padding: 5;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.5, 0, 2);
+  -fx-graphic: url("/images/face_icon.png");
+}
+
+/* Hover Effect */
+.faceRecButton:hover {
+  -fx-background-color: rgba(255, 255, 255, 0.1);
+  -fx-translate-y: -2;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0.5, 0, 4);
+  -fx-scale-x: 1.05;
+  -fx-scale-y: 1.05;
+  -fx-transition: all 0.2s ease-in-out;
+
+}
+
+/* Pressed Effect */
+.faceRecButton:pressed {
+  -fx-background-color: rgba(255, 255, 255, 0.2);
+  -fx-translate-y: 0;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.5, 0, 1);
+}
