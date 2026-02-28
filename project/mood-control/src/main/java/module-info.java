@@ -19,4 +19,8 @@ module com.serinity.moodcontrol {
 
     exports com.serinity.moodcontrol;
     opens com.serinity.moodcontrol.api.zenquotes to com.fasterxml.jackson.databind;
+
+    //backend
+    exports com.serinity.moodcontrol.backoffice;
+    opens com.serinity.moodcontrol.controller.backoffice to javafx.fxml;
 }
