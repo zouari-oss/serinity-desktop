@@ -19,6 +19,34 @@
             <version>8.0.33</version>
             <scope>compile</scope>
         </dependency>
+        <!-- ① ONNX Runtime — runs the .onnx model files -->
+        <dependency>
+            <groupId>com.microsoft.onnxruntime</groupId>
+            <artifactId>onnxruntime</artifactId>
+            <version>1.17.0</version>
+        </dependency>
+
+        <!-- ③ Guava — only used for Ints.toArray() in T5Tokenizer          -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.0.0-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.13</version>
+        </dependency>
+        <dependency>
+            <groupId>ai.djl.sentencepiece</groupId>
+            <artifactId>sentencepiece</artifactId>
+            <version>0.36.0</version>
+        </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -38,6 +66,11 @@
             <artifactId>mariadb-java-client</artifactId>
             <version>3.5.2</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.1</version>
         </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>

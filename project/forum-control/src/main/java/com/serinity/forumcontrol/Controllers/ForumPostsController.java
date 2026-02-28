@@ -1,6 +1,5 @@
 package com.serinity.forumcontrol.Controllers;
 
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
 import com.serinity.forumcontrol.Models.Category;
 import com.serinity.forumcontrol.Models.ThreadStatus;
 import com.serinity.forumcontrol.Models.ThreadType;
@@ -31,7 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ForumPostsController {
-    private FakeUser user;
+    private com.serinity.forumcontrol.CurrentUser.CurrentUser user;
     String currentUserId = user.getCurrentUserId();
     @FXML private VBox cardsContainer;
     @FXML private Button categoriesButton;

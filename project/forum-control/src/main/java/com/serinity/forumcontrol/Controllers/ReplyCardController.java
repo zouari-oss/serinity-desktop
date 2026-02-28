@@ -1,28 +1,23 @@
 package com.serinity.forumcontrol.Controllers;
 
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
 import com.serinity.forumcontrol.Models.Reply;
-import com.serinity.forumcontrol.Models.ThreadStatus;
 import com.serinity.forumcontrol.Services.ServiceReply;
 import com.serinity.forumcontrol.Services.ServiceThread;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
-import java.awt.*;
+
 import java.util.Optional;
 
 public class ReplyCardController {
-    private FakeUser user;
+    private com.serinity.forumcontrol.CurrentUser.CurrentUser user;
     String currentUserId = user.getCurrentUserId();
     @FXML private Label authorLabel;
     @FXML private Label contentLabel;

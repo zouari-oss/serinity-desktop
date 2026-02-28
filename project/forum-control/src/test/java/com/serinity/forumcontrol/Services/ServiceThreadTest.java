@@ -1,6 +1,5 @@
 package com.serinity.forumcontrol.Services;
 
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
 import com.serinity.forumcontrol.Models.Category;
 import com.serinity.forumcontrol.Models.Thread;
 import com.serinity.forumcontrol.Models.ThreadStatus;
@@ -32,7 +31,7 @@ class ServiceThreadTest {
     void setup() {
         threadService = new ServiceThread();
         categoryService = new ServiceCategory();
-        testUserId = String.valueOf(FakeUser.getCurrentUserId());
+        testUserId = String.valueOf(com.serinity.forumcontrol.HardcodedUser.CurrentUser.getCurrentUserId());
 
         // Create test category
         Category category = new Category();
