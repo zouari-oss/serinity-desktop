@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.moodcontrol.controller.backoffice.BackofficeAppController"
+            styleClass="backend-root">
+
+    <top>
+        <HBox spacing="10" styleClass="backend-topbar">
+            <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+
+            <Label text="Backoffice Admin" styleClass="backend-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblStatus" text="Ready" styleClass="backend-status"/>
+        </HBox>
+    </top>
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="backend-tabs">
+
+            <!-- MOOD TAB -->
+            <Tab text="Mood Entries">
+                <BorderPane>
+                    <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+
+                    <top>
+                        <HBox spacing="10">
+                            <padding><Insets top="0" right="0" bottom="12" left="0"/></padding>
+
+                            <Label text="Search name:"/>
+                            <TextField fx:id="tfMoodUser"
+                                       promptText="username / first / last (blank = all)"
+                                       prefWidth="520"/>
+                            <Button fx:id="btnMoodRefresh" text="Search" styleClass="backend-primary"/>
+                            <Button fx:id="btnMoodDeleteSelected" text="Delete Selected (0)" styleClass="backend-danger"/>
+                            <Button fx:id="btnMoodClearSelection" text="Clear"/>
+                        </HBox>
+                    </top>
+
+                    <center>
+                        <ScrollPane fitToWidth="true" pannable="true" styleClass="backend-scroll">
+                            <content>
+                                <VBox fx:id="moodCardsBox" spacing="10" styleClass="backend-cards">
+                                    <padding><Insets top="2" right="2" bottom="2" left="2"/></padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </center>
+                </BorderPane>
+            </Tab>
+
+            <!-- JOURNAL TAB -->
+            <Tab text="Journal Entries">
+                <BorderPane>
+                    <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+
+                    <top>
+                        <HBox spacing="10">
+                            <padding><Insets top="0" right="0" bottom="12" left="0"/></padding>
+
+                            <Label text="Search name:"/>
+                            <TextField fx:id="tfJournalUser"
+                                       promptText="username / first / last (blank = all)"
+                                       prefWidth="520"/>
+                            <Button fx:id="btnJournalRefresh" text="Refresh" styleClass="backend-primary"/>
+                            <Button fx:id="btnJournalDeleteSelected" text="Delete Selected (0)" styleClass="backend-danger"/>
+                            <Button fx:id="btnJournalClearSelection" text="Clear"/>
+                        </HBox>
+                    </top>
+
+                    <center>
+                        <ScrollPane fitToWidth="true" pannable="true" styleClass="backend-scroll">
+                            <content>
+                                <VBox fx:id="journalCardsBox" spacing="10" styleClass="backend-cards">
+                                    <padding><Insets top="2" right="2" bottom="2" left="2"/></padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </center>
+                </BorderPane>
+            </Tab>
+
+        </TabPane>
+    </center>
+
+</BorderPane>
