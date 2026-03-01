@@ -20,8 +20,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class ThreadCardController {
-    private FakeUser user;
-    String currentUserId = user.getCurrentUserId();
+    String currentUserId = FakeUser.getCurrentUserId();
     @FXML
     private VBox rootCard;
     @FXML

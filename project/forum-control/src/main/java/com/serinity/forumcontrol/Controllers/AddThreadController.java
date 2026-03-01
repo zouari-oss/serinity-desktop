@@ -38,8 +38,7 @@ public class AddThreadController {
     @FXML private Button removeImageButton;
     @FXML private Label imageStatusLabel;
 
-    private FakeUser user;
-    private String currentUserId = user.getCurrentUserId();
+    private String currentUserId = FakeUser.getCurrentUserId();
     private final ServiceThread threadService = new ServiceThread();
     private final ServiceCategory categoryService = new ServiceCategory();
     private final ServiceImgBB imgbbService = new ServiceImgBB();

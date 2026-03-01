@@ -22,8 +22,7 @@ import java.awt.*;
 import java.util.Optional;
 
 public class ReplyCardController {
-    private FakeUser user;
-    String currentUserId = user.getCurrentUserId();
+    String currentUserId = FakeUser.getCurrentUserId();
     @FXML private Label authorLabel;
     @FXML private Label contentLabel;
     @FXML private Label dateLabel;

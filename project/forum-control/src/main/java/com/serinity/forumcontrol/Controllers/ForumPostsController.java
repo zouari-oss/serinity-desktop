@@ -31,8 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ForumPostsController {
-    private FakeUser user;
-    String currentUserId = user.getCurrentUserId();
+    String currentUserId = FakeUser.getCurrentUserId();
     @FXML private VBox cardsContainer;
     @FXML private Button categoriesButton;
     @FXML private Button newCategoryButton;
@@ -288,7 +287,7 @@ public class ForumPostsController {
         try {
             cardsContainer.getChildren().clear();
             ServiceThread service = new ServiceThread();
-            List<Thread> threads = service.getAll(user.getCurrentUserId()).stream().filter(t-> t.getStatus()!= ThreadStatus.ARCHIVED).toList();
+            List<Thread> threads = service.getAll(FakeUser.getCurrentUserId()).stream().filter(t-> t.getStatus()!= ThreadStatus.ARCHIVED).toList();
             currentThreads = threads;
             displayThreads(threads);
         } catch (Exception e) {
@@ -300,7 +299,7 @@ public class ForumPostsController {
         try {
             cardsContainer.getChildren().clear();
             ServiceThread service = new ServiceThread();
-            List<Thread> threads = service.getAll().stream().filter(t-> t.getUserId().equalsIgnoreCase(user.getCurrentUserId()) ).filter(t-> t.getStatus()!= ThreadStatus.ARCHIVED).toList();
+            List<Thread> threads = service.getAll().stream().filter(t-> t.getUserId().equalsIgnoreCase(FakeUser.getCurrentUserId()) ).filter(t-> t.getStatus()!= ThreadStatus.ARCHIVED).toList();
             currentThreads = threads;
             displayThreads(threads);
         } catch (Exception e) {
@@ -312,7 +311,7 @@ public class ForumPostsController {
         try {
             cardsContainer.getChildren().clear();
             ServiceThread service = new ServiceThread();
-            List<Thread> threads = service.getAll().stream().filter(t-> (t.getUserId().equalsIgnoreCase(user.getCurrentUserId()) && t.getStatus()== ThreadStatus.ARCHIVED)).toList();
+            List<Thread> threads = service.getAll().stream().filter(t-> (t.getUserId().equalsIgnoreCase(FakeUser.getCurrentUserId()) && t.getStatus()== ThreadStatus.ARCHIVED)).toList();
             currentThreads = threads;
             displayThreads(threads);
         } catch (Exception e) {

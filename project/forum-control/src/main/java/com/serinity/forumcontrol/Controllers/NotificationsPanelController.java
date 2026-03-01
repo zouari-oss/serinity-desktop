@@ -30,8 +30,7 @@ public class NotificationsPanelController {
 
     private ServiceNotification notificationService;
     private ServiceThread threadService;
-    private FakeUser user;
-    String currentUserId = user.getCurrentUserId();
+    String currentUserId = FakeUser.getCurrentUserId();
     private Runnable onCloseCallback;
 
     public NotificationsPanelController() {

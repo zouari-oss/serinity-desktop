@@ -124,6 +124,20 @@
       <scope>compile</scope>
     </dependency>
     <!-- !com.microsoft.onnxruntime.onnxruntime -->
+
+    <!-- com.fasterxml.jackson.core.jackson-databind -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <!-- com.fasterxml.jackson.core.jackson-databind -->
+
+    <!-- nz.ac.waikato.cms.weka.weka-stable -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.weka</groupId>
+      <artifactId>weka-stable</artifactId>
+    </dependency>
+    <!-- nz.ac.waikato.cms.weka.weka-stable -->
   </dependencies>
 
   <build>
@@ -166,6 +180,7 @@
                 <option>--enable-native-access=com.microsoft.onnxruntime</option>
                 <option>--enable-native-access=org.opencv</option>
               </options>
+              <includePathExceptionsInClasspath>true</includePathExceptionsInClasspath>
             </configuration>
           </execution>
         </executions>

@@ -1,3 +1,7 @@
+@import "mood-home.css";
+@import "mood.css";
+@import "journal.css";
+
 * {
   -fx-font-family: "Segoe UI", system-ui, Arial, sans-serif;
 

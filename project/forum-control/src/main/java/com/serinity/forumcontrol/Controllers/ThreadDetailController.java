@@ -25,8 +25,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class ThreadDetailController {
-    private FakeUser user ;
-    String currentUserId = user.getCurrentUserId();
+    String currentUserId = FakeUser.getCurrentUserId();
     @FXML private Label titleLabel;
     @FXML private Label metaLabel;
     @FXML private Label lfoukLabel;
@@ -132,7 +131,7 @@ public class ThreadDetailController {
 
         Reply r = new Reply(
                 thread.getId(),
-                user.getCurrentUserId(),
+                FakeUser.getCurrentUserId(),
                 replyingToParentId,
                 text
         );
