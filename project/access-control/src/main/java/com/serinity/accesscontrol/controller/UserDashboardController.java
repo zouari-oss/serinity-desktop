@@ -5,7 +5,6 @@ package com.serinity.accesscontrol.controller;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -72,7 +71,6 @@ public final class UserDashboardController implements StatusMessageProvider, Sta
   public String getSceneTitleKey() {
     return "app.scene.title.dashboard";
   }
-
 
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(UserDashboardController.class);
@@ -175,13 +173,7 @@ public final class UserDashboardController implements StatusMessageProvider, Sta
 
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
-  private User user;
-
   private Profile userProfile;
-
-  public void setUser(final User user) {
-    this.user = user;
-  }
 
   public void setStatusProvider(final StatusMessageProvider provider) {
     this.statusProvider = provider;
@@ -196,7 +188,7 @@ public final class UserDashboardController implements StatusMessageProvider, Sta
 
   public void loadActivityCards() {
     final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
-    final List<AuditLog> allLogs = new AuditLogRepository(em).findAllByUserId(user.getId());
+    final List<AuditLog> allLogs = new AuditLogRepository(em).findAllByUserId(LoginController.getUser().getId());
 
     // Sort by `created_at` column
     allLogs.sort(Comparator.comparing(AuditLog::getCreatedAt).reversed());
@@ -233,9 +225,9 @@ public final class UserDashboardController implements StatusMessageProvider, Sta
           ResourceFile.CAMERA_DESKTOP_FXML.getFileName(),
           I18nUtil.getBundle());
 
-      view.getController().setEnrollMode(user, () -> {
-        user.setFaceRecognitionEnabled(true);
-        userRepository.update(user);
+      view.getController().setEnrollMode(LoginController.getUser(), () -> {
+        LoginController.getUser().setFaceRecognitionEnabled(true);
+        userRepository.update(LoginController.getUser());
         toggle.setSelected(true);
         toggle.setText(I18nUtil.getValue("user.dashboard.face_id.disable"));
         showStatusMessage(I18nUtil.getValue("status.face_id.registered"), MessageStatus.SUCCESS);
@@ -249,7 +241,7 @@ public final class UserDashboardController implements StatusMessageProvider, Sta
 
       // If user closes without enrolling, revert toggle
       stage.setOnHidden(e -> {
-        if (!user.isFaceRecognitionEnabled()) {
+        if (!LoginController.getUser().isFaceRecognitionEnabled()) {
           toggle.setSelected(false);
           toggle.setText(I18nUtil.getValue("user.dashboard.face_id.enable"));
         }
@@ -259,12 +251,12 @@ public final class UserDashboardController implements StatusMessageProvider, Sta
 
     } else {
       // Remove stored face and disable flag
-      final UserFace existing = userFaceRepository.findByUserId(user.getId());
+      final UserFace existing = userFaceRepository.findByUserId(LoginController.getUser().getId());
       if (existing != null) {
         userFaceRepository.delete(existing);
       }
-      user.setFaceRecognitionEnabled(false);
-      userRepository.update(user);
+      LoginController.getUser().setFaceRecognitionEnabled(false);
+      userRepository.update(LoginController.getUser());
       toggle.setText(I18nUtil.getValue("user.dashboard.face_id.enable"));
       showStatusMessage(I18nUtil.getValue("status.face_id.disabled"), MessageStatus.INFO);
     }
@@ -358,8 +350,8 @@ public final class UserDashboardController implements StatusMessageProvider, Sta
       welcomeLabel.setText(welcomeLabel.getText() + userProfile.getUsername());
       loadActivityCards();
       // Sync toggle state with user's face recognition setting
-      faceRecognitionToggleButton.setSelected(user.isFaceRecognitionEnabled());
-      faceRecognitionToggleButton.setText(user.isFaceRecognitionEnabled()
+      faceRecognitionToggleButton.setSelected(LoginController.getUser().isFaceRecognitionEnabled());
+      faceRecognitionToggleButton.setText(LoginController.getUser().isFaceRecognitionEnabled()
           ? I18nUtil.getValue("user.dashboard.face_id.disable")
           : I18nUtil.getValue("user.dashboard.face_id.enable"));
     });
@@ -447,7 +439,7 @@ public final class UserDashboardController implements StatusMessageProvider, Sta
     if (userProfile == null) {
       final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
       final ProfileRepository profileRepository = new ProfileRepository(em);
-      userProfile = profileRepository.findByUserId(user.getId());
+      userProfile = profileRepository.findByUserId(LoginController.getUser().getId());
     }
 
     // Set user info

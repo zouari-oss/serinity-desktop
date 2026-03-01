@@ -108,6 +108,12 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
 
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
+  private static User user;
+
+  public static User getUser() {
+    return user;
+  }
+
   // ############################
   // ### OVERRIDE FUNCTION(S) ###
   // ############################
@@ -146,8 +152,9 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
         I18nUtil.getBundle());
 
     final CameraDesktopController cameraController = loader.getController();
-    cameraController.setRecognizeMode(user -> {
-      UserService.signInWithFace(user);
+    cameraController.setRecognizeMode(newUser -> {
+      UserService.signInWithFace(newUser);
+      user = newUser;
       push(user.getRole().equals(UserRole.ADMIN)
           ? ResourceFile.ADMIN_DASHBOARD_FXML.getFileName()
           : ResourceFile.USER_HOME_FXML.getFileName(),
@@ -175,7 +182,7 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
 
     if (userServiceResult.isSuccess()) {
       showStatusMessage(userServiceResult.getMessage(), MessageStatus.SUCCESS);
-      final User user = userServiceResult.getData();
+      user = userServiceResult.getData();
       push(user.getRole().equals(UserRole.ADMIN)
           ? ResourceFile.ADMIN_DASHBOARD_FXML.getFileName()
           : ResourceFile.USER_HOME_FXML.getFileName(),
@@ -196,7 +203,7 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
 
     if (userServiceResult.isSuccess()) {
       showStatusMessage(userServiceResult.getMessage(), MessageStatus.SUCCESS);
-      final User user = userServiceResult.getData();
+      user = userServiceResult.getData();
       push(user.getRole().equals(UserRole.ADMIN)
           ? ResourceFile.ADMIN_DASHBOARD_FXML.getFileName()
           : ResourceFile.USER_HOME_FXML.getFileName(),
@@ -263,12 +270,10 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
 
   private void injectUserIntoDashboard(final Object controller, final User user) {
     if (controller instanceof final AdminDashboardController admin) {
-      admin.setUser(user);
       admin.setStatusProvider(this);
     }
 
     if (controller instanceof final UserHomeController home) {
-      home.setUser(user);
       home.setStatusProvider(this);
     }
   }

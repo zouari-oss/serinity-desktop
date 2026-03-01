@@ -33,6 +33,8 @@ public enum ResourceFile {
   ADMIN_USERS_MANAGMENT_FXML("/fxml/admin-users-management.fxml"),
   RESET_PASSWORD_FXML("/fxml/reset-password.fxml"),
   CAMERA_DESKTOP_FXML("/fxml/camera-desktop.fxml"),
+  MOOD_HOME_FXML("/fxml/mood/MoodHome.fxml"),
+  MOOD_ADMIN_MANAGMENT("/fxml/backoffice/admin-mood-managment.fxml"),
 
   // HTML FILE(s)
   LOGIN_SIDE_HTML("/html/login-side.html"),

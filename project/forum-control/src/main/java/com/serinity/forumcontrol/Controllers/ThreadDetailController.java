@@ -156,7 +156,7 @@ public class ThreadDetailController {
 
         Reply r = new Reply(
                 thread.getId(),
-                user.getCurrentUserId(),
+                FakeUser.getCurrentUserId(),
                 replyingToParentId,
                 text
         );

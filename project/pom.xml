@@ -66,12 +66,13 @@
     <okhttp.version>4.12.0</okhttp.version>
     <opencv.version>4.13.0</opencv.version>
     <onnxruntime.version>1.24.2</onnxruntime.version>
+    <jackson-databind.version>2.17.2</jackson-databind.version>
+    <weka-stable.version>3.8.6</weka-stable.version>
   </properties>
   <!-- !Custom properties -->
 
   <!-- Modules properties -->
   <modules>
-    <module>mood-control</module>
     <module>access-control</module>
     <module>sleep-control</module>
     <module>exercice-control</module>
@@ -231,6 +232,23 @@
         <scope>compile</scope>
       </dependency>
       <!-- !com.microsoft.onnxruntime.onnxruntime -->
+
+      <!-- com.fasterxml.jackson.core.jackson-databind -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson-databind.version}</version>
+      </dependency>
+      <!-- com.fasterxml.jackson.core.jackson-databind -->
+
+      <!-- nz.ac.waikato.cms.weka.weka-stable -->
+      <dependency>
+        <groupId>nz.ac.waikato.cms.weka</groupId>
+        <artifactId>weka-stable</artifactId>
+        <version>${weka-stable.version}</version>
+      </dependency>
+      <!-- nz.ac.waikato.cms.weka.weka-stable -->
+
     </dependencies>
   </dependencyManagement>
 

@@ -67,12 +67,6 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
 
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
-  private User user;
-
-  public void setUser(final User user) {
-    this.user = user;
-  }
-
   @Override
   public StackPane getStackHost() {
     return contentAreaStackPane;
@@ -87,6 +81,11 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
     if (statusProvider != null) {
       statusProvider.showStatusMessage(message, status);
     }
+  }
+
+  @FXML
+  void onMoodManagmentButtonAction(ActionEvent event) {
+    replace(ResourceFile.MOOD_ADMIN_MANAGMENT.getFileName());
   }
 
   @FXML
@@ -105,7 +104,7 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
 
   @FXML
   void onUsersManagmentButtonAction(final ActionEvent event) {
-    push(ResourceFile.ADMIN_USERS_MANAGMENT_FXML.getFileName());
+    replace(ResourceFile.ADMIN_USERS_MANAGMENT_FXML.getFileName());
   }
 
   @FXML // This method is called by the FXMLLoader when initialization is complete

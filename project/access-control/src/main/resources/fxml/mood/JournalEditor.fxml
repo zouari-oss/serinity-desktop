@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="com.serinity.accesscontrol.controller.JournalEditorController"
+  styleClass="editor-panel"
+  prefWidth="430"
+  maxWidth="430">
+
+  <padding>
+    <Insets top="16" right="16" bottom="16" left="16" />
+  </padding>
+
+  <!-- Header -->
+  <VBox spacing="6">
+    <HBox alignment="CENTER_LEFT" spacing="10">
+      <Label fx:id="editorTitle" styleClass="editor-title" />
+      <Region HBox.hgrow="ALWAYS" />
+      <Button text="✕"
+        styleClass="icon-btn ms-icon"
+        onAction="#onCancel" />
+    </HBox>
+    <Label fx:id="editorSubtitle" styleClass="editor-subtitle" />
+  </VBox>
+
+  <Separator />
+
+  <!-- Title -->
+  <VBox spacing="6">
+    <Label text="%journal.field.title" styleClass="filter-label" />
+    <TextField fx:id="titleField" promptText="%journal.field.title.ph" />
+  </VBox>
+
+  <Separator />
+
+  <!-- Prompt 1 -->
+  <VBox spacing="6" styleClass="prompt-block">
+    <Label text="%journal.prompt.context" styleClass="prompt-q" />
+    <Label text="%journal.prompt.context.hint" styleClass="prompt-hint" />
+    <TextArea fx:id="a1Area" styleClass="prompt-answer"
+      prefRowCount="4" wrapText="true"
+      promptText="%journal.answer.ph" />
+  </VBox>
+
+  <!-- Prompt 2 -->
+  <VBox spacing="6" styleClass="prompt-block">
+    <Label text="%journal.prompt.inner" styleClass="prompt-q" />
+    <Label text="%journal.prompt.inner.hint" styleClass="prompt-hint" />
+    <TextArea fx:id="a2Area" styleClass="prompt-answer"
+      prefRowCount="4" wrapText="true"
+      promptText="%journal.answer.ph" />
+  </VBox>
+
+  <!-- Prompt 3 -->
+  <VBox spacing="6" styleClass="prompt-block">
+    <Label text="%journal.prompt.meaning" styleClass="prompt-q" />
+    <Label text="%journal.prompt.meaning.hint" styleClass="prompt-hint" />
+    <TextArea fx:id="a3Area" styleClass="prompt-answer"
+      prefRowCount="4" wrapText="true"
+      promptText="%journal.answer.ph" />
+  </VBox>
+
+  <Region VBox.vgrow="ALWAYS" />
+
+  <!-- footer -->
+  <VBox spacing="6">
+    <HBox alignment="CENTER_RIGHT" spacing="10">
+      <Button text="%journal.cancel" styleClass="btn-ghost" onAction="#onCancel" />
+      <Button fx:id="btnSave" text="%journal.save" styleClass="btn-primary" onAction="#onSave" />
+    </HBox>
+
+    <!-- hint below buttons -->
+    <Label fx:id="saveHint"
+      text=""
+      styleClass="save-hint"
+      visible="false"
+      managed="false"
+      wrapText="true"
+      maxWidth="450" />
+  </VBox>
+
+</VBox>

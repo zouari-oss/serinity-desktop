@@ -46,6 +46,17 @@ import javafx.stage.Stage;
 public interface StackNavigable {
 
   /**
+   * Updates the stage title if {@code controller} implements {@link StageTitled}.
+   */
+  private static void applySceneTitle(final StackPane host, final Object controller) {
+    if (!(controller instanceof final StageTitled titled))
+      return;
+    if (host.getScene() == null)
+      return;
+    ((Stage) host.getScene().getWindow()).setTitle(I18nUtil.getValue(titled.getSceneTitleKey()));
+  }
+
+  /**
    * Returns the StackPane hosting dynamic views.
    */
   StackPane getStackHost();
@@ -117,12 +128,50 @@ public interface StackNavigable {
    * @param fxml path to FXML
    */
   default void replace(final String fxml) {
+    replace(fxml, null);
+  }
+
+  /**
+   * Replace the current view with a new FXML.
+   *
+   * @param fxml path to FXML
+   * @param <T>  type of controller
+   */
+  default <T> void replace(final String fxml,
+      final Consumer<T> controllerInitializer) {
     final StackPane host = getStackHost();
     if (host == null)
       return;
 
-    host.getChildren().setAll(
-        FXMLLoaderUtil.loadFXML(getClass(), fxml, I18nUtil.getBundle()));
+    final FXMLLoaderUtil.ViewLoader<T> view = FXMLLoaderUtil.loadView(
+        getClass(),
+        fxml,
+        I18nUtil.getBundle());
+
+    final T controller = view.getController();
+
+    // Inject navigation
+    if (controller instanceof final StackNavigable navController) {
+      navController.setStackHost(host);
+
+      if (this instanceof final StatusMessageProvider statusProvider) {
+        navController.setStatusProvider(statusProvider);
+      }
+    }
+
+    // Inject custom data
+    if (controllerInitializer != null) {
+      controllerInitializer.accept(controller);
+    }
+
+    // Store controller on root node (for title restore consistency)
+    view.getRoot().setUserData(controller);
+
+    // Replace current content
+    host.getChildren().setAll(view.getRoot());
+
+    // Update stage title
+    applySceneTitle(host, controller);
   }
 
   /**
@@ -145,14 +194,5 @@ public interface StackNavigable {
         applySceneTitle(host, top.getUserData());
       }
     }
-  }
-
-  /** Updates the stage title if {@code controller} implements {@link StageTitled}. */
-  private static void applySceneTitle(final StackPane host, final Object controller) {
-    if (!(controller instanceof StageTitled titled))
-      return;
-    if (host.getScene() == null)
-      return;
-    ((Stage) host.getScene().getWindow()).setTitle(I18nUtil.getValue(titled.getSceneTitleKey()));
   }
 } // StackNavigable interface
