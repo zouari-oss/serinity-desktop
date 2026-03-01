@@ -197,7 +197,7 @@ public class AddCategoryController {
 
     private void returnToForum() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/forum/ForumPostsView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/forum/ForumBackoffice.fxml"));
             Parent forumView = loader.load();
 
             BorderPane root = findBorderPane();

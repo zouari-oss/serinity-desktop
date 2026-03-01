@@ -1,0 +1,8 @@
+.env
+.idea/
+project/access-control/
+project/exercice-control/
+project/mood-control/
+project/sleep-control/
+project/forum-control/target/
+project/forum-control/t5-small-onnx/

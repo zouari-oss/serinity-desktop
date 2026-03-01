@@ -7,6 +7,9 @@
     <HBox alignment="CENTER_LEFT" spacing="10">
         <Label fx:id="lfoukLabel" style="-fx-text-fill:#2b2a2a;" HBox.hgrow="ALWAYS" />
         <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="badgeLabel"
+               style="-fx-font-size:11; -fx-font-weight:bold; -fx-padding: 2 8 2 8;
+                      -fx-background-radius:20; -fx-background-color:#6b7280; -fx-text-fill:white;" />
         <MenuButton fx:id="menuButton"
                     text="⋮"
                     style="-fx-background-color: transparent;
