@@ -11,6 +11,10 @@ module com.serinity {
     requires javafx.base;
     requires org.json;
     requires java.net.http;
+    requires com.microsoft.onnxruntime;
+    requires com.google.common;
+    requires ai.djl.sentencepiece;
+    requires org.apache.pdfbox;
 
 
     opens com.serinity.forumcontrol.Controllers to javafx.fxml;

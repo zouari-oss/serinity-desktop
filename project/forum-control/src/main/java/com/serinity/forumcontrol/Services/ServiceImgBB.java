@@ -1,5 +1,6 @@
 package com.serinity.forumcontrol.Services;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -10,10 +11,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class ServiceImgBB {
+    private static final Dotenv dotenv = Dotenv.load();
 
     private static final String IMGBB_API_URL = "https://api.imgbb.com/1/upload";
 
-    private static final String API_KEY = "77a7c45139ecec874f7d237e00102014";
+    private static final String API_KEY = dotenv.get("API_KEY_IMGBB");
 
     public String uploadImage(File imageFile) throws IOException {
         if (API_KEY == null ) {

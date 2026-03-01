@@ -1,6 +1,5 @@
 package com.serinity.forumcontrol.Controllers;
 
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
 import com.serinity.forumcontrol.Models.Notification;
 import com.serinity.forumcontrol.Models.Thread;
 import com.serinity.forumcontrol.Services.ServiceNotification;
@@ -30,7 +29,8 @@ public class NotificationsPanelController {
 
     private ServiceNotification notificationService;
     private ServiceThread threadService;
-    String currentUserId = FakeUser.getCurrentUserId();
+    private com.serinity.forumcontrol.CurrentUser.CurrentUser user;
+    String currentUserId = user.getCurrentUserId();
     private Runnable onCloseCallback;
 
     public NotificationsPanelController() {

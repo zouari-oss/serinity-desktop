@@ -1,11 +1,8 @@
 package com.serinity.forumcontrol.Controllers;
 
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
 import com.serinity.forumcontrol.Models.Reply;
 import com.serinity.forumcontrol.Models.ThreadStatus;
-import com.serinity.forumcontrol.Services.ServicePostInteraction;
-import com.serinity.forumcontrol.Services.ServiceReply;
-import com.serinity.forumcontrol.Services.ServiceThread;
+import com.serinity.forumcontrol.Services.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -16,7 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import com.serinity.forumcontrol.Models.Thread;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,13 +20,18 @@ import javafx.scene.input.MouseEvent;
 import java.io.IOException;
 import java.util.List;
 
+import javafx.stage.FileChooser;
+import java.io.File;
+
+
 public class ThreadDetailController {
-    String currentUserId = FakeUser.getCurrentUserId();
+    private com.serinity.forumcontrol.CurrentUser.CurrentUser user ;
+    String currentUserId = user.getCurrentUserId();
     @FXML private Label titleLabel;
     @FXML private Label metaLabel;
     @FXML private Label lfoukLabel;
     @FXML private Label Category;
-    @FXML private TextArea contentArea;
+    @FXML private Label contentLabel;
     @FXML private ImageView threadImageView;
     @FXML private VBox repliesBox;
     @FXML private TextArea replyArea;
@@ -42,10 +43,19 @@ public class ThreadDetailController {
     @FXML private Label repliescountLabel;
     @FXML private Button followButton;
     @FXML private Label followerCountLabel;
+    @FXML private Button summarizeButton;
+    @FXML private Label summaryLabel;
+    @FXML private VBox summaryBox;
+    @FXML private Button exportPdfButton;
+    @FXML private Button translateButton;
+    @FXML private javafx.scene.control.ComboBox<String> languageBox;
 
+    private ServiceTranslate translateService = new ServiceTranslate();
+    private ServicePdfExport pdfExportService = new ServicePdfExport();
     private ServicePostInteraction interactionService = new ServicePostInteraction();
     private ServiceThread service = new ServiceThread();
     private ServiceReply replyService = new ServiceReply();
+    private ServiceSummarize summaryService = new ServiceSummarize();
     private Long replyingToParentId = null;
     private Thread thread;
 
@@ -53,6 +63,21 @@ public class ThreadDetailController {
 
     public void setThread(Thread t) {
         this.thread = t;
+        languageBox.getItems().addAll(
+                "French",
+                "Arabic",
+                "Spanish",
+                "German",
+                "English"
+        );
+
+        languageBox.setValue("French");
+        if (summaryBox != null) {
+            summaryBox.setVisible(false);
+            summaryBox.setManaged(false);
+            summarizeButton.setText("🤖 AI Summary");
+            summarizeButton.setDisable(false);
+        }
         String author = service.getAuthor(t.getUserId());
         String lfouk =
                 "U/" + author +
@@ -65,7 +90,7 @@ public class ThreadDetailController {
         titleLabel.setText(t.getTitle());
         Category.setText("  C/" + service.getCategory(t.getCategoryId()));
         metaLabel.setText("Status: " + t.getStatus());
-        contentArea.setText(t.getContent());
+        contentLabel.setText(t.getContent());
         if (t.getImageUrl() != null && !t.getImageUrl().isEmpty()) {
             try {
                 Image image = new Image(t.getImageUrl(), true);
@@ -351,5 +376,269 @@ public class ThreadDetailController {
 
         loadInteractions();
 
+    }
+    /**
+     * Generate AI summary of thread content
+     */
+    @FXML
+    private void onSummarize() {
+        if (thread == null || thread.getContent() == null) {
+            return;
+        }
+
+        // Check if API is configured
+        if (!summaryService.isApiConfigured()) {
+            alert("Hugging Face API token not configured in ServiceHuggingFace.java",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
+        // Disable button and show loading
+        summarizeButton.setDisable(true);
+        summarizeButton.setText("⏳ Generating summary...");
+
+        // Use JavaFX Task for background work
+        javafx.concurrent.Task<String> task = new javafx.concurrent.Task<String>() {
+            @Override
+            protected String call() throws Exception {
+                String content = thread.getContent();
+                return summaryService.summarizeText(content);
+            }
+        };
+
+        // On success
+        task.setOnSucceeded(event -> {
+            String summary = task.getValue();
+            if (summary != null && !summary.isEmpty()) {
+                summaryLabel.setText(summary);
+                summaryBox.setVisible(true);
+                summaryBox.setManaged(true);
+                summarizeButton.setText("✓ Summary Generated");
+            } else {
+                alert("Failed to generate summary. Please try again.",
+                        Alert.AlertType.ERROR);
+                summarizeButton.setText("🤖 AI Summary");
+                summarizeButton.setDisable(false);
+            }
+        });
+
+        task.setOnFailed(event -> {
+            Throwable ex = task.getException();
+            String errorMsg = ex != null ? ex.getMessage() : "Unknown error";
+            if (errorMsg != null && errorMsg.contains("Model is loading")) {
+                alert("AI model is warming up. Please try again in 10-20 seconds.",
+                        Alert.AlertType.INFORMATION);
+            } else {
+                alert("Error generating summary: " + errorMsg,
+                        Alert.AlertType.ERROR);
+            }
+            summarizeButton.setText("🤖 AI Summary");
+            summarizeButton.setDisable(false);
+        });
+
+        java.lang.Thread backgroundThread = new java.lang.Thread(task);
+        backgroundThread.setDaemon(true);
+        backgroundThread.start();
+    }
+
+    @FXML
+    private void onHideSummary() {
+        summaryBox.setVisible(false);
+        summaryBox.setManaged(false);
+        summarizeButton.setText("🤖 AI Summary");
+        summarizeButton.setDisable(false);
+    }
+    @FXML
+    private void onExportPdf() {
+        if (thread == null) {
+            return;
+        }
+
+        // Create file chooser
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Thread as PDF");
+
+        // Set default filename
+        String defaultFilename = pdfExportService.generateFilename(thread);
+        fileChooser.setInitialFileName(defaultFilename);
+
+        // Set file extension filter
+        FileChooser.ExtensionFilter pdfFilter =
+                new FileChooser.ExtensionFilter("PDF Files (*.pdf)", "*.pdf");
+        fileChooser.getExtensionFilters().add(pdfFilter);
+
+        // Set initial directory to user's Documents folder
+        String userHome = System.getProperty("user.home");
+        File documentsDir = new File(userHome, "Documents");
+        if (documentsDir.exists()) {
+            fileChooser.setInitialDirectory(documentsDir);
+        }
+
+        // Show save dialog
+        File file = fileChooser.showSaveDialog(exportPdfButton.getScene().getWindow());
+
+        if (file != null) {
+            // Disable button and show progress
+            exportPdfButton.setDisable(true);
+            exportPdfButton.setText("⏳ Exporting...");
+
+            // Export in background thread
+            new java.lang.Thread(() -> {
+                try {
+                    // Get replies if available
+                    List<Reply> replies = null;
+                    if (replyService != null) {
+                        replies = replyService.getTopLevelReplies(thread.getId());
+                    }
+
+                    // Export to PDF
+                    boolean success = pdfExportService.exportThreadToPdf(
+                            thread,
+                            replies,
+                            file.getAbsolutePath()
+                    );
+
+                    // Update UI on JavaFX thread
+                    javafx.application.Platform.runLater(() -> {
+                        if (success) {
+                            exportPdfButton.setText("✓ PDF Saved");
+                            alert("PDF exported successfully!\n\nSaved to: " + file.getAbsolutePath(),
+                                    Alert.AlertType.INFORMATION);
+                        } else {
+                            exportPdfButton.setText("📄 Save as PDF");
+                            alert("Failed to export PDF. Please try again.",
+                                    Alert.AlertType.ERROR);
+                        }
+
+                        // Reset button after 3 seconds
+                        new java.util.Timer().schedule(new java.util.TimerTask() {
+                            @Override
+                            public void run() {
+                                javafx.application.Platform.runLater(() -> {
+                                    exportPdfButton.setText("📄 Save as PDF");
+                                    exportPdfButton.setDisable(false);
+                                });
+                            }
+                        }, 3000);
+                    });
+
+                } catch (Exception e) {
+                    javafx.application.Platform.runLater(() -> {
+                        exportPdfButton.setText("📄 Save as PDF");
+                        exportPdfButton.setDisable(false);
+                        alert("Error exporting PDF: " + e.getMessage(),
+                                Alert.AlertType.ERROR);
+                    });
+                }
+            }).start();
+        }
+    }
+    @FXML
+    private void onQuickExportPdf() {
+        if (thread == null) {
+            return;
+        }
+
+        exportPdfButton.setDisable(true);
+        exportPdfButton.setText("⏳ Exporting...");
+
+        new java.lang.Thread(() -> {
+            try {
+                // Export to Downloads folder
+                String userHome = System.getProperty("user.home");
+                File downloadsDir = new File(userHome, "Downloads");
+                String filename = pdfExportService.generateFilename(thread);
+                File file = new File(downloadsDir, filename);
+
+                List<Reply> replies = null;
+                if (replyService != null) {
+                    replies = replyService.getTopLevelReplies(thread.getId());
+                }
+
+                boolean success = pdfExportService.exportThreadToPdf(
+                        thread,
+                        replies,
+                        file.getAbsolutePath()
+                );
+
+                javafx.application.Platform.runLater(() -> {
+                    if (success) {
+                        exportPdfButton.setText("✓ PDF Saved");
+                        alert("PDF saved to Downloads:\n" + filename,
+                                Alert.AlertType.INFORMATION);
+                    } else {
+                        exportPdfButton.setText("📄 Save as PDF");
+                        alert("Failed to export PDF", Alert.AlertType.ERROR);
+                    }
+
+                    new java.util.Timer().schedule(new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            javafx.application.Platform.runLater(() -> {
+                                exportPdfButton.setText("📄 Save as PDF");
+                                exportPdfButton.setDisable(false);
+                            });
+                        }
+                    }, 3000);
+                });
+
+            } catch (Exception e) {
+                javafx.application.Platform.runLater(() -> {
+                    exportPdfButton.setText("📄 Save as PDF");
+                    exportPdfButton.setDisable(false);
+                    alert("Error: " + e.getMessage(), Alert.AlertType.ERROR);
+                });
+            }
+        }).start();
+    }
+    @FXML
+    private void onTranslate() {
+
+        if (thread == null || thread.getContent() == null) {
+            return;
+        }
+
+        if (!translateService.isApiConfigured()) {
+            alert("Gemini API key not configured.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        String targetLanguage = languageBox.getValue();
+        String originalText = thread.getContent();
+
+        translateButton.setDisable(true);
+        translateButton.setText("⏳ Translating...");
+
+        javafx.concurrent.Task<String> task = new javafx.concurrent.Task<>() {
+            @Override
+            protected String call() throws Exception {
+                return translateService.translateText(originalText, targetLanguage);
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            String translated = task.getValue();
+
+            if (translated != null && !translated.isEmpty()) {
+                contentLabel.setText(translated);
+                translateButton.setText("✓ Translated");
+            } else {
+                alert("Translation failed.", Alert.AlertType.ERROR);
+                translateButton.setText("🌍 Translate");
+                translateButton.setDisable(false);
+            }
+        });
+
+        task.setOnFailed(event -> {
+            alert("Error: " + task.getException().getMessage(),
+                    Alert.AlertType.ERROR);
+
+            translateButton.setText("🌍 Translate");
+            translateButton.setDisable(false);
+        });
+
+        java.lang.Thread backgroundThread = new java.lang.Thread(task);
+        backgroundThread.setDaemon(true);
+        backgroundThread.start();
     }
 }

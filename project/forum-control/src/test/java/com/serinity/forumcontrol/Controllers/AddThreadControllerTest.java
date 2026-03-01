@@ -2,7 +2,6 @@ package com.serinity.forumcontrol.Controllers;
 
 import com.serinity.forumcontrol.Models.Category;
 import com.serinity.forumcontrol.Models.ThreadType;
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
 import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -43,7 +42,7 @@ class AddThreadControllerTest {
         inject("pinnedContainer", new HBox());
 
         // Inject a fake user
-        FakeUser user ;
+        com.serinity.forumcontrol.HardcodedUser.CurrentUser user ;
 
         // Initialize controller
         controller.initialize();

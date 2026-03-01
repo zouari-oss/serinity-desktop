@@ -1,10 +1,8 @@
 package com.serinity.forumcontrol.Controllers;
 
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
 import com.serinity.forumcontrol.Models.ThreadStatus;
 import com.serinity.forumcontrol.Services.ServiceReply;
 import com.serinity.forumcontrol.Services.ServiceThread;
-import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,14 +11,14 @@ import javafx.scene.control.*;
 import com.serinity.forumcontrol.Models.Thread;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.Optional;
 
 public class ThreadCardController {
-    String currentUserId = FakeUser.getCurrentUserId();
+    private com.serinity.forumcontrol.CurrentUser.CurrentUser user;
+    String currentUserId = user.getCurrentUserId();
     @FXML
     private VBox rootCard;
     @FXML
@@ -33,6 +31,8 @@ public class ThreadCardController {
     private Label lfoukLabel;
     @FXML
     private MenuButton menuButton;
+    @FXML
+    private Label badgeLabel;
     private ServiceThread service = new ServiceThread();
     private Thread thread;
     private Runnable onRefreshCallback;
@@ -64,6 +64,11 @@ public class ThreadCardController {
         lfoukLabel.setText(lfouk);
         configureMenu();
         applyPinnedStyling();
+        String badge = service.getThreadBadge(t.getId());
+        if (badgeLabel != null) {
+            badgeLabel.setText(badge);
+            applyBadgeStyling(badge);
+        }
     }
 
     @FXML
@@ -471,6 +476,25 @@ public class ThreadCardController {
                     "-fx-text-fill: gray;"
             );
         }
+    }
+    private void applyBadgeStyling(String badge) {
+        if (badgeLabel == null) return;
+
+        String baseStyle =
+                "-fx-font-size: 11; -fx-font-weight: bold;" +
+                        "-fx-padding: 2 8 2 8;" +
+                        "-fx-background-radius: 20;" +
+                        "-fx-text-fill: white;";
+
+        String bgColor;
+        switch (badge) {
+            case "🏆 Elite"   -> bgColor = "#7c3aed"; // purple
+            case "🔥 Hot"     -> bgColor = "#ef4444"; // red
+            case "⭐ Rising"  -> bgColor = "#f59e0b"; // amber
+            case "💬 Active"  -> bgColor = "#3b82f6"; // blue
+            default           -> bgColor = "#6b7280"; // grey (New)
+        }
+        badgeLabel.setStyle(baseStyle + "-fx-background-color: " + bgColor + ";");
     }
 
 }

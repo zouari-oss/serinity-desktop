@@ -4,7 +4,6 @@ import com.serinity.forumcontrol.Models.Thread;
 import com.serinity.forumcontrol.Models.ThreadType;
 import com.serinity.forumcontrol.Models.ThreadStatus;
 import com.serinity.forumcontrol.Utils.MyDataBase;
-import com.serinity.forumcontrol.HardcodedUser.FakeUser;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ public class ServiceThread implements Services<Thread> {
 
     @Override
     public void add(Thread thread) {
-        thread.setUserId(String.valueOf(FakeUser.getCurrentUserId()));
+        thread.setUserId(String.valueOf(com.serinity.forumcontrol.CurrentUser.CurrentUser.getCurrentUserId()));
 
         String req = "INSERT INTO `threads` (`category_id`, `user_id`, `title`, `content`,`image_url`, `type`, `status`, `is_pinned`) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
 
@@ -154,6 +153,89 @@ public class ServiceThread implements Services<Thread> {
         return threads;
     }
 
+    public String getThreadBadge(long threadId) {
+        String sql = """
+            WITH
+            base AS (
+                SELECT
+                    t.id,
+                    t.user_id,
+                    t.likecount,
+                    t.dislikecount,
+                    t.followcount,
+                    t.repliescount,
+                    DATEDIFF(NOW(), t.created_at)  AS days_old
+                FROM threads t
+                WHERE t.id = ?
+            ),
+
+            recent_likes AS (
+                SELECT COUNT(*) AS likes_live
+                FROM postinteraction pi
+                WHERE pi.thread_id = ?
+                  AND pi.vote      = 1
+            ),
+
+            author_rep AS (
+                SELECT COALESCE(SUM(pi.follow), 0) AS nb_followers
+                FROM postinteraction pi
+                JOIN threads t ON t.id = pi.thread_id
+                WHERE t.user_id = (SELECT user_id FROM base)
+            ),
+
+            scoring AS (
+                SELECT
+                    b.likecount,
+                    b.dislikecount,
+                    COALESCE(
+                        b.dislikecount * 1.0
+                        / NULLIF(b.likecount + b.dislikecount, 0),
+                    0) AS controversy_ratio,
+                    (
+                        b.likecount         * 3.0
+                      + b.repliescount      * 3.0
+                      + b.followcount       * 2.0
+                      - b.dislikecount      * 1.0
+                      + COALESCE(a.nb_followers, 0) * 1.5
+                      + COALESCE(r.likes_live,   0) * 5.0
+                      + (1.0 / (b.days_old + 1))   * 10.0
+                    ) AS raw_score
+                FROM base b
+                CROSS JOIN recent_likes r
+                CROSS JOIN author_rep   a
+            ),
+
+            final_score AS (
+                SELECT
+                    raw_score * (1.0 - controversy_ratio * 0.3) AS score_final
+                FROM scoring
+            )
+
+            SELECT
+                CASE
+                    WHEN score_final >= 200 THEN '🏆 Elite'
+                    WHEN score_final >= 100 THEN '🔥 Hot'
+                    WHEN score_final >= 50 THEN '⭐ Rising'
+                    WHEN score_final >= 20  THEN '💬 Active'
+                    ELSE                        '🆕 New'
+                END AS badge,
+                ROUND(score_final, 2) AS score_final
+            FROM final_score
+            """;
+
+        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            ps.setLong(1, threadId);   // base CTE
+            ps.setLong(2, threadId);   // recent_likes CTE
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("badge");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error computing thread badge: " + e.getMessage());
+        }
+        return "🆕 New";
+    }
     @Override
     public void update(Thread thread) {
         String req = "UPDATE `threads` SET `category_id` = ?, `user_id` = ?, `title` = ?, `content` = ?,`content` = ?, `type` = ?, `status` = ?, `is_pinned` = ? WHERE `id` = ?";

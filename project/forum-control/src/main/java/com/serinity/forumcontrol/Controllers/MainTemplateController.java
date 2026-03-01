@@ -85,7 +85,7 @@ public class MainTemplateController {
         setActiveNav(clicked);
 
         if (clicked == btnSupport) {
-            loadIntoHost("/fxml/forum/ForumPostsView.fxml");
+            loadIntoHost("/fxml/forum/ForumBackoffice.fxml");
         } else {
             loadIntoHost("/fxml/pages/Blank.fxml");
         }
