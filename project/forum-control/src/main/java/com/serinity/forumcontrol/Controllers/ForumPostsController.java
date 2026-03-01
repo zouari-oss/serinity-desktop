@@ -33,8 +33,6 @@ public class ForumPostsController {
     private com.serinity.forumcontrol.CurrentUser.CurrentUser user;
     String currentUserId = user.getCurrentUserId();
     @FXML private VBox cardsContainer;
-    @FXML private Button categoriesButton;
-    @FXML private Button newCategoryButton;
     @FXML private Button homeButton;
     @FXML private Button myThreadsButton;
     @FXML private Button followedButton;
@@ -71,7 +69,6 @@ public class ForumPostsController {
         configureSearch();
         configureFilters();
         loadCheckboxCategories();
-        configureCategory();
         setActiveNavButton(homeButton);
         updateNotificationBadge();
         Timeline notificationRefreshTimeline = new Timeline(
@@ -167,31 +164,6 @@ public class ForumPostsController {
         }
     }
 
-
-    private void configureCategory() {
-        try {
-            boolean isAdmin = service.isAdmin(currentUserId);
-            if (isAdmin) {
-                categoriesButton.setVisible(true);
-                categoriesButton.setManaged(true);
-                newCategoryButton.setVisible(true);
-                newCategoryButton.setManaged(true);
-            } else {
-                categoriesButton.setVisible(false);
-                categoriesButton.setManaged(false);
-                newCategoryButton.setVisible(false);
-                newCategoryButton.setManaged(false);
-            }
-
-        } catch (Exception e) {
-            System.err.println("Error configuring menu: " + e.getMessage());
-            e.printStackTrace();
-            categoriesButton.setVisible(false);
-            categoriesButton.setManaged(false);
-            newCategoryButton.setVisible(false);
-            newCategoryButton.setManaged(false);
-        }
-    }
     @FXML
     private void onNewThread() {
         try {
@@ -212,37 +184,6 @@ public class ForumPostsController {
                     "Could not load New Thread form.\n\n" +
                             "Error: " + e.getMessage() + "\n\n" +
                             "Check that AddThread.fxml is at: /fxml/forum/AddThread.fxml",
-                    Alert.AlertType.ERROR);
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Unexpected Error",
-                    "An unexpected error occurred: " + e.getMessage(),
-                    Alert.AlertType.ERROR);
-        }
-    }
-
-    @FXML
-    private void onNewCategory() {
-        try {
-
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/forum/AddCategory.fxml"));
-            Parent addCategoryView = loader.load();
-
-            System.out.println("FXML loaded successfully");
-            BorderPane borderPane = findBorderPane();
-
-            if (borderPane != null) {
-                borderPane.setCenter(addCategoryView);
-                System.out.println("AddCategory view set in center pane");
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Error Loading View",
-                    "Could not load New Category form.\n\n" +
-                            "Error: " + e.getMessage() + "\n\n" +
-                            "Check that AddCategory.fxml is at: /fxml/forum/AddCategory.fxml",
                     Alert.AlertType.ERROR);
         } catch (Exception e) {
             e.printStackTrace();
@@ -276,12 +217,7 @@ public class ForumPostsController {
         toggleFilterButton.setManaged(false);
         loadArchivedThreads();
     }
-    @FXML
-    private void onCategories(){
-        toggleFilterButton.setVisible(false);
-        toggleFilterButton.setManaged(false);
-        loadCategories();
-    }
+
     public void loadThreads() {
         setActiveNavButton(homeButton);
         try {
@@ -319,32 +255,6 @@ public class ForumPostsController {
         }
     }
 
-    public void loadCategories() {
-        setActiveNavButton(categoriesButton);
-        try {
-            cardsContainer.getChildren().clear();
-            ServiceCategory service = new ServiceCategory();
-            List<Category> categories = service.getAll();
-
-            for (Category c : categories) {
-
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/fxml/forum/CategoryCard.fxml"));
-
-                Node card = loader.load();
-
-                CategoryCardController ctrl =
-                        loader.getController();
-
-                ctrl.setData(c);
-
-                cardsContainer.getChildren().add(card);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
     public void loadFollowedThreads() {
         setActiveNavButton(followedButton);
         try {
@@ -572,7 +482,6 @@ public class ForumPostsController {
         resetNavButton(myThreadsButton);
         resetNavButton(followedButton);
         resetNavButton(archivedButton);
-        resetNavButton(categoriesButton);
 
         if (activeButton != null) {
             activeButton.setStyle(

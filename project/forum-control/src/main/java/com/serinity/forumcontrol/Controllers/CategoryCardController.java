@@ -14,34 +14,41 @@ import javafx.scene.layout.VBox;
 import java.util.Optional;
 
 public class CategoryCardController {
-    @FXML
-    private VBox rootCard;
-    @FXML
-    private Label titleLabel;
-    @FXML
-    private Label metaLabel;
-    @FXML
-    private Label lfoukLabel;
-    @FXML
-    private MenuButton menuButton;
+    @FXML private VBox rootCard;
+    @FXML private Label titleLabel;
+    @FXML private Label slugLabel;
+    @FXML private Label metaLabel;
+    @FXML private Label lfoukLabel;
+    @FXML private MenuButton menuButton;
+
     private ServiceCategory service = new ServiceCategory();
     private Category category;
     private Runnable onRefreshCallback;
+
     public void setData(Category c) {
-        this.category= c;
-        String parent;
-        if(c.getParentId()==null){
-            parent="none";
-        }else parent=(service.getById(c.getParentId())).getSlug();
-        String lfouk =
-                " • Parent:" + parent ;
-        String title =
-                " • Name: " + c.getName() +
-                "           • Slug: " + c.getSlug();
-        titleLabel.setText(title);
+        this.category = c;
+
+        // Set category name (big and bold)
+        titleLabel.setText(c.getName());
+
+        slugLabel.setText("/" + c.getSlug());
+
         metaLabel.setText(c.getDescription());
-        lfoukLabel.setText(lfouk);
+
+        String parent;
+        if (c.getParentId() == null) {
+            parent = "none";
+        } else {
+            Category parentCat = service.getById(c.getParentId());
+            parent = parentCat != null ? parentCat.getSlug() : "unknown";
+        }
+        lfoukLabel.setText("• Parent: " + parent);
+
         buildMenu();
+    }
+
+    public void setOnRefreshCallback(Runnable callback) {
+        this.onRefreshCallback = callback;
     }
 
     private void buildMenu() {
@@ -57,33 +64,37 @@ public class CategoryCardController {
     private void handleDelete(ActionEvent event) {
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDialog.setTitle("Delete Category");
-        confirmDialog.setHeaderText("Are you sure you want to delete this Category?");
+        confirmDialog.setHeaderText("Are you sure you want to delete this category?");
         confirmDialog.setContentText(
-                "Thread: \"" + category.getSlug() + "\"\n\n" +
+                "Category: \"" + category.getName() + "\" (" + category.getSlug() + ")\n\n" +
                         "This will permanently delete:\n" +
                         "• The category\n" +
-                        "• All SubCategories \n\n" +
+                        "• All subcategories\n\n" +
                         "⚠️ This action cannot be undone!"
         );
+
         ButtonType deleteButton = new ButtonType("Delete", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         confirmDialog.getButtonTypes().setAll(deleteButton, cancelButton);
+
         Optional<ButtonType> result = confirmDialog.showAndWait();
 
         if (result.isPresent() && result.get() == deleteButton) {
             try {
+                // Delete subcategories first
                 try {
-                    ServiceCategory categoryService = new ServiceCategory();
-                    categoryService.deleteByParent(category.getId());
+                    service.deleteByParent(category.getId());
                 } catch (Exception e) {
                     System.err.println("Warning: Could not delete subcategories: " + e.getMessage());
                 }
 
+                // Delete the category
                 service.delete(category);
 
                 showAlert("Success",
-                        "Category \"" + category.getSlug() + "\" has been deleted successfully!",
+                        "Category \"" + category.getName() + "\" has been deleted successfully!",
                         Alert.AlertType.INFORMATION);
+
                 refreshCategoryList();
 
             } catch (Exception e) {
@@ -96,10 +107,8 @@ public class CategoryCardController {
                                 "Please try again or contact support if the problem persists.",
                         Alert.AlertType.ERROR);
             }
-        } else {
         }
     }
-
 
     private void handleEdit(ActionEvent event) {
         try {
@@ -151,11 +160,13 @@ public class CategoryCardController {
     public void handleMenuClick(MouseEvent event) {
         event.consume();
     }
+
     private void refreshCategoryList() {
         if (onRefreshCallback != null) {
             onRefreshCallback.run();
         }
     }
+
     private void showAlert(String title, String message, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
