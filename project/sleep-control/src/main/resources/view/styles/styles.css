@@ -773,3 +773,48 @@
 .alerte-modere   { -fx-background-color: rgba(244,180,0,0.16);  -fx-text-fill: #7A5200;      -fx-background-radius: 10; -fx-padding: 4 12; -fx-font-weight: 700; }
 .alerte-eleve    { -fx-background-color: rgba(230,81,0,0.14);   -fx-text-fill: #E65100;      -fx-background-radius: 10; -fx-padding: 4 12; -fx-font-weight: 700; }
 .alerte-critique { -fx-background-color: rgba(183,28,28,0.14);  -fx-text-fill: #B71C1C;      -fx-background-radius: 10; -fx-padding: 4 12; -fx-font-weight: 700; }
+
+
+/* ==================== BACKOFFICE (Admin) ==================== */
+
+.admin-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-width: 1.5;
+    -fx-border-color: #e5e7eb;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.09), 12, 0.2, 0, 3);
+}
+
+.admin-btn {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #111827;
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+    -fx-padding: 12 16;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-width: 1.5;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 10, 0.2, 0, 2);
+}
+
+.admin-btn:hover {
+    -fx-translate-y: -1;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.18), 16, 0.3, 0, 5);
+}
+
+/* Variantes basées sur les KPI cards */
+.admin-btn-primary { -fx-border-color: #0ea5e9; }
+.admin-btn-info    { -fx-border-color: #06b6d4; }
+.admin-btn-success { -fx-border-color: #22c55e; }
+.admin-btn-warning { -fx-border-color: #f97316; }
+.admin-btn-accent  { -fx-border-color: #6366f1; }
+
+/* Variante teal Serinity (si tu veux un bouton plein) */
+.admin-btn-teal {
+    -fx-background-color: #2F6F6D;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+.admin-btn-teal:hover { -fx-background-color: #1f5f63; }

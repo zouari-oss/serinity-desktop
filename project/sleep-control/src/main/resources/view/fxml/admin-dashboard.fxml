@@ -9,28 +9,32 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.serinity.sleepcontrol.controller.AdminDashboardController"
-      spacing="16" style="-fx-background-color: #ffffff;">
+      spacing="16"
+      styleClass="admin-card">
 
     <padding>
         <Insets top="24" right="24" bottom="24" left="24"/>
     </padding>
 
     <Label text="Backoffice Admin — Statistiques"
-           style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+           styleClass="admin-title"/>
 
     <Label text="Ouvrir Power BI en mode gestion (édition). L’admin doit avoir les droits sur le workspace."
-           wrapText="true" style="-fx-font-size: 13px; -fx-opacity: 0.75;"/>
+           wrapText="true"
+           styleClass="admin-subtitle"/>
 
     <HBox spacing="12">
         <Button text="🛠 Gérer statistiques Sommeil"
-                onAction="#gererSommeil"
-                prefWidth="260"/>
+                styleClass="admin-btn admin-btn-info"
+                onAction="#gererSommeil"/>
 
         <Button text="🛠 Gérer statistiques Rêve"
-                onAction="#gererReve"
-                prefWidth="260"/>
-    </HBox>
+                styleClass="admin-btn admin-btn-primary"
+                onAction="#gererReve"/>
 
-    <Button text="⬅ Retour" onAction="#retour" prefWidth="120"/>
+        <Button text="⬅ Retour"
+                styleClass="admin-btn admin-btn-teal"
+                onAction="#retour"/>
+    </HBox>
 
 </VBox>
