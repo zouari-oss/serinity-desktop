@@ -9,7 +9,7 @@ public class MyDataBase {
     private static MyDataBase instance ;
     final String URL = "jdbc:mariadb://127.0.0.1:3306/serinity";
     final String USERNAME = "root";
-    final String PASSWORD = "";
+    final String PASSWORD = "root";
     private Connection cnx ;
 
     private MyDataBase() {

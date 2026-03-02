@@ -24,8 +24,6 @@ module com.serinity.accesscontrol {
   requires weka.stable;
   requires org.json;
   requires org.apache.pdfbox;
-  requires org.mariadb.jdbc;
-    uses java.sql.Driver;
 
     // --- Module exports ---
   exports com.serinity.accesscontrol;

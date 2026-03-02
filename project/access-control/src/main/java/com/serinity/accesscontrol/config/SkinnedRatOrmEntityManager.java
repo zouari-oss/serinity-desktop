@@ -83,7 +83,7 @@ public class SkinnedRatOrmEntityManager {
    */
   public static EntityManager getEntityManager() {
       try {
-          Class.forName("org.mariadb.jdbc.Driver"); // hardcoded, NOT EnvironmentVariableLoader
+          Class.forName(EnvironmentVariableLoader.getJdbcDriver());
       } catch (final ClassNotFoundException e) {
           _LOGGER.error("JDBC driver not found", e);
           throw new RuntimeException(e);
