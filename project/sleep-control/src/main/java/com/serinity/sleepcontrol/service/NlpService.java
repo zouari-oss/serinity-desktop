@@ -106,8 +106,4 @@ public class NlpService {
     }
 
     // ── Inner classes payload ─────────────────────────────────
-   // private record GptPayload(String inputs,
-    //                          @com.google.gson.annotations.SerializedName("max_new_tokens")
-    //                          int maxNewTokens,
-    //                          float temperature) {}
 }
