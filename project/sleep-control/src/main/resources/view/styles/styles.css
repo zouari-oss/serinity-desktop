@@ -726,57 +726,54 @@
 
 /* ==================== ADMIN DASHBOARD (look KPI cards) ==================== */
 
-.admin-card {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 14;
-    -fx-border-radius: 14;
-    -fx-border-width: 1.5;
-    -fx-border-color: #e5e7eb; /* border clair cards */
-    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.09), 12, 0.2, 0, 3);
-}
+/* ==================== BOUTONS ADMIN ==================== */
 
-.admin-title {
-    -fx-text-fill: #111827;   /* stat-card-value */
-    -fx-font-size: 22px;
-    -fx-font-weight: 800;
-}
-
-.admin-subtitle {
-    -fx-text-fill: #6b7280;   /* stat-card-title */
-    -fx-font-size: 13px;
-    -fx-font-weight: 600;
-}
-
-/* Boutons (même style que cards KPI) */
 .admin-btn {
-    -fx-background-color: #ffffff;
-    -fx-text-fill: #111827;
     -fx-font-size: 13px;
-    -fx-font-weight: 800;
-    -fx-padding: 12 16;
-    -fx-background-radius: 14;
-    -fx-border-radius: 14;
-    -fx-border-width: 1.5;
+    -fx-font-weight: bold;
+    -fx-padding: 12 22;
+    -fx-background-radius: 10;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 10, 0.2, 0, 2);
-}
-
-.admin-btn:hover {
-    -fx-translate-y: -1;
-    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.18), 16, 0.3, 0, 5);
-}
-
-/* Bordures KPI */
-.admin-btn-primary { -fx-border-color: #0ea5e9; } /* primary KPI */
-.admin-btn-info    { -fx-border-color: #06b6d4; } /* info KPI */
-
-/* Bouton plein Serinity */
-.admin-btn-teal {
-    -fx-background-color: #2F6F6D; /* -ser-primary */
     -fx-text-fill: white;
-    -fx-border-color: transparent;
 }
-.admin-btn-teal:hover { -fx-background-color: #1f5f63; }
+
+/* 🟠 Sommeil — Orangé chaud */
+.admin-btn-info {
+    -fx-background-color: linear-gradient(to right, #FF8C00, #FF5722);
+    -fx-effect: dropshadow(gaussian, rgba(255,87,34,0.45), 10, 0, 0, 4);
+}
+.admin-btn-info:hover {
+    -fx-background-color: linear-gradient(to right, #FF6F00, #E64A19);
+    -fx-effect: dropshadow(gaussian, rgba(255,87,34,0.65), 14, 0, 0, 6);
+    -fx-scale-x: 1.04;
+    -fx-scale-y: 1.04;
+}
+
+/* 🟢 Rêve — Vert émeraude */
+.admin-btn-primary {
+    -fx-background-color: linear-gradient(to right, #00C853, #1B5E20);
+    -fx-effect: dropshadow(gaussian, rgba(0,200,83,0.45), 10, 0, 0, 4);
+}
+.admin-btn-primary:hover {
+    -fx-background-color: linear-gradient(to right, #00E676, #2E7D32);
+    -fx-effect: dropshadow(gaussian, rgba(0,200,83,0.65), 14, 0, 0, 6);
+    -fx-scale-x: 1.04;
+    -fx-scale-y: 1.04;
+}
+
+/* 🔴 Retour — Rouge rubis */
+.admin-btn-teal {
+    -fx-background-color: linear-gradient(to right, #E53935, #B71C1C);
+    -fx-effect: dropshadow(gaussian, rgba(229,57,53,0.45), 8, 0, 0, 4);
+}
+.admin-btn-teal:hover {
+    -fx-background-color: linear-gradient(to right, #EF5350, #C62828);
+    -fx-effect: dropshadow(gaussian, rgba(229,57,53,0.65), 12, 0, 0, 6);
+    -fx-scale-x: 1.04;
+    -fx-scale-y: 1.04;
+}
+
+
 
 /* ── Recommandations chips ─────────────────────── */
 .insight-chip {

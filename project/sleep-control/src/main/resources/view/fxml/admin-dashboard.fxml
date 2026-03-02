@@ -1,64 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<?import java.lang.String?>
-<StackPane fx:id="root"
-           xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.serinity.sleepcontrol.controller.AdminDashboardController"
-           stylesheets="@/view/styles/styles.css">
+<StackPane fx:id="root" stylesheets="@/view/styles/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.sleepcontrol.controller.AdminDashboardController">
 
     <styleClass>
-        <String fx:value="app-bg"/>
+        <String fx:value="app-bg" />
     </styleClass>
 
-    <VBox spacing="16" maxWidth="920" prefWidth="920">
+    <VBox maxWidth="920" prefWidth="920" spacing="16">
         <padding>
-            <Insets top="24" right="24" bottom="24" left="24"/>
+            <Insets bottom="24" left="24" right="24" top="24" />
         </padding>
 
         <styleClass>
-            <String fx:value="admin-card"/>
+            <String fx:value="admin-card" />
         </styleClass>
 
         <Label text="Backoffice Admin — Statistiques">
             <styleClass>
-                <String fx:value="admin-title"/>
+                <String fx:value="admin-title" />
             </styleClass>
         </Label>
 
-        <Label text="Ouvrir Power BI en mode gestion (édition). L’admin doit avoir les droits sur le workspace."
-               wrapText="true">
+        <Label wrapText="true">
             <styleClass>
-                <String fx:value="admin-subtitle"/>
+                <String fx:value="admin-subtitle" />
             </styleClass>
         </Label>
 
         <HBox spacing="12">
-            <Button text="🛠 Gérer statistiques Sommeil" onAction="#gererSommeil">
+            <Button onAction="#gererSommeil" text="🛠 Gérer statistiques Sommeil">
                 <styleClass>
-                    <String fx:value="admin-btn"/>
-                    <String fx:value="admin-btn-info"/>
+                    <String fx:value="admin-btn" />
+                    <String fx:value="admin-btn-info" />
                 </styleClass>
             </Button>
 
-            <Button text="🛠 Gérer statistiques Rêve" onAction="#gererReve">
+            <Button onAction="#gererReve" text="🛠 Gérer statistiques Rêve">
                 <styleClass>
-                    <String fx:value="admin-btn"/>
-                    <String fx:value="admin-btn-primary"/>
+                    <String fx:value="admin-btn" />
+                    <String fx:value="admin-btn-primary" />
                 </styleClass>
             </Button>
 
-            <Button text="⬅ Retour" onAction="#retour">
+            <Button onAction="#retour" text="⬅ Retour">
                 <styleClass>
-                    <String fx:value="admin-btn"/>
-                    <String fx:value="admin-btn-teal"/>
+                    <String fx:value="admin-btn" />
+                    <String fx:value="admin-btn-teal" />
                 </styleClass>
             </Button>
         </HBox>
