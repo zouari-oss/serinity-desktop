@@ -84,7 +84,6 @@ public class ReveController {
         try {
             currentReves = reveService.listerTous();
             afficherCards();
-            updateStats();
         } catch (SQLException e) {
             showError("Erreur", "Impossible de charger les rêves");
             e.printStackTrace();
@@ -116,52 +115,7 @@ public class ReveController {
         }
     }
 
-    private void updateStats() {
-        try {
-            int    total        = currentReves != null ? currentReves.size() : 0;
-            double intensiteMoy = reveService.calculerIntensiteMoyenne();
-            double anxieteMoy   = reveService.calculerAnxieteMoyenne();
 
-            totalRevesLabel.setText("Total: " + total + " rêves");
-            intensiteMoyLabel.setText(
-                    String.format("Intensité moyenne: %.1f/10", intensiteMoy));
-            anxieteMoyLabel.setText(
-                    String.format("Anxiété moyenne: %.1f/10", anxieteMoy));
-            anxieteMoyBar.setProgress(anxieteMoy / 10.0);
-            anxieteMoyBar.getStyleClass()
-                    .removeAll("anxiete-low", "anxiete-mid", "anxiete-high");
-            if      (anxieteMoy >= 7) anxieteMoyBar.getStyleClass().add("anxiete-high");
-            else if (anxieteMoy >= 4) anxieteMoyBar.getStyleClass().add("anxiete-mid");
-            else                      anxieteMoyBar.getStyleClass().add("anxiete-low");
-
-        } catch (SQLException e) {
-            totalRevesLabel.setText("Erreur statistiques");
-            intensiteMoyLabel.setText("");
-            anxieteMoyLabel.setText("");
-            anxieteMoyBar.setProgress(0);
-        }
-    }
-
-    @FXML
-    private void ouvrirStatistiques() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/fxml/reve-stats.fxml"));
-            Parent root = loader.load();
-            ReveStatsController statsCtrl = loader.getController();
-            statsCtrl.setReveService(reveService);
-            Stage stage = new Stage();
-            stage.setTitle("Statistiques des Rêves");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(root, 700, 620));
-            stage.setMinWidth(600);
-            stage.setMinHeight(500);
-            stage.showAndWait();
-        } catch (IOException e) {
-            showError("Erreur", "Impossible d'ouvrir les statistiques.");
-            e.printStackTrace();
-        }
-    }
 
 
     @FXML
@@ -250,7 +204,6 @@ public class ReveController {
             } else {
                 currentReves = reveService.rechercherDynamique(critere);
                 afficherCards();
-                updateStats();
             }
         } catch (SQLException e) {
             showError("Erreur", "Erreur lors de la recherche");
@@ -271,7 +224,6 @@ public class ReveController {
                     ? filtres.stream().filter(Reve::isRecurrent).toList()
                     : filtres;
             afficherCards();
-            updateStats();
         } catch (SQLException e) {
             showError("Erreur", "Erreur lors du filtrage");
             e.printStackTrace();
@@ -295,7 +247,6 @@ public class ReveController {
                 case "Anxiete (faible)"   -> currentReves = reveService.trierParAnxiete(true);
             }
             afficherCards();
-            updateStats();
         } catch (SQLException e) {
             showError("Erreur", "Erreur lors du tri");
             e.printStackTrace();

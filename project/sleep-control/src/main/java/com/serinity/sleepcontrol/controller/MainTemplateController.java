@@ -3,9 +3,10 @@ package com.serinity.sleepcontrol.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Side;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
@@ -15,19 +16,19 @@ public class MainTemplateController {
 
     @FXML private StackPane contentHost;
 
-    // Les 5 boutons du groupe (btnSleep est remplacé par menuSleep)
+    // Nav buttons
     @FXML private Button btnDashboard;
     @FXML private Button btnMood;
     @FXML private Button btnSupport;
     @FXML private Button btnExercises;
     @FXML private Button btnAppointments;
 
-    // Ton MenuButton à la place de btnSleep
+    // MenuButton Sommeil
     @FXML private MenuButton menuSleep;
 
     @FXML private Label userNameLabel;
 
-    // Suivi du bouton actif (null si c'est menuSleep qui est actif)
+    // Suivi du bouton actif (null si menuSleep est actif)
     private Button currentActiveButton;
 
     @FXML
@@ -36,60 +37,81 @@ public class MainTemplateController {
             userNameLabel.setText("Utilisateur");
         }
 
-        // Dashboard actif par défaut
-        currentActiveButton = btnDashboard;
+        // ✅ Page par défaut = Dashboard (Backoffice Admin)
         setActiveButton(btnDashboard);
-
-        loadPage("/view/fxml/sleep-page.fxml");
+        menuSleep.getStyleClass().remove("nav-menu-btn-active");
+        loadPage("/view/fxml/admin-dashboard.fxml");
     }
 
+    // =========================
+    // NAV BUTTONS (Dashboard/Mood/Support/Exercises/Appointments)
+    // =========================
     @FXML
     private void onNavClick(ActionEvent event) {
         Button clicked = (Button) event.getSource();
 
-        // Désactiver menuSleep si actif
+        // ✅ Désactiver le menuSleep (visuellement)
         menuSleep.getStyleClass().remove("nav-menu-btn-active");
 
+        // ✅ Activer le bouton cliqué
         setActiveButton(clicked);
 
         if (clicked == btnDashboard) {
-            loadPage("/view/fxml/sleep-page.fxml");
+            loadPage("/view/fxml/admin-dashboard.fxml"); // ✅ backoffice
         } else if (clicked == btnMood) {
             showInfoPage("Page Mood — module de vos collègues");
+            // si tu as un vrai fxml, remplace par:
+            // loadPage("/view/fxml/mood.fxml");
         } else if (clicked == btnSupport) {
             showInfoPage("Page Support — module de vos collègues");
+            // loadPage("/view/fxml/support.fxml");
         } else if (clicked == btnExercises) {
             showInfoPage("Page Exercises — module de vos collègues");
+            // loadPage("/view/fxml/exercices.fxml");
         } else if (clicked == btnAppointments) {
             showInfoPage("Page Appointments — module de vos collègues");
+            // loadPage("/view/fxml/appointments.fxml");
         }
     }
 
+    // =========================
+    // MENU SOMMEIL / RÊVES
+    // =========================
     @FXML
     private void onMenuSommeil() {
-        // Désactiver les boutons normaux
-        if (currentActiveButton != null) {
-            currentActiveButton.getStyleClass().remove("nav-btn-active");
-            currentActiveButton = null;
-        }
+        // ✅ Désactiver les boutons normaux
+        clearActiveButton();
+
+        // ✅ Activer visuellement le menu
         menuSleep.getStyleClass().remove("nav-menu-btn-active");
         menuSleep.getStyleClass().add("nav-menu-btn-active");
 
-        loadPage("/view/fxml/sleep-page.fxml");
+        // ⚠️ Mets ici ton vrai fichier sommeil
+        // Si ton projet utilise "sommeil.fxml" :
+        loadPage("/view/fxml/sommeil.fxml");
+
+        // Si c'est "sleep-page.fxml", utilise plutôt:
+        // loadPage("/view/fxml/sleep-page.fxml");
     }
 
     @FXML
     private void onMenuReve() {
-        if (currentActiveButton != null) {
-            currentActiveButton.getStyleClass().remove("nav-btn-active");
-            currentActiveButton = null;
-        }
+        clearActiveButton();
+
         menuSleep.getStyleClass().remove("nav-menu-btn-active");
         menuSleep.getStyleClass().add("nav-menu-btn-active");
 
-        loadPage("/view/fxml/reve-page.fxml");
+        // ⚠️ Mets ici ton vrai fichier rêve
+        // Si ton projet utilise "reve.fxml" :
+        loadPage("/view/fxml/reve.fxml");
+
+        // Si c'est "reve-page.fxml", utilise plutôt:
+        // loadPage("/view/fxml/reve-page.fxml");
     }
 
+    // =========================
+    // Helpers
+    // =========================
     private void setActiveButton(Button newActive) {
         if (currentActiveButton != null) {
             currentActiveButton.getStyleClass().remove("nav-btn-active");
@@ -98,6 +120,13 @@ public class MainTemplateController {
             newActive.getStyleClass().add("nav-btn-active");
         }
         currentActiveButton = newActive;
+    }
+
+    private void clearActiveButton() {
+        if (currentActiveButton != null) {
+            currentActiveButton.getStyleClass().remove("nav-btn-active");
+            currentActiveButton = null;
+        }
     }
 
     private void loadPage(String fxmlPath) {
@@ -109,11 +138,11 @@ public class MainTemplateController {
             }
             FXMLLoader loader = new FXMLLoader(url);
             Parent page = loader.load();
-            contentHost.getChildren().clear();
-            contentHost.getChildren().add(page);
+            contentHost.getChildren().setAll(page);
+
         } catch (IOException e) {
             e.printStackTrace();
-            showErrorPage("Erreur : " + e.getMessage());
+            showErrorPage("Erreur de chargement : " + e.getMessage());
         }
     }
 
