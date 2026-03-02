@@ -2,6 +2,7 @@ package com.serinity.sleepcontrol.controller;
 
 import com.serinity.sleepcontrol.utils.PowerBIConfig;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
@@ -9,6 +10,9 @@ import java.awt.Desktop;
 import java.net.URI;
 
 public class AdminDashboardController {
+
+    // ✅ Doit correspondre au container racine de ton admin-dashboard.fxml (ex: VBox)
+    @FXML private Node root;
 
     @FXML
     private void gererSommeil() {
@@ -22,28 +26,30 @@ public class AdminDashboardController {
 
     @FXML
     private void retour() {
-        // Ferme la fenêtre si c’est une popup
-        Stage stage = (Stage) javafx.stage.Window.getWindows().stream()
-                .filter(w -> w.isShowing())
-                .reduce((first, second) -> second)
-                .orElse(null);
-
-        if (stage != null) stage.hide();
+        // ✅ Ferme UNIQUEMENT la fenêtre qui contient ce FXML
+        if (root != null && root.getScene() != null && root.getScene().getWindow() != null) {
+            ((Stage) root.getScene().getWindow()).close(); // ou .hide()
+        }
     }
 
     private void ouvrirLien(String url, String nom) {
         try {
             if (url == null || url.isBlank() || url.startsWith("COLLE_ICI")) {
-                showError("Lien manquant",
-                        "Colle le lien Power BI Service pour " + nom + " dans PowerBIConfig (ADMIN_*_MANAGE_URL).");
+                showError(
+                        "Lien manquant",
+                        "Colle le lien Power BI Service pour " + nom +
+                                " dans PowerBIConfig (ADMIN_*_MANAGE_URL)."
+                );
                 return;
             }
 
-            if (Desktop.isDesktopSupported()) {
-                Desktop.getDesktop().browse(new URI(url));
-            } else {
+            if (!Desktop.isDesktopSupported()) {
                 showError("Erreur", "Impossible d’ouvrir le navigateur sur cette machine.");
+                return;
             }
+
+            Desktop.getDesktop().browse(new URI(url));
+
         } catch (Exception e) {
             showError("Erreur", "Impossible d'ouvrir Power BI (" + nom + ").");
             e.printStackTrace();

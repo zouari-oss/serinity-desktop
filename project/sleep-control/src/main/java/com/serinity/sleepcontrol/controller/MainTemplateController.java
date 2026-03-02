@@ -61,7 +61,6 @@ public class MainTemplateController {
         } else if (clicked == btnMood) {
             showInfoPage("Page Mood — module de vos collègues");
             // si tu as un vrai fxml, remplace par:
-            // loadPage("/view/fxml/mood.fxml");
         } else if (clicked == btnSupport) {
             showInfoPage("Page Support — module de vos collègues");
             // loadPage("/view/fxml/support.fxml");
@@ -138,6 +137,7 @@ public class MainTemplateController {
             }
             FXMLLoader loader = new FXMLLoader(url);
             Parent page = loader.load();
+            page.getStylesheets().add(getClass().getResource("/view/styles/styles.css").toExternalForm());
             contentHost.getChildren().setAll(page);
 
         } catch (IOException e) {

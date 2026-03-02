@@ -1,7 +1,8 @@
 package com.serinity.sleepcontrol.controller;
-
 import com.serinity.sleepcontrol.ia.AnalyseResult;
-import com.serinity.sleepcontrol.ia.ReveAnalyseIA;
+
+
+import com.serinity.sleepcontrol.ia.ReveAnalyseIAAgent;
 import com.serinity.sleepcontrol.model.Reve;
 import com.serinity.sleepcontrol.service.ReveService;
 import javafx.application.Platform;
@@ -10,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class ReveAnalyseController {
@@ -26,10 +26,10 @@ public class ReveAnalyseController {
     @FXML private ComboBox<String> modeCombo;
     @FXML private FlowPane         recommandationsContainer;
 
-    private ReveService     reveService;
-    private Reve            reveUnique;
-    private boolean         pret = false;  // ← true quand tout est prêt
-    private final ReveAnalyseIA ia = new ReveAnalyseIA();
+    private ReveService          reveService;
+    private Reve                 reveUnique;
+    private boolean              pret = false;
+    private final ReveAnalyseIAAgent ia = new ReveAnalyseIAAgent();
 
     @FXML
     public void initialize() {
@@ -40,18 +40,14 @@ public class ReveAnalyseController {
         });
     }
 
-    // ─── 1. Toujours appeler EN PREMIER ──────────────────────────────────────────
     public void setReveService(ReveService service) {
         this.reveService = service;
-        // Ne lance rien ici — attend demarrerAnalyseGlobale() ou setReveUnique()
     }
 
-    // ─── 2a. Appeler pour une analyse globale ─────────────────────────────────────
     public void demarrerAnalyseGlobale() {
         marquerPret();
     }
 
-    // ─── 2b. Appeler pour analyser un rêve spécifique ────────────────────────────
     public void setReveUnique(Reve reve) {
         this.reveUnique = reve;
         modeCombo.setValue("Rêve sélectionné");
@@ -59,7 +55,6 @@ public class ReveAnalyseController {
         marquerPret();
     }
 
-    // ─── Déclenche l'analyse quand tout est prêt ─────────────────────────────────
     private void marquerPret() {
         if (reveService == null) return;
         pret = true;
@@ -80,8 +75,8 @@ public class ReveAnalyseController {
                 lblMode.setText("🔍 Analyse globale — " + tous.size() + " rêves");
             }
             afficherResultat(result);
-        } catch (SQLException e) {
-            txtConclusion.setText("Erreur lors de l'analyse.");
+        } catch (Exception e) {
+            txtConclusion.setText("Erreur lors de l'analyse : " + e.getMessage());
             e.printStackTrace();
         }
     }

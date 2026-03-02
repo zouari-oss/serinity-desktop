@@ -9,6 +9,7 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.serinity.sleepcontrol.controller.AdminDashboardController"
+      fx:id="root"
       spacing="16"
       styleClass="admin-card">
 
@@ -25,16 +26,16 @@
 
     <HBox spacing="12">
         <Button text="🛠 Gérer statistiques Sommeil"
-                styleClass="admin-btn admin-btn-info"
-                onAction="#gererSommeil"/>
+                onAction="#gererSommeil"
+                styleClass="admin-btn admin-btn-info"/>
 
         <Button text="🛠 Gérer statistiques Rêve"
-                styleClass="admin-btn admin-btn-primary"
-                onAction="#gererReve"/>
+                onAction="#gererReve"
+                styleClass="admin-btn admin-btn-primary"/>
 
         <Button text="⬅ Retour"
-                styleClass="admin-btn admin-btn-teal"
-                onAction="#retour"/>
+                onAction="#retour"
+                styleClass="admin-btn admin-btn-teal"/>
     </HBox>
 
 </VBox>
