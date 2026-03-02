@@ -82,14 +82,13 @@ public class SkinnedRatOrmEntityManager {
    *                          connection cannot be established
    */
   public static EntityManager getEntityManager() {
-    try {
-      Class.forName(EnvironmentVariableLoader.getJdbcDriver());
-    } catch (final ClassNotFoundException e) {
-      _LOGGER.error("JDBC driver not found", e);
-      throw new RuntimeException(e);
-    }
+      try {
+          Class.forName("org.mariadb.jdbc.Driver"); // hardcoded, NOT EnvironmentVariableLoader
+      } catch (final ClassNotFoundException e) {
+          _LOGGER.error("JDBC driver not found", e);
+          throw new RuntimeException(e);
+      }
 
-    final Connection connection = getConnection();
-    return new EntityManager(connection);
-  }
-} // SkinnedRatOrmEntityManager class
+      final Connection connection = getConnection();
+      return new EntityManager(connection);
+  }}// SkinnedRatOrmEntityManager class

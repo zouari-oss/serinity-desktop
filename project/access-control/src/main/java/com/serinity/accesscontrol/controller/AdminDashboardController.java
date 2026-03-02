@@ -88,6 +88,12 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
     replace(ResourceFile.MOOD_ADMIN_MANAGMENT.getFileName());
   }
 
+    @FXML
+    void onForumManagmentButtonAction(ActionEvent event) {
+        replace(ResourceFile.FORUM_ADMIN_FXML.getFileName());
+    }
+
+
   @FXML
   void onLogoutButtonAction(final ActionEvent event) {
 

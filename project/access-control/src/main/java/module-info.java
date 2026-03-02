@@ -22,11 +22,16 @@ module com.serinity.accesscontrol {
   requires org.opencv;
   requires com.fasterxml.jackson.databind;
   requires weka.stable;
+  requires org.json;
+  requires org.apache.pdfbox;
+  requires org.mariadb.jdbc;
+    uses java.sql.Driver;
 
-  // --- Module exports ---
+    // --- Module exports ---
   exports com.serinity.accesscontrol;
 
   // --- Reflection access (opens) ---
+    opens com.serinity.accesscontrol.controller.forum to javafx.fxml;
   opens com.serinity.accesscontrol.controller to javafx.fxml;
   opens com.serinity.accesscontrol.controller.backoffice to javafx.fxml;
   opens com.serinity.accesscontrol.model to org.zouarioss.skinnedratorm;
