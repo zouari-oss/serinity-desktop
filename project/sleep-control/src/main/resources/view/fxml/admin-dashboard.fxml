@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.serinity.sleepcontrol.controller.AdminDashboardController"
+      spacing="16" style="-fx-background-color: #ffffff;">
+
+    <padding>
+        <Insets top="24" right="24" bottom="24" left="24"/>
+    </padding>
+
+    <Label text="Backoffice Admin — Statistiques"
+           style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+
+    <Label text="Ouvrir Power BI en mode gestion (édition). L’admin doit avoir les droits sur le workspace."
+           wrapText="true" style="-fx-font-size: 13px; -fx-opacity: 0.75;"/>
+
+    <HBox spacing="12">
+        <Button text="🛠 Gérer statistiques Sommeil"
+                onAction="#gererSommeil"
+                prefWidth="260"/>
+
+        <Button text="🛠 Gérer statistiques Rêve"
+                onAction="#gererReve"
+                prefWidth="260"/>
+    </HBox>
+
+    <Button text="⬅ Retour" onAction="#retour" prefWidth="120"/>
+
+</VBox>
