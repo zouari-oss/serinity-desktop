@@ -57,7 +57,7 @@ public class MainTemplateController {
         setActiveButton(clicked);
 
         if (clicked == btnDashboard) {
-            loadPage("/ressources/view/fxml/admin-dashboard.fxml"); // ✅ backoffice
+            loadPage("/view/fxml/admin-dashboard.fxml");
         } else if (clicked == btnMood) {
             showInfoPage("Page Mood — module de vos collègues");
             // si tu as un vrai fxml, remplace par:

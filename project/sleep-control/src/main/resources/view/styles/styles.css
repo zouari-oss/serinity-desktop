@@ -777,3 +777,22 @@
     -fx-border-color: transparent;
 }
 .admin-btn-teal:hover { -fx-background-color: #1f5f63; }
+
+/* ── Recommandations chips ─────────────────────── */
+.insight-chip {
+    -fx-background-color: #e8f4fd;
+    -fx-background-radius: 20px;
+    -fx-border-color: #3498db;
+    -fx-border-radius: 20px;
+    -fx-border-width: 1px;
+    -fx-padding: 8 14 8 14;
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e50;
+    -fx-cursor: hand;
+}
+
+.insight-chip-neutral {
+    -fx-background-color: #eaf7f0;
+    -fx-border-color: #27ae60;
+    -fx-text-fill: #1e8449;
+}

@@ -4,72 +4,103 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="mainContainer" spacing="15.0" style="-fx-background-color: #f5f7fa;" stylesheets="@../styles/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.sleepcontrol.controller.ReveController">
+<VBox fx:id="mainContainer"
+      spacing="15.0"
+      style="-fx-background-color: #f5f7fa;"
+      stylesheets="@../styles/styles.css"
+      xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.serinity.sleepcontrol.controller.ReveController">
 
     <padding>
-        <Insets bottom="20" left="20" right="20" top="20" />
+        <Insets bottom="20" left="20" right="20" top="20"/>
     </padding>
 
     <!-- En-tête -->
     <HBox alignment="CENTER_LEFT" spacing="15.0">
-        <Label styleClass="page-header" text="Gestion des Rêves" />
-        <Region HBox.hgrow="ALWAYS" />
-        <Button fx:id="btnStats" onAction="#ouvrirStatistiques" styleClass="btn-secondary" text="📊 Statistiques" />
-        <Button fx:id="btnAjouter" onAction="#ajouterReve" styleClass="btn-primary" text="+ Ajouter un Rêve" />
-        <Button fx:id="btnRefresh" onAction="#rafraichir" styleClass="btn-secondary" text="⟳ Rafraîchir" />
+        <Label styleClass="page-header" text="Gestion des Rêves"/>
+        <Region HBox.hgrow="ALWAYS"/>
 
-        <Button onAction="#ouvrirAnalyseIA" styleClass="btn-secondary" text=" Analyse IA" />
+        <Button fx:id="btnStats"
+                onAction="#ouvrirStatistiques"
+                styleClass="btn-secondary"
+                text="📊 Statistiques"/>
 
+        <Button fx:id="btnAjouter"
+                onAction="#ajouterReve"
+                styleClass="btn-primary"
+                text="+ Ajouter un Rêve"/>
 
+        <Button fx:id="btnRefresh"
+                onAction="#rafraichir"
+                styleClass="btn-secondary"
+                text="⟳ Rafraîchir"/>
 
-
+        <Button onAction="#ouvrirAnalyseIA"
+                styleClass="btn-secondary"
+                text="Analyse IA"/>
     </HBox>
 
     <!-- Filtres -->
     <VBox spacing="12.0" styleClass="filter-container">
         <padding>
-            <Insets bottom="15" left="15" right="15" top="15" />
+            <Insets bottom="15" left="15" right="15" top="15"/>
         </padding>
 
         <HBox alignment="CENTER_LEFT" spacing="10.0">
-            <Label styleClass="form-label" text="Recherche:" />
-            <TextField fx:id="searchField" prefWidth="400.0" promptText="Rechercher par titre, description, émotions..." styleClass="form-control" HBox.hgrow="ALWAYS" />
+            <Label styleClass="form-label" text="Recherche:"/>
+            <TextField fx:id="searchField"
+                       prefWidth="400.0"
+                       promptText="Rechercher par titre, description, émotions..."
+                       styleClass="form-control"
+                       HBox.hgrow="ALWAYS"/>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="15.0">
             <VBox spacing="5.0">
-                <Label styleClass="form-label" text="Type:" />
-                <ComboBox fx:id="filterType" prefWidth="150.0" />
+                <Label styleClass="form-label" text="Type:"/>
+                <ComboBox fx:id="filterType" prefWidth="150.0"/>
             </VBox>
+
             <VBox spacing="5.0">
-                <Label styleClass="form-label" text="Trier par:" />
-                <ComboBox fx:id="sortComboBox" prefWidth="180.0" />
+                <Label styleClass="form-label" text="Trier par:"/>
+                <ComboBox fx:id="sortComboBox" prefWidth="180.0"/>
             </VBox>
+
             <VBox spacing="5.0">
-                <Label text=" " />
-                <CheckBox fx:id="filterRecurrent" text="Rêves récurrents uniquement" />
+                <Label text=" "/>
+                <CheckBox fx:id="filterRecurrent" text="Rêves récurrents uniquement"/>
             </VBox>
         </HBox>
     </VBox>
 
-    <!-- Stats résumé (simple, 3 labels) -->
+    <!-- Stats résumé -->
     <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="stats-container">
         <padding>
-            <Insets bottom="10" left="15" right="15" top="10" />
+            <Insets bottom="10" left="15" right="15" top="10"/>
         </padding>
-        <Label fx:id="totalRevesLabel" styleClass="stat-badge-primary" text="Total: 0 rêves" />
-        <Label fx:id="intensiteMoyLabel" styleClass="stat-badge-info" text="Intensité moyenne: --/10" />
+
+        <Label fx:id="totalRevesLabel"
+               styleClass="stat-badge-primary"
+               text="Total: 0 rêves"/>
+
+        <Label fx:id="intensiteMoyLabel"
+               styleClass="stat-badge-info"
+               text="Intensité moyenne: --/10"/>
+
         <HBox alignment="CENTER_LEFT" spacing="8.0">
-            <ProgressBar fx:id="anxieteMoyBar" prefWidth="140.0" />
-            <Label fx:id="anxieteMoyLabel" styleClass="stats-label" text="Anxiété moyenne: --/10" />
+            <ProgressBar fx:id="anxieteMoyBar" prefWidth="140.0"/>
+            <Label fx:id="anxieteMoyLabel"
+                   styleClass="stats-label"
+                   text="Anxiété moyenne: --/10"/>
         </HBox>
     </HBox>
 
     <!-- Cartes -->
     <ScrollPane fitToWidth="true" styleClass="cards-scroll-pane" VBox.vgrow="ALWAYS">
-        <FlowPane fx:id="cardsContainer" hgap="15.0" styleClass="cards-flow-pane" vgap="15.0">
+        <FlowPane fx:id="cardsContainer" hgap="15.0" vgap="15.0" styleClass="cards-flow-pane">
             <padding>
-                <Insets bottom="10" left="10" right="10" top="10" />
+                <Insets bottom="10" left="10" right="10" top="10"/>
             </padding>
         </FlowPane>
     </ScrollPane>

@@ -193,7 +193,7 @@ public class ReveService {
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  STATISTIQUES DE BASE
+    //  STATISTIQUES (DAO)
     // ═══════════════════════════════════════════════════════════
 
     public List<Object[]> obtenirStatistiquesParType() throws SQLException {
@@ -211,44 +211,24 @@ public class ReveService {
                 .collect(Collectors.groupingBy(Reve::getHumeur, Collectors.counting()));
     }
 
-    private double calculerPourcentageEnCouleur() throws SQLException {
-        List<Reve> r = listerTous();
-        if (r.isEmpty()) return 0;
-        return (r.stream().filter(Reve::isCouleur).count() * 100.0) / r.size();
+    // ═══════════════════════════════════════════════════════════
+    //  ✅ KPI LOCAUX (pour ton bandeau)
+    // ═══════════════════════════════════════════════════════════
+
+    public int totalReves() throws SQLException {
+        return listerTous().size();
     }
 
-    public Map<String, Long> emotionsFrequentes() throws SQLException {
-        return listerTous().stream()
-                .flatMap(r -> r.getEmotionsList().stream())
-                .collect(Collectors.groupingBy(e -> e, Collectors.counting()))
-                .entrySet().stream()
-                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                .limit(10)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue,
-                        (a, b) -> a, LinkedHashMap::new));
+    public double intensiteMoyenne() throws SQLException {
+        List<Reve> reves = listerTous();
+        if (reves.isEmpty()) return 0;
+        return reves.stream().mapToInt(Reve::getIntensite).average().orElse(0);
     }
 
-    public Map<String, Long> symbolesFrequents() throws SQLException {
-        return listerTous().stream()
-                .flatMap(r -> r.getSymbolesList().stream())
-                .collect(Collectors.groupingBy(s -> s, Collectors.counting()))
-                .entrySet().stream()
-                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                .limit(10)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue,
-                        (a, b) -> a, LinkedHashMap::new));
-    }
-
-    public Reve trouverPlusIntense() throws SQLException {
-        return listerTous().stream()
-                .max(Comparator.comparingInt(Reve::getIntensite)).orElse(null);
-    }
-
-    public Reve trouverPlusAnxiogene() throws SQLException {
-        return listerTous().stream()
-                .max(Comparator.comparingInt(Reve::calculerNiveauAnxiete)).orElse(null);
+    public double anxieteMoyenne() throws SQLException {
+        List<Reve> reves = listerTous();
+        if (reves.isEmpty()) return 0;
+        return reves.stream().mapToInt(Reve::calculerNiveauAnxiete).average().orElse(0);
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -288,9 +268,6 @@ public class ReveService {
             return rec;
         }
 
-        // Les indicateurs dashboard ont été retirés, donc pas d'utilisation ici
-        // (aucune autre modification)
-
         if (rec.isEmpty())
             rec.add("Vos rêves semblent équilibrés, continuez votre suivi!");
 
@@ -301,10 +278,6 @@ public class ReveService {
     //  CLASSIFICATION PAR RISQUE
     // ═══════════════════════════════════════════════════════════
 
-    /**
-     * Classe les rêves en 3 niveaux selon le niveau d'anxiété calculé.
-     * @return Map avec clés "🔴 HIGH", "🟡 MEDIUM", "🟢 LOW"
-     */
     public Map<String, List<Reve>> classerParNiveauRisque() throws SQLException {
         Map<String, List<Reve>> classes = new LinkedHashMap<>();
         classes.put("🔴 HIGH",   new ArrayList<>());
@@ -324,9 +297,6 @@ public class ReveService {
     //  DÉTECTION D'ANOMALIES
     // ═══════════════════════════════════════════════════════════
 
-    /**
-     * Rêves statistiquement inhabituels : intensité > moyenne + 2×écart-type.
-     */
     public List<Reve> detecterAnomalies() throws SQLException {
         List<Reve> reves = listerTous();
         if (reves.size() < 3) return Collections.emptyList();
@@ -347,12 +317,32 @@ public class ReveService {
     //  THÈMES RÉCURRENTS
     // ═══════════════════════════════════════════════════════════
 
-    /**
-     * Détecte les symboles/émotions qui apparaissent au moins {@code seuil} fois.
-     */
+    public Map<String, Long> emotionsFrequentes() throws SQLException {
+        return listerTous().stream()
+                .flatMap(r -> r.getEmotionsList().stream())
+                .collect(Collectors.groupingBy(e -> e, Collectors.counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(10)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue,
+                        (a, b) -> a, LinkedHashMap::new));
+    }
+
+    public Map<String, Long> symbolesFrequents() throws SQLException {
+        return listerTous().stream()
+                .flatMap(r -> r.getSymbolesList().stream())
+                .collect(Collectors.groupingBy(s -> s, Collectors.counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(10)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue,
+                        (a, b) -> a, LinkedHashMap::new));
+    }
+
     public Map<String, Long> detecterThemesRecurrents(int seuil) throws SQLException {
         Map<String, Long> tous = new LinkedHashMap<>();
-
         emotionsFrequentes().forEach((k, v) -> { if (v >= seuil) tous.put(k, v); });
         symbolesFrequents().forEach((k, v)   -> { if (v >= seuil) tous.put(k, v); });
 
@@ -363,14 +353,16 @@ public class ReveService {
                         (a, b) -> a, LinkedHashMap::new));
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  RÊVES SIMILAIRES
-    // ═══════════════════════════════════════════════════════════
+    public Reve trouverPlusIntense() throws SQLException {
+        return listerTous().stream()
+                .max(Comparator.comparingInt(Reve::getIntensite)).orElse(null);
+    }
 
-    /**
-     * Retourne les rêves proches du rêve donné (même type OU même humeur,
-     * et intensité dans un rayon de ±2).
-     */
+    public Reve trouverPlusAnxiogene() throws SQLException {
+        return listerTous().stream()
+                .max(Comparator.comparingInt(Reve::calculerNiveauAnxiete)).orElse(null);
+    }
+
     public List<Reve> trouverRevesSimilaires(Reve reference) throws SQLException {
         if (reference == null) return Collections.emptyList();
         return listerTous().stream()
@@ -385,10 +377,6 @@ public class ReveService {
                 .collect(Collectors.toList());
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  INTENSITÉ MOYENNE PAR TYPE  (nouveau)
-    // ═══════════════════════════════════════════════════════════
-
     public Map<String, Double> intensiteMoyenneParType() throws SQLException {
         return listerTous().stream()
                 .collect(Collectors.groupingBy(
@@ -397,13 +385,6 @@ public class ReveService {
                 ));
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  INSIGHTS
-    // ═══════════════════════════════════════════════════════════
-
-    /**
-     * Génère une liste de phrases clés décrivant le profil onirique.
-     */
     public List<String> obtenirInsights() throws SQLException {
         List<String> insights = new ArrayList<>();
         List<Reve> reves = listerTous();
@@ -411,11 +392,6 @@ public class ReveService {
             insights.add("Aucun rêve enregistré pour le moment.");
             return insights;
         }
-
-        // Les 2 blocs ci-dessous utilisaient les métriques du dashboard retirées,
-        // donc ils sont supprimés pour éviter une erreur de compilation :
-        // - Score de bien-être onirique
-        // - Résilience
 
         long nbLucides = reves.stream().filter(Reve::estLucide).count();
         if (nbLucides > 0)
@@ -437,10 +413,6 @@ public class ReveService {
 
         return insights;
     }
-
-    // ═══════════════════════════════════════════════════════════
-    //  RAPPORT DÉTAILLÉ D'UN RÊVE
-    // ═══════════════════════════════════════════════════════════
 
     public String genererRapportDetaille(Reve reve) {
         if (reve == null) return "Aucune donnée";
@@ -471,5 +443,4 @@ public class ReveService {
 
         return sb.toString();
     }
-
 }
