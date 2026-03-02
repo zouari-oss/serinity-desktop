@@ -39,6 +39,11 @@
         <Button onAction="#ouvrirAnalyseIA"
                 styleClass="btn-secondary"
                 text="Analyse IA"/>
+
+        <Button onAction="#ouvrirHumeurReveil"
+                styleClass="btn-secondary"
+                text="😴 Humeur Réveil"/>
+
     </HBox>
 
     <!-- Filtres -->

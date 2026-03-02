@@ -4,6 +4,8 @@ import com.serinity.sleepcontrol.model.Reve;
 import com.serinity.sleepcontrol.service.ReveService;
 import com.serinity.sleepcontrol.service.SommeilService;
 import com.serinity.sleepcontrol.utils.PowerBIConfig;
+import com.serinity.sleepcontrol.controller.HumeurReveilController;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +16,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -356,6 +359,27 @@ public class ReveController {
             }
         }
     }
+    @FXML
+    private void ouvrirHumeurReveil() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/fxml/humeur-reveil.fxml"));
+            Parent root = loader.load();
+
+            HumeurReveilController ctrl = loader.getController();
+            ctrl.setReveService(reveService);
+            ctrl.chargerReves();
+
+            Stage stage = new Stage();
+            stage.setTitle("😴 Analyse Humeur du Réveil");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root, 680, 620));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @FXML
     private void rafraichir() {

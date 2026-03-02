@@ -2,6 +2,8 @@ package com.serinity.sleepcontrol.service;
 
 import com.serinity.sleepcontrol.dao.ReveDao;
 import com.serinity.sleepcontrol.dao.impl.ReveDaoJdbc;
+import com.serinity.sleepcontrol.model.NlpResultat;
+import com.serinity.sleepcontrol.service.NlpService;
 import com.serinity.sleepcontrol.model.Reve;
 
 import java.sql.SQLException;
@@ -442,5 +444,13 @@ public class ReveService {
         sb.append(analyserReve(reve)).append("\n");
 
         return sb.toString();
+    }
+    public NlpResultat analyserAvecNlp(Reve reve) {
+        NlpService nlp = new NlpService();
+        String texte = "";
+        if (reve.getTitre()       != null) texte += reve.getTitre() + ". ";
+        if (reve.getDescription() != null) texte += reve.getDescription() + ". ";
+        if (reve.getEmotions()    != null) texte += reve.getEmotions();
+        return nlp.analyser(texte.trim());
     }
 }
