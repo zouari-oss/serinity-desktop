@@ -57,7 +57,7 @@ public class MainTemplateController {
         setActiveButton(clicked);
 
         if (clicked == btnDashboard) {
-            loadPage("/view/fxml/admin-dashboard.fxml"); // ✅ backoffice
+            loadPage("/ressources/view/fxml/admin-dashboard.fxml"); // ✅ backoffice
         } else if (clicked == btnMood) {
             showInfoPage("Page Mood — module de vos collègues");
             // si tu as un vrai fxml, remplace par:
@@ -87,7 +87,7 @@ public class MainTemplateController {
 
         // ⚠️ Mets ici ton vrai fichier sommeil
         // Si ton projet utilise "sommeil.fxml" :
-        loadPage("/view/fxml/sommeil.fxml");
+        loadPage("/view/fxml/sleep-page.fxml");
 
         // Si c'est "sleep-page.fxml", utilise plutôt:
         // loadPage("/view/fxml/sleep-page.fxml");
@@ -102,7 +102,7 @@ public class MainTemplateController {
 
         // ⚠️ Mets ici ton vrai fichier rêve
         // Si ton projet utilise "reve.fxml" :
-        loadPage("/view/fxml/reve.fxml");
+        loadPage("/view/fxml/reve-page.fxml");
 
         // Si c'est "reve-page.fxml", utilise plutôt:
         // loadPage("/view/fxml/reve-page.fxml");
