@@ -773,6 +773,93 @@
     -fx-scale-y: 1.04;
 }
 
+/* ===== HEADER COMPARTIMENT ===== */
+.admin-card-header {
+    -fx-background-color: linear-gradient(to right, #1a252f, #2c3e50);
+    -fx-background-radius: 10 10 0 0;
+}
+
+.admin-card-header .admin-title {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.admin-card-header .admin-subtitle {
+    -fx-text-fill: #B2EBF2;
+    -fx-font-size: 12px;
+}
+
+/* ===== BODY ===== */
+.admin-card-body {
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 10 10;
+}
+
+/* ===== CARD CONTAINER ===== */
+.admin-card {
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(38,198,218,0.2), 14, 0, 0, 4);
+    -fx-border-color: #B2EBF2;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+/* ==================== ADMIN DASHBOARD ==================== */
+
+.admin-card-header {
+    -fx-background-color: linear-gradient(to right, #1a252f, #2c3e50);
+    -fx-background-radius: 10 10 0 0;
+}
+.admin-card-header .admin-title   { -fx-text-fill: white; -fx-font-size: 17px; -fx-font-weight: bold; }
+.admin-card-header .admin-subtitle{ -fx-text-fill: #B2EBF2; -fx-font-size: 12px; }
+
+.admin-card-body {
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 10 10;
+}
+
+/* ── Headers colorés des deux colonnes ── */
+.admin-section-header-reve {
+    -fx-background-color: linear-gradient(to right, #7E57C2, #512DA8);
+    -fx-background-radius: 8 8 0 0;
+}
+.admin-section-header-sommeil {
+    -fx-background-color: linear-gradient(to right, #FF8C00, #FF5722);
+    -fx-background-radius: 8 8 0 0;
+}
+.admin-section-title { -fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; }
+.admin-section-sub   { -fx-text-fill: rgba(255,255,255,0.80); -fx-font-size: 11px; }
+
+/* ── Barre CRUD ── */
+.admin-crud-bar {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* ── Liste body ── */
+.admin-list-body {
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 8 8;
+}
+
+/* ── Item card ── */
+.admin-item-card {
+    -fx-background-color: #f9fafb;
+    -fx-background-radius: 8;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+}
+.admin-item-card:hover {
+    -fx-background-color: #eef2ff;
+    -fx-border-color: #B2EBF2;
+    -fx-effect: dropshadow(gaussian, rgba(38,198,218,0.15), 8, 0, 0, 2);
+}
+
+
+
 
 
 /* ── Recommandations chips ─────────────────────── */

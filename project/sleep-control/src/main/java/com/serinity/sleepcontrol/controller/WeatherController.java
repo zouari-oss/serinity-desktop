@@ -1,7 +1,7 @@
 package com.serinity.sleepcontrol.controller;
 
-import com.serinity.sleepcontrol.api.WeatherData;
-import com.serinity.sleepcontrol.api.WeatherService;
+import com.serinity.sleepcontrol.model.WeatherData;
+import com.serinity.sleepcontrol.service.WeatherService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;

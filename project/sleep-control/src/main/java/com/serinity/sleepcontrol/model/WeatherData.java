@@ -1,4 +1,4 @@
-package com.serinity.sleepcontrol.api;
+package com.serinity.sleepcontrol.model;
 
 public class WeatherData {
 

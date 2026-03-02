@@ -1,5 +1,7 @@
-package com.serinity.sleepcontrol.api;
+package com.serinity.sleepcontrol.service;
 
+import com.serinity.sleepcontrol.utils.WeatherConfig;
+import com.serinity.sleepcontrol.model.WeatherData;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

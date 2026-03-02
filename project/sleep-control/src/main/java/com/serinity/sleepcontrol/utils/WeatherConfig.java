@@ -1,4 +1,4 @@
-package com.serinity.sleepcontrol.api;
+package com.serinity.sleepcontrol.utils;
 
 public class WeatherConfig {
     public static final String API_KEY  = "ecfa6cb80517eb83e0574556220e0d03";
