@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 28, 2026 at 07:21 PM
+-- Generation Time: Mar 02, 2026 at 06:36 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,39 @@ SET time_zone = "+00:00";
 --
 -- Database: `serinity`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `audit_logs`
+--
+
+CREATE TABLE `audit_logs` (
+  `id` char(36) NOT NULL,
+  `action` varchar(100) NOT NULL,
+  `os_name` varchar(50) DEFAULT NULL,
+  `hostname` varchar(100) DEFAULT NULL,
+  `private_ip_address` varchar(45) NOT NULL,
+  `mac_address` varchar(17) DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `auth_session_id` char(36) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `auth_sessions`
+--
+
+CREATE TABLE `auth_sessions` (
+  `id` char(36) NOT NULL,
+  `refresh_token` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `expires_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `revoked` tinyint(1) NOT NULL,
+  `user_id` char(36) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -56,7 +89,6 @@ INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `parent_id`) VALU
 (14, 'Workplace Mental Health', 'workplace-mental-health', 'Burnout prevention, work-life balance, and mental health in professional settings', NULL),
 (15, 'Anxiety Management', 'anxiety-management', 'Resources and tools for understanding and managing anxiety disorders, panic attacks, and stress', NULL),
 (48, 'New Test Category', 'new-test-cat', 'Another test category', NULL),
-(73, 'test', 'test', 'test category', 1),
 (74, 'anxiety hghg', 'anxiety-hghg', 'tetstetstet', 3);
 
 -- --------------------------------------------------------
@@ -74,6 +106,19 @@ CREATE TABLE `notifications` (
   `date` date NOT NULL DEFAULT current_timestamp(),
   `user_id` char(36) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `thread_id`, `type`, `content`, `seen`, `date`, `user_id`) VALUES
+(7, 18, 'comment', 'hamadi commented on your thread: \"COMMUNITY GUIDELINES - PLEASE READ\"', 0, '2026-03-02', '1'),
+(8, 18, 'like', 'khaled liked your thread: \"COMMUNITY GUIDELINES - PLEASE READ\"', 0, '2026-03-02', '1'),
+(9, 18, 'follow', 'mariem followed your thread: \"COMMUNITY GUIDELINES - PLEASE READ\"', 0, '2026-03-02', '1'),
+(10, 18, 'follow', 'salouha followed your thread: \"COMMUNITY GUIDELINES - PLEASE READ\"', 0, '2026-03-02', '1'),
+(11, 1, 'like', 'brahim liked your thread: \"Welcome to Our Mental Health Community\"', 0, '2026-03-02', '1'),
+(12, 3, 'dislike', 'brahim disliked your thread: \"CBT for Social Anxiety - Success Stories?\"', 0, '2026-03-02', '1'),
+(13, 5, 'follow', 'brahim followed your thread: \"Beginner\'s Guide to Mindfulness\"', 0, '2026-03-02', '1');
 
 -- --------------------------------------------------------
 
@@ -335,7 +380,12 @@ INSERT INTO `postinteraction` (`id`, `thread_id`, `user_id`, `follow`, `vote`) V
 (398, 40, '1', 0, -1),
 (401, 36, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 1, 1),
 (409, 73, '1', 0, 1),
-(410, 73, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 0, 1);
+(410, 73, '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 0, 1),
+(411, 18, '6d58d8b3-0634-45a4-8ac4-13dddaebc27d', 1, 1),
+(412, 18, '896a20aa-20f6-46b7-9c7c-4751734213a4', 1, 0),
+(413, 1, '6eeb2f65-dd7a-4479-9501-be2627a42dbf', 0, 1),
+(414, 3, '6eeb2f65-dd7a-4479-9501-be2627a42dbf', 0, -1),
+(415, 5, '6eeb2f65-dd7a-4479-9501-be2627a42dbf', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -344,21 +394,28 @@ INSERT INTO `postinteraction` (`id`, `thread_id`, `user_id`, `follow`, `vote`) V
 --
 
 CREATE TABLE `profiles` (
-  `user_id` char(36) NOT NULL,
+  `id` char(36) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `username` varchar(255) NOT NULL,
-  `role` varchar(255) NOT NULL
+  `firstName` varchar(255) DEFAULT NULL,
+  `lastName` varchar(255) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `gender` varchar(255) DEFAULT NULL,
+  `profile_image_url` varchar(512) DEFAULT NULL,
+  `country` varchar(100) DEFAULT NULL,
+  `state` varchar(100) DEFAULT NULL,
+  `aboutMe` varchar(500) DEFAULT NULL,
+  `user_id` char(36) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `profiles`
 --
 
-INSERT INTO `profiles` (`user_id`, `username`, `role`) VALUES
-('1', 'saif', '0'),
-('3', 'ahmed', '0'),
-('6', 'abdsmad', '0'),
-('6affa2df-dda9-442d-99ee-d2a3c1e78c64', 'hsan', 'admin'),
-('8', 'coulibaly', '0');
+INSERT INTO `profiles` (`id`, `created_at`, `updated_at`, `username`, `firstName`, `lastName`, `phone`, `gender`, `profile_image_url`, `country`, `state`, `aboutMe`, `user_id`) VALUES
+('a4562f82-15f0-11f1-855e-0f4323e61acd', '2026-03-02 04:31:12', '2026-03-02 04:31:12', 'saif_admin', 'Saif', 'Dkhaili', '+21612345678', 'male', 'https://example.com/profiles/saif_admin.jpg', 'Tunisia', 'Tunis', 'System administrator with 5+ years of experience', '6affa2df-dda9-442d-99ee-d2a3c1e78c64'),
+('b356bfd2-15f0-11f1-855e-0f4323e61acd', '2026-03-02 04:31:37', '2026-03-02 04:31:37', 'saif_therapist', 'Saif', 'Dkhaili', '+21687654321', 'male', 'https://example.com/profiles/saif_therapist.jpg', 'Tunisia', 'Sousse', 'Licensed therapist specializing in cognitive behavioral therapy', 'b35379cf-15f0-11f1-855e-0f4323e61acd');
 
 -- --------------------------------------------------------
 
@@ -513,11 +570,11 @@ CREATE TABLE `threads` (
 --
 
 INSERT INTO `threads` (`id`, `category_id`, `title`, `content`, `image_url`, `type`, `status`, `is_pinned`, `created_at`, `updated_at`, `user_id`, `likecount`, `dislikecount`, `followcount`, `repliescount`) VALUES
-(1, 1, 'Welcome to Our Mental Health Community', 'We\'re glad you\'re here. This is a safe space to discuss anything related to mental health. Please read our community guidelines before posting.', NULL, 'announcement', 'open', 0, '2024-01-15 09:00:00', '2026-02-16 16:34:25', '1', 4, 2, 4, 3),
-(2, 1, 'Introduce Yourself Thread', 'New here? Tell us a bit about yourself and what brings you to our community.', NULL, 'discussion', 'open', 0, '2024-01-16 13:30:00', '2026-02-23 17:30:47', '1', 5, 2, 3, 4),
-(3, 2, 'CBT for Social Anxiety - Success Stories?', 'Has anyone used CBT techniques to manage social anxiety? I\'d love to hear what worked for you.', NULL, 'question', 'open', 0, '2024-01-17 08:15:00', '2026-02-16 16:34:25', '3', 4, 2, 4, 6),
+(1, 1, 'Welcome to Our Mental Health Community', 'We\'re glad you\'re here. This is a safe space to discuss anything related to mental health. Please read our community guidelines before posting.', NULL, 'announcement', 'open', 0, '2024-01-15 09:00:00', '2026-03-02 05:23:53', '1', 101, 2, 4, 3),
+(2, 1, 'Introduce Yourself Thread', 'New here? Tell us a bit about yourself and what brings you to our community.', NULL, 'discussion', 'open', 0, '2024-01-16 13:30:00', '2026-03-02 05:32:58', '1', 8, 2, 3, 4),
+(3, 2, 'CBT for Social Anxiety - Success Stories?', 'Has anyone used CBT techniques to manage social anxiety? I\'d love to hear what worked for you.', NULL, 'question', 'open', 0, '2024-01-17 08:15:00', '2026-03-02 05:24:00', '3', 0, 1, 0, 0),
 (4, 2, 'Cognitive Restructuring Worksheets', 'Sharing a collection of CBT worksheets I\'ve found helpful for challenging negative thoughts. Feel free to add your own!', NULL, 'discussion', 'open', 0, '2024-01-18 10:20:00', '2026-02-23 17:32:26', '3', 5, 2, 3, 2),
-(5, 3, 'Beginner\'s Guide to Mindfulness', 'Just starting with mindfulness? Here are 5 simple exercises you can try today, even with a busy schedule.', NULL, 'discussion', 'open', 0, '2024-01-19 07:45:00', '2026-02-28 18:20:01', '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 5, 2, 3, 4),
+(5, 3, 'Beginner\'s Guide to Mindfulness', 'Just starting with mindfulness? Here are 5 simple exercises you can try today, even with a busy schedule.', NULL, 'discussion', 'open', 0, '2024-01-19 07:45:00', '2026-03-02 05:24:06', '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 5, 2, 4, 4),
 (6, 3, 'Apps for Guided Meditation', 'What meditation apps do you recommend? Looking for both free and paid options.', NULL, 'question', 'open', 0, '2024-01-20 15:30:00', '2026-02-16 16:34:25', '1', 5, 1, 4, 3),
 (7, 4, 'EMDR Therapy Experiences', 'I\'m considering EMDR for trauma recovery. Can anyone share their experiences with this type of therapy?', NULL, 'question', 'open', 0, '2024-01-21 12:10:00', '2026-02-23 17:30:47', '1', 5, 2, 3, 2),
 (8, 5, 'Helping Children with Separation Anxiety', 'My 7-year-old struggles with separation anxiety at school drop-off. Looking for gentle strategies that have worked for others.', NULL, 'discussion', 'open', 0, '2024-01-22 09:40:00', '2026-02-16 16:34:25', '3', 5, 1, 4, 3),
@@ -530,7 +587,7 @@ INSERT INTO `threads` (`id`, `category_id`, `title`, `content`, `image_url`, `ty
 (15, 12, 'ADHD and Time Blindness - Tips?', 'I struggle with time blindness and am always late. What strategies have helped you manage this?', NULL, 'question', 'open', 0, '2024-01-29 13:10:00', '2026-02-28 18:20:01', '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 6, 1, 3, 3),
 (16, 13, 'Navigating Holidays After a Loss', 'First holiday season since losing my mother. How do others cope with grief during celebratory times?', NULL, 'discussion', 'open', 0, '2024-01-30 10:25:00', '2026-02-16 16:34:25', '1', 5, 1, 4, 2),
 (17, 14, 'Setting Boundaries at Work', 'How do you maintain mental health while working in a high-stress environment? Let\'s share boundary-setting strategies.', NULL, 'discussion', 'open', 0, '2024-01-31 07:50:00', '2026-02-23 17:30:47', '1', 6, 1, 3, 2),
-(18, 15, 'COMMUNITY GUIDELINES - PLEASE READ', 'Welcome to our Anxiety Management community! Please review our guidelines for creating a safe, supportive environment for everyone.', NULL, 'announcement', 'open', 1, '2024-02-01 08:00:00', '2026-02-28 18:20:01', '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 5, 2, 5, 4),
+(18, 15, 'COMMUNITY GUIDELINES - PLEASE READ', 'Welcome to our Anxiety Management community! We’re truly honored to have you here. This space was thoughtfully created to provide a safe, welcoming, and judgment-free environment where individuals can openly share their experiences, challenges, and successes related to anxiety and emotional well-being.\r\n\r\nWe understand that talking about anxiety can sometimes feel overwhelming or vulnerable. Whether you are navigating daily stress, managing long-term anxiety, supporting a loved one, or simply looking to learn more about mental wellness, you are not alone here. Our community is built on compassion, empathy, and mutual respect. Every voice matters, and every story deserves to be heard with kindness.\r\n\r\nThis is a place to exchange coping strategies, discuss helpful resources, ask questions, and offer encouragement to others who may be walking a similar path. While we welcome diverse perspectives and experiences, we ask that all interactions remain supportive and constructive. Disagreements can happen, but they should always be handled respectfully and thoughtfully.\r\n\r\nTo help us maintain a positive and nurturing atmosphere, we kindly ask that you review our community guidelines before participating. These guidelines are in place to protect the well-being of all members and to ensure that conversations remain safe, inclusive, and helpful. Please avoid sharing harmful, triggering, or disrespectful content, and remember that professional medical advice should always be sought from qualified healthcare providers when needed.\r\n\r\nConfidentiality and privacy are also essential. Be mindful of the personal information you choose to share, and respect the privacy of others at all times. Our goal is to foster trust so that everyone feels comfortable engaging authentically.\r\n\r\nThank you for choosing to be part of this community. By participating with empathy and understanding, you help create a space where healing, growth, and connection can flourish. Together, we can support one another on the journey toward greater calm, resilience, and emotional well-being.', NULL, 'announcement', 'open', 1, '2024-02-01 08:00:00', '2026-03-02 05:02:24', '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 6, 2, 7, 6),
 (19, 15, 'Medication for Anxiety - Experiences?', 'Considering medication for generalized anxiety. Would love to hear about others\' experiences with different options.', NULL, 'question', 'open', 0, '2024-02-02 12:15:00', '2026-02-16 16:34:25', '3', 6, 1, 3, 4),
 (20, 4, 'Books That Helped Me Process Trauma', 'A list of books that supported my trauma recovery journey. Please add your recommendations below.', NULL, 'discussion', 'open', 0, '2024-02-03 09:30:00', '2026-02-23 17:32:26', '3', 5, 1, 4, 2),
 (21, 1, 'Weekend Check-In', 'How is everyone doing this weekend? Share your wins, struggles, or just check in with the community.', NULL, 'discussion', 'open', 0, '2024-02-05 08:30:00', '2026-02-16 16:34:25', '3', 6, 1, 3, 3),
@@ -568,11 +625,71 @@ INSERT INTO `threads` (`id`, `category_id`, `title`, `content`, `image_url`, `ty
 (92, 9, 'How to rebuild trust after betrayal', 'Partner had an emotional affair. We\'re trying to work through it but trust is shattered. Any success stories or resources?', NULL, 'discussion', 'locked', 0, '2026-01-13 19:36:20', '2026-02-28 18:20:01', '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 51, 2, 9, 46),
 (97, 1, 'Best practices for writing clean code', 'I wanted to share some tips I\'ve learned about writing maintainable Java code. Using proper naming conventions and keeping methods short really helps the team.', NULL, 'discussion', 'open', 0, '2026-02-21 17:02:55', '2026-02-28 18:20:01', '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 0, 0, 0, 0),
 (102, 1, 'You are all stupid idiots', 'Everyone in this forum is an absolute moron and I hate all of you, you\'re worthless garbage and should shut up forever.', NULL, 'discussion', 'open', 0, '2026-02-21 18:31:05', '2026-02-28 18:20:01', '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 0, 0, 0, 0),
-(104, 1, 'i want to kill everyone', 'i want to kill everyone because i hate them all', NULL, 'discussion', 'open', 0, '2026-02-21 20:27:06', '2026-02-28 18:20:01', '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 0, 0, 0, 0);
+(104, 1, 'i want to kill everyone', 'i want to kill everyone because i hate them all', NULL, 'discussion', 'open', 0, '2026-02-21 20:27:06', '2026-02-28 18:20:01', '6affa2df-dda9-442d-99ee-d2a3c1e78c64', 0, 0, 0, 0),
+(108, 1, 'Saifdk', 'saif saif saif saif saif', NULL, 'discussion', 'archived', 0, '2026-03-02 04:49:05', '2026-03-02 04:49:14', '6d58d8b3-0634-45a4-8ac4-13dddaebc27d', 0, 0, 0, 0),
+(109, 1, 'thread thread', 'jhgljqsdjlkgvjkdùmqgds', NULL, 'discussion', 'open', 0, '2026-03-02 05:01:36', '2026-03-02 05:02:05', '896a20aa-20f6-46b7-9c7c-4751734213a4', 0, 0, 0, 0),
+(110, 1, 'i hate you', 'i want to kill everyone', 'https://i.ibb.co/BHS92sHC/Capture-d-cran-2026-03-02-050026-png.png', 'discussion', 'open', 0, '2026-03-02 05:09:06', '2026-03-02 05:09:06', '896a20aa-20f6-46b7-9c7c-4751734213a4', 0, 0, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` char(36) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `email` varchar(150) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` varchar(255) NOT NULL,
+  `presence_status` varchar(255) NOT NULL,
+  `account_status` varchar(255) NOT NULL,
+  `face_recognition_enabled` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `created_at`, `updated_at`, `email`, `password`, `role`, `presence_status`, `account_status`, `face_recognition_enabled`) VALUES
+('6affa2df-dda9-442d-99ee-d2a3c1e78c64', '2026-03-02 04:31:10', '2026-03-02 04:31:10', 'saifdkhaili10@gmail.com', 'Saif@123', 'admin', 'offline', 'active', 0),
+('b35379cf-15f0-11f1-855e-0f4323e61acd', '2026-03-02 04:31:37', '2026-03-02 04:31:37', 'dkhailisaif23@gmail.com', 'Saif@123', 'therapist', 'offline', 'active', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_faces`
+--
+
+CREATE TABLE `user_faces` (
+  `id` char(36) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `embedding` longblob NOT NULL,
+  `user_id` char(36) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_audit_created` (`created_at`),
+  ADD KEY `fk_audit_logs_auth_session_id` (`auth_session_id`);
+
+--
+-- Indexes for table `auth_sessions`
+--
+ALTER TABLE `auth_sessions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `refresh_token` (`refresh_token`),
+  ADD KEY `idx_session_token` (`refresh_token`),
+  ADD KEY `idx_session_user` (`user_id`);
 
 --
 -- Indexes for table `categories`
@@ -587,22 +704,22 @@ ALTER TABLE `categories`
 --
 ALTER TABLE `notifications`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `notifications_ibfk_1` (`thread_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `notifications_ibfk_1` (`thread_id`);
 
 --
 -- Indexes for table `postinteraction`
 --
 ALTER TABLE `postinteraction`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `thread_id` (`thread_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `thread_id` (`thread_id`);
 
 --
 -- Indexes for table `profiles`
 --
 ALTER TABLE `profiles`
-  ADD PRIMARY KEY (`user_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_id` (`user_id`),
+  ADD UNIQUE KEY `uk_profile_username` (`username`);
 
 --
 -- Indexes for table `replies`
@@ -610,16 +727,28 @@ ALTER TABLE `profiles`
 ALTER TABLE `replies`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_reply_thread` (`thread_id`),
-  ADD KEY `fk_reply_parent` (`parent_id`),
-  ADD KEY `fk_reply_user` (`user_id`);
+  ADD KEY `fk_reply_parent` (`parent_id`);
 
 --
 -- Indexes for table `threads`
 --
 ALTER TABLE `threads`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_thread_categorysecondary` (`category_id`),
-  ADD KEY `fk_thread_user` (`user_id`);
+  ADD KEY `fk_thread_categorysecondary` (`category_id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `user_faces`
+--
+ALTER TABLE `user_faces`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_id` (`user_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -635,29 +764,41 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `postinteraction`
 --
 ALTER TABLE `postinteraction`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=411;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=416;
 
 --
 -- AUTO_INCREMENT for table `replies`
 --
 ALTER TABLE `replies`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
 
 --
 -- AUTO_INCREMENT for table `threads`
 --
 ALTER TABLE `threads`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  ADD CONSTRAINT `fk_audit_logs_auth_session_id` FOREIGN KEY (`auth_session_id`) REFERENCES `auth_sessions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `auth_sessions`
+--
+ALTER TABLE `auth_sessions`
+  ADD CONSTRAINT `fk_auth_sessions_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `categories`
@@ -670,31 +811,39 @@ ALTER TABLE `categories`
 -- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
-  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`thread_id`) REFERENCES `threads` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `profiles` (`user_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`thread_id`) REFERENCES `threads` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `postinteraction`
 --
 ALTER TABLE `postinteraction`
-  ADD CONSTRAINT `fk_postinteraction_thread` FOREIGN KEY (`thread_id`) REFERENCES `threads` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `postinteraction_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `profiles` (`user_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_postinteraction_thread` FOREIGN KEY (`thread_id`) REFERENCES `threads` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `profiles`
+--
+ALTER TABLE `profiles`
+  ADD CONSTRAINT `fk_profiles_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `replies`
 --
 ALTER TABLE `replies`
   ADD CONSTRAINT `fk_reply_parent` FOREIGN KEY (`parent_id`) REFERENCES `replies` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_reply_thread` FOREIGN KEY (`thread_id`) REFERENCES `threads` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_reply_user` FOREIGN KEY (`user_id`) REFERENCES `profiles` (`user_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_reply_thread` FOREIGN KEY (`thread_id`) REFERENCES `threads` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `threads`
 --
 ALTER TABLE `threads`
   ADD CONSTRAINT `fk_thread_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
-  ADD CONSTRAINT `fk_thread_categorysecondary` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_thread_user` FOREIGN KEY (`user_id`) REFERENCES `profiles` (`user_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_thread_categorysecondary` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `user_faces`
+--
+ALTER TABLE `user_faces`
+  ADD CONSTRAINT `fk_user_faces_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

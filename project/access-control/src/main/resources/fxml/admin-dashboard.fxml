@@ -37,6 +37,8 @@
         styleClass="sidebar-btn" text="%admin.nav.users_management" />
       <Button onAction="#onMoodManagmentButtonAction" styleClass="sidebar-btn"
         text="%admin.nav.mood_managment" />
+        <Button onAction="#onForumManagmentButtonAction" styleClass="sidebar-btn"
+                text="%admin.nav.forum_managment" />
 
       <Button fx:id="profileAndSettingsButton" onAction="#onProfileAndSettingsButtonAction"
         styleClass="sidebar-btn" text="%admin.nav.profile_settings" />

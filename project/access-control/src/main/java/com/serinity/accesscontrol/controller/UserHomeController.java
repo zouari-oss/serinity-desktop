@@ -129,7 +129,8 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
 
   @FXML
   void onNavBarSupportButtonAction(final ActionEvent event) {
-
+      setActiveNavButton(navBarSupportButton);
+      replace(ResourceFile.FORUM_HOME_FXML.getFileName());
   }
 
   @FXML // This method is called by the FXMLLoader when initialization is complete

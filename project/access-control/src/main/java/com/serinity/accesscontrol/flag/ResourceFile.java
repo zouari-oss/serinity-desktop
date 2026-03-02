@@ -35,6 +35,8 @@ public enum ResourceFile {
   CAMERA_DESKTOP_FXML("/fxml/camera-desktop.fxml"),
   MOOD_HOME_FXML("/fxml/mood/MoodHome.fxml"),
   MOOD_ADMIN_MANAGMENT("/fxml/backoffice/admin-mood-managment.fxml"),
+    FORUM_HOME_FXML("/fxml/forum/ForumPostsView.fxml"),
+    FORUM_ADMIN_FXML("/fxml/forum/ForumBackoffice.fxml"),
 
   // HTML FILE(s)
   LOGIN_SIDE_HTML("/html/login-side.html"),
