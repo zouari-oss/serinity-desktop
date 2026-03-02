@@ -62,10 +62,6 @@ public class ReveService {
         reveDao.supprimer(id);
     }
 
-    public int compterTotal() throws SQLException {
-        return listerTous().size();
-    }
-
     public boolean existeParTitre(String titre) throws SQLException {
         if (titre == null || titre.trim().isEmpty()) return false;
         return listerTous().stream()
@@ -204,18 +200,6 @@ public class ReveService {
         return reveDao.statistiquesParType();
     }
 
-    public double calculerIntensiteMoyenne() throws SQLException {
-        List<Reve> r = listerTous();
-        if (r.isEmpty()) return 0;
-        return r.stream().mapToInt(Reve::getIntensite).average().orElse(0);
-    }
-
-    public double calculerAnxieteMoyenne() throws SQLException {
-        List<Reve> r = listerTous();
-        if (r.isEmpty()) return 0;
-        return r.stream().mapToInt(Reve::calculerNiveauAnxiete).average().orElse(0);
-    }
-
     public Map<String, Long> compterParType() throws SQLException {
         return listerTous().stream()
                 .collect(Collectors.groupingBy(Reve::getTypeReve, Collectors.counting()));
@@ -225,18 +209,6 @@ public class ReveService {
         return listerTous().stream()
                 .filter(r -> r.getHumeur() != null)
                 .collect(Collectors.groupingBy(Reve::getHumeur, Collectors.counting()));
-    }
-
-    public double calculerPourcentageCauchemars() throws SQLException {
-        List<Reve> r = listerTous();
-        if (r.isEmpty()) return 0;
-        return (r.stream().filter(Reve::estCauchemar).count() * 100.0) / r.size();
-    }
-
-    public double calculerPourcentageRecurrents() throws SQLException {
-        List<Reve> r = listerTous();
-        if (r.isEmpty()) return 0;
-        return (r.stream().filter(Reve::isRecurrent).count() * 100.0) / r.size();
     }
 
     private double calculerPourcentageEnCouleur() throws SQLException {
@@ -267,18 +239,6 @@ public class ReveService {
                 .collect(Collectors.toMap(
                         Map.Entry::getKey, Map.Entry::getValue,
                         (a, b) -> a, LinkedHashMap::new));
-    }
-
-    public Map<String, Object> statistiquesGlobales() throws SQLException {
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("nombreTotal",          compterTotal());
-        stats.put("intensiteMoyenne",     calculerIntensiteMoyenne());
-        stats.put("anxieteMoyenne",       calculerAnxieteMoyenne());
-        stats.put("pourcentageCauchemars",calculerPourcentageCauchemars());
-        stats.put("pourcentageRecurrents",calculerPourcentageRecurrents());
-        stats.put("pourcentageCouleur",   calculerPourcentageEnCouleur());
-        stats.put("repartitionTypes",     compterParType());
-        return stats;
     }
 
     public Reve trouverPlusIntense() throws SQLException {
@@ -328,85 +288,13 @@ public class ReveService {
             return rec;
         }
 
-        double pctCauchemars = calculerPourcentageCauchemars();
-        double anxieteMoy    = calculerAnxieteMoyenne();
+        // Les indicateurs dashboard ont été retirés, donc pas d'utilisation ici
+        // (aucune autre modification)
 
-        if (pctCauchemars > 30) {
-            rec.add("Taux de cauchemars élevé - envisagez des techniques de relaxation");
-            rec.add("Pratiquez la méditation avant le coucher");
-            rec.add("Tenez un journal de gratitude");
-        }
-        if (anxieteMoy > 6) {
-            rec.add("Niveau d'anxiété élevé dans vos rêves");
-            rec.add("Consultez un spécialiste si l'anxiété persiste");
-            rec.add("Essayez la musique relaxante avant de dormir");
-        }
-        long nbRecurrents = reves.stream().filter(Reve::isRecurrent).count();
-        if (nbRecurrents >= 3) {
-            rec.add("Vous avez plusieurs rêves récurrents");
-            rec.add("Ils peuvent refléter des préoccupations non résolues");
-        }
-        long nbLucides = reves.stream().filter(Reve::estLucide).count();
-        if (nbLucides > 0) {
-            rec.add("Vous avez des rêves lucides - excellente opportunité de contrôle");
-            rec.add("Explorez les techniques d'onirisme pour en faire davantage");
-        }
         if (rec.isEmpty())
             rec.add("Vos rêves semblent équilibrés, continuez votre suivi!");
 
         return rec;
-    }
-
-    // ═══════════════════════════════════════════════════════════
-    //  SCORE BIEN-ÊTRE ONIRIQUE
-    // ═══════════════════════════════════════════════════════════
-
-
-    public int calculerScoreBienEtreOnirique() throws SQLException {
-        List<Reve> reves = listerTous();
-        if (reves.isEmpty()) return 0;
-
-        double intensiteMoy   = calculerIntensiteMoyenne();
-        double pctCauchemars  = calculerPourcentageCauchemars();
-        double anxieteMoy     = calculerAnxieteMoyenne();
-        long   nbLucides      = reves.stream().filter(Reve::estLucide).count();
-        double pctLucides     = (nbLucides * 100.0) / reves.size();
-
-        double cIntensite  = (1 - (intensiteMoy  / 10.0)) * 100 * 0.40;
-        double cCauchemars = (1 - (pctCauchemars / 100.0)) * 100 * 0.30;
-        double cAnxiete    = (1 - (anxieteMoy    / 10.0)) * 100 * 0.20;
-        double cLucides    = pctLucides * 0.10;
-
-        return (int) Math.round(cIntensite + cCauchemars + cAnxiete + cLucides);
-    }
-
-    public String libelleBienEtre(int score) {
-        if (score >= 80) return "Excellent";
-        if (score >= 60) return "Bon";
-        if (score >= 40) return "Moyen";
-        if (score >= 20) return "Faible";
-        return "Préoccupant";
-    }
-
-    // ═══════════════════════════════════════════════════════════
-    //  INDEX RÉSILIENCE
-    // ═══════════════════════════════════════════════════════════
-
-    /** Ratio rêves non-anxiogènes (anxiété < 4) → 0.0 à 1.0 */
-    public double calculerIndexResilience() throws SQLException {
-        List<Reve> reves = listerTous();
-        if (reves.isEmpty()) return 0;
-        long positifs = reves.stream()
-                .filter(r -> r.calculerNiveauAnxiete() < 4 && !r.estCauchemar())
-                .count();
-        return (double) positifs / reves.size();
-    }
-
-    public String libelleResilience(double index) {
-        if (index >= 0.80) return "Très bonne résilience onirique";
-        if (index >= 0.60) return "Bonne résilience";
-        if (index >= 0.40) return "Résilience moyenne";
-        return "Résilience faible";
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -524,16 +412,10 @@ public class ReveService {
             return insights;
         }
 
-        int score = calculerScoreBienEtreOnirique();
-        insights.add(" Score de bien-être onirique : " + score + "/100 — " + libelleBienEtre(score));
-
-        double pctCauchemars = calculerPourcentageCauchemars();
-        if (pctCauchemars > 30)
-            insights.add(" " + String.format("%.0f%%", pctCauchemars) + " de vos rêves sont des cauchemars");
-
-        double anxieteMoy = calculerAnxieteMoyenne();
-        if (anxieteMoy >= 6)
-            insights.add(" Anxiété onirique élevée : " + String.format("%.1f", anxieteMoy) + "/10");
+        // Les 2 blocs ci-dessous utilisaient les métriques du dashboard retirées,
+        // donc ils sont supprimés pour éviter une erreur de compilation :
+        // - Score de bien-être onirique
+        // - Résilience
 
         long nbLucides = reves.stream().filter(Reve::estLucide).count();
         if (nbLucides > 0)
@@ -544,10 +426,6 @@ public class ReveService {
             String top = themes.keySet().iterator().next();
             insights.add(" Thème le plus récurrent : \"" + top + "\"");
         }
-
-        double resilience = calculerIndexResilience();
-        insights.add(" Résilience : " + String.format("%.0f%%", resilience * 100)
-                + " — " + libelleResilience(resilience));
 
         Map<String, Double> parType = intensiteMoyenneParType();
         parType.entrySet().stream()
@@ -593,6 +471,5 @@ public class ReveService {
 
         return sb.toString();
     }
-
 
 }
