@@ -80,30 +80,28 @@ public class AdminDashboardController {
 
 
 
-    // ══════════════════════════════════════════════
-    // OUVERTURE FORMULAIRES — SOMMEIL
-    // ══════════════════════════════════════════════
-
     private void ouvrirFormulaireSommeil(Sommeil sommeilAModifier) {
         try {
-            var url = getClass().getResource(SOMMEIL_FORM_FXML);
+            var url = getClass().getResource("/view/fxml/sommeil-form.fxml");
             if (url == null) {
-                afficherErreur("FXML introuvable", "Fichier non trouvé : " + SOMMEIL_FORM_FXML);
+                afficherErreur("FXML introuvable", "Fichier non trouvé : /view/fxml/sommeil-form.fxml");
                 return;
             }
             FXMLLoader loader = new FXMLLoader(url);
             Parent parent = loader.load();
 
-            Object ctrl = loader.getController();
-            if (ctrl instanceof SommeilFormController c) {
-                // ✅ Jamais null — mode ajout = Sommeil vide, mode édition = Sommeil existant
-                c.setSommeil(sommeilAModifier != null ? sommeilAModifier : new Sommeil());
-            }
+            SommeilFormController controller = loader.getController();
+            controller.setSommeilService(sommeilService);
+            // ✅ setSommeil appelé SEULEMENT en mode modification — exactement comme SommeilController
+            if (sommeilAModifier != null) controller.setSommeil(sommeilAModifier);
+            controller.setParentController(null); // ou passer un callback si besoin
 
             Stage stage = new Stage();
             stage.setTitle(sommeilAModifier == null ? "Ajouter une Session" : "Modifier la Session");
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(parent));
+            stage.setScene(new Scene(parent, 550, 600));
+            stage.setMinWidth(500);
+            stage.setMinHeight(400);
             stage.showAndWait();
             chargerSommeils();
 
@@ -115,24 +113,26 @@ public class AdminDashboardController {
 
     private void ouvrirFormulaireReve(Reve reveAModifier) {
         try {
-            var url = getClass().getResource(REVE_FORM_FXML);
+            var url = getClass().getResource("/view/fxml/reve-form.fxml");
             if (url == null) {
-                afficherErreur("FXML introuvable", "Fichier non trouvé : " + REVE_FORM_FXML);
+                afficherErreur("FXML introuvable", "Fichier non trouvé : /view/fxml/reve-form.fxml");
                 return;
             }
             FXMLLoader loader = new FXMLLoader(url);
             Parent parent = loader.load();
 
-            Object ctrl = loader.getController();
-            if (ctrl instanceof ReveFormController c) {
-                // ✅ Jamais null — mode ajout = Reve vide, mode édition = Reve existant
-                c.setReve(reveAModifier != null ? reveAModifier : new Reve());
-            }
+            ReveFormController controller = loader.getController();
+            controller.setReveService(reveService);
+            // ✅ setSommeil appelé SEULEMENT en mode modification
+            if (reveAModifier != null) controller.setReve(reveAModifier);
+            controller.setParentController(null);
 
             Stage stage = new Stage();
             stage.setTitle(reveAModifier == null ? "Ajouter un Rêve" : "Modifier le Rêve");
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(parent));
+            stage.setScene(new Scene(parent, 550, 600));
+            stage.setMinWidth(500);
+            stage.setMinHeight(400);
             stage.showAndWait();
             chargerReves();
 
@@ -141,6 +141,7 @@ public class AdminDashboardController {
             e.printStackTrace();
         }
     }
+
 
 
     // ══════════════════════════════════════════════
