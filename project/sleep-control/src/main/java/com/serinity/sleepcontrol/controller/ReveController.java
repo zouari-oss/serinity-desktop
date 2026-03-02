@@ -163,7 +163,6 @@ public class ReveController {
         }
     }
 
-    // ─── Analyse IA globale (1er bouton) ─────────────────────────────────────────
 
     @FXML
     private void ouvrirAnalyseIA() {

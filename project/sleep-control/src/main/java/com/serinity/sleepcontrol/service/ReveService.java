@@ -594,54 +594,5 @@ public class ReveService {
         return sb.toString();
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  RAPPORT GLOBAL
-    // ═══════════════════════════════════════════════════════════
 
-    public String genererRapportGlobal() throws SQLException {
-        List<Reve> reves = listerTous();
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-        sb.append("  RAPPORT GLOBAL DES RÊVES\n");
-        sb.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-
-        if (reves.isEmpty()) {
-            sb.append("Aucun rêve enregistré.");
-            return sb.toString();
-        }
-
-        sb.append("Total          : ").append(reves.size()).append(" rêves\n");
-        sb.append("Intensité moy. : ").append(
-                String.format("%.1f", calculerIntensiteMoyenne())).append("/10\n");
-        sb.append("Anxiété moy.   : ").append(
-                String.format("%.1f", calculerAnxieteMoyenne())).append("/10\n");
-        sb.append("Score bien-être: ").append(calculerScoreBienEtreOnirique()).append("/100\n");
-        sb.append("Résilience     : ").append(
-                String.format("%.0f%%", calculerIndexResilience() * 100)).append("\n\n");
-
-        sb.append("── Répartition par type ─────────────\n");
-        compterParType().forEach((type, nb) ->
-                sb.append("  ").append(type).append(" : ").append(nb).append("\n"));
-
-        sb.append("\n── % Cauchemars  : ")
-                .append(String.format("%.0f%%", calculerPourcentageCauchemars())).append("\n");
-        sb.append("── % Récurrents  : ")
-                .append(String.format("%.0f%%", calculerPourcentageRecurrents())).append("\n");
-        sb.append("── % En couleur  : ")
-                .append(String.format("%.0f%%", calculerPourcentageEnCouleur())).append("\n");
-
-        sb.append("\n── Top émotions ─────────────────────\n");
-        emotionsFrequentes().forEach((e, nb) ->
-                sb.append("  • ").append(e).append(" (").append(nb).append("x)\n"));
-
-        sb.append("\n── Top symboles ─────────────────────\n");
-        symbolesFrequents().forEach((s, nb) ->
-                sb.append("  • ").append(s).append(" (").append(nb).append("x)\n"));
-
-        sb.append("\n── Insights ─────────────────────────\n");
-        obtenirInsights().forEach(i -> sb.append("  ").append(i).append("\n"));
-
-        return sb.toString();
-    }
 }

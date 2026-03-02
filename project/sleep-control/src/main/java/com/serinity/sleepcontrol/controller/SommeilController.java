@@ -2,6 +2,7 @@ package com.serinity.sleepcontrol.controller;
 
 import com.serinity.sleepcontrol.model.Sommeil;
 import com.serinity.sleepcontrol.service.SommeilService;
+import com.serinity.sleepcontrol.utils.PowerBIConfig;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,14 +11,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+
+import java.awt.Desktop;
 import java.io.File;
-
-
 import java.io.IOException;
+import java.net.URI;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -62,9 +63,7 @@ public class SommeilController {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Enregistrer le rapport de sommeil");
             fileChooser.setInitialFileName("rapport_sommeil.pdf");
-            fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("PDF", "*.pdf")
-            );
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
 
             Stage stage = (Stage) mainContainer.getScene().getWindow();
             File file = fileChooser.showSaveDialog(stage);
@@ -127,9 +126,7 @@ public class SommeilController {
 
         for (Sommeil sommeil : currentSommeils) {
             try {
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/view/fxml/sommeil-card.fxml")
-                );
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/sommeil-card.fxml"));
                 VBox card = loader.load();
                 SommeilCardController cardController = loader.getController();
                 cardController.setData(sommeil, this);
@@ -183,14 +180,14 @@ public class SommeilController {
         try {
             String triOption = sortComboBox.getValue();
             switch (triOption) {
-                case "Date (recent)"      -> currentSommeils = sommeilService.trierParDate(false);
-                case "Date (ancien)"      -> currentSommeils = sommeilService.trierParDate(true);
-                case "Duree (croissant)"  -> currentSommeils = sommeilService.trierParDuree(true);
-                case "Duree (decroissant)"-> currentSommeils = sommeilService.trierParDuree(false);
-                case "Qualite (meilleure)"-> currentSommeils = sommeilService.trierParQualite(false);
-                case "Qualite (pire)"     -> currentSommeils = sommeilService.trierParQualite(true);
-                case "Score (eleve)"      -> currentSommeils = sommeilService.trierParScore(false);
-                case "Score (faible)"     -> currentSommeils = sommeilService.trierParScore(true);
+                case "Date (recent)"        -> currentSommeils = sommeilService.trierParDate(false);
+                case "Date (ancien)"        -> currentSommeils = sommeilService.trierParDate(true);
+                case "Duree (croissant)"    -> currentSommeils = sommeilService.trierParDuree(true);
+                case "Duree (decroissant)"  -> currentSommeils = sommeilService.trierParDuree(false);
+                case "Qualite (meilleure)"  -> currentSommeils = sommeilService.trierParQualite(false);
+                case "Qualite (pire)"       -> currentSommeils = sommeilService.trierParQualite(true);
+                case "Score (eleve)"        -> currentSommeils = sommeilService.trierParScore(false);
+                case "Score (faible)"       -> currentSommeils = sommeilService.trierParScore(true);
             }
             enrichirAvecNbReves(currentSommeils);
             afficherCards();
@@ -201,45 +198,32 @@ public class SommeilController {
         }
     }
 
+    /**
+     * ✅ Ouvre Power BI (lecture seule) au lieu des stats locales.
+     */
     @FXML
     private void ouvrirStatistiques() {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/fxml/sommeil-stats.fxml")
-            );
-            Parent root = loader.load();
-            SommeilStatsController statsCtrl = loader.getController();
-            statsCtrl.setSommeilService(sommeilService);
-            Stage stage = new Stage();
-            stage.setTitle("Statistiques du Sommeil");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(root, 700, 620));
-            stage.setMinWidth(600);
-            stage.setMinHeight(500);
-            stage.showAndWait();
-        } catch (IOException e) {
-            showError("Erreur", "Impossible d'ouvrir les statistiques.");
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().browse(new URI(PowerBIConfig.SOMMEIL_URL)); // ✅ utilise config
+            } else {
+                showError("Erreur", "Impossible d’ouvrir le navigateur sur cette machine.");
+            }
+        } catch (Exception e) {
+            showError("Erreur", "Impossible d'ouvrir Power BI.");
             e.printStackTrace();
         }
     }
 
-    public void voirDetailsPublic(Sommeil sommeil) {
-        voirDetails(sommeil);
-    }
-
-    public void modifierSommeilPublic(Sommeil sommeil) {
-        modifierSommeil(sommeil);
-    }
-
-    public void supprimerSommeilPublic(Sommeil sommeil) {
-        supprimerSommeil(sommeil);
-    }
+    public void voirDetailsPublic(Sommeil sommeil) { voirDetails(sommeil); }
+    public void modifierSommeilPublic(Sommeil sommeil) { modifierSommeil(sommeil); }
+    public void supprimerSommeilPublic(Sommeil sommeil) { supprimerSommeil(sommeil); }
 
     private void voirDetails(Sommeil sommeil) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Details du Sommeil");
-        alert.setHeaderText("Nuit du " +
-                sommeil.getDateNuit().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        alert.setHeaderText("Nuit du " + sommeil.getDateNuit().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
         String analyse = sommeilService.analyserQualiteSommeil(sommeil);
         String details = String.format(
                 "%s\n\nCoucher: %s\nReveil: %s\nDuree: %.2f heures\n" +
@@ -257,29 +241,26 @@ public class SommeilController {
                 sommeil.getNbReves(),
                 sommeil.getCommentaire() != null ? sommeil.getCommentaire() : "Aucun"
         );
+
         alert.setContentText(details);
         alert.showAndWait();
     }
 
     @FXML
-    private void ajouterSommeil() {
-        ouvrirFormulaire(null);
-    }
+    private void ajouterSommeil() { ouvrirFormulaire(null); }
 
-    private void modifierSommeil(Sommeil sommeil) {
-        ouvrirFormulaire(sommeil);
-    }
+    private void modifierSommeil(Sommeil sommeil) { ouvrirFormulaire(sommeil); }
 
     private void ouvrirFormulaire(Sommeil sommeil) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/fxml/sommeil-form.fxml")
-            );
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/sommeil-form.fxml"));
             Parent root = loader.load();
+
             SommeilFormController controller = loader.getController();
             controller.setSommeilService(sommeilService);
             if (sommeil != null) controller.setSommeil(sommeil);
             controller.setParentController(this);
+
             Stage stage = new Stage();
             stage.setTitle(sommeil == null ? "Ajouter un Sommeil" : "Modifier le Sommeil");
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -301,6 +282,7 @@ public class SommeilController {
                 "Cette action supprimera egalement tous les reves associes.\nDate: " +
                         sommeil.getDateNuit().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         );
+
         Optional<ButtonType> result = confirmation.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
@@ -328,10 +310,9 @@ public class SommeilController {
             scoreMoyLabel.setText(String.format("Score moyen: %.1f/100", scoreMoyen));
 
             scoreMoyBar.getStyleClass().removeAll("score-low", "score-mid", "score-high");
-            if      (scoreMoyen >= 70) scoreMoyBar.getStyleClass().add("score-high");
+            if (scoreMoyen >= 70) scoreMoyBar.getStyleClass().add("score-high");
             else if (scoreMoyen >= 40) scoreMoyBar.getStyleClass().add("score-mid");
-            else                       scoreMoyBar.getStyleClass().add("score-low");
-
+            else scoreMoyBar.getStyleClass().add("score-low");
         } catch (SQLException e) {
             totalNuitsLabel.setText("Erreur statistiques");
             dureeMoyLabel.setText("");
@@ -352,9 +333,9 @@ public class SommeilController {
     @FXML
     private void ouvrirMeteo() {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/fxml/weather.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/weather.fxml"));
             Parent root = loader.load();
+
             Stage stage = new Stage();
             stage.setTitle("🌤️ Météo & Sommeil");
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -364,7 +345,6 @@ public class SommeilController {
             e.printStackTrace();
         }
     }
-
 
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

@@ -62,9 +62,7 @@ public class ReveAnalyseIA {
         put("LIBÉRATEUR",   new String[]{"vol", "mer", "liberté", "route", "fuite"});
     }};
 
-    // ═══════════════════════════════════════════════════════════
-    //  ANALYSE PRINCIPALE
-    // ═══════════════════════════════════════════════════════════
+
 
     public AnalyseResult analyser(Reve reve) {
         AnalyseResult result = new AnalyseResult();
@@ -89,13 +87,11 @@ public class ReveAnalyseIA {
 
         AnalyseResult result = new AnalyseResult();
 
-        // Score moyen
         double scoreMoy = reves.stream()
                 .mapToInt(r -> calculerScorePsychologique(r))
                 .average().orElse(50);
         result.setScorePsychologique((int) scoreMoy);
 
-        // Profil dominant global
         Map<String, Integer> profilCount = new HashMap<>();
         for (Reve r : reves) {
             String profil = determinerProfil(r);
@@ -105,7 +101,6 @@ public class ReveAnalyseIA {
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey).orElse("ÉQUILIBRÉ"));
 
-        // Symboles les plus fréquents
         Map<String, Integer> symbolesFreq = new HashMap<>();
         for (Reve r : reves) {
             analyserSymboles(r).forEach((sym, desc) ->
@@ -128,22 +123,17 @@ public class ReveAnalyseIA {
         return result;
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  SCORING PSYCHOLOGIQUE
-    // ═══════════════════════════════════════════════════════════
+
 
     private int calculerScorePsychologique(Reve reve) {
-        int score = 50; // base neutre
+        int score = 50;
 
-        // Impact de l'intensité
         if (reve.getIntensite() >= 8)      score -= 10;
         else if (reve.getIntensite() <= 3) score += 5;
 
-        // Impact de l'anxiété
         int anxiete = reve.calculerNiveauAnxiete();
         score -= anxiete * 3;
 
-        // Impact du type
         switch (reve.getTypeReve().toLowerCase()) {
             case "cauchemar"  -> score -= 20;
             case "lucide"     -> score += 15;
@@ -151,7 +141,6 @@ public class ReveAnalyseIA {
             default           -> score += 5;
         }
 
-        // Impact des émotions
         if (reve.getEmotions() != null) {
             String emo = reve.getEmotions().toLowerCase();
             for (Map.Entry<String, Integer> e : EMOTIONS_SCORE.entrySet()) {
@@ -159,15 +148,11 @@ public class ReveAnalyseIA {
             }
         }
 
-        // Rêve en couleur = signe positif
         if (reve.isCouleur()) score += 5;
 
         return Math.max(0, Math.min(100, score));
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  PROFIL PSYCHOLOGIQUE
-    // ═══════════════════════════════════════════════════════════
 
     private String determinerProfil(Reve reve) {
         String texte = buildTexteReve(reve).toLowerCase();
@@ -187,9 +172,7 @@ public class ReveAnalyseIA {
                 .orElse("ÉQUILIBRÉ");
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  ANALYSE DES SYMBOLES
-    // ═══════════════════════════════════════════════════════════
+
 
     private Map<String, String> analyserSymboles(Reve reve) {
         String texte = buildTexteReve(reve).toLowerCase();
@@ -203,9 +186,7 @@ public class ReveAnalyseIA {
         return trouves;
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  IMPACT ÉMOTIONNEL
-    // ═══════════════════════════════════════════════════════════
+
 
     private String evaluerImpactEmotionnel(Reve reve) {
         int score = calculerScorePsychologique(reve);
@@ -232,9 +213,7 @@ public class ReveAnalyseIA {
         return                             "🟠 État psychologique à surveiller — tensions récurrentes";
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  CONCLUSIONS
-    // ═══════════════════════════════════════════════════════════
+
 
     private String genererConclusion(Reve reve, AnalyseResult result) {
         StringBuilder sb = new StringBuilder();
@@ -303,9 +282,7 @@ public class ReveAnalyseIA {
         return sb.toString();
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  RECOMMANDATIONS
-    // ═══════════════════════════════════════════════════════════
+
 
     private List<String> genererRecommandations(Reve reve, AnalyseResult result) {
         List<String> rec = new ArrayList<>();
@@ -374,9 +351,7 @@ public class ReveAnalyseIA {
         return rec;
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  NIVEAU D'ALERTE
-    // ═══════════════════════════════════════════════════════════
+
 
     private String calculerNiveauAlerte(Reve reve, AnalyseResult result) {
         int score   = result.getScorePsychologique();
@@ -402,9 +377,6 @@ public class ReveAnalyseIA {
         return "AUCUN";
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  UTILITAIRES
-    // ═══════════════════════════════════════════════════════════
 
     private String buildTexteReve(Reve reve) {
         StringBuilder sb = new StringBuilder();

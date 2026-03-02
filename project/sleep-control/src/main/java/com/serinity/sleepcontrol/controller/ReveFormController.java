@@ -20,7 +20,6 @@ import java.util.List;
 
 public class ReveFormController {
 
-    // ─── Champs FXML ────────────────────────────────────────────────────────────
 
     @FXML private VBox mainContainer;
     @FXML private Label titleLabel;
@@ -42,7 +41,6 @@ public class ReveFormController {
     @FXML private Button btnSave;
     @FXML private Button btnCancel;
 
-    // ─── Champs internes ────────────────────────────────────────────────────────
 
     private ReveService reveService;
     private SommeilService sommeilService;
@@ -53,7 +51,6 @@ public class ReveFormController {
     private static final int MAX_TITRE       = 100;
     private static final int MAX_OPTIONAL    = 200;
 
-    // ─── Groupes de classes CSS pour reset propre ────────────────────────────────
 
     private static final List<String> VALIDATION_CLASSES = List.of(
             "field-default", "field-valid-purple", "field-valid-blue",
@@ -64,7 +61,6 @@ public class ReveFormController {
             "intensite-low", "intensite-medium", "intensite-high"
     );
 
-    // ─── Initialisation ─────────────────────────────────────────────────────────
 
     @FXML
     public void initialize() {
@@ -78,7 +74,7 @@ public class ReveFormController {
 
     private void initComboBoxes() {
         typeCombo.setItems(FXCollections.observableArrayList(
-                "💭 Normal", "😱 Cauchemar", "🌟 Lucide", "🔁 Récurrent"
+                "Normal", "Cauchemar", "Lucide", "Récurrent"
         ));
         typeCombo.setPromptText("Sélectionner...");
 
@@ -104,7 +100,6 @@ public class ReveFormController {
             int val = newVal.intValue();
             intensiteLabel.setText(String.valueOf(val));
 
-            // Swap de classe CSS selon l'intensité
             intensiteLabel.getStyleClass().removeAll(INTENSITE_CLASSES);
             if (val <= 3)      intensiteLabel.getStyleClass().add("intensite-low");
             else if (val <= 6) intensiteLabel.getStyleClass().add("intensite-medium");
@@ -153,7 +148,6 @@ public class ReveFormController {
         if (!sommeils.isEmpty()) sommeilCombo.setValue(sommeils.get(0));
     }
 
-    // ─── Validation visuelle (via CSS classes uniquement) ───────────────────────
 
     private void setupValidation() {
         sommeilCombo.valueProperty().addListener((obs, old, newVal) ->
@@ -175,7 +169,6 @@ public class ReveFormController {
                 validateOptionalField(symbolesField, newVal));
     }
 
-    /** Retire toutes les classes de validation et applique la nouvelle. */
     private void setFieldState(Control field, String cssClass) {
         field.getStyleClass().removeAll(VALIDATION_CLASSES);
         field.getStyleClass().add(cssClass);
@@ -208,10 +201,8 @@ public class ReveFormController {
             setFieldState(field, "field-valid-orange");
     }
 
-    // ─── Effets visuels ─────────────────────────────────────────────────────────
 
     private void setupButtonEffects() {
-        // Couleurs hover/pressed → CSS  |  Scale → Java (CSS ne peut pas animer)
         addScaleEffect(btnSave);
         addScaleEffect(btnCancel);
     }
@@ -234,7 +225,6 @@ public class ReveFormController {
         ft.setFromValue(0); ft.setToValue(1); ft.play();
     }
 
-    // ─── API publique ────────────────────────────────────────────────────────────
 
     public void setReveService(ReveService service) {
         this.reveService = service;
@@ -281,7 +271,6 @@ public class ReveFormController {
         }
     }
 
-    // ─── Actions FXML ────────────────────────────────────────────────────────────
 
     @FXML
     private void sauvegarder() {
@@ -327,7 +316,6 @@ public class ReveFormController {
     @FXML
     private void annuler() { fermer(); }
 
-    // ─── Validation métier ───────────────────────────────────────────────────────
 
     private boolean validerFormulaire() {
         StringBuilder errors = new StringBuilder();
@@ -385,7 +373,6 @@ public class ReveFormController {
         return true;
     }
 
-    // ─── Utilitaires ────────────────────────────────────────────────────────────
 
     private int compterLettres(String texte) {
         if (texte == null) return 0;
@@ -420,7 +407,6 @@ public class ReveFormController {
         alert.showAndWait();
     }
 
-    /** Injecte le CSS dans la DialogPane de l'alerte (fenêtre séparée). */
     private void applyAlertStyle(Alert alert, String cssClass) {
         DialogPane dp = alert.getDialogPane();
         dp.getStylesheets().add(
