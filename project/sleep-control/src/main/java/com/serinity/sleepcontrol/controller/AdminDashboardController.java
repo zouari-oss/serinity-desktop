@@ -123,8 +123,13 @@ public class AdminDashboardController {
 
             ReveFormController controller = loader.getController();
             controller.setReveService(reveService);
-            // ✅ setSommeil appelé SEULEMENT en mode modification
+
+            // ✅ IMPORTANT : pour charger les nuits + validation
+            controller.setSommeilService(sommeilService);
+
+            // ✅ en mode modification seulement
             if (reveAModifier != null) controller.setReve(reveAModifier);
+
             controller.setParentController(null);
 
             Stage stage = new Stage();
@@ -134,6 +139,7 @@ public class AdminDashboardController {
             stage.setMinWidth(500);
             stage.setMinHeight(400);
             stage.showAndWait();
+
             chargerReves();
 
         } catch (Exception e) {

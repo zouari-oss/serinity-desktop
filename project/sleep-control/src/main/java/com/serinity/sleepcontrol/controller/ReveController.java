@@ -36,7 +36,6 @@ public class ReveController {
     @FXML private Button           btnRefresh;
     @FXML private FlowPane         cardsContainer;
 
-    // ✅ KPI
     @FXML private Label            totalRevesLabel;
     @FXML private Label            intensiteMoyLabel;
     @FXML private Label            anxieteMoyLabel;
