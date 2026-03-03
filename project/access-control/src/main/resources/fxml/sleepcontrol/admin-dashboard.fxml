@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import java.lang.String?>
+
+<StackPane fx:id="root"
+  xmlns="http://javafx.com/javafx"
+  xmlns:fx="http://javafx.com/fxml"
+  fx:controller="com.serinity.accesscontrol.controller.sleepcontrol.AdminDashboardController"
+  stylesheets="@../../styles/sleepcontrol/styles.css">
+
+  <styleClass>
+    <String fx:value="root" />
+    <String fx:value="app-bg" />
+  </styleClass>
+
+  <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+    <VBox spacing="20">
+      <padding>
+        <Insets top="24" right="24" bottom="24" left="24" />
+      </padding>
+
+      <!-- ===== HEADER ===== -->
+      <VBox styleClass="admin-card-header" spacing="4">
+        <padding>
+          <Insets top="16" right="24" bottom="16" left="24" />
+        </padding>
+        <Label text="🛡 Backoffice Admin — Gestion des données">
+          <styleClass>
+            <String fx:value="admin-title" />
+          </styleClass>
+        </Label>
+        <Label
+          text="Gérez les enregistrements de Sommeil et de Rêves directement depuis ce tableau de bord."
+          wrapText="true">
+          <styleClass>
+            <String fx:value="admin-subtitle" />
+          </styleClass>
+        </Label>
+      </VBox>
+
+      <!-- ===== DEUX COLONNES ===== -->
+      <HBox spacing="20" fillHeight="true">
+
+        <!-- ════════ COLONNE GAUCHE : RÊVES ════════ -->
+        <VBox spacing="0" HBox.hgrow="ALWAYS">
+          <styleClass>
+            <String fx:value="card" />
+          </styleClass>
+
+          <!-- Header Rêves -->
+          <VBox styleClass="admin-section-header-reve" spacing="2">
+            <padding>
+              <Insets top="14" right="18" bottom="14" left="18" />
+            </padding>
+            <Label text="🌙 Gestion des Rêves">
+              <styleClass>
+                <String fx:value="admin-section-title" />
+              </styleClass>
+            </Label>
+            <Label text="Ajouter, modifier ou supprimer des rêves.">
+              <styleClass>
+                <String fx:value="admin-section-sub" />
+              </styleClass>
+            </Label>
+          </VBox>
+
+          <!-- Liste Rêves (cards générées dynamiquement) -->
+          <VBox fx:id="revesContainer" spacing="10" styleClass="admin-list-body">
+            <padding>
+              <Insets top="12" right="18" bottom="12" left="18" />
+            </padding>
+            <Label fx:id="emptyRevesLabel" text="Aucun rêve enregistré."
+              styleClass="empty-label" visible="false" managed="false" />
+          </VBox>
+        </VBox>
+
+        <!-- ════════ COLONNE DROITE : SOMMEIL ════════ -->
+        <VBox spacing="0" HBox.hgrow="ALWAYS">
+          <styleClass>
+            <String fx:value="card" />
+          </styleClass>
+
+          <!-- Header Sommeil -->
+          <VBox styleClass="admin-section-header-sommeil" spacing="2">
+            <padding>
+              <Insets top="14" right="18" bottom="14" left="18" />
+            </padding>
+            <Label text="💤 Gestion du Sommeil">
+              <styleClass>
+                <String fx:value="admin-section-title" />
+              </styleClass>
+            </Label>
+            <Label text="Ajouter, modifier ou supprimer des sessions de sommeil.">
+              <styleClass>
+                <String fx:value="admin-section-sub" />
+              </styleClass>
+            </Label>
+          </VBox>
+
+          <!-- Liste Sommeil (cards générées dynamiquement) -->
+          <VBox fx:id="sommeilContainer" spacing="10" styleClass="admin-list-body">
+            <padding>
+              <Insets top="12" right="18" bottom="12" left="18" />
+            </padding>
+            <Label fx:id="emptySommeilLabel" text="Aucune session de sommeil enregistrée."
+              styleClass="empty-label" visible="false" managed="false" />
+          </VBox>
+        </VBox>
+
+      </HBox>
+
+      <!-- ===== STATISTIQUES ===== -->
+      <VBox styleClass="admin-card-header" spacing="4">
+        <padding>
+          <Insets top="14" right="24" bottom="14" left="24" />
+        </padding>
+        <Label text="📊 Backoffice Admin — Statistiques">
+          <styleClass>
+            <String fx:value="admin-title" />
+          </styleClass>
+        </Label>
+        <Label
+          text="Ouvrir Power BI en mode gestion (édition). L'admin doit avoir les droits sur le workspace."
+          wrapText="true">
+          <styleClass>
+            <String fx:value="admin-subtitle" />
+          </styleClass>
+        </Label>
+      </VBox>
+
+      <HBox spacing="12" styleClass="admin-card-body">
+        <padding>
+          <Insets top="16" right="24" bottom="16" left="24" />
+        </padding>
+        <Button text="🛠 Gérer statistiques Sommeil" onAction="#gererSommeil">
+          <styleClass>
+            <String fx:value="admin-btn" />
+            <String fx:value="admin-btn-info" />
+          </styleClass>
+        </Button>
+        <Button text="🛠 Gérer statistiques Rêve" onAction="#gererReve">
+          <styleClass>
+            <String fx:value="admin-btn" />
+            <String fx:value="admin-btn-primary" />
+          </styleClass>
+        </Button>
+        <Button text="⬅ Retour" onAction="#retour">
+          <styleClass>
+            <String fx:value="admin-btn" />
+            <String fx:value="admin-btn-teal" />
+          </styleClass>
+        </Button>
+      </HBox>
+
+    </VBox>
+  </ScrollPane>
+
+</StackPane>

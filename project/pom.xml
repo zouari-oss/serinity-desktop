@@ -68,6 +68,7 @@
     <onnxruntime.version>1.24.2</onnxruntime.version>
     <jackson-databind.version>2.17.2</jackson-databind.version>
     <weka-stable.version>3.8.6</weka-stable.version>
+    <gson.version>2.10.1</gson.version>
   </properties>
   <!-- !Custom properties -->
 
@@ -213,6 +214,22 @@
       </dependency>
       <!-- !com.itextpdf.itext7-core -->
 
+      <!-- com.itextpdf.kernel -->
+      <dependency>
+        <groupId>com.itextpdf</groupId>
+        <artifactId>kernel</artifactId>
+        <version>${itext7-core.version}</version>
+      </dependency>
+      <!-- !com.itextpdf.kernel -->
+
+      <!-- com.itextpdf.layout -->
+      <dependency>
+        <groupId>com.itextpdf</groupId>
+        <artifactId>layout</artifactId>
+        <version>${itext7-core.version}</version>
+      </dependency>
+      <!-- !com.itextpdf.layout -->
+
       <!-- org.opencv.opencv -->
       <!-- Source: https://mvnrepository.com/artifact/org.opencv/opencv -->
       <dependency>
@@ -249,6 +266,13 @@
       </dependency>
       <!-- nz.ac.waikato.cms.weka.weka-stable -->
 
+      <!-- com.google.code.gson -->
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>${gson.version}</version>
+      </dependency>
+      <!-- !com.google.code.gson -->
     </dependencies>
   </dependencyManagement>
 
