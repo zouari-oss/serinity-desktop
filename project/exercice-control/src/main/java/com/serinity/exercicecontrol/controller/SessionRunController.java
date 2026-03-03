@@ -2,16 +2,15 @@ package com.serinity.exercicecontrol.controller;
 
 import com.serinity.exercicecontrol.dao.SessionDAO;
 import com.serinity.exercicecontrol.model.Exercise;
+import com.serinity.exercicecontrol.model.api.VideoSuggestion;
 import com.serinity.exercicecontrol.service.AmbientSoundApiService;
 import com.serinity.exercicecontrol.service.SessionService;
 import com.serinity.exercicecontrol.service.SessionStatus;
 import com.serinity.exercicecontrol.service.WorldTimeApiService;
-
-import com.serinity.exercicecontrol.model.api.VideoSuggestion;
 import com.serinity.exercicecontrol.service.api.YouTubeApiService;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -49,14 +48,14 @@ public class SessionRunController {
     @FXML private Button btnComplete;
     @FXML private Button btnAbort;
 
-    // ✅ API UI (doit matcher SessionRun.fxml)
+    // API UI
     @FXML private Label lblDayPhase;
     @FXML private Label lblStation;
     @FXML private Button btnSoundLoad;
     @FXML private Button btnSoundPlay;
     @FXML private Button btnSoundStop;
 
-    // ✅ YouTube UI
+    // YouTube UI
     @FXML private ListView<VideoSuggestion> listYouTube;
     @FXML private Label lblYouTubeStatus;
 
@@ -66,8 +65,7 @@ public class SessionRunController {
     private final WorldTimeApiService timeApi = new WorldTimeApiService();
     private final AmbientSoundApiService soundApi = new AmbientSoundApiService();
 
-    // ✅ Lazy init: évite crash FXML si clé manquante
-    private YouTubeApiService youTubeApi;
+    private YouTubeApiService youTubeApi; // lazy init
 
     private int sessionId = -1;
     private Exercise exercise;
@@ -79,7 +77,9 @@ public class SessionRunController {
     private int stationIndex = 0;
     private MediaPlayer ambientPlayer;
 
-    // Appelé depuis ExerciseDetailsController
+    // évite que des callbacks async update l’UI après fermeture
+    private volatile boolean alive = true;
+
     public void init(int sessionId, Exercise exercise) {
         this.sessionId = sessionId;
         this.exercise = exercise;
@@ -88,32 +88,33 @@ public class SessionRunController {
         lblGuidance.setText(exercise != null ? safe(exercise.getDescription(), "—") : "—");
         lblTarget.setText(exercise != null ? (exercise.getDurationMinutes() + " min") : "—");
 
-        initDayPhase();
-
-        // ✅ AUTO: charge + play ambiance
-        onLoadAmbient();
-        onPlayAmbient();
-
-        // ✅ YouTube
         initYouTubeUI();
-        onLoadYouTube();
 
-        refreshFromDb();
-        startUiTimer();
+        // ✅ Tout en async pour éviter freeze
+        initDayPhaseAsync();
+        loadAmbientAsync(true);     // charge et play auto
+        onLoadYouTube();            // déjà async
+        refreshFromDbAsync();       // 1er refresh
+        startUiTimer();             // timer async
     }
 
-    // ---------------- API: day phase ----------------
+    // ---------------- Day phase (ASYNC) ----------------
 
-    private void initDayPhase() {
+    private void initDayPhaseAsync() {
         if (lblDayPhase == null) return;
 
-        try {
-            var info = timeApi.fetchTime("Africa/Tunis");
-            lblDayPhase.setText(toFr(info.phase()));
-        } catch (Exception e) {
-            int hour = LocalTime.now().getHour();
-            lblDayPhase.setText(toFr(fromHour(hour)));
-        }
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                var info = timeApi.fetchTime("Africa/Tunis");
+                return toFr(info.phase());
+            } catch (Exception e) {
+                int hour = LocalTime.now().getHour();
+                return toFr(fromHour(hour));
+            }
+        }).thenAccept(phase -> Platform.runLater(() -> {
+            if (!alive) return;
+            lblDayPhase.setText(phase);
+        }));
     }
 
     private WorldTimeApiService.DayPhase fromHour(int hour) {
@@ -132,22 +133,42 @@ public class SessionRunController {
         };
     }
 
-    // ---------------- API: ambient sounds ----------------
+    // ---------------- Ambient (ASYNC) ----------------
 
     @FXML
     private void onLoadAmbient() {
+        loadAmbientAsync(false);
+    }
+
+    private void loadAmbientAsync(boolean autoPlay) {
         if (lblStation == null || btnSoundPlay == null) return;
 
-        try {
-            String phase = lblDayPhase == null ? "" : safe(lblDayPhase.getText(), "");
+        btnSoundPlay.setDisable(true);
+        lblStation.setText("Chargement ambiance...");
 
+        final String phase = (lblDayPhase == null) ? "" : safe(lblDayPhase.getText(), "");
+
+        CompletableFuture.supplyAsync(() -> {
             String query = switch (phase) {
                 case "Nuit" -> "sleep";
                 case "Soir" -> "meditation";
                 default -> "relax";
             };
+            try {
+                return soundApi.searchStations(query, 25);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).whenComplete((result, err) -> Platform.runLater(() -> {
+            if (!alive) return;
 
-            stations = soundApi.searchStations(query, 25);
+            if (err != null) {
+                lblStation.setText("Erreur API");
+                btnSoundPlay.setDisable(true);
+                return;
+            }
+
+            stations = (result == null) ? List.of() : result;
             stationIndex = 0;
 
             if (stations.isEmpty()) {
@@ -159,10 +180,8 @@ public class SessionRunController {
             lblStation.setText(stations.get(0).name());
             btnSoundPlay.setDisable(false);
 
-        } catch (Exception e) {
-            lblStation.setText("Erreur API");
-            btnSoundPlay.setDisable(true);
-        }
+            if (autoPlay) onPlayAmbient();
+        }));
     }
 
     @FXML
@@ -197,7 +216,7 @@ public class SessionRunController {
         }
     }
 
-    // ---------------- ✅ YouTube ----------------
+    // ---------------- YouTube (déjà ASYNC) ----------------
 
     private void initYouTubeUI() {
         if (listYouTube == null) return;
@@ -206,9 +225,8 @@ public class SessionRunController {
             @Override
             protected void updateItem(VideoSuggestion item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
+                if (empty || item == null) setText(null);
+                else {
                     int min = item.durationSeconds() / 60;
                     int sec = item.durationSeconds() % 60;
                     setText(item.title() + " (" + min + "m " + sec + "s) — " + item.channelTitle());
@@ -228,7 +246,6 @@ public class SessionRunController {
     private void onLoadYouTube() {
         if (lblYouTubeStatus != null) lblYouTubeStatus.setText("Chargement YouTube...");
 
-        // ✅ Lazy init: pas de crash si clé absente
         if (youTubeApi == null) {
             try {
                 youTubeApi = new YouTubeApiService();
@@ -246,28 +263,28 @@ public class SessionRunController {
         CompletableFuture.supplyAsync(() -> {
             try {
                 var vids = youTubeApi.searchMeditationOrYoga(query, 10);
-
                 int minSec = 3 * 60;
                 int maxSec = 15 * 60;
-
                 return youTubeApi.filterByDuration(vids, minSec, maxSec);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }).thenAccept(videos -> javafx.application.Platform.runLater(() -> {
+        }).whenComplete((videos, err) -> Platform.runLater(() -> {
+            if (!alive) return;
+
+            if (err != null) {
+                if (lblYouTubeStatus != null) lblYouTubeStatus.setText("Erreur YouTube: " + rootMsg(err));
+                return;
+            }
+
             if (listYouTube != null) listYouTube.setItems(FXCollections.observableArrayList(videos));
 
             if (lblYouTubeStatus != null) {
-                lblYouTubeStatus.setText(videos.isEmpty()
+                lblYouTubeStatus.setText(videos == null || videos.isEmpty()
                         ? "Aucune vidéo trouvée. Clique Rafraîchir."
                         : "Trouvé " + videos.size() + " vidéos. Double-clique pour ouvrir.");
             }
-        })).exceptionally(ex -> {
-            javafx.application.Platform.runLater(() -> {
-                if (lblYouTubeStatus != null) lblYouTubeStatus.setText("Erreur YouTube: " + ex.getMessage());
-            });
-            return null;
-        });
+        }));
     }
 
     private String buildYouTubeQuery() {
@@ -298,86 +315,99 @@ public class SessionRunController {
         }
     }
 
-    // ---------------- Session actions ----------------
+    // ---------------- Session actions (ASYNC) ----------------
 
     @FXML
     private void onStart() {
-        try {
-            sessionService.start(sessionId);
-            refreshFromDb();
-        } catch (Exception e) {
-            showError("Erreur", "Impossible de démarrer.\n" + e.getMessage());
-        }
+        runSessionActionAsync(() -> sessionService.start(sessionId), "Impossible de démarrer.");
     }
 
     @FXML
     private void onPause() {
-        try {
-            sessionService.pause(sessionId);
-            refreshFromDb();
-        } catch (Exception e) {
-            showError("Erreur", "Pause impossible.\n" + e.getMessage());
-        }
+        runSessionActionAsync(() -> sessionService.pause(sessionId), "Pause impossible.");
     }
 
     @FXML
     private void onResume() {
-        try {
-            sessionService.resume(sessionId);
-            refreshFromDb();
-        } catch (Exception e) {
-            showError("Erreur", "Reprise impossible.\n" + e.getMessage());
-        }
+        runSessionActionAsync(() -> sessionService.resume(sessionId), "Reprise impossible.");
     }
 
     @FXML
     private void onComplete() {
-        try {
-            sessionService.complete(sessionId, txtFeedback.getText());
-            refreshFromDb();
+        runSessionActionAsync(() -> sessionService.complete(sessionId, txtFeedback.getText()), "Impossible de terminer.");
+        // stop local après update
+        Platform.runLater(() -> {
             stopUiTimer();
             stopAmbient();
             showInfo("Terminé", "Session terminée ✅");
-        } catch (Exception e) {
-            showError("Erreur", "Impossible de terminer.\n" + e.getMessage());
-        }
+        });
     }
 
     @FXML
     private void onAbort() {
-        try {
-            sessionService.abort(sessionId);
-            refreshFromDb();
+        runSessionActionAsync(() -> sessionService.abort(sessionId), "Impossible de quitter.");
+        Platform.runLater(() -> {
             stopUiTimer();
             stopAmbient();
-        } catch (Exception e) {
-            showError("Erreur", "Impossible de quitter.\n" + e.getMessage());
-        }
+        });
     }
+
+    private void runSessionActionAsync(Runnable action, String errMsg) {
+        disableActionButtons(true);
+        CompletableFuture.runAsync(() -> {
+            try { action.run(); }
+            catch (Exception e) { throw new RuntimeException(e); }
+        }).whenComplete((ok, err) -> Platform.runLater(() -> {
+            disableActionButtons(false);
+            if (!alive) return;
+            if (err != null) showError("Erreur", errMsg + "\n" + rootMsg(err));
+            refreshFromDbAsync();
+        }));
+    }
+
+    private void disableActionButtons(boolean v) {
+        if (btnStart != null) btnStart.setDisable(v);
+        if (btnPause != null) btnPause.setDisable(v);
+        if (btnResume != null) btnResume.setDisable(v);
+        if (btnComplete != null) btnComplete.setDisable(v);
+        if (btnAbort != null) btnAbort.setDisable(v);
+    }
+
+    // ---------------- Back ----------------
 
     @FXML
     private void onBack() {
+        alive = false;
+        stopUiTimer();
         stopAmbient();
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseDetails.fxml"));
             Parent root = loader.load();
-
             ExerciseDetailsController ctrl = loader.getController();
             ctrl.setExercise(exercise);
-
             setContent(root);
         } catch (IOException e) {
-            e.printStackTrace();
-            showError("Erreur", "Impossible de revenir aux détails.");
+            showError("Erreur", "Impossible de revenir aux détails.\n" + e.getMessage());
         }
     }
 
-    // ---------------- UI refresh ----------------
+    // ---------------- DB refresh (ASYNC) ----------------
 
-    private void refreshFromDb() {
-        try {
-            var s = sessionDAO.findByIdForUpdate(sessionId);
+    private void refreshFromDbAsync() {
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                return sessionDAO.findByIdForUpdate(sessionId);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).whenComplete((s, err) -> Platform.runLater(() -> {
+            if (!alive) return;
+
+            if (err != null) {
+                // on évite spam d'alert chaque seconde
+                return;
+            }
             if (s == null) return;
 
             SessionStatus status = s.status();
@@ -390,7 +420,7 @@ public class SessionRunController {
             }
             if (active < 0) active = 0;
 
-            lblTimer.setText(formatMMSS((int) Math.min(Integer.MAX_VALUE, active)));
+            if (lblTimer != null) lblTimer.setText(formatMMSS((int) Math.min(Integer.MAX_VALUE, active)));
 
             if (s.feedback() != null && !s.feedback().isBlank()
                     && (txtFeedback.getText() == null || txtFeedback.getText().isBlank())) {
@@ -398,11 +428,7 @@ public class SessionRunController {
             }
 
             updateButtons(status);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Erreur", "Impossible de rafraîchir la session.\n" + e.getMessage());
-        }
+        }));
     }
 
     private void updateButtons(SessionStatus status) {
@@ -472,7 +498,7 @@ public class SessionRunController {
 
     private void startUiTimer() {
         stopUiTimer();
-        uiTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> refreshFromDb()));
+        uiTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> refreshFromDbAsync()));
         uiTimer.setCycleCount(Timeline.INDEFINITE);
         uiTimer.play();
     }
@@ -521,5 +547,11 @@ public class SessionRunController {
         a.setHeaderText(null);
         a.setContentText(msg);
         a.showAndWait();
+    }
+
+    private static String rootMsg(Throwable t) {
+        Throwable x = t;
+        while (x.getCause() != null) x = x.getCause();
+        return x.getMessage() == null ? x.toString() : x.getMessage();
     }
 }
