@@ -28,7 +28,7 @@ public class MainTemplateController {
     @FXML private Label footerLabel;
     @FXML private Label userNameLabel;
 
-    //  same bundle as App.java
+    // ✅ same bundle as App.java
     private final ResourceBundle bundle =
             ResourceBundle.getBundle("i18n.messages", Locale.getDefault());
 

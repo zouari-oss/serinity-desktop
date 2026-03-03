@@ -48,6 +48,7 @@ public enum AuditAction {
   // Auth events
   USER_SIGN_UP("USER_SIGN_UP"),
   USER_LOGIN("USER_LOGIN"),
+  USER_FACE_LOGIN("USER_FACE_LOGIN"),
   USER_LOGOUT("USER_LOGOUT"),
   USER_LOGIN_FAILED("USER_LOGIN_FAILED"),
   TOKEN_REFRESH("TOKEN_REFRESH"),
@@ -75,4 +76,4 @@ public enum AuditAction {
   public String toString() {
     return value;
   }
-}
+} // AuditAction enum

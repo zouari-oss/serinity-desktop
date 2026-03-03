@@ -5,7 +5,7 @@ import com.serinity.exercicecontrol.model.Exercise;
 import com.serinity.exercicecontrol.model.Resource;
 import com.serinity.exercicecontrol.service.ExerciseService;
 import com.serinity.exercicecontrol.service.ResourceService;
-import javafx.application.Platform;
+import com.serinity.exercicecontrol.service.SessionService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,7 +16,6 @@ import javafx.scene.layout.TilePane;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class ExerciseDetailsController {
 
@@ -30,9 +29,6 @@ public class ExerciseDetailsController {
     // -------- Resources UI ----------
     @FXML private Label lblResourcesInfo;
     @FXML private TilePane resourcesPane;
-
-    // (optionnel) si tu as un bouton "Démarrer l’exercice" dans le fxml
-    @FXML private Button btnStartExercise;
 
     private final ResourceService resourceService = new ResourceService();
     private final ExerciseService exerciseService = new ExerciseService();
@@ -67,7 +63,9 @@ public class ExerciseDetailsController {
 
         try {
             List<Resource> list = resourceService.getResourcesByExerciseId(exercise.getId());
-            if (lblResourcesInfo != null) lblResourcesInfo.setText("(" + list.size() + ")");
+            if (lblResourcesInfo != null) {
+                lblResourcesInfo.setText("(" + list.size() + ")");
+            }
             renderResources(list);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -163,7 +161,6 @@ public class ExerciseDetailsController {
             Parent root = loader.load();
 
             ExerciseFormController ctrl = loader.getController();
-            // si tu veux revenir à la liste après save, garde ton mode existant
             ctrl.setModeEditReturnToList(exercise, null);
 
             setContent(root);
@@ -193,49 +190,32 @@ public class ExerciseDetailsController {
         }
     }
 
-    // ===================== START SESSION (✅ corrigé: async, pas de freeze) =====================
-
+    // ✅ Start session (accessible à tous)
     @FXML
     private void onStart() {
         if (exercise == null) return;
 
-        int userId = 1; // TODO: user connecté
+        try {
+            int userId = 1; // TODO: remplacer par l'utilisateur connecté
 
-        if (btnStartExercise != null) btnStartExercise.setDisable(true);
+            SessionDAO dao = new SessionDAO();
+            SessionService service = new SessionService(dao);
 
-        CompletableFuture
-                .supplyAsync(() -> {
-                    try {
-                        SessionDAO dao = new SessionDAO();
-                        // crée la session en CREATED
-                        return dao.createCreatedSession(userId, exercise.getId());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .thenAccept(sessionId -> Platform.runLater(() -> {
-                    try {
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/SessionRun.fxml"));
-                        Parent root = loader.load();
+            int sessionId = dao.createCreatedSession(userId, exercise.getId());
+            service.start(sessionId);
 
-                        SessionRunController ctrl = loader.getController();
-                        ctrl.init(sessionId, exercise);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/SessionRun.fxml"));
+            Parent root = loader.load();
 
-                        setContent(root);
+            SessionRunController ctrl = loader.getController();
+            ctrl.init(sessionId, exercise);
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        showError("Erreur", "Impossible d'ouvrir la session.\n" + e.getMessage());
-                        if (btnStartExercise != null) btnStartExercise.setDisable(false);
-                    }
-                }))
-                .exceptionally(ex -> {
-                    Platform.runLater(() -> {
-                        showError("Erreur", "Impossible de démarrer la session.\n" + rootMsg(ex));
-                        if (btnStartExercise != null) btnStartExercise.setDisable(false);
-                    });
-                    return null;
-                });
+            setContent(root);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Erreur", "Impossible de démarrer la session.\n" + e.getMessage());
+        }
     }
 
     @FXML
@@ -273,12 +253,10 @@ public class ExerciseDetailsController {
     private void setContent(Parent page) {
         StackPane host = (StackPane) lblTitle.getScene().lookup("#contentHost");
         if (host == null) {
-            throw new IllegalStateException("contentHost introuvable. Vérifie fx:id=\"contentHost\" dans MainTemplate.fxml");
+            throw new IllegalStateException("contentHost introuvable. Vérifie fx:id=\"contentHost\" dans Template.fxml");
         }
         host.getChildren().setAll(page);
     }
-
-    // ===================== Helpers =====================
 
     private String nvl(String s, String def) {
         return (s == null || s.isBlank()) ? def : s;
@@ -292,9 +270,12 @@ public class ExerciseDetailsController {
         a.showAndWait();
     }
 
-    private static String rootMsg(Throwable t) {
-        Throwable x = t;
-        while (x.getCause() != null) x = x.getCause();
-        return x.getMessage() == null ? x.toString() : x.getMessage();
+    @SuppressWarnings("unused")
+    private void showInfo(String title, String msg) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }

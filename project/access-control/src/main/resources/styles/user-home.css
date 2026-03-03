@@ -1,6 +1,4 @@
-/* =========================
-   TOP BAR (Template.fxml)
-   ========================= */
+/* ========================= Top navbar ========================= */
 .topbar {
   -fx-background-color: -color-primary;
 }
@@ -11,9 +9,7 @@
   -fx-font-weight: 800;
 }
 
-/* =========================
-   NAV BUTTONS (Template.fxml)
-   ========================= */
+/* ========================= Navbar buttons ========================= */
 .nav-btn {
   -fx-background-color: transparent;
   -fx-text-fill: rgba(255, 255, 255, 0.88);
@@ -38,9 +34,7 @@
   -fx-text-fill: white;
 }
 
-/* =========================
-   SEARCH BOX (Template.fxml)
-   ========================= */
+/* ========================= Search box ========================= */
 .search {
   -fx-background-color: rgba(255, 255, 255, 0.18);
   -fx-background-radius: 12;

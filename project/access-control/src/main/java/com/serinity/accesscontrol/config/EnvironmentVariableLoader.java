@@ -48,6 +48,8 @@ import io.github.cdimascio.dotenv.DotenvException;
  *        </a>
  */
 public class EnvironmentVariableLoader {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(EnvironmentVariableLoader.class);
   private final static Dotenv dotenv;
 
   static {
@@ -57,55 +59,67 @@ public class EnvironmentVariableLoader {
           .ignoreIfMissing()
           .load();
     } catch (final DotenvException e) {
-      e.printStackTrace();
+      _LOGGER.fatal("Failed to load .env configuration", e);
       throw new RuntimeException();
     }
   }
 
+  /** @return the {@code DATABASE_URL} environment variable value */
   public final static String getDatabaseUrl() {
     return dotenv.get("DATABASE_URL");
   }
 
+  /** @return the {@code DATABASE_USERNAME} environment variable value */
   public final static String getDatabaseUsername() {
     return dotenv.get("DATABASE_USERNAME");
   }
 
+  /** @return the {@code DATABASE_PASSWORD} environment variable value */
   public final static String getDatabasePassword() {
     return dotenv.get("DATABASE_PASSWORD");
   }
 
+  /** @return the fully-qualified JDBC driver class name from {@code JDBC_DRIVER} */
   public final static String getJdbcDriver() {
     return dotenv.get("JDBC_DRIVER");
   }
 
+  /** @return the SMTP server hostname from {@code SMTP_HOST} */
   public final static String getSmtpHost() {
     return dotenv.get("SMTP_HOST");
   }
 
+  /** @return the SMTP server port from {@code SMTP_PORT} */
   public final static int getSmtpPort() {
     return Integer.parseInt(dotenv.get("SMTP_PORT"));
   }
 
+  /** @return the SMTP authentication password from {@code SMTP_PASSWORD} */
   public final static String getSmtpPassword() {
     return dotenv.get("SMTP_PASSWORD");
   }
 
+  /** @return the SMTP authentication username from {@code SMTP_USERNAME} */
   public final static String getSmtpUsername() {
     return dotenv.get("SMTP_USERNAME");
   }
 
+  /** @return the sender display name from {@code SMTP_FROM_NAME} */
   public final static String getSmtpFromName() {
     return dotenv.get("SMTP_FROM_NAME");
   }
 
+  /** @return {@code true} if {@code SMTP_USE_TLS} is set to {@code "true"} */
   public final static boolean isSmptTls() {
     return dotenv.get("SMTP_USE_TLS").equals("true");
   }
 
+  /** @return the FreeImage.host API request URL from {@code IMAGE_REQUEST_URL} */
   public final static String getImageRequestUrl() {
     return dotenv.get("IMAGE_REQUEST_URL");
   }
 
+  /** @return the FreeImage.host API key from {@code IMAGE_API_KEY} */
   public final static String getImageApiKey() {
     return dotenv.get("IMAGE_API_KEY");
   }

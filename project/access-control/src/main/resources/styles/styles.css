@@ -1,3 +1,7 @@
+@import "mood-home.css";
+@import "mood.css";
+@import "journal.css";
+
 * {
   -fx-font-family: "Segoe UI", system-ui, Arial, sans-serif;
 
@@ -15,7 +19,32 @@
   -color-error: #D9534F;
   -color-info: #2196F3;
 }
+.forum-sidebar{
+    -fx-background-color: #329996;
+    -fx-padding: 15;
+}
+.forum-sidebar .button{
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255, 255, 255, 0.88);
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-padding: 8 12;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+}
+.forum-sidebar .button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+    -fx-text-fill: white;
+}
 
+.forum-sidebar .button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.20);
+}
+
+.forum-sidebar .button-active {
+    -fx-background-color: rgb(5, 18, 97);
+    -fx-text-fill: white;
+}
 .app-bg {
   -fx-background-color: -bg-color;
 }

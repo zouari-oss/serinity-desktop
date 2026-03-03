@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.serinity.accesscontrol.controller.base.StackNavigable;
+import com.serinity.accesscontrol.controller.base.StageTitled;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.dto.ServiceResult;
 import com.serinity.accesscontrol.flag.MessageStatus;
@@ -34,7 +35,13 @@ import javafx.scene.layout.StackPane;
  *        ResetPasswordController.java
  *        </a>
  */
-public final class ResetPasswordController implements StackNavigable, StatusMessageProvider {
+public final class ResetPasswordController implements StackNavigable, StatusMessageProvider, StageTitled {
+
+  @Override
+  public String getSceneTitleKey() {
+    return "app.scene.title.reset_password";
+  }
+
 
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;

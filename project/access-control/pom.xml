@@ -33,6 +33,42 @@
     </dependency>
     <!-- !org.openjfx.javafx-fxml -->
 
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>33.0.0-jre</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.13</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>2.0.13</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ai.djl.sentencepiece</groupId>
+      <artifactId>sentencepiece</artifactId>
+      <version>0.36.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+      <version>3.0.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20231013</version>
+    </dependency>
+
     <!-- org.openjfx.javafx-web -->
     <dependency>
       <groupId>org.openjfx</groupId>
@@ -106,6 +142,87 @@
       <scope>compile</scope>
     </dependency>
     <!-- !org.springframework.security.spring-security-crypto -->
+
+    <!-- org.opencv.opencv -->
+    <!-- Source: https://mvnrepository.com/artifact/org.opencv/opencv -->
+    <dependency>
+      <groupId>org.opencv</groupId>
+      <artifactId>opencv</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !org.opencv.opencv -->
+
+    <!-- com.microsoft.onnxruntime.onnxruntime -->
+    <!-- Source: https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime -->
+    <dependency>
+      <groupId>com.microsoft.onnxruntime</groupId>
+      <artifactId>onnxruntime</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !com.microsoft.onnxruntime.onnxruntime -->
+
+    <!-- com.fasterxml.jackson.core.jackson-databind -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <!-- com.fasterxml.jackson.core.jackson-databind -->
+
+    <!-- nz.ac.waikato.cms.weka.weka-stable -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.weka</groupId>
+      <artifactId>weka-stable</artifactId>
+    </dependency>
+    <!-- nz.ac.waikato.cms.weka.weka-stable -->
+
+    <!-- com.itextpdf.kernel -->
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>kernel</artifactId>
+    </dependency>
+    <!-- !com.itextpdf.kernel -->
+
+    <!-- com.itextpdf.layout -->
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>layout</artifactId>
+    </dependency>
+    <!-- !com.itextpdf.layout -->
+
+    <!-- com.google.zxing -->
+    <dependency>
+      <groupId>com.google.zxing</groupId>
+      <artifactId>core</artifactId>
+      <version>3.5.3</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.zxing</groupId>
+      <artifactId>javase</artifactId>
+      <version>3.5.3</version>
+    </dependency>
+    <!-- !com.google.zxing -->
+
+    <!-- com.sun.mail.jakarta.mail -->
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>jakarta.mail</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+    <!-- !com.sun.mail.jakarta.mail -->
+
+    <!-- com.squareup.okhttp3.okhttp -->
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+    </dependency>
+    <!-- !com.squareup.okhttp3.okhttp -->
+
+    <!-- com.google.code.gson -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+    </dependency>
+    <!-- !com.google.code.gson -->
   </dependencies>
 
   <build>
@@ -127,6 +244,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgs>
+            <arg>--add-reads=com.serinity.accesscontrol=ALL-UNNAMED</arg>
+          </compilerArgs>
+        </configuration>
       </plugin>
       <!-- !org.apache.maven.plugins.maven-compiler-plugin -->
 
@@ -142,9 +264,14 @@
             <configuration>
               <mainClass>com.serinity.accesscontrol/com.serinity.accesscontrol.App</mainClass>
               <options>
+                <option>--enable-native-access=com.serinity.accesscontrol</option>
                 <option>--enable-native-access=javafx.graphics</option>
                 <option>--enable-native-access=javafx.web</option>
+                <option>--enable-native-access=com.microsoft.onnxruntime</option>
+                <option>--enable-native-access=org.opencv</option>
+                <option>--add-reads=com.serinity.accesscontrol=ALL-UNNAMED</option>
               </options>
+              <includePathExceptionsInClasspath>true</includePathExceptionsInClasspath>
             </configuration>
           </execution>
         </executions>

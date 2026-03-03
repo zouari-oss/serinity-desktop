@@ -1,7 +1,8 @@
 package com.serinity.exercicecontrol.service;
 
-import com.serinity.exercicecontrol.model.ExerciseSession;
 import com.serinity.exercicecontrol.dao.ExerciseSessionDao;
+import com.serinity.exercicecontrol.model.ExerciseSession;
+
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;

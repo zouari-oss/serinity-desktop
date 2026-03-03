@@ -116,8 +116,7 @@ public final class MailSenderService {
           );
       _LOGGER.info("Email send it successfully! - {}, {}", toEmail, subject);
     } catch (final MailException e) {
-      e.printStackTrace();
-      _LOGGER.warn("Email sending error! - {}, {}", toEmail, subject);
+      _LOGGER.error("Email sending error! - {}, {}", toEmail, subject, e);
       throw new RuntimeException(e);
     }
   }
@@ -136,7 +135,7 @@ public final class MailSenderService {
         .replace("{{email}}", toEmail)
         .replace("{{generated-code}}", generatedCode);
     send(toEmail, "Reset Your Password", htmlContent);
-    _LOGGER.info("Password reset email send it successfully! - {}, {}, {}", username, toEmail, generatedCode);
+    _LOGGER.info("Password reset email sent successfully to: {}", toEmail);
   }
 
   /**

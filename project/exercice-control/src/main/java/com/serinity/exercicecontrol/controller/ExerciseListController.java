@@ -1,6 +1,5 @@
 package com.serinity.exercicecontrol.controller;
 
-import com.serinity.exercicecontrol.controller.admin.AdminDashboardController;
 import com.serinity.exercicecontrol.dao.RecommendationDAO;
 import com.serinity.exercicecontrol.dao.ScoringDAO;
 import com.serinity.exercicecontrol.model.Exercise;
@@ -32,24 +31,26 @@ public class ExerciseListController {
     @FXML private ComboBox<String> cbType;
     @FXML private ComboBox<Integer> cbLevel;
 
+    // ✅ Responsive grid
     @FXML private TilePane cardsPane;
 
+    // ✅ Ambiance Banner
     @FXML private StackPane ambianceBox;
     @FXML private ImageView imgAmbiance;
     @FXML private Label lblAmbianceText;
 
+    // ✅ Scoring UI
     @FXML private Label lblScore;
     @FXML private Label lblStreak;
     @FXML private Label lblCompletion;
     @FXML private Label lblActive7d;
     @FXML private Label lblScorePill;
 
+    // ✅ Recommendation UI
     @FXML private Label lblRecTitle;
     @FXML private Label lblRecMeta;
     @FXML private Label lblRecReason;
     @FXML private Button btnStartRecommended;
-
-    @FXML private Button btnBreathing;
 
     private final ExerciseService exerciseService = new ExerciseService();
     private final ScoringService scoringService = new ScoringService(new ScoringDAO());
@@ -67,7 +68,6 @@ public class ExerciseListController {
         cbLevel.setItems(FXCollections.observableArrayList());
         cbLevel.getItems().add(null);
         cbLevel.getItems().addAll(1, 2, 3, 4, 5);
-
         cbLevel.setConverter(new javafx.util.StringConverter<>() {
             @Override public String toString(Integer v) { return v == null ? "Tous" : String.valueOf(v); }
             @Override public Integer fromString(String s) {
@@ -76,15 +76,14 @@ public class ExerciseListController {
         });
         cbLevel.getSelectionModel().selectFirst();
 
+        // Banner cover resize
         if (ambianceBox != null) {
             ambianceBox.widthProperty().addListener((o, a, b) -> updateCoverViewport());
             ambianceBox.heightProperty().addListener((o, a, b) -> updateCoverViewport());
         }
 
-        // ✅ responsive colonnes
+        // ✅ Responsive columns (TilePane)
         Platform.runLater(() -> {
-            if (cardsPane == null) return;
-
             Scene scene = cardsPane.getScene();
             if (scene != null) {
                 scene.widthProperty().addListener((o, a, b) -> updateColumns());
@@ -108,11 +107,11 @@ public class ExerciseListController {
         if (cardsPane == null || cardsPane.getScene() == null) return;
 
         double w = cardsPane.getScene().getWidth();
-        double tile = cardsPane.getPrefTileWidth();
-        double gap = cardsPane.getHgap();
+        double tile = cardsPane.getPrefTileWidth(); // 320
+        double gap = cardsPane.getHgap();           // 18
 
+        // marge approximative (padding page + scrollbars)
         int cols = (int) Math.max(1, Math.floor((w - 80) / (tile + gap)));
-        cols = Math.min(cols, 3);
         cardsPane.setPrefColumns(cols);
     }
 
@@ -150,7 +149,7 @@ public class ExerciseListController {
                 loadAmbianceBanner();
             });
 
-            setContentSafe(root);
+            setContent(root);
         } catch (IOException e) {
             e.printStackTrace();
             showError("Erreur", "Impossible d'ouvrir le formulaire d'ajout.");
@@ -161,82 +160,6 @@ public class ExerciseListController {
     private void onStartRecommended() {
         if (recommendedExercise == null) return;
         openDetails(recommendedExercise);
-    }
-
-    @FXML
-    private void onOpenBreathing() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/breathing/BreathingView.fxml"));
-            Parent root = loader.load();
-            setContentSafe(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-            showError("Erreur", "Impossible d'ouvrir le module respiration.");
-        }
-    }
-
-    // ===================== COACH =====================
-    // (optionnel, mais je le laisse propre si tu l'utilises déjà)
-    @FXML
-    private void onOpenCoachDashboard() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/coach/CoachDashboard.fxml"));
-            Parent root = loader.load();
-
-            CoachDashboardController ctrl = loader.getController();
-
-            StackPane host = getContentHost();
-            int userId = 1; // TODO user connecté
-
-            ctrl.setHost(host);
-            ctrl.setContext(userId, allExercises, () -> {
-                try {
-                    FXMLLoader back = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseList.fxml"));
-                    Parent backRoot = back.load();
-                    host.getChildren().setAll(backRoot);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showError("Erreur", "Impossible de revenir à la liste.\n" + e.getMessage());
-                }
-            });
-
-            host.getChildren().setAll(root);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Erreur", "Impossible d'ouvrir le Coach IA.\n" + e.getMessage());
-        }
-    }
-
-    // ===================== ADMIN (FIX RETOUR) =====================
-    @FXML
-    private void onOpenAdminDashboard() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/AdminDashboard.fxml"));
-            Parent root = loader.load();
-
-            StackPane host = getContentHost();
-
-            AdminDashboardController ctrl = loader.getController();
-
-
-            ctrl.setOnBack(() -> {
-                try {
-                    FXMLLoader back = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseList.fxml"));
-                    Parent backRoot = back.load();
-                    host.getChildren().setAll(backRoot);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showError("Erreur", "Impossible de revenir à la liste.\n" + e.getMessage());
-                }
-            });
-
-            host.getChildren().setAll(root);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Erreur", "Impossible d'ouvrir l'Admin Dashboard.\n" + e.getMessage());
-        }
     }
 
     // ===================== API utilisée par ExerciseCardController =====================
@@ -255,7 +178,7 @@ public class ExerciseListController {
                 loadAmbianceBanner();
             });
 
-            setContentSafe(root);
+            setContent(root);
         } catch (IOException e) {
             e.printStackTrace();
             showError("Erreur", "Impossible d'ouvrir la modification.");
@@ -293,7 +216,7 @@ public class ExerciseListController {
             ExerciseDetailsController ctrl = loader.getController();
             ctrl.setExercise(ex);
 
-            setContentSafe(root);
+            setContent(root);
         } catch (IOException e) {
             e.printStackTrace();
             showError("Erreur", "Impossible d'ouvrir les détails.");
@@ -472,33 +395,20 @@ public class ExerciseListController {
             RecommendationService.RecommendationResult rec =
                     recommendationService.recommend(userId, lastScore100, allExercises);
 
-            if (rec == null || rec.exercise() == null || rec.actionPlan() == null) {
+            if (rec == null || rec.exercise() == null) {
                 recommendedExercise = null;
                 lblRecTitle.setText("—");
                 lblRecMeta.setText("—");
                 lblRecReason.setText("—");
                 btnStartRecommended.setDisable(true);
-                if (btnBreathing != null) btnBreathing.setDisable(false);
                 return;
             }
 
             recommendedExercise = rec.exercise();
-
             lblRecTitle.setText(safe(recommendedExercise.getTitle(), "Exercice recommandé"));
-
-            lblRecMeta.setText(
-                    "Plan : " + rec.actionPlan().getPlannedMinutes() + " min à " + rec.actionPlan().plannedTimeLabel()
-                            + " • Niveau : " + recommendedExercise.getLevel()
-            );
-
-            lblRecReason.setText(
-                    safe(rec.reason(), "Recommandation basée sur votre activité récente.")
-                            + "\n" + rec.actionPlan().getStreakMessage()
-                            + "\n" + rec.actionPlan().getMicroCommitment()
-            );
-
+            lblRecMeta.setText("Durée : " + recommendedExercise.getDurationMinutes() + " min • Niveau : " + recommendedExercise.getLevel());
+            lblRecReason.setText(safe(rec.reason(), "Recommandation basée sur votre activité récente."));
             btnStartRecommended.setDisable(false);
-            if (btnBreathing != null) btnBreathing.setDisable(false);
 
         } catch (Exception e) {
             recommendedExercise = null;
@@ -506,44 +416,18 @@ public class ExerciseListController {
             lblRecMeta.setText("—");
             lblRecReason.setText("Impossible de générer une recommandation.");
             btnStartRecommended.setDisable(true);
-            if (btnBreathing != null) btnBreathing.setDisable(false);
         }
     }
 
-    @FXML
-    private void onOpenPlan() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/PlanDuJour.fxml"));
-            Parent page = loader.load();
-            setContentSafe(page);
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Erreur", "Impossible d'ouvrir Plan du jour.\n" + e.getMessage());
-        }
-    }
+    // ===================== Template Host =====================
 
-    // ===================== Navigation helpers =====================
-
-    private StackPane getContentHost() {
-        if (cardsPane == null || cardsPane.getScene() == null) {
-            throw new IllegalStateException("Scene non prête (cardsPane/scene null).");
-        }
-        StackPane host = (StackPane) cardsPane.getScene().lookup("#contentHost");
-        if (host == null) throw new IllegalStateException("contentHost introuvable dans Template.fxml");
-        return host;
-    }
-
-    private void setContentSafe(Parent page) {
-        if (cardsPane == null || cardsPane.getScene() == null) {
-            Platform.runLater(() -> setContentSafe(page));
-            return;
-        }
+    private void setContent(Parent page) {
         StackPane host = (StackPane) cardsPane.getScene().lookup("#contentHost");
         if (host == null) throw new IllegalStateException("contentHost introuvable dans Template.fxml");
         host.getChildren().setAll(page);
     }
 
-    private static String safe(String s, String def) {
+    private String safe(String s, String def) {
         return (s == null || s.isBlank()) ? def : s;
     }
 

@@ -29,6 +29,8 @@ package com.serinity.accesscontrol.util;
  *        </a>
  */
 public final class SystemInfo {
+  private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
+      .getLogger(SystemInfo.class);
   public static String getJavaVersion() {
     return System.getProperty("java.version");
   }
@@ -57,7 +59,7 @@ public final class SystemInfo {
         }
       }
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.warn("Failed to retrieve private IP address", e);
     }
 
     return "unknown";
@@ -88,7 +90,7 @@ public final class SystemInfo {
         }
       }
     } catch (final Exception e) {
-      e.printStackTrace();
+      _LOGGER.warn("Failed to retrieve MAC address", e);
     }
 
     return "unknown";

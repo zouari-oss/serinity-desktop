@@ -3,6 +3,7 @@ package com.serinity.accesscontrol;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.flag.ResourceFile;
+import com.serinity.accesscontrol.migration.SkinnedRatOrmMigrator;
 import com.serinity.accesscontrol.util.FXMLLoaderUtil;
 import com.serinity.accesscontrol.util.I18nUtil;
 
@@ -40,6 +41,7 @@ public class App extends Application {
         this.getClass(),
         ResourceFile.ROOT_FXML.getFileName(),
         I18nUtil.getBundle()));
+    stage.setTitle(I18nUtil.getValue("app.scene.title.sign_in"));
     stage.centerOnScreen();
     stage.show();
     _LOGGER.info("App Launched successfully!");

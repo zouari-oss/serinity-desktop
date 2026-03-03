@@ -1,7 +1,6 @@
 package com.serinity.exercicecontrol.service;
 
 import com.serinity.exercicecontrol.dao.RecommendationDAO;
-import com.serinity.exercicecontrol.model.ActionPlan;
 import com.serinity.exercicecontrol.model.Exercise;
 
 import java.sql.SQLException;
@@ -10,25 +9,17 @@ import java.util.List;
 public class RecommendationService {
 
     private final RecommendationDAO dao;
-    private final BehaviorChangeService behaviorChangeService;
 
     public RecommendationService(RecommendationDAO dao) {
         this.dao = dao;
-        this.behaviorChangeService = new BehaviorChangeService();
     }
 
     /**
-     * Recommandation:
+     * Recommandation simple:
      * - évite l'exercice déjà fait aujourd’hui
      * - favorise "jamais essayé"
      * - pénalise "souvent abandonné"
      * - adapte la durée selon le score d’engagement
-     *
-     * + Motivation & adhérence :
-     * - action planning (créneau concret)
-     * - graded tasks (durée progressive)
-     * - streak intelligent (jours consécutifs complétés)
-     * - micro-engagement (phrase courte)
      */
     public RecommendationResult recommend(int userId, int engagementScore100, List<Exercise> exercises) {
         if (exercises == null || exercises.isEmpty()) return null;
@@ -77,7 +68,7 @@ public class RecommendationService {
                 }
 
                 // durée adaptée au score global
-                int dur = ex.getDurationMinutes();
+                int dur = ex.getDurationMinutes(); // dans ton model
                 int diff = Math.abs(dur - targetMinutes);
                 if (diff == 0) {
                     score += 20;
@@ -96,9 +87,7 @@ public class RecommendationService {
                 if (score > bestScore) {
                     bestScore = score;
                     best = ex;
-                    bestReason = reason.isBlank()
-                            ? "Recommandation basée sur votre activité récente."
-                            : reason.substring(0, reason.length() - 3);
+                    bestReason = reason.isBlank() ? "Recommandation basée sur votre activité récente." : reason.substring(0, reason.length() - 3);
                 }
 
             } catch (SQLException e) {
@@ -106,15 +95,13 @@ public class RecommendationService {
             }
         }
 
-        // fallback : premier exercice
         if (best == null) {
+            // fallback : premier exercice
             Exercise ex = exercises.get(0);
-            ActionPlan plan = behaviorChangeService.buildActionPlan(userId, ex, targetMinutes);
-            return new RecommendationResult(ex, "Suggestion par défaut (aucune donnée suffisante).", targetMinutes, plan);
+            return new RecommendationResult(ex, "Suggestion par défaut (aucune donnée suffisante).", targetMinutes);
         }
 
-        ActionPlan plan = behaviorChangeService.buildActionPlan(userId, best, targetMinutes);
-        return new RecommendationResult(best, bestReason, targetMinutes, plan);
+        return new RecommendationResult(best, bestReason, targetMinutes);
     }
 
     private int targetMinutesForScore(int score100) {
@@ -123,5 +110,5 @@ public class RecommendationService {
         return 12;                      // bon engagement → un peu plus long
     }
 
-    public record RecommendationResult(Exercise exercise, String reason, int targetMinutes, ActionPlan actionPlan) {}
+    public record RecommendationResult(Exercise exercise, String reason, int targetMinutes) {}
 }

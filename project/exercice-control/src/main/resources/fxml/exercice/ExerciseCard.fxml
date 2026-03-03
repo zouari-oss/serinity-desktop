@@ -32,15 +32,17 @@
         <Label fx:id="lblDuration" text="Durée : - min" styleClass="exercise-meta"/>
     </VBox>
 
-    <!-- Actions -->
+    <!-- Actions (admin-only for edit/delete) -->
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button text="Voir" onAction="#onOpenDetails" styleClass="secondary-btn"/>
 
+        <!-- ✅ fx:id ajouté -->
         <Button fx:id="btnEdit"
                 text="Modifier"
                 onAction="#onEdit"
                 styleClass="secondary-btn"/>
 
+        <!-- ✅ fx:id ajouté -->
         <Button fx:id="btnDelete"
                 text="Supprimer"
                 onAction="#onDelete"

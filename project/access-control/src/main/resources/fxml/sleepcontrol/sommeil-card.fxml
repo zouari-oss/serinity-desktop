@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.2"
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="com.serinity.accesscontrol.controller.sleepcontrol.SommeilCardController"
+  fx:id="cardRoot"
+  styleClass="card"
+  stylesheets="@../../styles/sleepcontrol/styles.css"
+  maxWidth="280.0"
+  prefWidth="280.0"
+  spacing="0.0">
+
+  <!-- ── Barre dégradé teal→cyan en haut ── -->
+  <HBox styleClass="card-accent-bar" maxWidth="1.7976931348623157E308" />
+
+  <!-- ── Contenu principal ── -->
+  <VBox styleClass="card-body" spacing="7.0">
+
+    <!-- En-tête : date + badge qualité -->
+    <HBox styleClass="card-header" alignment="CENTER_LEFT" spacing="10.0">
+      <Label fx:id="dateLabel"
+        styleClass="card-date"
+        HBox.hgrow="ALWAYS"
+        maxWidth="1.7976931348623157E308" />
+      <Label fx:id="qualiteLabel" />
+    </HBox>
+
+    <!-- Heures coucher → réveil -->
+    <Label fx:id="heuresLabel" styleClass="card-info" />
+
+    <!-- Durée -->
+    <Label fx:id="dureeLabel" styleClass="card-info" />
+
+    <!-- Interruptions -->
+    <Label fx:id="interruptionsLabel" styleClass="card-info" />
+
+    <!-- Humeur au réveil -->
+    <Label fx:id="humeurLabel" styleClass="card-info" />
+
+    <!-- Rêves -->
+    <Label fx:id="revesLabel" styleClass="card-dreams" />
+
+    <!-- Score -->
+    <Label fx:id="scoreLabel" styleClass="score-label" />
+
+    <!-- ── Footer boutons ── -->
+    <HBox styleClass="card-footer" alignment="CENTER_LEFT" spacing="8.0">
+      <padding>
+        <Insets top="6.0" />
+      </padding>
+      <Button fx:id="btnVoir"
+        text="👁 Voir"
+        styleClass="btn-card-voir,btn-sm" />
+      <Button fx:id="btnModifier"
+        text="✏ Modifier"
+        styleClass="btn-card-modifier,btn-sm" />
+      <Button fx:id="btnSupprimer"
+        text="✕"
+        styleClass="btn-card-delete,btn-sm" />
+    </HBox>
+
+  </VBox>
+
+</VBox>

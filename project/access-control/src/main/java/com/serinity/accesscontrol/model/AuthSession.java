@@ -1,8 +1,8 @@
 // `AuthSession` package name
 package com.serinity.accesscontrol.model;
 
-import java.time.Duration;
 // `java` import(s)
+import java.time.Duration;
 import java.time.Instant;
 
 // `zouarioss` import(s)
@@ -15,9 +15,9 @@ import org.zouarioss.skinnedratorm.annotations.ManyToOne;
 import org.zouarioss.skinnedratorm.annotations.PrePersist;
 import org.zouarioss.skinnedratorm.annotations.Table;
 
+// `serinity` import(s)
 import com.serinity.accesscontrol.flag.SessionDuration;
 import com.serinity.accesscontrol.flag.UserRole;
-// `serinity` import(s)
 import com.serinity.accesscontrol.model.base.IdentifiableEntity;
 import com.serinity.accesscontrol.util.RefreshTokenGenerator;
 

@@ -1,0 +1,35 @@
+@startuml
+actor User
+participant "LoginView (JavaFX UI)" as View
+participant "LoginController" as Controller
+participant "AuthService" as Service
+participant "UserDAO" as DAO
+database "Database" as DB
+
+User -> View : Enter email & password\nClick Login
+View -> Controller : handleLogin(email, password)
+
+Controller -> Service : authenticate(email, password)
+
+Service -> DAO : findUserByEmail(email)
+DAO -> DB : SELECT * FROM users WHERE email=?
+DB --> DAO : user record / null
+DAO --> Service : User object
+
+alt User exists
+    Service -> Service : verifyPassword(input, storedHash)
+    
+    alt Password correct
+        Service --> Controller : Authentication Success
+        Controller -> View : showDashboard()
+        View --> User : Login successful
+    else Password incorrect
+        Service --> Controller : Authentication Failed
+        Controller -> View : showError("Invalid credentials")
+    end
+
+else User not found
+    Service --> Controller : Authentication Failed
+    Controller -> View : showError("User not found")
+end
+@enduml

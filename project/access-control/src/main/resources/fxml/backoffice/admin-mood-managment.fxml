@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="backend-root" stylesheets="@../../styles/backoffice.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.accesscontrol.controller.backoffice.BackofficeAppController">
+
+  <top>
+    <HBox spacing="10" styleClass="backend-topbar">
+      <padding>
+        <Insets bottom="12" left="12" right="12" top="12" />
+      </padding>
+
+      <Label styleClass="backend-title" text="Backoffice Admin" />
+      <Region HBox.hgrow="ALWAYS" />
+      <Label fx:id="lblStatus" styleClass="backend-status" text="Ready" />
+    </HBox>
+  </top>
+
+  <center>
+    <TabPane styleClass="backend-tabs" tabClosingPolicy="UNAVAILABLE">
+
+      <!-- MOOD TAB -->
+      <Tab text="Mood Entries">
+        <BorderPane>
+          <padding>
+            <Insets bottom="12" left="12" right="12" top="12" />
+          </padding>
+
+          <top>
+            <HBox spacing="10">
+              <padding>
+                <Insets bottom="12" left="0" right="0" top="0" />
+              </padding>
+
+              <Label text="Search name:" />
+              <TextField fx:id="tfMoodUser" prefWidth="520" promptText="username / first / last (blank = all)" />
+              <Button fx:id="btnMoodRefresh" styleClass="backend-primary" text="Search" />
+              <Button fx:id="btnMoodDeleteSelected" styleClass="backend-danger" text="Delete Selected (0)" />
+              <Button fx:id="btnMoodClearSelection" text="Clear" />
+            </HBox>
+          </top>
+
+          <center>
+            <ScrollPane fitToWidth="true" pannable="true" styleClass="backend-scroll">
+              <content>
+                <VBox fx:id="moodCardsBox" spacing="10" styleClass="backend-cards">
+                  <padding>
+                    <Insets bottom="2" left="2" right="2" top="2" />
+                  </padding>
+                </VBox>
+              </content>
+            </ScrollPane>
+          </center>
+        </BorderPane>
+      </Tab>
+
+      <!-- JOURNAL TAB -->
+      <Tab text="Journal Entries">
+        <BorderPane>
+          <padding>
+            <Insets bottom="12" left="12" right="12" top="12" />
+          </padding>
+
+          <top>
+            <HBox spacing="10">
+              <padding>
+                <Insets bottom="12" left="0" right="0" top="0" />
+              </padding>
+
+              <Label text="Search name:" />
+              <TextField fx:id="tfJournalUser" prefWidth="520" promptText="username / first / last (blank = all)" />
+              <Button fx:id="btnJournalRefresh" styleClass="backend-primary" text="Refresh" />
+              <Button fx:id="btnJournalDeleteSelected" styleClass="backend-danger" text="Delete Selected (0)" />
+              <Button fx:id="btnJournalClearSelection" text="Clear" />
+            </HBox>
+          </top>
+
+          <center>
+            <ScrollPane fitToWidth="true" pannable="true" styleClass="backend-scroll">
+              <content>
+                <VBox fx:id="journalCardsBox" spacing="10" styleClass="backend-cards">
+                  <padding>
+                    <Insets bottom="2" left="2" right="2" top="2" />
+                  </padding>
+                </VBox>
+              </content>
+            </ScrollPane>
+          </center>
+        </BorderPane>
+      </Tab>
+
+    </TabPane>
+  </center>
+</BorderPane>

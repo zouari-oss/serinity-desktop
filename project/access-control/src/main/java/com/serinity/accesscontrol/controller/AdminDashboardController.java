@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 // `serinity` import(s)
 import com.serinity.accesscontrol.controller.base.StackNavigable;
+import com.serinity.accesscontrol.controller.base.StageTitled;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.flag.MessageStatus;
 import com.serinity.accesscontrol.flag.ResourceFile;
@@ -32,7 +33,13 @@ import javafx.scene.layout.StackPane;
  *        AdminDashboardController.java
  *        </a>
  */
-public final class AdminDashboardController implements StackNavigable, StatusMessageProvider {
+public final class AdminDashboardController implements StackNavigable, StatusMessageProvider, StageTitled {
+
+  @Override
+  public String getSceneTitleKey() {
+    return "app.scene.title.admin_dashboard";
+  }
+
 
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;
@@ -60,12 +67,6 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
 
   private StatusMessageProvider statusProvider; // Delegate to RootController
 
-  private User user;
-
-  public void setUser(final User user) {
-    this.user = user;
-  }
-
   @Override
   public StackPane getStackHost() {
     return contentAreaStackPane;
@@ -80,6 +81,27 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
     if (statusProvider != null) {
       statusProvider.showStatusMessage(message, status);
     }
+  }
+
+  @FXML
+  void onMoodManagmentButtonAction(ActionEvent event) {
+    replace(ResourceFile.MOOD_ADMIN_MANAGMENT.getFileName());
+  }
+
+    @FXML
+    void onForumManagmentButtonAction(ActionEvent event) {
+        replace(ResourceFile.FORUM_ADMIN_FXML.getFileName());
+    }
+
+  
+    @FXML
+    void onSleepManagmentButtonAction(ActionEvent event) {
+        replace("/fxml/sleepcontrol/admin-dashboard.fxml");
+    }
+
+  @FXML
+  void onConsultationButtonAction(final ActionEvent event) {
+    replace("/fxml/doctor/doctor_list.fxml");
   }
 
   @FXML
@@ -98,7 +120,7 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
 
   @FXML
   void onUsersManagmentButtonAction(final ActionEvent event) {
-    push(ResourceFile.ADMIN_USERS_MANAGMENT_FXML.getFileName());
+    replace(ResourceFile.ADMIN_USERS_MANAGMENT_FXML.getFileName());
   }
 
   @FXML // This method is called by the FXMLLoader when initialization is complete

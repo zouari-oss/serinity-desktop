@@ -50,7 +50,7 @@ import com.serinity.accesscontrol.util.RegexValidator;
 public final class UserService {
 
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
-      .getLogger(MailSenderService.class);
+      .getLogger(UserService.class);
 
   private static final com.github.benmanes.caffeine.cache.Cache<String, String> resetCodeCache = com.github.benmanes.caffeine.cache.Caffeine
       .newBuilder()
@@ -158,8 +158,8 @@ public final class UserService {
 
     if (!RegexValidator.isValidEmail(usernameOrEmail)) { // Will considered as username
       final ProfileRepository profileRepository = new ProfileRepository(em);
-      Profile profile = profileRepository.findByUsername(usernameOrEmail);
-      user = profile.getUser();
+      final Profile profile = profileRepository.findByUsername(usernameOrEmail);
+      user = (profile != null) ? profile.getUser() : null;
     } else { // It's an email
       final UserRepository userRepository = new UserRepository(em);
       user = userRepository.findUserByEmail(usernameOrEmail);
@@ -180,19 +180,63 @@ public final class UserService {
       authSessionRepository.update(session);
     });
 
-    AuthSession newAuthSession = new AuthSession();
+    final AuthSession newAuthSession = new AuthSession();
     newAuthSession.setUser(user);
 
     final AuditLog auditLog = new AuditLog();
     auditLog.setAction(AuditAction.USER_LOGIN.getValue());
     auditLog.setSession(newAuthSession);
 
-    new AuditLogRepository(em).save(auditLog);
     authSessionRepository.save(newAuthSession);
+    new AuditLogRepository(em).save(auditLog);
 
     return ServiceResult.success(user, "User signed in successfully!");
   }
 
+  /**
+   * Creates a new authenticated session for a user who was identified via face
+   * recognition, revoking any previously active session, and records the login
+   * in the audit log with action {@link AuditAction#USER_FACE_LOGIN}.
+   *
+   * @param user the {@link User} identified by the face recognition system
+   * @return a {@link ServiceResult} containing the authenticated {@link User}
+   */
+  public static ServiceResult<User> signInWithFace(final User user) {
+    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    final AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
+
+    final Optional<AuthSession> activeSession = authSessionRepository.findActiveSession(user);
+    activeSession.ifPresent(session -> {
+      session.setRevoked(true);
+      authSessionRepository.update(session);
+    });
+
+    final AuthSession newAuthSession = new AuthSession();
+    newAuthSession.setUser(user);
+
+    final AuditLog auditLog = new AuditLog();
+    auditLog.setAction(AuditAction.USER_FACE_LOGIN.getValue());
+    auditLog.setSession(newAuthSession);
+
+    authSessionRepository.save(newAuthSession);
+    new AuditLogRepository(em).save(auditLog);
+
+    return ServiceResult.success(user, "User signed in via face recognition!");
+  }
+
+  /**
+   * Initiates a password reset flow by sending a one-time code to the user's
+   * email address.
+   *
+   * <p>
+   * The generated code is cached for 10 minutes. The user must call
+   * {@link #confirmResetMail(String, String, String)} with the correct code
+   * within that window to update their password.
+   * </p>
+   *
+   * @param email the email address of the account to reset
+   * @return a {@link ServiceResult} indicating success or failure with a message
+   */
   public static ServiceResult<Void> sendResetMail(final String email) {
     if (!RegexValidator.isValidEmail(email)) {
       _LOGGER.warn("Invalid Email! - {}", email);
@@ -231,6 +275,20 @@ public final class UserService {
     }
   }
 
+  /**
+   * Confirms a password reset by verifying the one-time code and applying the
+   * new password.
+   *
+   * <p>
+   * The reset code must match the one previously sent via
+   * {@link #sendResetMail(String)} and must not have expired (10-minute TTL).
+   * </p>
+   *
+   * @param email       the email address of the account to reset
+   * @param inputCode   the one-time code entered by the user
+   * @param newPassword the desired new password (must meet complexity rules)
+   * @return a {@link ServiceResult} indicating success or failure with a message
+   */
   public static ServiceResult<Void> confirmResetMail(
       final String email,
       final String inputCode,
