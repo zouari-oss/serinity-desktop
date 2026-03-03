@@ -100,6 +100,11 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
     }
 
   @FXML
+  void onConsultationButtonAction(final ActionEvent event) {
+    replace("/fxml/doctor/doctor_list.fxml");
+  }
+
+  @FXML
   void onLogoutButtonAction(final ActionEvent event) {
 
   }

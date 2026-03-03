@@ -103,7 +103,7 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
 
   @FXML
   void onNavBarAppointmentsButtonAction(final ActionEvent event) {
-
+    replace("/fxml/doctor/doctor_rdv_list.fxml");
   }
 
   @FXML
