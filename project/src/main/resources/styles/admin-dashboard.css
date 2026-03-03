@@ -1,0 +1,99 @@
+/* =================== Sidebar ======================== */
+.sidebar {
+  -fx-background-color: -color-primary;
+  -fx-padding: 25;
+}
+
+/* ================ Logo ============================== */
+.logo {
+  -fx-text-fill: white;
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
+}
+
+/* ================= Sidebar buttons ================== */
+.sidebar-btn {
+  -fx-background-color: transparent;
+  -fx-text-fill: -color-secondary;
+  -fx-font-size: 14px;
+  -fx-alignment: CENTER_LEFT;
+  -fx-pref-width: 180;
+  -fx-padding: 10 15;
+  -fx-background-radius: 6;
+}
+
+.sidebar-btn:hover {
+  -fx-background-color: -color-accent;
+  -fx-text-fill: white;
+}
+
+.sidebar-btn.active {
+  -fx-background-color: -color-accent;
+  -fx-text-fill: white;
+}
+
+.logout-btn {
+  -fx-background-color: -color-error;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-background-radius: 6;
+  -fx-padding: 10 15;
+}
+
+.logout-btn:hover {
+  -fx-opacity: 0.85;
+}
+
+
+/* ======================= Header ================================ */
+
+.header {
+  -fx-background-color: -color-secondary;
+  -fx-alignment: CENTER_LEFT;
+  -fx-padding: 15;
+  -fx-border-color: transparent transparent #DDE3E8 transparent;
+  -fx-border-width: 0 0 1 0;
+}
+
+.header-title {
+  -fx-text-fill: -text-primary;
+  -fx-font-size: 18px;
+  -fx-font-weight: bold;
+}
+
+
+/* ======================== Content Area ========================= */
+
+.content-area {
+  -fx-background-color: -bg-color;
+  -fx-padding: 30;
+}
+
+.welcome-text {
+  -fx-text-fill: -text-secondary;
+  -fx-font-size: 16px;
+}
+
+/* Secondary button (Enable / Disable) */
+.secondary-btn {
+  -fx-background-color: #5C6BC0;
+  -fx-text-fill: white;
+  -fx-background-radius: 6;
+}
+
+.secondary-btn:hover {
+  -fx-background-color: #3F51B5;
+  -fx-cursor: hand;
+}
+
+/* Danger button (Delete) */
+.danger-btn {
+  -fx-background-color: #D9534F;
+  -fx-text-fill: white;
+  -fx-background-radius: 6;
+}
+
+.danger-btn:hover {
+  -fx-background-color: #C9302C;
+  -fx-cursor: hand;
+}

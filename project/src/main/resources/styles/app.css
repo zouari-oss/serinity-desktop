@@ -1,0 +1,795 @@
+/* =========================================================
+   MODERN TEAL THEME - UPGRADED DESIGN SYSTEM
+   Colors based on: #2F6F6D, #E6F2F1, #88BDBC, #F9FAFB
+========================================================= */
+
+.root {
+    -fx-font-family: "Segoe UI", "Inter", system-ui, Arial, sans-serif;
+    -fx-background-color: #F9FAFB; /* -ser-bg */
+
+    /* Color palette - fully integrated */
+    -ser-primary: #2F6F6D;
+    -ser-secondary: #E6F2F1;
+    -ser-accent: #88BDBC;
+    -ser-bg: #F9FAFB;
+    -ser-text: #1F2933;
+    -ser-text2: #5F6C7B;
+    -ser-success: #4CAF50;
+    -ser-warning: #F4B400;
+    -ser-error: #D9534F;
+
+    /* Extended semantic colors */
+    -card-shadow: rgba(47, 111, 109, 0.12);
+    -glow-teal: rgba(136, 189, 188, 0.6);
+}
+
+/* =========================================================
+   GLOBAL & LAYOUT
+========================================================= */
+
+.root {
+    -fx-font-family: "Segoe UI", "Inter", system-ui, Arial;
+    -fx-background-color: -ser-bg;
+}
+
+.content {
+    -fx-background-color: transparent;
+    -fx-max-width: 1200px;
+    -fx-alignment: TOP_CENTER;
+    -fx-padding: 20 30 25 30;
+}
+
+/* =========================================================
+   TYPOGRAPHY - using ser-text colors
+========================================================= */
+
+.page-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -ser-text;
+    -fx-padding: 0 0 8 0;
+}
+
+.subtitle {
+    -fx-text-fill: -ser-text2;
+    -fx-font-size: 13px;
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -ser-text;
+    -fx-padding: 12 0 0 6;
+}
+
+.label {
+    -fx-text-fill: -ser-text2;
+    -fx-font-size: 13px;
+}
+
+/* =========================================================
+   CARDS & CONTAINERS - modern teal elevation
+========================================================= */
+
+.card {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, -card-shadow, 18, 0.1, 0, 8);
+}
+
+.header-card {
+    -fx-background-color: white;
+    -fx-padding: 18 22;
+    -fx-background-radius: 22;
+    -fx-effect: dropshadow(gaussian, -card-shadow, 16, 0.05, 0, 4);
+}
+
+.doctor-profile-card {
+    -fx-background-color: white;
+    -fx-padding: 24;
+    -fx-background-radius: 24;
+    -fx-border-radius: 24;
+    -fx-border-color: -ser-secondary;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, -card-shadow, 22, 0.08, 0, 8);
+}
+
+.doctor-contact-card {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, -card-shadow, 16, 0.06, 0, 6);
+    -fx-border-color: -ser-secondary;
+    -fx-border-radius: 20;
+}
+
+.rdv-card {
+    -fx-background-color: white;
+    -fx-padding: 26;
+    -fx-background-radius: 24;
+    -fx-effect: dropshadow(gaussian, -card-shadow, 22, 0.1, 0, 10);
+}
+
+.toolbar {
+    -fx-background-color: white;
+    -fx-padding: 14 18;
+    -fx-background-radius: 18;
+    -fx-border-color: -ser-secondary;
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, -card-shadow, 12, 0.05, 0, 4);
+}
+
+/* =========================================================
+   BUTTONS - primary teal, refined interactions
+========================================================= */
+
+.primary-btn {
+    -fx-background-color: -ser-primary;
+    -fx-text-fill: white;
+    -fx-background-radius: 14;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(47, 111, 109, 0.3), 10, 0.1, 0, 4);
+    -fx-font-size: 14px;
+    -fx-transition: all 0.2s;
+}
+
+.primary-btn:hover {
+    -fx-background-color: derive(-ser-primary, -10%);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-effect: dropshadow(gaussian, -glow-teal, 18, 0.25, 0, 6);
+}
+
+.primary-btn:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+.big-btn {
+    -fx-font-size: 15px;
+    -fx-padding: 14 24;
+}
+
+.secondary-btn {
+    -fx-background-color: -ser-secondary;
+    -fx-text-fill: -ser-primary;
+    -fx-background-radius: 12;
+    -fx-padding: 8 16;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-border-color: derive(-ser-secondary, -10%);
+    -fx-border-radius: 12;
+}
+
+.secondary-btn:hover {
+    -fx-background-color: derive(-ser-secondary, -5%);
+    -fx-text-fill: derive(-ser-primary, -15%);
+}
+
+.danger-btn {
+    -fx-background-color: #FFEBEE;
+    -fx-text-fill: -ser-error;
+    -fx-background-radius: 12;
+    -fx-padding: 8 16;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+}
+
+.danger-btn:hover {
+    -fx-background-color: #FFCDD2;
+}
+
+/* Navigation buttons */
+.nav-rdv-btn, .nav-doctor-btn {
+    -fx-background-color: -ser-secondary;
+    -fx-text-fill: -ser-primary;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-padding: 8 16;
+    -fx-border-color: derive(-ser-secondary, -15%);
+    -fx-border-radius: 12;
+    -fx-cursor: hand;
+}
+
+.nav-rdv-btn:hover, .nav-doctor-btn:hover {
+    -fx-background-color: derive(-ser-secondary, -8%);
+}
+
+/* PDF / action buttons */
+.pdf-btn {
+    -fx-background-color: derive(-ser-secondary, 40%);
+    -fx-text-fill: -ser-primary;
+    -fx-border-color: -ser-accent;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.pdf-btn:hover {
+    -fx-background-color: -ser-secondary;
+}
+
+/* AI Button - using accent for pop */
+.ai-button {
+    -fx-background-color: linear-gradient(to right, -ser-primary, -ser-accent);
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 30;
+    -fx-padding: 10 24;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, -glow-teal, 14, 0.3, 0, 4);
+}
+
+.ai-button:hover {
+    -fx-background-color: -ser-primary ;
+     -fx-effect: dropshadow(gaussian, -glow-teal, 24, 0.4, 0, 8);
+}
+
+.ai-button:pressed {
+    -fx-scale-x: 0.96;
+    -fx-scale-y: 0.96;
+}
+
+.ai-glow {
+    -fx-effect: dropshadow(gaussian, -glow-teal, 30, 0.5, 0, 0);
+}
+.navbar{
+    -fx-background-color: linear-gradient(to right,#2F6F6D,#88BDBC);
+    -fx-padding: 14 24 14 24;
+}
+
+/* LOGO */
+.nav-logo{
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: 800;
+}
+
+/* NAV BUTTONS */
+.nav-btn{
+    -fx-background-color: transparent;
+    -fx-text-fill: #cbd5e1;
+    -fx-font-size: 14px;
+    -fx-padding: 8 14;
+    -fx-cursor: hand;
+    -fx-background-radius: 8;
+}
+
+.nav-btn:hover{
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-text-fill: white;
+}
+
+.active-nav{
+    -fx-background-color: rgba(255,255,255,0.2);
+    -fx-text-fill: white;
+}
+
+/* AI BUTTON */
+.nav-ai{
+    -fx-background-color: #22c55e;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 8 16;
+}
+
+.nav-ai:hover{
+    -fx-background-color: #16a34a;
+}
+
+/* LOGOUT */
+.logout-btn{
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-padding: 8 16;
+}
+
+.logout-btn:hover{
+    -fx-background-color: #dc2626;
+}
+
+/* HEADER CARD */
+.header-card{
+    -fx-background-color: white;
+    -fx-padding: 16 20;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),14,0,0,4);
+}
+
+/* TITLES */
+.page-title{
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.subtitle{
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 13px;
+}
+
+/* SEARCH */
+.toolbar{
+    -fx-background-color: white;
+    -fx-padding: 14;
+    -fx-background-radius: 12;
+}
+
+.search-field{
+    -fx-background-radius: 10;
+    -fx-padding: 8 12;
+}
+
+/* BUTTONS */
+.secondary-btn{
+    -fx-background-color: #e5e7eb;
+    -fx-background-radius: 10;
+}
+
+.secondary-btn:hover{
+    -fx-background-color: #d1d5db;
+}
+
+/* EMPTY */
+.empty-title{
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.empty-subtitle{
+    -fx-text-fill: #6b7280;
+}
+/* =========================================================
+   DOCTOR / PATIENT CARDS - with teal accents
+========================================================= */
+
+.doctor-card {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: -ser-secondary;
+    -fx-effect: dropshadow(gaussian, -card-shadow, 18, 0.08, 0, 6);
+    -fx-pref-width: 320;
+    -fx-transition: all 0.2s;
+}
+
+.doctor-card:hover {
+    -fx-effect: dropshadow(gaussian, -glow-teal, 28, 0.25, 0, 12);
+    -fx-translate-y: -4;
+    -fx-border-color: -ser-accent;
+}
+
+.doctor-name {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -ser-text;
+}
+
+.doctor-speciality {
+    -fx-text-fill: -ser-primary;
+    -fx-font-weight: 600;
+}
+
+.doctor-phone, .doctor-address {
+    -fx-text-fill: -ser-text2;
+    -fx-font-size: 13px;
+}
+
+/* Status badges */
+.doctor-card-status {
+    -fx-padding: 4 12;
+    -fx-background-radius: 20;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.status-wait { -fx-background-color: #FFF3E0; -fx-text-fill: #E65100; }
+.status-ok { -fx-background-color: #E8F5E9; -fx-text-fill: #2E7D32; }
+.status-refused { -fx-background-color: #FFEBEE; -fx-text-fill: #C62828; }
+.status-modified { -fx-background-color: #E1F5FE; -fx-text-fill: #01579B; }
+
+/* Doctor profile specific */
+.doctor-avatar {
+    -fx-fill: linear-gradient(to bottom, -ser-primary, -ser-accent);
+    -fx-arc-width: 30;
+    -fx-arc-height: 30;
+}
+
+.doctor-avatar-icon {
+    -fx-font-size: 28px;
+    -fx-text-fill: white;
+}
+
+.doctor-profile-name {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -ser-text;
+}
+
+.doctor-badge {
+    -fx-background-color: -ser-secondary;
+    -fx-text-fill: -ser-primary;
+    -fx-padding: 5 15;
+    -fx-background-radius: 20;
+    -fx-font-weight: 600;
+}
+
+.doctor-verified {
+    -fx-text-fill: -ser-success;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+/* =========================================================
+   FORM ELEMENTS - consistent teal focus
+========================================================= */
+
+.input, .search-field, .consult-input {
+    -fx-background-color: white;
+    -fx-border-color: derive(-ser-secondary, -15%);
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 12 16;
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: derive(-ser-text2, 30%);
+}
+
+.input:focused, .search-field:focused, .consult-input:focused {
+    -fx-border-color: -ser-primary;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, -glow-teal, 12, 0.2, 0, 0);
+}
+
+.text-area {
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: derive(-ser-secondary, -15%);
+    -fx-border-width: 1.5;
+    -fx-font-size: 14px;
+    -fx-background-color: white;
+}
+
+.text-area:focused {
+    -fx-border-color: -ser-primary;
+}
+
+.text-area .content {
+    -fx-background-radius: 14;
+    -fx-padding: 8;
+}
+
+.card-textarea {
+    -fx-background-color: #F8FAFC;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 14;
+    -fx-font-size: 13px;
+    -fx-text-fill: -ser-text;
+    -fx-border-color: -ser-secondary;
+}
+
+/* =========================================================
+   APPOINTMENT (RDV) LIST ITEMS
+========================================================= */
+
+.rdv-item {
+    -fx-background-color: white;
+    -fx-padding: 18;
+    -fx-background-radius: 18;
+    -fx-border-color: -ser-secondary;
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, -card-shadow, 14, 0.06, 0, 6);
+}
+
+.rdv-item:hover {
+    -fx-effect: dropshadow(gaussian, -glow-teal, 22, 0.2, 0, 10);
+    -fx-border-color: -ser-accent;
+}
+
+.rdv-doctor {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -ser-text;
+}
+
+.rdv-date {
+    -fx-text-fill: -ser-primary;
+    -fx-font-weight: 600;
+}
+
+.rdv-motif {
+    -fx-text-fill: -ser-text;
+}
+
+.rdv-status {
+    -fx-background-color: -ser-secondary;
+    -fx-text-fill: -ser-primary;
+    -fx-padding: 4 12;
+    -fx-background-radius: 20;
+    -fx-font-weight: 600;
+}
+
+/* =========================================================
+   CONSULTATION CARDS & MEDICAL ELEMENTS
+========================================================= */
+
+.consult-date {
+    -fx-text-fill: -ser-primary;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.consult-title {
+    -fx-font-weight: 600;
+    -fx-text-fill: -ser-text;
+}
+
+.consult-box {
+    -fx-background-color: -ser-secondary;
+    -fx-padding: 12 16;
+    -fx-background-radius: 16;
+    -fx-text-fill: -ser-text;
+    -fx-font-size: 13px;
+    -fx-border-color: derive(-ser-secondary, -10%);
+}
+
+.consult-actions {
+    -fx-padding: 8 0 0 0;
+}
+
+/* Action buttons inside cards */
+.btn-accept {
+    -fx-background-color: derive(-ser-success, 10%);
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.btn-accept:hover {
+    -fx-background-color: -ser-success;
+}
+
+.btn-refuse {
+    -fx-background-color: -ser-error;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.btn-refuse:hover {
+    -fx-background-color: derive(-ser-error, -10%);
+}
+
+.btn-consult {
+    -fx-background-color: -ser-accent;
+    -fx-text-fill: -ser-text;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.btn-consult:hover {
+    -fx-background-color: derive(-ser-accent, -10%);
+}
+
+/* =========================================================
+   EMPTY STATE & MESSAGES
+========================================================= */
+
+.empty-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -ser-text;
+}
+
+.empty-subtitle {
+    -fx-text-fill: -ser-text2;
+    -fx-font-size: 14px;
+}
+
+/* =========================================================
+   SCROLLPANE - clean, minimal
+========================================================= */
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 12;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: derive(-ser-secondary, -20%);
+    -fx-background-radius: 20;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -ser-accent;
+}
+
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+}
+
+/* =========================================================
+   ICONS & MISC
+========================================================= */
+
+.icon {
+    -fx-font-size: 16px;
+    -fx-text-fill: -ser-primary;
+    -fx-fill: -ser-primary;
+}
+
+.contact-text {
+    -fx-text-fill: -ser-text;
+    -fx-font-size: 13px;
+}
+
+#urgencyLabel {
+    -fx-font-size: 18px;
+    -fx-text-fill: -ser-error;
+    -fx-font-weight: bold;
+}
+
+.brand-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -ser-primary;
+    -fx-effect: dropshadow(gaussian, -glow-teal, 8, 0.2, 0, 2);
+}
+
+/* =========================================================
+   UTILITIES & SPACING
+========================================================= */
+
+.doctor-card-header { -fx-alignment: center-left; -fx-spacing: 8; }
+.doctor-card-body { -fx-padding: 8 0 8 0; -fx-spacing: 6; }
+.doctor-card-actions { -fx-alignment: center-right; -fx-spacing: 8; }
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    -fx-background-color: -ser-primary;
+    -fx-padding: 22 14 22 14;
+    -fx-pref-width: 235;
+}
+
+.sidebar-logo{
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: 800;
+}
+
+/* menu buttons */
+.side-btn{
+    -fx-background-color: transparent;
+    -fx-text-fill: #d7eeee;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 11 14;
+    -fx-font-size: 14px;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+}
+
+.side-btn:hover{
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-text-fill: white;
+}
+
+/* active page */
+.active-side{
+    -fx-background-color: -ser-accent;
+    -fx-text-fill: #083c3a;
+    -fx-font-weight: bold;
+}
+/* ================= NAVBAR ================= */
+
+.navbar{
+    -fx-background-color: -ser-primary;
+    -fx-padding: 14 24;
+}
+
+.nav-logo{
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: 800;
+}
+
+.nav-btn{
+    -fx-background-color: transparent;
+    -fx-text-fill: #d7eeee;
+    -fx-font-size: 14px;
+    -fx-padding: 8 14;
+    -fx-background-radius: 10;
+}
+
+.nav-btn:hover{
+    -fx-background-color: rgba(255,255,255,0.2);
+    -fx-text-fill: white;
+}
+
+.active-nav{
+    -fx-background-color: -ser-accent;
+    -fx-text-fill: #083c3a;
+    -fx-font-weight: bold;
+}
+.patient-card{
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 14;
+    -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),12,0,0,4);
+}
+
+.patient-name{
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -ser-primary;
+}.stat-card{
+     -fx-background-color: white;
+     -fx-background-radius: 16;
+     -fx-padding: 18;
+     -fx-pref-width: 170;
+     -fx-effect: dropshadow(gaussian,rgba(0,0,0,0.08),12,0,0,4);
+ }
+
+.stat-number{
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -ser-primary;
+}
+
+.patient-visits{
+    -fx-text-fill: -ser-success;
+    -fx-font-weight: bold;
+}/* Dashboard Cards */
+.stat-card{
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-padding: 18;
+    -fx-pref-width: 180;
+    -fx-effect: dropshadow(gaussian, rgba(47,111,109,0.15), 18,0,0,6);
+    -fx-border-color: #E6F2F1;
+    -fx-border-radius: 18;
+}
+
+/* Chart lines */
+.chart-series-line {
+    -fx-stroke-width: 3px;
+}
+
+/* Chart symbols */
+.chart-line-symbol {
+    -fx-background-radius: 6px;
+    -fx-padding: 6px;
+}
+
+/* Axis */
+.chart-axis-label{
+    -fx-text-fill: #2F6F6D;
+    -fx-font-weight: bold;
+}

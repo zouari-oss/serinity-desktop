@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="com.serinity.accesscontrol.controller.sleepcontrol.ReveStatsController"
+  spacing="16.0"
+  stylesheets="@../../styles/sleepcontrol/styles.css"
+  style="-fx-background-color: #f5f7fa;"
+  minWidth="600" minHeight="500">
+
+  <padding>
+    <Insets top="24" right="24" bottom="24" left="24" />
+  </padding>
+
+  <HBox alignment="CENTER_LEFT" spacing="12.0">
+    <Label text="📊 Statistiques des Rêves" styleClass="page-header" />
+    <Region HBox.hgrow="ALWAYS" />
+    <Button text="🔄 Actualiser" styleClass="btn-secondary" onAction="#actualiser" />
+  </HBox>
+
+  <HBox spacing="12.0">
+    <VBox styleClass="stat-card, primary" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+      <padding>
+        <Insets top="12" right="14" bottom="12" left="14" />
+      </padding>
+      <Label text="💭 TOTAL RÊVES" styleClass="stat-card-title" />
+      <Label fx:id="kpiTotal" text="–" styleClass="stat-card-value" />
+      <Label text="Rêves enregistrés" styleClass="stat-card-subtitle" />
+    </VBox>
+    <VBox styleClass="stat-card, info" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+      <padding>
+        <Insets top="12" right="14" bottom="12" left="14" />
+      </padding>
+      <Label text="⚡ INTENSITÉ MOY." styleClass="stat-card-title" />
+      <Label fx:id="kpiIntensite" text="–" styleClass="stat-card-value" />
+      <Label text="Sur 10" styleClass="stat-card-subtitle" />
+    </VBox>
+    <VBox styleClass="stat-card, warning" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+      <padding>
+        <Insets top="12" right="14" bottom="12" left="14" />
+      </padding>
+      <Label text="😰 ANXIÉTÉ MOY." styleClass="stat-card-title" />
+      <Label fx:id="kpiAnxiete" text="–" styleClass="stat-card-value" />
+      <Label text="Sur 10" styleClass="stat-card-subtitle" />
+    </VBox>
+    <VBox styleClass="stat-card, success" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+      <padding>
+        <Insets top="12" right="14" bottom="12" left="14" />
+      </padding>
+      <Label text="🏆 BIEN-ÊTRE" styleClass="stat-card-title" />
+      <Label fx:id="kpiBienEtre" text="–" styleClass="stat-card-value" />
+      <Label text="Score onirique" styleClass="stat-card-subtitle" />
+    </VBox>
+    <VBox styleClass="stat-card, accent" spacing="4" alignment="CENTER" HBox.hgrow="ALWAYS">
+      <padding>
+        <Insets top="12" right="14" bottom="12" left="14" />
+      </padding>
+      <Label text="💪 RÉSILIENCE" styleClass="stat-card-title" />
+      <Label fx:id="kpiResilience" text="–" styleClass="stat-card-value" />
+      <Label text="Index global" styleClass="stat-card-subtitle" />
+    </VBox>
+  </HBox>
+
+  <VBox styleClass="filter-container" spacing="10.0">
+    <padding>
+      <Insets top="12" right="14" bottom="12" left="14" />
+    </padding>
+    <Label text="📈 Répartition" styleClass="section-title" />
+    <HBox spacing="30.0">
+      <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+        <Label text="😱 Cauchemars" styleClass="form-label" />
+        <HBox alignment="CENTER_LEFT" spacing="8.0">
+          <ProgressBar fx:id="barCauchemars" prefWidth="180.0" />
+          <Label fx:id="pctCauchemars" text="–%" styleClass="stat-bar-label" />
+        </HBox>
+      </VBox>
+      <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+        <Label text="🔁 Récurrents" styleClass="form-label" />
+        <HBox alignment="CENTER_LEFT" spacing="8.0">
+          <ProgressBar fx:id="barRecurrents" prefWidth="180.0" />
+          <Label fx:id="pctRecurrents" text="–%" styleClass="stat-bar-label" />
+        </HBox>
+      </VBox>
+      <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+        <Label text="🌈 En couleur" styleClass="form-label" />
+        <HBox alignment="CENTER_LEFT" spacing="8.0">
+          <ProgressBar fx:id="barCouleur" prefWidth="180.0" />
+          <Label fx:id="pctCouleur" text="–%" styleClass="stat-bar-label" />
+        </HBox>
+      </VBox>
+    </HBox>
+  </VBox>
+
+  <HBox spacing="14.0" VBox.vgrow="ALWAYS">
+    <VBox styleClass="filter-container" spacing="10.0" HBox.hgrow="ALWAYS">
+      <padding>
+        <Insets top="12" right="14" bottom="12" left="14" />
+      </padding>
+      <Label text="🎭 Types de rêves" styleClass="section-title" />
+      <VBox fx:id="typesContainer" spacing="6.0" />
+    </VBox>
+    <VBox styleClass="filter-container" spacing="10.0" HBox.hgrow="ALWAYS">
+      <padding>
+        <Insets top="12" right="14" bottom="12" left="14" />
+      </padding>
+      <Label text="💫 Top émotions" styleClass="section-title" />
+      <VBox fx:id="emotionsContainer" spacing="6.0" />
+    </VBox>
+    <VBox styleClass="filter-container" spacing="10.0" HBox.hgrow="ALWAYS">
+      <padding>
+        <Insets top="12" right="14" bottom="12" left="14" />
+      </padding>
+      <Label text="🔮 Top symboles" styleClass="section-title" />
+      <VBox fx:id="symbolesContainer" spacing="6.0" />
+    </VBox>
+  </HBox>
+
+  <VBox styleClass="filter-container" spacing="8.0">
+    <padding>
+      <Insets top="12" right="14" bottom="10" left="14" />
+    </padding>
+    <Label text="💡 Insights personnalisés" styleClass="section-title" />
+    <FlowPane fx:id="insightsContainer" hgap="8" vgap="8" />
+  </VBox>
+
+</VBox>

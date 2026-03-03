@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    log4j2.xml
+
+    Java-based logging framework that enables developers to track and record application activity
+
+    <p>TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF</p>
+
+    @author @ZouariOmar <zouariomar20@gmail.com>
+    @version 0.1
+    @since 07/28/2025
+    @Example <code>private static final Logger _LOGGER = LogManager.getLogger(MyClass.class);</code>
+-->
+<Configuration status="WARN" monitorInterval="60">
+  <Properties>
+    <Property name="logPath">target/logs</Property>
+    <Property name="logFileName">Serinity</Property>
+    <Property name="maxFileSize">10MB</Property>
+    <Property name="maxBackup">30</Property>
+  </Properties>
+
+  <Appenders>
+    <!-- Console: Show everything -->
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout
+        pattern="[%highlight{%p}] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}.%M() - %msg%n%throwable{short}" />
+    </Console>
+
+    <!-- TRACE and DEBUG log -->
+    <RollingFile name="DebugFileAppender"
+      fileName="${logPath}/${logFileName}-debug.log"
+      filePattern="${logPath}/archive/${logFileName}-debug-%d{yyyy-MM-dd}-%i.log.gz">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+      <Filters>
+        <LevelRangeFilter minLevel="DEBUG" maxLevel="TRACE" onMatch="ACCEPT" onMismatch="DENY" />
+      </Filters>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+        <SizeBasedTriggeringPolicy size="${maxFileSize}" />
+      </Policies>
+      <DefaultRolloverStrategy max="${maxBackup}" fileIndex="min" />
+    </RollingFile>
+
+    <!-- INFO and WARN log -->
+    <RollingFile name="InfoFileAppender"
+      fileName="${logPath}/${logFileName}-info.log"
+      filePattern="${logPath}/archive/${logFileName}-%d{yyyy-MM-dd}-%i.log.gz">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+      <Filters>
+        <LevelRangeFilter minLevel="WARN" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY" />
+      </Filters>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+        <SizeBasedTriggeringPolicy size="${maxFileSize}" />
+      </Policies>
+      <DefaultRolloverStrategy max="${maxBackup}" fileIndex="min" />
+    </RollingFile>
+
+    <!-- ERROR and above log -->
+    <RollingFile name="ErrorFileAppender"
+      fileName="${logPath}/${logFileName}-error.log"
+      filePattern="${logPath}/archive/${logFileName}-error-%d{yyyy-MM-dd}-%i.log.gz">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+      <Filters>
+        <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
+      </Filters>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+        <SizeBasedTriggeringPolicy size="${maxFileSize}" />
+      </Policies>
+      <DefaultRolloverStrategy max="${maxBackup}" fileIndex="min" />
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+    <!-- Catch all logs under com.mycompany -->
+    <Logger name="com.serinity.accesscontrol" level="TRACE" additivity="false">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="DebugFileAppender" />
+      <AppenderRef ref="InfoFileAppender" />
+      <AppenderRef ref="ErrorFileAppender" />
+    </Logger>
+
+    <!-- Fallback for anything not under above
+    <Root level="TRACE">
+      <AppenderRef ref="Console" />
+      <AppenderRef ref="DebugFileAppender" />
+      <AppenderRef ref="InfoFileAppender" />
+      <AppenderRef ref="ErrorFileAppender" />
+    </Root>
+    -->
+  </Loggers>
+</Configuration>

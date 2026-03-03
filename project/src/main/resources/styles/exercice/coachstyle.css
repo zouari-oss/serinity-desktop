@@ -1,0 +1,194 @@
+/* =========================
+   SERINITY — COACH DASHBOARD
+   ========================= */
+
+.coach-root {
+    -fx-font-family: "Segoe UI Variable", "Segoe UI", "Inter", Arial;
+    -fx-background-color: #F6F8FA;
+
+    -ser-primary: #2F6F6D;
+    -ser-text: #1A232B;
+    -ser-muted: #6B8E88;
+    -ser-border: #E0ECE9;
+    -ser-card: white;
+}
+
+/* Topbar */
+.coach-topbar {
+    -fx-background-color: white;
+    -fx-border-color: -ser-border;
+    -fx-border-width: 0 0 1 0;
+}
+
+.coach-title {
+    -fx-text-fill: -ser-text;
+    -fx-font-size: 18px;
+    -fx-font-weight: 900;
+}
+
+.coach-label {
+    -fx-text-fill: -ser-muted;
+    -fx-font-weight: 800;
+}
+
+/* Inputs */
+.coach-input, .combo-box, .spinner, .text-field {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(0,0,0,0.12);
+    -fx-border-width: 1;
+    -fx-font-weight: 700;
+}
+.text-field, .combo-box-base, .spinner {
+    -fx-padding: 8 10;
+}
+.text-field:focused,
+.combo-box:focused,
+.spinner:focused {
+    -fx-border-color: rgba(47,111,109,0.45);
+    -fx-effect: dropshadow(gaussian, rgba(47,111,109,0.12), 12, 0.25, 0, 0);
+}
+
+/* Buttons */
+.btn-primary {
+    -fx-background-color: -ser-primary;
+    -fx-text-fill: white;
+    -fx-font-weight: 900;
+    -fx-background-radius: 12;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.btn-primary:hover { -fx-background-color: derive(-ser-primary, 8%); }
+
+.btn-secondary {
+    -fx-background-color: rgba(47,111,109,0.12);
+    -fx-text-fill: -ser-primary;
+    -fx-font-weight: 900;
+    -fx-background-radius: 12;
+    -fx-padding: 8 14;
+    -fx-cursor: hand;
+}
+.btn-secondary:hover { -fx-background-color: rgba(47,111,109,0.18); }
+
+.btn-ghost {
+    -fx-background-color: transparent;
+    -fx-text-fill: -ser-primary;
+    -fx-font-weight: 900;
+    -fx-border-color: rgba(47,111,109,0.25);
+    -fx-border-radius: 12;
+    -fx-padding: 8 14;
+    -fx-cursor: hand;
+}
+.btn-ghost:hover { -fx-background-color: rgba(47,111,109,0.08); }
+
+/* SplitPane */
+.coach-split {
+    -fx-background-color: transparent;
+}
+.coach-split .split-pane-divider {
+    -fx-padding: 0 1 0 1;
+    -fx-background-color: rgba(0,0,0,0.06);
+}
+
+/* Panes */
+.coach-pane { -fx-background-color: transparent; }
+
+/* Cards */
+.coach-card {
+    -fx-background-color: -ser-card;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: -ser-border;
+    -fx-padding: 14;
+    -fx-effect: dropshadow(gaussian, rgba(30,70,65,0.08), 18, 0.2, 0, 6);
+}
+
+.card-title {
+    -fx-text-fill: -ser-text;
+    -fx-font-size: 14.5px;
+    -fx-font-weight: 900;
+}
+
+.section-label {
+    -fx-text-fill: -ser-muted;
+    -fx-font-weight: 900;
+    -fx-padding: 4 0 2 0;
+}
+
+.body-text {
+    -fx-text-fill: -ser-text;
+    -fx-font-weight: 700;
+}
+
+.body-muted {
+    -fx-text-fill: -ser-muted;
+    -fx-font-weight: 700;
+}
+
+/* KPI */
+.kpi {
+    -fx-background-color: rgba(47,111,109,0.04);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(47,111,109,0.12);
+    -fx-padding: 10 12;
+    -fx-min-width: 140;
+}
+.kpi-title {
+    -fx-text-fill: -ser-muted;
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+}
+.kpi-value {
+    -fx-text-fill: -ser-text;
+    -fx-font-size: 14px;
+    -fx-font-weight: 900;
+}
+
+/* Pills */
+.pill-muted {
+    -fx-background-color: rgba(0,0,0,0.06);
+    -fx-text-fill: rgba(0,0,0,0.55);
+    -fx-padding: 4 10;
+    -fx-background-radius: 999;
+    -fx-font-weight: 800;
+}
+.pill-accent {
+    -fx-background-color: rgba(47,111,109,0.12);
+    -fx-text-fill: -ser-primary;
+    -fx-padding: 4 10;
+    -fx-background-radius: 999;
+    -fx-font-weight: 900;
+}
+
+/* TextAreas */
+.coach-textarea {
+    -fx-background-color: rgba(47,111,109,0.04);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(47,111,109,0.12);
+    -fx-padding: 10;
+    -fx-font-weight: 650;
+}
+.coach-textarea .content {
+    -fx-background-color: transparent;
+}
+
+/* ListView */
+.coach-list {
+    -fx-background-color: rgba(47,111,109,0.04);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(47,111,109,0.12);
+}
+.coach-list .list-cell {
+    -fx-padding: 10 12;
+    -fx-font-weight: 750;
+}
+
+/* Footer */
+.footer-status {
+    -fx-text-fill: -ser-muted;
+    -fx-font-weight: 800;
+    -fx-padding: 2 2 0 2;
+}

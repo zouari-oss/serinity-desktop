@@ -1,0 +1,94 @@
+/* ============= Base for the page ========================== */
+.users-page {
+  -fx-background-color: #2a2d44;
+  -fx-padding: 10;
+}
+
+/* ================= Search & filter toolbar ================= */
+.users-toolbar {
+  -fx-background-color: #333750;
+  -fx-padding: 10;
+  -fx-background-radius: 8;
+}
+
+.search-field {
+  -fx-background-radius: 6;
+  -fx-border-radius: 6;
+  -fx-background-color: #f0f0f0;
+  -fx-prompt-text-fill: #888;
+  -fx-font-size: 14px;
+  -fx-padding: 6 10;
+}
+
+.filter-box {
+  -fx-background-radius: 6;
+  -fx-font-size: 14px;
+  -fx-pref-width: 150px;
+}
+
+/* ================= Buttons ================= */
+.primary-btn {
+  -fx-background-color: #2F6F6D;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-background-radius: 6;
+  -fx-padding: 6 12;
+}
+
+.primary-btn:hover {
+  -fx-background-color: #237463;
+  -fx-cursor: hand;
+}
+
+/* ================= Scroll pane ================= */
+.users-scroll {
+  -fx-background: transparent;
+  -fx-background-color: transparent;
+}
+
+/* ================= Users container ================= */
+.users-container {
+  -fx-padding: 10 0 10 0;
+}
+
+/* ================= User card ================= */
+.user-card {
+  -fx-background-color: #3a3f5c;
+  -fx-padding: 12;
+  -fx-background-radius: 8;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2);
+}
+
+.user-card:hover {
+  -fx-background-color: #4b5180;
+}
+
+/* ================= Labels ================= */
+.user-email {
+  -fx-text-fill: #ffffff;
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
+}
+
+.user-role {
+  -fx-text-fill: #d0d0ff;
+  -fx-font-size: 12px;
+}
+
+/* ================= User status ================= */
+.user-status {
+  -fx-text-fill: white;
+  -fx-padding: 2 6;
+  -fx-background-radius: 4;
+  -fx-font-size: 12px;
+  -fx-font-weight: bold;
+}
+
+/* ================ Status Variants ============== */
+.status-active {
+  -fx-background-color: #4CAF50;
+}
+
+.status-disabled {
+  -fx-background-color: #D9534F;
+}

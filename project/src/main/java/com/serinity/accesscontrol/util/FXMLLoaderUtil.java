@@ -1,0 +1,169 @@
+// `FXMLLoaderUtil` package name
+package com.serinity.accesscontrol.util;
+
+// `java` import(s)
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+// `javafx` import(s)
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+
+/**
+ * Fxml loader util class
+ *
+ * <p>
+ * see `/fxml/*`
+ * </p>
+ *
+ * <pre>{@code
+ * // Example usage
+ * Scene scene = FXMLLoaderUtil.loadScene(this.getClass(), FXMLFile.SIGNIN.getFileName());
+ * }</pre>
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 2026-01-28
+ *
+ *        <a
+ *        href=
+ *        "https://github.com/zouari-oss/serinity-desktop/tree/main/project/access-control/src/main/java/com/serinity/accesscontrol/util/FXMLLoaderUtil.java">
+ *        FXMLLoaderUtil.java
+ *        </a>
+ */
+final public class FXMLLoaderUtil {
+
+  /**
+   * Wrapper class that holds both the loaded FXML root node and its controller.
+   *
+   * <p>
+   * This is typically used for navigation systems to access both the root
+   * node to add to a layout (e.g., StackPane) and the controller to inject
+   * dependencies or configure callbacks.
+   * </p>
+   *
+   * @param <T> The type of the controller associated with the FXML.
+   */
+  public static final class ViewLoader<T> {
+
+    private final Parent root;
+    private final T controller;
+
+    public ViewLoader(final Parent root, final T controller) {
+      this.root = root;
+      this.controller = controller;
+    }
+
+    public Parent getRoot() {
+      return root;
+    }
+
+    public T getController() {
+      return controller;
+    }
+  }
+
+  /**
+   * Loads an FXML file and wraps the root node in a new {@link Scene}.
+   *
+   * @param caller   class used to resolve the FXML resource path
+   * @param fxmlPath classpath path to the FXML file
+   * @return a new {@link Scene} containing the loaded FXML root
+   */
+  public static Scene loadScene(final Class<?> caller, final String fxmlPath) {
+    return loadScene(caller, fxmlPath, null);
+  }
+
+  /**
+   * Loads an FXML file with a resource bundle and wraps the root in a
+   * {@link Scene}.
+   *
+   * @param caller   class used to resolve the FXML resource path
+   * @param fxmlPath classpath path to the FXML file
+   * @param bundle   resource bundle for i18n, or {@code null}
+   * @return a new {@link Scene} containing the loaded FXML root
+   */
+  public static Scene loadScene(final Class<?> caller, final String fxmlPath, final ResourceBundle bundle) {
+    return new Scene(loadRoot(caller, fxmlPath, bundle));
+  }
+
+  /**
+   * Loads an FXML file and returns the root {@link Parent} node.
+   *
+   * @param caller   class used to resolve the FXML resource path
+   * @param fxmlPath classpath path to the FXML file
+   * @return the root {@link Parent} node
+   */
+  public static Parent loadFXML(final Class<?> caller, final String fxmlPath) {
+    return loadFXML(caller, fxmlPath, null);
+  }
+
+  /**
+   * Loads an FXML file with a resource bundle and returns the root node.
+   *
+   * @param caller   class used to resolve the FXML resource path
+   * @param fxmlPath classpath path to the FXML file
+   * @param bundle   resource bundle for i18n, or {@code null}
+   * @return the root {@link Parent} node
+   */
+  public static Parent loadFXML(final Class<?> caller, final String fxmlPath, final ResourceBundle bundle) {
+    return loadRoot(caller, fxmlPath, bundle);
+  }
+
+  /**
+   * Loads an FXML file and returns both the root node and its typed controller
+   * wrapped in a {@link ViewLoader}.
+   *
+   * @param <T>      the controller type
+   * @param caller   class used to resolve the FXML resource path
+   * @param fxmlPath classpath path to the FXML file
+   * @param bundle   resource bundle for i18n, or {@code null}
+   * @return a {@link ViewLoader} containing the root node and controller
+   */
+  public static <T> ViewLoader<T> loadView(
+      final Class<?> caller,
+      final String fxmlPath,
+      final ResourceBundle bundle) {
+
+    try {
+      final URL fxmlUrl = caller.getResource(fxmlPath);
+      if (fxmlUrl == null) {
+        throw new IllegalStateException("[ERROR] FXML file not found: " + fxmlPath);
+      }
+
+      final FXMLLoader loader = new FXMLLoader(fxmlUrl);
+      if (bundle != null) {
+        loader.setResources(bundle);
+      }
+
+      final Parent root = loader.load();
+      final T controller = loader.getController();
+
+      return new ViewLoader<>(root, controller);
+
+    } catch (final IOException e) {
+      throw new RuntimeException("[ERROR] Failed to load FXML: " + fxmlPath, e);
+    }
+  }
+
+  private static Parent loadRoot(final Class<?> caller, final String fxmlPath, final ResourceBundle bundle) {
+    try {
+      final URL fxmlUrl = caller.getResource(fxmlPath);
+      if (fxmlUrl == null) {
+        throw new IllegalStateException("[ERROR] FXML file not found: " + fxmlPath);
+      }
+
+      final FXMLLoader loader = new FXMLLoader(fxmlUrl);
+      if (bundle != null) {
+        loader.setResources(bundle);
+      }
+
+      return loader.load();
+
+    } catch (final IOException e) {
+      throw new RuntimeException("[ERROR] Failed to load FXML: " + fxmlPath, e);
+    }
+  }
+} // FXMLLoaderUtil class

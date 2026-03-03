@@ -2,7 +2,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
   <!-- GAV properties -->
   <groupId>com.serinity</groupId>
@@ -69,246 +69,285 @@
     <jackson-databind.version>2.17.2</jackson-databind.version>
     <weka-stable.version>3.8.6</weka-stable.version>
     <gson.version>2.10.1</gson.version>
+    <pdfbox.version>3.0.3</pdfbox.version>
+    <zxing.version>3.5.3</zxing.version>
   </properties>
   <!-- !Custom properties -->
 
-  <!-- Modules properties -->
-  <modules>
-    <module>access-control</module>
-    <module>exercice-control</module>
-  </modules>
-  <!-- !Modules properties -->
+  <dependencies>
+    <!-- org.openjfx.javafx-controls -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <!-- !org.openjfx.javafx-controls -->
 
-  <dependencyManagement>
-    <dependencies>
-      <!-- org.openjfx.javafx-controls -->
-      <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-controls</artifactId>
-        <version>${javafx.version}</version>
-      </dependency>
-      <!-- !org.openjfx.javafx-controls -->
+    <!-- org.openjfx.javafx-fxml -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <!-- !org.openjfx.javafx-fxml -->
 
-      <!-- org.openjfx.javafx-fxml -->
-      <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-fxml</artifactId>
-        <version>${javafx.version}</version>
-      </dependency>
-      <!-- !org.openjfx.javafx-fxml -->
+    <!-- org.openjfx.javafx-web -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-web</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <!-- !org.openjfx.javafx-web -->
 
-      <!-- org.openjfx.javafx-web -->
-      <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-web</artifactId>
-        <version>${javafx.version}</version>
-      </dependency>
-      <!-- !org.openjfx.javafx-web -->
+    <!-- org.openjfx.javafx-media -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-media</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <!-- !org.openjfx.javafx-media -->
 
-      <!-- org.openjfx.javafx-media -->
-      <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-media</artifactId>
-        <version>${javafx.version}</version>
-      </dependency>
-      <!-- !org.openjfx.javafx-media -->
+    <!-- org.junit.jupiter.junit-jupiter-engine -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- !org.junit.jupiter.junit-jupiter-engine -->
 
-      <!-- org.junit.jupiter.junit-jupiter-engine -->
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>${junit.jupiter.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <!-- !org.junit.jupiter.junit-jupiter-engine -->
+    <!-- org.mariadb.jdbc.mariadb-java-client -->
+    <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+      <version>${mariadb.version}</version>
+    </dependency>
+    <!-- !org.mariadb.jdbc.mariadb-java-client -->
 
-      <!-- org.mariadb.jdbc.mariadb-java-client -->
-      <dependency>
-        <groupId>org.mariadb.jdbc</groupId>
-        <artifactId>mariadb-java-client</artifactId>
-        <version>${mariadb.version}</version>
-      </dependency>
-      <!-- !org.mariadb.jdbc.mariadb-java-client -->
+    <!-- io.github.cdimascio.dotenv-java -->
+    <dependency>
+      <groupId>io.github.cdimascio</groupId>
+      <artifactId>dotenv-java</artifactId>
+      <version>${dotenv-java.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !io.github.cdimascio.dotenv-java -->
 
-      <!-- io.github.cdimascio.dotenv-java -->
-      <dependency>
-        <groupId>io.github.cdimascio</groupId>
-        <artifactId>dotenv-java</artifactId>
-        <version>${dotenv-java.version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <!-- !io.github.cdimascio.dotenv-java -->
+    <!-- org.zouarioss.skinnedratorm -->
+    <dependency>
+      <groupId>org.zouarioss</groupId>
+      <artifactId>skinnedratorm</artifactId>
+      <version>${skinnedratorm.version}</version>
+    </dependency>
+    <!-- !org.zouarioss.skinnedratorm -->
 
-      <!-- org.zouarioss.skinnedratorm -->
-      <dependency>
-        <groupId>org.zouarioss</groupId>
-        <artifactId>skinnedratorm</artifactId>
-        <version>${skinnedratorm.version}</version>
-      </dependency>
-      <!-- !org.zouarioss.skinnedratorm -->
+    <!-- org.simplejavamail.simple-java-mail -->
+    <!-- Source: https://mvnrepository.com/artifact/org.simplejavamail/simple-java-mail -->
+    <dependency>
+      <groupId>org.simplejavamail</groupId>
+      <artifactId>simple-java-mail</artifactId>
+      <version>${simple-java-mail.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !org.simplejavamail.simple-java-mail -->
 
-      <!-- org.simplejavamail.simple-java-mail -->
-      <!-- Source: https://mvnrepository.com/artifact/org.simplejavamail/simple-java-mail -->
-      <dependency>
-        <groupId>org.simplejavamail</groupId>
-        <artifactId>simple-java-mail</artifactId>
-        <version>${simple-java-mail.version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <!-- !org.simplejavamail.simple-java-mail -->
+    <!-- org.apache.logging.log4j.log4j-core -->
+    <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j.version}</version>
+      <scope>compile</scope>
+      <!-- !org.apache.logging.log4j.log4j-core -->
+    </dependency>
 
-      <!-- org.apache.logging.log4j.log4j-core -->
-      <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-core</artifactId>
-        <version>${log4j.version}</version>
-        <scope>compile</scope>
-        <!-- !org.apache.logging.log4j.log4j-core -->
-      </dependency>
+    <!-- com.github.ben-manes.caffeine.caffeine -->
+    <!-- Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
+    <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+      <version>${caffeine.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !com.github.ben-manes.caffeine.caffeine -->
 
-      <!-- com.github.ben-manes.caffeine.caffeine -->
-      <!-- Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
-      <dependency>
-        <groupId>com.github.ben-manes.caffeine</groupId>
-        <artifactId>caffeine</artifactId>
-        <version>${caffeine.version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <!-- !com.github.ben-manes.caffeine.caffeine -->
-
-      <!-- org.springframework.security.spring-security-crypto -->
-      <!-- Source:
+    <!-- org.springframework.security.spring-security-crypto -->
+    <!-- Source:
     https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
-      <dependency>
-        <groupId>org.springframework.security</groupId>
-        <artifactId>spring-security-crypto</artifactId>
-        <version>${spring-security-crypto.version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <!-- !org.springframework.security.spring-security-crypto -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-crypto</artifactId>
+      <version>${spring-security-crypto.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !org.springframework.security.spring-security-crypto -->
 
-      <!-- com.squareup.okhttp3.okhttp3 -->
-      <dependency>
-        <groupId>com.squareup.okhttp3</groupId>
-        <artifactId>okhttp</artifactId>
-        <version>${okhttp.version}</version>
-      </dependency>
-      <!-- !com.squareup.okhttp3.okhttp3 -->
+    <!-- com.squareup.okhttp3.okhttp3 -->
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>${okhttp.version}</version>
+    </dependency>
+    <!-- !com.squareup.okhttp3.okhttp3 -->
 
-      <!-- org.json.json -->
-      <dependency>
-        <groupId>org.json</groupId>
-        <artifactId>json</artifactId>
-        <version>${json.version}</version>
-      </dependency>
-      <!-- !org.json.json -->
+    <!-- org.json.json -->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${json.version}</version>
+    </dependency>
+    <!-- !org.json.json -->
 
-      <!-- com.itextpdf.itext7-core -->
-      <dependency>
-        <groupId>com.itextpdf</groupId>
-        <artifactId>itext7-core</artifactId>
-        <version>${itext7-core.version}</version>
-        <type>pom</type>
-      </dependency>
-      <!-- !com.itextpdf.itext7-core -->
+    <!-- com.itextpdf.itext7-core -->
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>itext7-core</artifactId>
+      <version>${itext7-core.version}</version>
+      <type>pom</type>
+    </dependency>
+    <!-- !com.itextpdf.itext7-core -->
 
-      <!-- com.itextpdf.kernel -->
-      <dependency>
-        <groupId>com.itextpdf</groupId>
-        <artifactId>kernel</artifactId>
-        <version>${itext7-core.version}</version>
-      </dependency>
-      <!-- !com.itextpdf.kernel -->
+    <!-- com.itextpdf.kernel -->
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>kernel</artifactId>
+      <version>${itext7-core.version}</version>
+    </dependency>
+    <!-- !com.itextpdf.kernel -->
 
-      <!-- com.itextpdf.layout -->
-      <dependency>
-        <groupId>com.itextpdf</groupId>
-        <artifactId>layout</artifactId>
-        <version>${itext7-core.version}</version>
-      </dependency>
-      <!-- !com.itextpdf.layout -->
+    <!-- com.itextpdf.layout -->
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>layout</artifactId>
+      <version>${itext7-core.version}</version>
+    </dependency>
+    <!-- !com.itextpdf.layout -->
 
-      <!-- org.opencv.opencv -->
-      <!-- Source: https://mvnrepository.com/artifact/org.opencv/opencv -->
-      <dependency>
-        <groupId>org.opencv</groupId>
-        <artifactId>opencv</artifactId>
-        <version>${opencv.version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <!-- !org.opencv.opencv -->
+    <!-- org.opencv.opencv -->
+    <!-- Source: https://mvnrepository.com/artifact/org.opencv/opencv -->
+    <dependency>
+      <groupId>org.opencv</groupId>
+      <artifactId>opencv</artifactId>
+      <version>${opencv.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !org.opencv.opencv -->
 
-      <!-- com.microsoft.onnxruntime.onnxruntime -->
-      <!-- Source: https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime -->
-      <dependency>
-        <groupId>com.microsoft.onnxruntime</groupId>
-        <artifactId>onnxruntime</artifactId>
-        <version>${onnxruntime.version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <!-- !com.microsoft.onnxruntime.onnxruntime -->
+    <!-- com.microsoft.onnxruntime.onnxruntime -->
+    <!-- Source: https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime -->
+    <dependency>
+      <groupId>com.microsoft.onnxruntime</groupId>
+      <artifactId>onnxruntime</artifactId>
+      <version>${onnxruntime.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- !com.microsoft.onnxruntime.onnxruntime -->
 
-      <!-- com.fasterxml.jackson.core.jackson-databind -->
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${jackson-databind.version}</version>
-      </dependency>
-      <!-- com.fasterxml.jackson.core.jackson-databind -->
+    <!-- com.fasterxml.jackson.core.jackson-databind -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson-databind.version}</version>
+    </dependency>
+    <!-- com.fasterxml.jackson.core.jackson-databind -->
 
-      <!-- nz.ac.waikato.cms.weka.weka-stable -->
-      <dependency>
-        <groupId>nz.ac.waikato.cms.weka</groupId>
-        <artifactId>weka-stable</artifactId>
-        <version>${weka-stable.version}</version>
-      </dependency>
-      <!-- nz.ac.waikato.cms.weka.weka-stable -->
+    <!-- nz.ac.waikato.cms.weka.weka-stable -->
+    <dependency>
+      <groupId>nz.ac.waikato.cms.weka</groupId>
+      <artifactId>weka-stable</artifactId>
+      <version>${weka-stable.version}</version>
+    </dependency>
+    <!-- nz.ac.waikato.cms.weka.weka-stable -->
 
-      <!-- com.google.code.gson -->
-      <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>${gson.version}</version>
-      </dependency>
-      <!-- !com.google.code.gson -->
-    </dependencies>
-  </dependencyManagement>
+    <!-- com.google.code.gson -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>${gson.version}</version>
+    </dependency>
+    <!-- !com.google.code.gson -->
+
+    <!-- org.apache.pdfbox -->
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+      <version>${pdfbox.version}</version>
+    </dependency>
+    <!-- !org.apache.pdfbox -->
+
+    <!-- com.google.zxing -->
+    <dependency>
+      <groupId>com.google.zxing</groupId>
+      <artifactId>core</artifactId>
+      <version>${zxing.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.zxing</groupId>
+      <artifactId>javase</artifactId>
+      <version>${zxing.version}</version>
+    </dependency>
+    <!-- !com.google.zxing -->
+
+    <!-- jakarta.activation -->
+    <dependency>
+      <groupId>com.sun.activation</groupId>
+      <artifactId>jakarta.activation</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+    <!-- !jakarta.activation -->
+  </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <!-- org.apache.maven.plugins.maven-compiler-plugin -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.13.0</version>
-          <configuration>
-            <release>${maven.compiler.release}</release>
-          </configuration>
-        </plugin>
-        <!-- !org.apache.maven.plugins.maven-compiler-plugin -->
+    <plugins>
+      <!-- org.apache.maven.plugins.maven-compiler-plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <compilerArgs>
+            <arg>--add-reads=com.serinity.accesscontrol=ALL-UNNAMED</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <!-- !org.apache.maven.plugins.maven-compiler-plugin -->
 
-        <!-- org.apache.maven.plugins.maven-surefire-plugin -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.4</version>
-          <configuration>
-            <useModulePath>true</useModulePath>
-          </configuration>
-        </plugin>
-        <!-- !org.apache.maven.plugins.maven-surefire-plugin -->
+      <!-- org.apache.maven.plugins.maven-surefire-plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.4</version>
+        <configuration>
+          <systemPropertyVariables>
+            <javafx.version>${javafx.version}</javafx.version> <!-- To include javaFx version to test -->
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      <!-- !org.apache.maven.plugins.maven-surefire-plugin -->
 
-        <!-- org.openjfx.javafx-maven-plugin -->
-        <plugin>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-maven-plugin</artifactId>
-          <version>0.0.8</version>
-        </plugin>
-        <!-- !org.openjfx.javafx-maven-plugin -->
-      </plugins>
-    </pluginManagement>
+      <!-- org.openjfx.javafx-maven-plugin -->
+      <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>0.0.8</version>
+        <executions>
+          <execution>
+            <!-- Default configuration for running -->
+            <!-- Usage: mvn clean javafx:run -->
+            <id>default-cli</id>
+            <configuration>
+              <mainClass>com.serinity.accesscontrol.App</mainClass>
+              <options>
+                <option>--enable-native-access=javafx.graphics</option>
+                <option>--enable-native-access=javafx.web</option>
+              </options>
+              <includePathExceptionsInClasspath>true</includePathExceptionsInClasspath>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- !org.openjfx.javafx-maven-plugin -->
+    </plugins>
   </build>
 
   <repositories>
