@@ -4,6 +4,7 @@ module com.serinity.accesscontrol {
   requires javafx.fxml;
   requires javafx.web;
   requires javafx.graphics;
+  requires javafx.media;
 
   // --- Persistence & database dependencies ---
   requires java.sql;
@@ -43,4 +44,7 @@ module com.serinity.accesscontrol {
   opens com.serinity.accesscontrol.model.consultation to javafx.base;
   opens com.serinity.accesscontrol.api.zenquotes.dto to com.fasterxml.jackson.databind;
   opens com.serinity.accesscontrol.api.zenquotes to com.fasterxml.jackson.databind;
+  opens com.serinity.accesscontrol.controller.exercice to javafx.fxml;
+  opens com.serinity.accesscontrol.controller.exercice.admin to javafx.fxml;
+  opens com.serinity.accesscontrol.model.exercice to javafx.base;
 } // `com.serinity.accesscontrol` module

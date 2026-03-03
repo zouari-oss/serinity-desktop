@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.serinity.accesscontrol.controller.exercice.admin.AdminDashboardController"
+            styleClass="admin-root"
+            stylesheets="@../../../styles/exercice/adminstyle.css">
+
+    <!-- =========================
+         TOP BAR
+         ========================= -->
+    <top>
+        <HBox spacing="10"
+              alignment="CENTER_LEFT"
+              styleClass="admin-topbar">
+            <padding>
+                <Insets top="14" right="16" bottom="14" left="16"/>
+            </padding>
+
+            <Button text="← Retour"
+                    onAction="#onBack"
+                    styleClass="admin-btn-ghost"/>
+
+            <Label text="Admin Dashboard"
+                   styleClass="admin-title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="Actualiser tout"
+                    onAction="#onRefreshAll"
+                    styleClass="admin-btn-secondary"/>
+        </HBox>
+    </top>
+
+    <!-- =========================
+         CONTENT
+         ========================= -->
+    <center>
+
+        <VBox spacing="14"
+              styleClass="admin-page"
+              VBox.vgrow="ALWAYS">
+
+            <padding>
+                <Insets top="14" right="16" bottom="16" left="16"/>
+            </padding>
+
+            <TabPane fx:id="tabPane"
+                     tabClosingPolicy="UNAVAILABLE"
+                     styleClass="admin-tabs"
+                     VBox.vgrow="ALWAYS">
+
+                <!-- =========================================
+                     TAB 1 — EXERCISES
+                     ========================================= -->
+                <Tab text="Exercises">
+                    <content>
+                        <VBox spacing="12" VBox.vgrow="ALWAYS">
+
+                            <HBox spacing="10"
+                                  alignment="CENTER_LEFT"
+                                  styleClass="admin-toolbar">
+                                <Label text="Gestion des exercices"
+                                       styleClass="admin-h2"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Button text="Ajouter"
+                                        onAction="#onAddExercise"
+                                        styleClass="admin-btn-primary"/>
+                                <Button text="Modifier"
+                                        onAction="#onEditSelectedExercise"
+                                        styleClass="admin-btn-secondary"/>
+                                <Button text="Supprimer"
+                                        onAction="#onDeleteSelectedExercise"
+                                        styleClass="admin-btn-danger"/>
+                            </HBox>
+
+                            <VBox spacing="10"
+                                  styleClass="admin-card"
+                                  VBox.vgrow="ALWAYS">
+
+                                <TableView fx:id="tvExercises"
+                                           styleClass="admin-table"
+                                           VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colExId" text="ID"/>
+                                        <TableColumn fx:id="colExTitle" text="Titre"/>
+                                        <TableColumn fx:id="colExType" text="Type"/>
+                                        <TableColumn fx:id="colExLevel" text="Niveau"/>
+                                        <TableColumn fx:id="colExDuration" text="Durée (min)"/>
+                                    </columns>
+                                </TableView>
+
+                                <Label text="Astuce : Double-clic sur un exercice pour modifier."
+                                       styleClass="admin-muted"/>
+                            </VBox>
+
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <!-- =========================================
+                     TAB 2 — SESSIONS
+                     ========================================= -->
+                <Tab text="Sessions">
+                    <content>
+                        <VBox spacing="12" VBox.vgrow="ALWAYS">
+
+                            <VBox spacing="10"
+                                  styleClass="admin-card">
+
+                                <HBox spacing="10"
+                                      alignment="CENTER_LEFT">
+                                    <Label text="Filtres"
+                                           styleClass="admin-h2"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Button text="Exporter CSV"
+                                            onAction="#onExportCsv"
+                                            styleClass="admin-btn-secondary"/>
+                                </HBox>
+
+                                <FlowPane hgap="12"
+                                          vgap="10">
+
+                                    <HBox spacing="8">
+                                        <Label text="Fenêtre (jours):"
+                                               styleClass="admin-muted"/>
+                                        <Spinner fx:id="spDays"
+                                                 prefWidth="110"/>
+                                    </HBox>
+
+                                    <HBox spacing="8">
+                                        <Label text="Exercice:"
+                                               styleClass="admin-muted"/>
+                                        <ComboBox fx:id="cbSessionExercise"
+                                                  prefWidth="240"/>
+                                    </HBox>
+
+                                    <HBox spacing="8">
+                                        <Label text="Statut:"
+                                               styleClass="admin-muted"/>
+                                        <ComboBox fx:id="cbSessionStatus"
+                                                  prefWidth="180"/>
+                                    </HBox>
+
+                                    <HBox spacing="8">
+                                        <Label text="Recherche:"
+                                               styleClass="admin-muted"/>
+                                        <TextField fx:id="tfSearch"
+                                                   prefWidth="240"
+                                                   promptText="feedback contient…"/>
+                                    </HBox>
+
+                                    <HBox spacing="8">
+                                        <Button text="Appliquer"
+                                                onAction="#onLoadSessions"
+                                                styleClass="admin-btn-primary"/>
+                                        <Button text="Réinitialiser"
+                                                onAction="#onResetSessionFilters"
+                                                styleClass="admin-btn-ghost"/>
+                                    </HBox>
+                                </FlowPane>
+                            </VBox>
+
+                            <VBox spacing="10"
+                                  styleClass="admin-card"
+                                  VBox.vgrow="ALWAYS">
+
+                                <TableView fx:id="tvSessions"
+                                           styleClass="admin-table"
+                                           VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colSeId" text="ID"/>
+                                        <TableColumn fx:id="colSeExercise" text="Exercise"/>
+                                        <TableColumn fx:id="colSeStatus" text="Statut"/>
+                                        <TableColumn fx:id="colSeStart" text="Début"/>
+                                        <TableColumn fx:id="colSeEnd" text="Fin"/>
+                                        <TableColumn fx:id="colSeActive" text="Actif (s)"/>
+                                        <TableColumn fx:id="colSeFeedback" text="Feedback"/>
+                                    </columns>
+                                </TableView>
+
+                                <HBox alignment="CENTER_RIGHT">
+                                    <Button text="Supprimer sélection"
+                                            onAction="#onDeleteSelectedSession"
+                                            styleClass="admin-btn-danger"/>
+                                </HBox>
+
+                            </VBox>
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <!-- =========================================
+                     TAB 3 — ANALYTICS
+                     ========================================= -->
+                <Tab text="Analytics">
+                    <content>
+                        <VBox spacing="12" VBox.vgrow="ALWAYS">
+
+                            <HBox spacing="10"
+                                  alignment="CENTER_LEFT"
+                                  styleClass="admin-toolbar">
+                                <Label text="Analytics basés sur exercise_session"
+                                       styleClass="admin-h2"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Button text="Recalculer"
+                                        onAction="#onRefreshAnalytics"
+                                        styleClass="admin-btn-primary"/>
+                            </HBox>
+
+                            <FlowPane hgap="12" vgap="12">
+                                <VBox styleClass="admin-kpi">
+                                    <Label text="Total sessions" styleClass="admin-kpi-title"/>
+                                    <Label fx:id="lblTotalSessions" text="—" styleClass="admin-kpi-value"/>
+                                </VBox>
+
+                                <VBox styleClass="admin-kpi">
+                                    <Label text="Complétées" styleClass="admin-kpi-title"/>
+                                    <Label fx:id="lblCompleted" text="—" styleClass="admin-kpi-value"/>
+                                </VBox>
+
+                                <VBox styleClass="admin-kpi">
+                                    <Label text="Completion rate" styleClass="admin-kpi-title"/>
+                                    <Label fx:id="lblCompletionRate" text="—" styleClass="admin-kpi-value"/>
+                                </VBox>
+
+                                <VBox styleClass="admin-kpi">
+                                    <Label text="Actif total (s)" styleClass="admin-kpi-title"/>
+                                    <Label fx:id="lblActiveTotal" text="—" styleClass="admin-kpi-value"/>
+                                </VBox>
+
+                                <VBox styleClass="admin-kpi">
+                                    <Label text="Actif moyen (s)" styleClass="admin-kpi-title"/>
+                                    <Label fx:id="lblAvgActive" text="—" styleClass="admin-kpi-value"/>
+                                </VBox>
+                            </FlowPane>
+
+                            <HBox spacing="12" HBox.hgrow="ALWAYS">
+
+                                <VBox spacing="10"
+                                      styleClass="admin-card"
+                                      HBox.hgrow="ALWAYS">
+                                    <Label text="Top 10 exercices (complétés)"
+                                           styleClass="admin-h3"/>
+                                    <ListView fx:id="lvTopExercises"
+                                              VBox.vgrow="ALWAYS"
+                                              styleClass="admin-list"/>
+                                </VBox>
+
+                                <VBox spacing="10"
+                                      styleClass="admin-card"
+                                      HBox.hgrow="ALWAYS">
+                                    <Label text="Sessions &amp; complétées par jour (14j)"
+                                           styleClass="admin-h3"/>
+
+                                    <LineChart fx:id="chartSessions"
+                                               createSymbols="false"
+                                               animated="false"
+                                               VBox.vgrow="ALWAYS"
+                                               styleClass="admin-chart">
+                                        <xAxis><CategoryAxis/></xAxis>
+                                        <yAxis><NumberAxis/></yAxis>
+                                    </LineChart>
+                                </VBox>
+
+                            </HBox>
+
+                        </VBox>
+                    </content>
+                </Tab>
+
+            </TabPane>
+
+            <!-- Status -->
+            <Label fx:id="lblStatus"
+                   text="Prêt."
+                   styleClass="admin-status"/>
+        </VBox>
+    </center>
+
+</BorderPane>
