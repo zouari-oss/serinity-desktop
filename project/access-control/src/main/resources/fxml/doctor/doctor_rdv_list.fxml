@@ -7,7 +7,8 @@
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.serinity.accesscontrol.controller.consultation.doctor.DoctorRdvController"
-            styleClass="root">
+            styleClass="root"
+            stylesheets="@../../styles/app.css">
 
     <!-- ================= SIDEBAR ================= -->
     <left>

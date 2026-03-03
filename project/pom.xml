@@ -75,7 +75,6 @@
   <!-- Modules properties -->
   <modules>
     <module>access-control</module>
-    <module>consultation</module>
     <module>exercice-control</module>
   </modules>
   <!-- !Modules properties -->

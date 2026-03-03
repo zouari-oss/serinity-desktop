@@ -11,6 +11,7 @@ import com.serinity.accesscontrol.controller.base.StageTitled;
 import com.serinity.accesscontrol.controller.base.StatusMessageProvider;
 import com.serinity.accesscontrol.flag.MessageStatus;
 import com.serinity.accesscontrol.flag.ResourceFile;
+import com.serinity.accesscontrol.flag.UserRole;
 import com.serinity.accesscontrol.model.User;
 
 // `javafx` import(s)
@@ -103,7 +104,13 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
 
   @FXML
   void onNavBarAppointmentsButtonAction(final ActionEvent event) {
-    replace("/fxml/doctor/doctor_rdv_list.fxml");
+    setActiveNavButton(navBarAppointmentsButton);
+    final User user = LoginController.getUser();
+    if (user != null && user.getRole() == UserRole.THERAPIST) {
+      replace("/fxml/doctor/doctor_rdv_list.fxml");
+    } else {
+      replace("/fxml/doctor/doctor_list.fxml");
+    }
   }
 
   @FXML
@@ -114,7 +121,8 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
 
   @FXML
   void onNavBarExercisesButtonAction(final ActionEvent event) {
-
+    setActiveNavButton(navBarExercisesButton);
+    replace("/fxml/exercice/exercice/ExerciseList.fxml");
   }
 
   @FXML

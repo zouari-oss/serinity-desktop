@@ -2,7 +2,7 @@ package com.serinity.accesscontrol.dao.backoffice;
 
 import com.serinity.accesscontrol.dto.backoffice.BackofficeJournalRow;
 
-import com.serinity.accesscontrol.dao.DbConnection;
+import com.serinity.accesscontrol.util.MyDataBase;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -36,7 +36,7 @@ public class BackofficeJournalAdminDao {
         "ORDER BY je.created_at DESC";
 
     final List<BackofficeJournalRow> out = new ArrayList<>();
-    final Connection cn = DbConnection.getConnection();
+    final Connection cn = MyDataBase.getInstance().getCnx();
 
     try (PreparedStatement ps = cn.prepareStatement(sql)) {
       if (byName) {
@@ -74,7 +74,7 @@ public class BackofficeJournalAdminDao {
   }
 
   public boolean delete(final long journalEntryId) throws SQLException {
-    final Connection cn = DbConnection.getConnection();
+    final Connection cn = MyDataBase.getInstance().getCnx();
     cn.setAutoCommit(false);
 
     try {
