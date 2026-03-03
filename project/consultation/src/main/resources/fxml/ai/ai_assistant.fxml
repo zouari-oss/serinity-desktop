@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="esprit.tn.oussema_javafx.controllers.AIAssistantController"
+      spacing="20"
+      alignment="TOP_CENTER"
+      styleClass="content">
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Button text="← Retour"
+                onAction="#back"
+                styleClass="secondary-btn"/>
+
+        <Label text="Dossier Médical Patient"
+               styleClass="page-title"/>
+    </HBox>
+    <padding>
+        <Insets top="25" left="25" right="25" bottom="25"/>
+    </padding>
+
+    <Label text="🧠 Assistant Médical Intelligent"
+           style="-fx-font-size:22px; -fx-font-weight:bold;"/>
+
+    <Label text="Décrivez vos symptômes :"/>
+
+    <TextArea fx:id="symptomArea"
+              prefHeight="150"
+              wrapText="true"
+              promptText="Ex: j’ai une forte douleur dans la poitrine et je respire difficilement..."/>
+
+    <Button text="Analyser avec IA"
+            onAction="#analyze"
+            styleClass="primary-btn"/>
+
+    <Separator/>
+
+    <Label text="Résultat de l'analyse :" style="-fx-font-weight:bold;"/>
+
+    <Label text="Niveau d'urgence :" />
+    <Label fx:id="urgencyLabel" style="-fx-font-size:16px; -fx-font-weight:bold;"/>
+
+    <Label text="Emotion détectée :" />
+    <Label fx:id="emotionLabel"/>
+
+    <Label text="Recommandation :" />
+    <TextArea fx:id="recommendationArea"
+              editable="false"
+              wrapText="true"
+              prefHeight="120"/>
+
+</VBox>

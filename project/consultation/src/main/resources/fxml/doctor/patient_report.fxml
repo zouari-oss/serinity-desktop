@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="esprit.tn.oussema_javafx.controllers.doctor.PatientReportController"
+            styleClass="content">
+
+    <!-- ================= HEADER ================= -->
+    <top>
+        <VBox spacing="18" BorderPane.alignment="CENTER">
+
+            <!-- BACK + TITLE -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Button text="← Retour"
+                        onAction="#back"
+                        styleClass="secondary-btn"/>
+
+                <Label text="Dossier Médical Patient"
+                       styleClass="page-title"/>
+            </HBox>
+
+            <!-- PATIENT CARD -->
+            <HBox spacing="20" styleClass="doctor-profile-card">
+
+                <!-- avatar -->
+                <StackPane>
+                    <Circle radius="38" styleClass="doctor-avatar"/>
+                    <Label text="👤" styleClass="doctor-avatar-icon"/>
+                </StackPane>
+
+                <!-- infos -->
+                <VBox spacing="6">
+                    <Label fx:id="patientName" styleClass="doctor-profile-name"/>
+                    <Label text="Patient enregistré"
+                           styleClass="doctor-verified"/>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- contact -->
+                <VBox spacing="6" alignment="CENTER_RIGHT">
+                    <Label fx:id="patientPhone" styleClass="contact-text"/>
+                    <Label fx:id="patientEmail" styleClass="contact-text"/>
+                </VBox>
+
+                <!-- actions -->
+                <VBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="📄 Télécharger PDF"
+                            onAction="#downloadPdf"
+                            styleClass="pdf-btn"/>
+
+                </VBox>
+
+            </HBox>
+
+            <!-- SECTION TITLE -->
+            <Label text="Historique des consultations"
+                   styleClass="section-title"/>
+
+        </VBox>
+    </top>
+
+    <!-- ================= CONSULTATIONS ================= -->
+    <center>
+        <StackPane>
+
+            <ScrollPane fitToWidth="true" styleClass="content">
+                <content>
+                    <FlowPane fx:id="consultationsPane"
+                              hgap="18"
+                              vgap="18"
+                              prefWrapLength="1000"
+                              />
+                </content>
+            </ScrollPane>
+
+            <!-- EMPTY STATE -->
+            <VBox fx:id="emptyBox"
+                  alignment="CENTER"
+                  spacing="12"
+                  visible="false">
+
+                <Label text="🩺 Aucun historique médical"
+                       styleClass="empty-title"/>
+
+                <Label text="Le patient n'a encore aucune consultation."
+                       styleClass="empty-subtitle"/>
+            </VBox>
+
+        </StackPane>
+    </center>
+
+</BorderPane>

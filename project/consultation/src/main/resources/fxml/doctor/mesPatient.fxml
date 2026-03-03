@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="esprit.tn.oussema_javafx.controllers.doctor.MesPatient"
+            styleClass="root">
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox spacing="10" styleClass="sidebar">
+
+            <Label text="🏥 MedLink" styleClass="sidebar-logo"/>
+
+            <Separator/>
+            <Button text="🏠 Dashboard"
+                    onAction="#goDashboard"
+                    styleClass="side-btn"/>
+            <Button text="📅 Rendez-vous" onAction="#goRdv" styleClass="side-btn"/>
+            <Button text="🧾 Consultations" onAction="#goConsultations" styleClass="side-btn"/>
+            <Button text="👥 Mes Patients" styleClass="side-btn active-side"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button text="⎋ Déconnexion" styleClass="logout-btn"/>
+
+        </VBox>
+    </left>
+
+    <!-- CONTENT -->
+    <center>
+        <VBox spacing="20" styleClass="content">
+
+            <padding>
+                <Insets top="20" right="25" bottom="20" left="25"/>
+            </padding>
+
+            <!-- HEADER -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-card">
+                <Label text="👥 Mes Patients" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <!-- PATIENTS GRID -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+                <content>
+                    <FlowPane fx:id="patientsPane"
+                              hgap="18"
+                              vgap="18"
+                              prefWrapLength="1000"/>
+                </content>
+            </ScrollPane>
+
+        </VBox>
+    </center>
+
+</BorderPane>

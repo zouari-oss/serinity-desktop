@@ -75,7 +75,7 @@
   <!-- Modules properties -->
   <modules>
     <module>access-control</module>
-    <module>sleep-control</module>
+    <module>consultation</module>
     <module>exercice-control</module>
   </modules>
   <!-- !Modules properties -->

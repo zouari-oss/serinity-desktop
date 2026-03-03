@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Circle?>
+
+<?import javafx.scene.image.ImageView?>
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="esprit.tn.oussema_javafx.controllers.doctor.DoctorDetailsController"
+      spacing="20"
+      styleClass="content">
+
+    <padding>
+        <Insets top="22" right="26" bottom="22" left="26"/>
+    </padding>
+
+    <!-- HEADER -->
+    <HBox alignment="CENTER_LEFT" spacing="12">
+
+        <Button text="← Retour"
+                onAction="#back"
+                styleClass="secondary-btn"/>
+
+        <Label text="Profil du médecin"
+               styleClass="page-title"/>
+
+    </HBox>
+
+    <!-- PROFILE CARD -->
+    <HBox spacing="22" styleClass="doctor-profile-card">
+
+        <!-- AVATAR -->
+        <StackPane>
+            <Circle radius="42" styleClass="doctor-avatar"/>
+            <Label text="👨‍⚕️" styleClass="doctor-avatar-icon"/>
+        </StackPane>
+
+        <!-- DOCTOR INFO -->
+        <VBox spacing="6">
+
+            <Label fx:id="nameLabel" styleClass="doctor-profile-name"/>
+
+            <Label fx:id="specialityLabel" styleClass="doctor-badge"/>
+
+            <Label text="Médecin certifié"
+                   styleClass="doctor-verified"/>
+
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- BOOK BUTTON -->
+        <Button text="Prendre Rendez-vous"
+                onAction="#takeRdv"
+                styleClass="primary-btn "/>
+
+    </HBox>
+
+    <!-- CONTACT CARD -->
+    <VBox spacing="12" styleClass="doctor-contact-card">
+
+        <Label text="Informations de contact"
+               styleClass="section-title"/>
+
+        <HBox spacing="10">
+            <Label text="📧" styleClass="icon"/>
+            <Label fx:id="emailLabel" styleClass="contact-text"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="☎" styleClass="icon"/>
+            <Label fx:id="phoneLabel" styleClass="contact-text"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="📍" styleClass="icon"/>
+            <Label fx:id="addressLabel"
+                   styleClass="contact-text"/>
+
+        </HBox>
+
+    </VBox>
+    <!-- QR CODE -->
+    <VBox spacing="10" alignment="CENTER" styleClass="doctor-qr-card">
+
+        <Label text="Scanner pour ajouter le médecin"
+               styleClass="section-title"/>
+
+        <ImageView fx:id="qrImage"
+                   fitWidth="180"
+                   fitHeight="180"
+                   preserveRatio="true"/>
+
+        <Label text="📱 Scanner  pour enregistrer le contact"
+               styleClass="contact-text"/>
+
+    </VBox>
+
+</VBox>

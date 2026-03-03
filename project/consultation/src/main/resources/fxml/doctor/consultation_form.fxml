@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="esprit.tn.oussema_javafx.controllers.doctor.ConsultationFormController"
+      spacing="20"
+      styleClass="content">
+
+    <padding>
+        <Insets top="22" right="26" bottom="22" left="26"/>
+    </padding>
+
+    <!-- ===== HEADER ===== -->
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Button text="← Retour"
+                onAction="#back"
+                styleClass="secondary-btn"/>
+
+        <Label text="Nouvelle Consultation Médicale"
+               styleClass="page-title"/>
+    </HBox>
+
+    <!-- ===== MEDICAL CARD ===== -->
+    <VBox spacing="18" styleClass="rdv-card">
+
+        <!-- DIAGNOSTIC -->
+        <VBox spacing="6">
+            <Label text="🩺 Diagnostic"
+                   styleClass="section-title"/>
+
+            <TextArea fx:id="diagnosticField"
+                      promptText="Décrivez le diagnostic médical du patient..."
+                      wrapText="true"
+                      prefRowCount="4"
+                      styleClass="consult-input"/>
+        </VBox>
+
+        <!-- PRESCRIPTION -->
+        <VBox spacing="6">
+            <Label text="💊 Prescription"
+                   styleClass="section-title"/>
+
+            <TextArea fx:id="prescriptionField"
+                      promptText="Médicaments, posologie, durée du traitement..."
+                      wrapText="true"
+                      prefRowCount="4"
+                      styleClass="consult-input"/>
+        </VBox>
+
+        <!-- NOTES -->
+        <VBox spacing="6">
+            <Label text="📝 Notes complémentaires"
+                   styleClass="section-title"/>
+
+            <TextArea fx:id="notesField"
+                      promptText="Observations supplémentaires, recommandations, examens..."
+                      wrapText="true"
+                      prefRowCount="5"
+                      styleClass="consult-input"/>
+        </VBox>
+
+        <!-- ACTION BUTTON -->
+        <HBox alignment="CENTER_RIGHT">
+            <Button text="💾 Enregistrer la consultation"
+                    onAction="#save"
+                    styleClass="primary-btn"/>
+        </HBox>
+
+    </VBox>
+
+</VBox>
