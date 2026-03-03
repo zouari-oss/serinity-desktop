@@ -108,7 +108,7 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
 
   @FXML
   void onNavBarDashboardButtonAction(final ActionEvent event) {
-        setActiveNavButton(navBarDashboardButton);
+    setActiveNavButton(navBarDashboardButton);
     replace(ResourceFile.USER_DAHBOARD_FXML.getFileName());
   }
 
@@ -125,6 +125,8 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
 
   @FXML
   void onNavBarSleepButtonAction(final ActionEvent event) {
+    setActiveNavButton(navBarSleepButton);
+    replace("/fxml/sleepcontrol/sleep-page.fxml");
   }
 
   @FXML
