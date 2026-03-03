@@ -37,6 +37,10 @@ module com.serinity.accesscontrol {
   opens com.serinity.accesscontrol.model to org.zouarioss.skinnedratorm;
   opens com.serinity.accesscontrol.model.base to org.zouarioss.skinnedratorm;
   opens com.serinity.accesscontrol.model.sleepcontrol to org.zouarioss.skinnedratorm;
+  opens com.serinity.accesscontrol.controller.consultation to javafx.fxml;
+  opens com.serinity.accesscontrol.controller.consultation.doctor to javafx.fxml;
+  opens com.serinity.accesscontrol.controller.consultation.rdv to javafx.fxml;
+  opens com.serinity.accesscontrol.model.consultation to javafx.base;
   opens com.serinity.accesscontrol.api.zenquotes.dto to com.fasterxml.jackson.databind;
   opens com.serinity.accesscontrol.api.zenquotes to com.fasterxml.jackson.databind;
 } // `com.serinity.accesscontrol` module

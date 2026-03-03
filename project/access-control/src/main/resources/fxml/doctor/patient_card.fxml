@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox spacing="8"
+      prefWidth="260"
+      styleClass="patient-card"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.serinity.accesscontrol.controller.consultation.doctor.PatientCardController">
+
+    <Label fx:id="nameLabel" styleClass="patient-name"/>
+
+    <Label fx:id="emailLabel"/>
+    <Label fx:id="phoneLabel"/>
+    <Label fx:id="addressLabel"/>
+
+    <Separator/>
+
+    <Label fx:id="visitLabel" styleClass="patient-visits"/>
+
+</VBox>

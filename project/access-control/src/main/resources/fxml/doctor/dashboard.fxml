@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.serinity.accesscontrol.controller.consultation.doctor.DashboardController"
+            styleClass="root">
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox spacing="10" styleClass="sidebar">
+
+            <Label text="🏥 MedLink" styleClass="sidebar-logo"/>
+
+            <Separator/>
+
+            <Button text="🏠 Dashboard"
+                    styleClass="side-btn active-side"/>
+
+            <Button text="📅 Rendez-vous"
+                    onAction="#goRdv"
+                    styleClass="side-btn"/>
+
+            <Button text="🧾 Consultations"
+                    onAction="#goConsultations"
+                    styleClass="side-btn"/>
+
+            <Button text="👥 Mes Patients"
+                    onAction="#goPatients"
+                    styleClass="side-btn"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button text="⎋ Déconnexion"
+                    styleClass="logout-btn"/>
+
+        </VBox>
+    </left>
+
+    <!-- MAIN CONTENT -->
+    <center>
+        <ScrollPane fitToWidth="true">
+            <content>
+                <VBox spacing="20" styleClass="content">
+
+                    <padding>
+                        <Insets top="20" right="25" bottom="20" left="25"/>
+                    </padding>
+
+                    <Label text="📊 Tableau de bord médecin"
+                           styleClass="page-title"/>
+
+                    <!-- KPI CARDS -->
+                    <FlowPane hgap="18" vgap="18">
+
+                        <VBox styleClass="stat-card">
+                            <Label text="Patients"/>
+                            <Label fx:id="patientsLabel" styleClass="stat-number"/>
+                        </VBox>
+
+                        <VBox styleClass="stat-card">
+                            <Label text="RDV aujourd'hui"/>
+                            <Label fx:id="todayLabel" styleClass="stat-number"/>
+                        </VBox>
+
+                        <VBox styleClass="stat-card">
+                            <Label text="En attente"/>
+                            <Label fx:id="pendingLabel" styleClass="stat-number"/>
+                        </VBox>
+
+                        <VBox styleClass="stat-card">
+                            <Label text="Consultations"/>
+                            <Label fx:id="consultLabel" styleClass="stat-number"/>
+                        </VBox>
+
+                        <VBox styleClass="stat-card">
+                            <Label text="Taux d'acceptation"/>
+                            <Label fx:id="rateLabel" styleClass="stat-number"/>
+                        </VBox>
+
+                    </FlowPane>
+
+                    <!-- CHART 1 -->
+                    <LineChart fx:id="rdvWeekChart" title="Rendez-vous des 7 derniers jours">
+                        <xAxis><CategoryAxis label="Jour"/></xAxis>
+                        <yAxis><NumberAxis label="RDV"/></yAxis>
+                    </LineChart>
+
+                    <!-- CHART 2 -->
+                    <LineChart fx:id="consultChart" title="Consultations des 7 derniers jours">
+                        <xAxis><CategoryAxis label="Jour"/></xAxis>
+                        <yAxis><NumberAxis label="Consultations"/></yAxis>
+                    </LineChart>
+
+                    <!-- CHART 3 -->
+                    <BarChart fx:id="statusChart" title="Répartition des statuts RDV">
+                        <xAxis><CategoryAxis label="Statut"/></xAxis>
+                        <yAxis><NumberAxis label="Nombre"/></yAxis>
+                    </BarChart>
+
+                    <!-- CHART 4 -->
+                    <LineChart fx:id="monthlyChart" title="RDV par mois">
+                        <xAxis><CategoryAxis label="Mois"/></xAxis>
+                        <yAxis><NumberAxis label="Nombre"/></yAxis>
+                    </LineChart>
+
+                    <!-- CHART 5 -->
+                    <BarChart fx:id="patientFreqChart" title="Patients les plus fréquents">
+                        <xAxis><CategoryAxis label="Patient"/></xAxis>
+                        <yAxis><NumberAxis label="Visites"/></yAxis>
+                    </BarChart>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
