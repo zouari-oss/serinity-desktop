@@ -84,9 +84,10 @@
 
     <!-- ================= CENTER CONTENT (PAGE HOST) ================= -->
     <center>
-        <StackPane fx:id="contentHost" styleClass="content-host" />
+        <StackPane fx:id="contentHost"
+                   alignment="TOP_CENTER"
+                   styleClass="content-host" />
     </center>
-
     <!-- ================= FOOTER ================= -->
     <bottom>
         <HBox alignment="CENTER_LEFT" styleClass="footer-bar">

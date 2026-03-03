@@ -6,8 +6,13 @@ import com.serinity.exercicecontrol.service.AmbientSoundApiService;
 import com.serinity.exercicecontrol.service.SessionService;
 import com.serinity.exercicecontrol.service.SessionStatus;
 import com.serinity.exercicecontrol.service.WorldTimeApiService;
+
+import com.serinity.exercicecontrol.model.api.VideoSuggestion;
+import com.serinity.exercicecontrol.service.api.YouTubeApiService;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,11 +22,14 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
+import java.awt.Desktop;
 import java.io.IOException;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class SessionRunController {
 
@@ -37,6 +45,7 @@ public class SessionRunController {
     @FXML private Button btnStart;
     @FXML private Button btnPause;
     @FXML private Button btnResume;
+
     @FXML private Button btnComplete;
     @FXML private Button btnAbort;
 
@@ -47,11 +56,18 @@ public class SessionRunController {
     @FXML private Button btnSoundPlay;
     @FXML private Button btnSoundStop;
 
+    // ✅ YouTube UI
+    @FXML private ListView<VideoSuggestion> listYouTube;
+    @FXML private Label lblYouTubeStatus;
+
     private final SessionDAO sessionDAO = new SessionDAO();
     private final SessionService sessionService = new SessionService(sessionDAO);
 
     private final WorldTimeApiService timeApi = new WorldTimeApiService();
     private final AmbientSoundApiService soundApi = new AmbientSoundApiService();
+
+    // ✅ Lazy init: évite crash FXML si clé manquante
+    private YouTubeApiService youTubeApi;
 
     private int sessionId = -1;
     private Exercise exercise;
@@ -74,12 +90,13 @@ public class SessionRunController {
 
         initDayPhase();
 
-        // ✅ AUTO: charge automatiquement une station adaptée
+        // ✅ AUTO: charge + play ambiance
         onLoadAmbient();
-
-        // ✅ AUTO (optionnel mais demandé): démarre automatiquement la musique
-        // Si tu veux seulement charger sans jouer, commente la ligne suivante.
         onPlayAmbient();
+
+        // ✅ YouTube
+        initYouTubeUI();
+        onLoadYouTube();
 
         refreshFromDb();
         startUiTimer();
@@ -177,6 +194,107 @@ public class SessionRunController {
             try { ambientPlayer.stop(); } catch (Exception ignored) {}
             try { ambientPlayer.dispose(); } catch (Exception ignored) {}
             ambientPlayer = null;
+        }
+    }
+
+    // ---------------- ✅ YouTube ----------------
+
+    private void initYouTubeUI() {
+        if (listYouTube == null) return;
+
+        listYouTube.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(VideoSuggestion item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    int min = item.durationSeconds() / 60;
+                    int sec = item.durationSeconds() % 60;
+                    setText(item.title() + " (" + min + "m " + sec + "s) — " + item.channelTitle());
+                }
+            }
+        });
+
+        listYouTube.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                VideoSuggestion v = listYouTube.getSelectionModel().getSelectedItem();
+                if (v != null) openYouTube(v.videoId());
+            }
+        });
+    }
+
+    @FXML
+    private void onLoadYouTube() {
+        if (lblYouTubeStatus != null) lblYouTubeStatus.setText("Chargement YouTube...");
+
+        // ✅ Lazy init: pas de crash si clé absente
+        if (youTubeApi == null) {
+            try {
+                youTubeApi = new YouTubeApiService();
+            } catch (Exception e) {
+                if (lblYouTubeStatus != null) {
+                    lblYouTubeStatus.setText("Clé YouTube manquante: ajoute YOUTUBE_API_KEY dans .env");
+                }
+                if (listYouTube != null) listYouTube.setItems(FXCollections.observableArrayList());
+                return;
+            }
+        }
+
+        String query = buildYouTubeQuery();
+
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                var vids = youTubeApi.searchMeditationOrYoga(query, 10);
+
+                int minSec = 3 * 60;
+                int maxSec = 15 * 60;
+
+                return youTubeApi.filterByDuration(vids, minSec, maxSec);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).thenAccept(videos -> javafx.application.Platform.runLater(() -> {
+            if (listYouTube != null) listYouTube.setItems(FXCollections.observableArrayList(videos));
+
+            if (lblYouTubeStatus != null) {
+                lblYouTubeStatus.setText(videos.isEmpty()
+                        ? "Aucune vidéo trouvée. Clique Rafraîchir."
+                        : "Trouvé " + videos.size() + " vidéos. Double-clique pour ouvrir.");
+            }
+        })).exceptionally(ex -> {
+            javafx.application.Platform.runLater(() -> {
+                if (lblYouTubeStatus != null) lblYouTubeStatus.setText("Erreur YouTube: " + ex.getMessage());
+            });
+            return null;
+        });
+    }
+
+    private String buildYouTubeQuery() {
+        String base;
+        if (exercise != null) {
+            String t = safe(exercise.getTitle(), "").toLowerCase();
+            if (t.contains("yoga")) base = "yoga for stress 10 minutes";
+            else if (t.contains("medit")) base = "guided meditation anxiety 5 minutes";
+            else base = "breathing meditation 5 minutes";
+        } else {
+            base = "guided meditation 5 minutes";
+        }
+
+        String phase = (lblDayPhase != null) ? safe(lblDayPhase.getText(), "") : "";
+        if ("Nuit".equals(phase)) base = "sleep meditation 10 minutes";
+        else if ("Soir".equals(phase)) base = "evening mindfulness meditation 10 minutes";
+
+        return base;
+    }
+
+    private void openYouTube(String videoId) {
+        try {
+            String url = "https://www.youtube.com/watch?v=" + videoId;
+            if (Desktop.isDesktopSupported()) Desktop.getDesktop().browse(URI.create(url));
+            else showInfo("YouTube", "Ouvre manuellement: " + url);
+        } catch (Exception e) {
+            showError("YouTube", "Impossible d’ouvrir la vidéo.\n" + e.getMessage());
         }
     }
 

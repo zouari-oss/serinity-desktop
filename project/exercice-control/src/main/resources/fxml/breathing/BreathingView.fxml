@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox spacing="14"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.serinity.exercicecontrol.controller.BreathingController"
+      stylesheets="@styles/styles.css"
+      style="-fx-padding: 18;">
+
+    <!-- TOP BAR -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Respiration guidée" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="État :" style="-fx-opacity: 0.8;"/>
+        <ComboBox fx:id="cbState" prefWidth="210"/>
+        <Button text="Retour" onAction="#onBack" styleClass="secondary-btn"/>
+    </HBox>
+
+    <!-- PROTOCOL CARD -->
+    <VBox fx:id="protocolCard" spacing="10" styleClass="breath-card">
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label fx:id="lblProtocolName"
+                   text="—"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label fx:id="lblStateBadge"
+                   text="—"
+                   styleClass="badge"/>
+        </HBox>
+
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Label fx:id="chipDuration" text="⏱ 00:00" styleClass="chip"/>
+            <Label fx:id="chipCycle" text="🔁 0-0-0-0" styleClass="chip"/>
+            <Label fx:id="chipGoal" text="🎯 —" styleClass="chip"/>
+        </HBox>
+
+        <Label fx:id="lblBenefit" text="—" wrapText="true"
+               style="-fx-opacity: 0.9; -fx-font-size: 13px;"/>
+        <Label fx:id="lblWhy" text="—" wrapText="true"
+               style="-fx-opacity: 0.75; -fx-font-size: 12.5px;"/>
+
+        <Separator/>
+
+        <!-- CYCLE PREVIEW -->
+        <VBox spacing="8">
+            <Label text="Cycle (aperçu)" style="-fx-font-weight: bold; -fx-opacity: 0.85;"/>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label fx:id="lblInhaleSec" text="Inspire —s" style="-fx-opacity:0.85;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblHold1Sec" text="Garde —s" style="-fx-opacity:0.85;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblExhaleSec" text="Expire —s" style="-fx-opacity:0.85;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblHold2Sec" text="Pause —s" style="-fx-opacity:0.85;"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <ProgressBar fx:id="barInhale" prefWidth="190" progress="0"/>
+                <ProgressBar fx:id="barHold1" prefWidth="190" progress="0"/>
+                <ProgressBar fx:id="barExhale" prefWidth="190" progress="0"/>
+                <ProgressBar fx:id="barHold2" prefWidth="190" progress="0"/>
+            </HBox>
+        </VBox>
+    </VBox>
+
+    <!-- MAIN AREA -->
+    <HBox spacing="16" alignment="CENTER" VBox.vgrow="ALWAYS">
+
+        <!-- LEFT: ORB CARD (with gradient background) -->
+        <StackPane fx:id="orbCard"
+                   prefWidth="430" prefHeight="430"
+                   styleClass="breath-soft">
+            <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
+
+            <!-- Gradient overlay region (we set its background from controller) -->
+            <Region fx:id="orbGradient"
+                    StackPane.alignment="CENTER"
+                    prefWidth="410" prefHeight="410"
+                    style="-fx-background-radius: 18;"/>
+
+            <ProgressIndicator fx:id="ringProgress" prefWidth="320" prefHeight="320"/>
+
+            <Circle fx:id="breathOrb" radius="110"
+                    style="-fx-fill: rgba(30,140,160,0.28); -fx-stroke: rgba(30,140,160,0.60); -fx-stroke-width: 4;"/>
+
+            <VBox spacing="6" alignment="CENTER">
+                <Label fx:id="lblPhaseBig" text="PRÊT"
+                       style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                <Label fx:id="lblPhaseSmall" text="—"
+                       style="-fx-opacity: 0.75; -fx-font-size: 14px;"/>
+
+                <Label fx:id="lblPercent" text="0%"
+                       style="-fx-opacity: 0.75; -fx-font-size: 12px;"/>
+
+                <Label fx:id="lblTimeLeft" text="00:00"
+                       style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+            </VBox>
+        </StackPane>
+
+        <!-- RIGHT: CONTROLS -->
+        <VBox fx:id="controlCard"
+              spacing="10" prefWidth="430"
+              styleClass="breath-soft"
+              style="-fx-padding: 14;">
+            <Label text="Guide" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <Label fx:id="lblHint" text="Choisis ton état, puis démarre."
+                   wrapText="true" style="-fx-opacity: 0.85;"/>
+
+            <Separator/>
+
+            <Label text="Progression" style="-fx-opacity: 0.8;"/>
+            <ProgressBar fx:id="progressBar" prefWidth="380"/>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="btnStart" text="Démarrer" onAction="#onStart" styleClass="primary-btn"/>
+                <Button fx:id="btnStop" text="Stop" onAction="#onStop" styleClass="secondary-btn"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblCycleInfo" text="—" style="-fx-opacity: 0.8;"/>
+            </HBox>
+
+            <Separator/>
+
+            <Label text="Astuce" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <Label text="Garde les épaules basses. Ne force pas. Si tu es gêné(e), arrête."
+                   wrapText="true" style="-fx-opacity: 0.75;"/>
+        </VBox>
+
+    </HBox>
+</VBox>

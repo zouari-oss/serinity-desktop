@@ -12,46 +12,33 @@
   <name>exercice-control</name>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.release>17</maven.compiler.release>
-    <javafx.version>17.0.10</javafx.version>
-    <junit.jupiter.version>5.10.2</junit.jupiter.version>
   </properties>
 
   <dependencies>
 
-    <!-- JavaFX -->
+    <!-- JavaFX 17.0.10 -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-base</artifactId>
+      <version>17.0.10</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-graphics</artifactId>
+      <version>17.0.10</version>
+    </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
       <version>17.0.10</version>
     </dependency>
-
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
-      <version>${javafx.version}</version>
-    </dependency>
-
-    <!-- MySQL JDBC Driver -->
-    <dependency>
-      <groupId>com.mysql</groupId>
-      <artifactId>mysql-connector-j</artifactId>
-      <version>8.4.0</version>
-    </dependency>
-
-    <!-- JUnit 5 -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.jupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.jupiter.version}</version>
-      <scope>test</scope>
+      <version>17.0.10</version>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
@@ -59,39 +46,84 @@
       <version>17.0.10</version>
     </dependency>
 
+    <!-- MySQL -->
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <version>8.4.0</version>
+    </dependency>
+
+    <!-- Gson -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+
+    <!-- JUnit 5.10.2 -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
     <plugins>
 
-      <!-- Compiler (JPMS friendly) -->
+      <!-- Compiler -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
         <configuration>
-          <release>${maven.compiler.release}</release>
+          <release>17</release>
+          <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
 
-      <!-- JavaFX runner (puts JavaFX on module-path correctly) -->
+      <!-- Resources -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <!-- JavaFX runner (classe main détectée dans le ZIP) -->
       <plugin>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <!-- CHANGE this to your real main class (the one that extends Application) -->
-          <mainClass>com.serinity.exercicecontrol.MainApp</mainClass>
+          <mainClass>com.serinity/com.serinity.exercicecontrol.App</mainClass>
         </configuration>
       </plugin>
 
-      <!-- Surefire -->
+      <!-- Surefire : exécute uniquement les unit tests, exclut les IT + MainTest (versions hardcodées) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.5</version>
         <configuration>
+          <!-- tu l’avais déjà: OK pour éviter des soucis JPMS en test -->
           <useModulePath>false</useModulePath>
+
+          <!-- Exclure l'intégration et le test "version" -->
+          <excludes>
+            <exclude>**/*ITTest.java</exclude>
+            <exclude>**/MainTest.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
 

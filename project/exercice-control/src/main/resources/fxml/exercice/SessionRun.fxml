@@ -24,7 +24,6 @@
                     <Label text="Suivi en temps réel" styleClass="muted"/>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <!-- ✅ match controller -->
                 <Label fx:id="lblStatusPill" text="EN COURS" styleClass="pill pill-info"/>
             </HBox>
 
@@ -32,19 +31,16 @@
             <HBox spacing="14">
                 <VBox spacing="6" styleClass="metric-card" HBox.hgrow="ALWAYS">
                     <Label text="Temps actif" styleClass="muted"/>
-                    <!-- ✅ match controller -->
                     <Label fx:id="lblTimer" text="00:00" styleClass="metric-value"/>
                 </VBox>
 
                 <VBox spacing="6" styleClass="metric-card" HBox.hgrow="ALWAYS">
                     <Label text="Objectif" styleClass="muted"/>
-                    <!-- ✅ match controller -->
                     <Label fx:id="lblTarget" text="—" styleClass="metric-value"/>
                 </VBox>
 
                 <VBox spacing="6" styleClass="metric-card" HBox.hgrow="ALWAYS">
                     <Label text="Moment" styleClass="muted"/>
-                    <!-- ✅ match controller -->
                     <Label fx:id="lblDayPhase" text="—" styleClass="metric-value"/>
                 </VBox>
             </HBox>
@@ -59,7 +55,6 @@
                 <!-- Consigne -->
                 <VBox spacing="10" styleClass="card" GridPane.rowIndex="0" GridPane.columnIndex="0">
                     <Label text="Consigne" styleClass="section-title"/>
-                    <!-- ✅ match controller -->
                     <Label fx:id="lblGuidance"
                            text="—"
                            wrapText="true"
@@ -71,28 +66,23 @@
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <Label text="Ambiance sonore" styleClass="section-title"/>
                         <Region HBox.hgrow="ALWAYS"/>
-                        <!-- ✅ pas dans controller avant, donc on retire fx:id -->
                         <Label text="Nature" styleClass="chip"/>
                     </HBox>
 
-                    <!-- ✅ match controller -->
-                    <Label fx:id="lblStation"
-                           text="—"
-                           styleClass="audio-title"/>
+                    <Label fx:id="lblStation" text="—" styleClass="audio-title"/>
 
                     <Label text="Choisie selon le moment de la journée"
                            styleClass="muted"
                            wrapText="true"/>
 
                     <HBox spacing="10" alignment="CENTER_RIGHT">
-                        <!-- ✅ match controller + méthodes -->
                         <Button fx:id="btnSoundLoad" text="Charger" onAction="#onLoadAmbient" styleClass="secondary-btn"/>
                         <Button fx:id="btnSoundPlay" text="Play" onAction="#onPlayAmbient" styleClass="primary-btn"/>
                         <Button fx:id="btnSoundStop" text="Stop" onAction="#onStopAmbient" styleClass="danger-btn"/>
                     </HBox>
                 </VBox>
 
-                <!-- Feedback -->
+                <!-- Feedback (pleine largeur) -->
                 <VBox spacing="10" styleClass="card" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2">
                     <Label text="Feedback (optionnel)" styleClass="section-title"/>
                     <TextArea fx:id="txtFeedback"
@@ -103,16 +93,27 @@
                 </VBox>
             </GridPane>
 
+            <!-- ✅ YouTube section -->
+            <VBox spacing="10" styleClass="card">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Vidéos guidées (YouTube)" styleClass="section-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Rafraîchir" onAction="#onLoadYouTube" styleClass="secondary-btn"/>
+                </HBox>
+
+                <Label fx:id="lblYouTubeStatus" text="—" styleClass="muted" wrapText="true"/>
+                <ListView fx:id="listYouTube" prefHeight="200"/>
+
+            </VBox>
+
             <!-- BOTTOM ACTION BAR -->
             <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="bottom-bar">
-                <!-- ✅ match controller -->
                 <Button fx:id="btnStart" text="Démarrer" onAction="#onStart" styleClass="primary-btn"/>
                 <Button fx:id="btnPause" text="Pause" onAction="#onPause" styleClass="secondary-btn"/>
                 <Button fx:id="btnResume" text="Reprendre" onAction="#onResume" styleClass="secondary-btn"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
-                <!-- ✅ match controller -->
                 <Button fx:id="btnComplete" text="Terminer" onAction="#onComplete" styleClass="primary-btn"/>
                 <Button fx:id="btnAbort" text="Quitter" onAction="#onAbort" styleClass="danger-btn"/>
             </HBox>
