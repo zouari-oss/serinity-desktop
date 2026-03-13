@@ -229,7 +229,8 @@
       <groupId>org.opencv</groupId>
       <artifactId>opencv</artifactId>
       <version>${opencv.version}</version>
-      <scope>compile</scope>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/opencv-4130.jar</systemPath>
     </dependency>
     <!-- !org.opencv.opencv -->
 
