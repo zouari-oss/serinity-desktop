@@ -129,6 +129,54 @@ mvn compile
 mvn -pl app javafx:run
 ```
 
+### 4. Setup Local AI Assets (required for local AI features)
+
+From the `project/` directory:
+
+```bash
+./scripts/setup-project
+```
+
+This installs:
+- `Mistral-7B-Instruct-v0.3-Q4_K_M.gguf` into `servers/sleep-ai-local-server/`
+- `antelopev2` ONNX models into `access-control/src/main/resources/antelopev2/`
+- Python virtual environments for local servers in `servers/*/.venv` (from each `requirements.txt`)
+
+Optional flags:
+
+```bash
+./scripts/setup-project --force
+./scripts/setup-project --skip-gguf
+./scripts/setup-project --skip-antelope
+./scripts/setup-project --skip-servers
+```
+
+> [!IMPORTANT]
+> Start local AI servers in separate terminal sessions, each on a different port, so the desktop app can interact with all services correctly at the same time.
+
+### 5. Build Native/Desktop Artifacts
+
+From the `project/` directory, use the deploy script:
+
+```bash
+./scripts/deploy-native --type all
+```
+
+> Supported `--type` values: `jar`, `native` (`app-image`), `deb`, `rpm` (`rmp`), `dmg`, `pkg`, `exe`, `msi`, `all`.
+
+Useful examples:
+
+```bash
+./scripts/deploy-native --type jar
+./scripts/deploy-native --type native,deb,rpm
+PACKAGE_TYPES=all ./scripts/deploy-native
+```
+
+Build outputs:
+
+- app-image: `app/target/native/serinity`
+- jar/installers: `app/target/dist/`
+
 > [!TIP]
 > Make sure you have **Java JDK 25+** and **Maven** installed.
 > If you encounter dependency issues, try:

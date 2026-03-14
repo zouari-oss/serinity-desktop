@@ -1,10 +1,62 @@
 #!/usr/bin/env bash
+# =========================================
+# .FILE
+#   deploy-native
+#
+# .SYNOPSIS
+#   Build Serinity desktop artifacts (jar, native app-image, and installers).
+#
+# .DESCRIPTION
+#   This script packages the desktop app from the project root.
+#   It can generate:
+#     - executable jar
+#     - native app-image (via jpackage)
+#     - installers (deb/rpm/dmg/pkg/exe/msi)
+#   Installers depend on OS and local packaging tools.
+#
+# .PARAMETERS
+#   -t, --type <list>
+#     Comma-separated artifact types:
+#     jar, native (alias: app-image), deb, rpm (alias: rmp), dmg, pkg, exe, msi, all
+#   -h, --help
+#     Show usage information.
+#
+# .INPUTS
+#   - Maven modules in this repository
+#   - Runtime dependencies copied to app/target/dependency
+#   - Optional .env.example copied into generated app-image
+#
+# .OUTPUTS
+#   - app/target/native/serinity        (app-image)
+#   - app/target/dist/*                 (jar/installers)
+#
+# .REQUIREMENTS
+#   - Java + jpackage available
+#   - Maven installed
+#   - For Linux installers:
+#       deb -> dpkg-deb
+#       rpm -> rpmbuild
+#
+# .NOTES
+#   Version       : 1.0
+#   Author        : @ZouariOmar <zouariomar20@gmail.com>
+#   Created       : 14/03/2026
+#   Change Log    : 1469c79
+#
+# .EXAMPLES
+#   ./deploy-native
+#   ./deploy-native --type jar
+#   ./deploy-native --type native,deb,rpm
+#   PACKAGE_TYPES=all ./scripts/deploy-native
+# =========================================
+
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-APP_NAME="Serinity"
+# Configuration vars
+APP_NAME="serinity"
 OUT_DIR="app/target/native"
 DIST_DIR="app/target/dist"
 INPUT_DIR="app/target/dependency"
@@ -12,9 +64,9 @@ APP_DIR="${OUT_DIR}/${APP_NAME}"
 
 usage() {
   cat <<'EOF'
-Usage: ./scripts/deploy-native.sh [OPTIONS]
+Usage: ./deploy-native [OPTIONS]
 
-Build and package Serinity desktop artifacts.
+Build and package serinity desktop artifacts.
 
 Options:
   -t, --type <list>   Comma-separated output types to generate.
@@ -172,23 +224,23 @@ if [[ "${NEEDS_NATIVE}" -eq 1 ]]; then
     cp -f ".env.example" "${APP_DIR}/.env.example"
   fi
 
-  cat >"${APP_DIR}/Serinity" <<'RUNNER'
+  cat >"${APP_DIR}/serinity" <<'RUNNER'
 #!/usr/bin/env bash
 set -euo pipefail
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$APP_DIR"
 if [[ ! -f ".env" ]]; then
-  echo "[Serinity] Missing .env in $APP_DIR"
-  echo "[Serinity] Create it from .env.example before launching."
+  echo "[serinity] Missing .env in $APP_DIR"
+  echo "[serinity] Create it from .env.example before launching."
   exit 1
 fi
 set -a
 source "$APP_DIR/.env"
 set +a
 export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:-} -Dserinity.env.dir=$APP_DIR"
-exec "$APP_DIR/bin/Serinity" "$@"
+exec "$APP_DIR/bin/serinity" "$@"
 RUNNER
-  chmod +x "${APP_DIR}/Serinity"
+  chmod +x "${APP_DIR}/serinity"
 fi
 
 for TYPE in "${INSTALLER_TYPES[@]}"; do

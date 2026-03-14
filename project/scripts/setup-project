@@ -1,0 +1,211 @@
+#!/usr/bin/env bash
+# =========================================
+# .FILE
+#   setup-project
+#
+# .SYNOPSIS
+#   Download and install required local AI assets for Serinity.
+#
+# .DESCRIPTION
+#   Installs:
+#     1) Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
+#        -> servers/sleep-ai-local-server/
+#     2) antelopev2.zip (insightface v0.7)
+#        -> access-control/src/main/resources/antelopev2/
+#     3) Python virtual environments for local servers
+#        -> servers/*/.venv + requirements installation
+#
+#   The script is idempotent by default and skips existing files unless --force
+#   is provided.
+
+# .NOTES
+#   Version       : 1.0
+#   Author        : @ZouariOmar <zouariomar20@gmail.com>
+#   Created       : 14/03/2026
+#   Change Log    : 1469c79
+#
+# .EXAMPLES
+#   ./setup-project                 # Install models + server venvs
+#   ./setup-project --skip-gguf     # Install only antelopev2 model
+#   ./setup-project --skip-antelope # Install only gguf model
+#   ./setup-project --skip-servers  # Skip Python venv setup
+# =========================================
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${ROOT_DIR}"
+
+# GFUF Model
+GGUF_FILE="Mistral-7B-Instruct-v0.3-Q4_K_M.gguf"
+GGUF_REMOTE_FILE="mistral-7b-instruct-v0.3-q4_k_m.gguf"
+GGUF_URL="https://huggingface.co/jfer1015/Mistral-7B-Instruct-v0.3-Q4_K_M-GGUF/resolve/main/${GGUF_REMOTE_FILE}?download=true"
+GGUF_DEST_DIR="servers/sleep-ai-local-server"
+GGUF_DEST_PATH="${GGUF_DEST_DIR}/${GGUF_FILE}"
+
+# ANTELOPE Model
+ANTELOPE_ZIP_URL="https://github.com/deepinsight/insightface/releases/download/v0.7/antelopev2.zip"
+ANTELOPE_DEST_DIR="access-control/src/main/resources/antelopev2"
+
+# Servers
+SERVERS_ROOT="servers"
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+
+# Flags
+FORCE=0
+SKIP_GGUF=0
+SKIP_ANTELOPE=0
+SKIP_SERVERS=0
+
+usage() {
+  cat <<'EOF'
+Usage: ./setup-project [OPTIONS]
+
+Download and install local AI assets and local server environments required by Serinity.
+
+Options:
+  --force            Re-download/reinstall even if files already exist.
+  --skip-gguf        Skip GGUF model installation.
+  --skip-antelope    Skip antelopev2 installation.
+  --skip-servers     Skip Python venv + requirements setup under servers/*.
+  -h, --help         Show this help message.
+
+Installed paths:
+  - servers/sleep-ai-local-server/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
+  - access-control/src/main/resources/antelopev2/*.onnx
+  - servers/*/.venv
+EOF
+}
+
+require_cmd() {
+  local cmd="$1"
+  if ! command -v "${cmd}" >/dev/null 2>&1; then
+    echo "[setup-project] Missing required command: ${cmd}" >&2
+    exit 1
+  fi
+}
+
+download_file() {
+  local url="$1"
+  local out="$2"
+  echo "[setup-project] Downloading: ${url}"
+  curl --fail --location --progress-bar --output "${out}" "${url}"
+}
+
+setup_server_venvs() {
+  local req_file req_dir venv_dir found=0
+
+  while IFS= read -r -d '' req_file; do
+    found=1
+    req_dir="$(dirname "${req_file}")"
+    venv_dir="${req_dir}/.venv"
+
+    if [[ -d "${venv_dir}" && "${FORCE}" -eq 1 ]]; then
+      echo "[setup-project] Recreating venv: ${venv_dir}"
+      rm -rf "${venv_dir}"
+    fi
+
+    if [[ ! -d "${venv_dir}" ]]; then
+      echo "[setup-project] Creating venv: ${venv_dir}"
+      "${PYTHON_BIN}" -m venv "${venv_dir}"
+    else
+      echo "[setup-project] Reusing venv: ${venv_dir}"
+    fi
+
+    echo "[setup-project] Installing Python dependencies for: ${req_dir}"
+    "${venv_dir}/bin/python" -m pip install --upgrade pip setuptools wheel
+    "${venv_dir}/bin/python" -m pip install -r "${req_file}"
+  done < <(find "${SERVERS_ROOT}" -mindepth 2 -maxdepth 2 -type f -name requirements.txt -print0 | sort -z)
+
+  if [[ "${found}" -eq 0 ]]; then
+    echo "[setup-project] No requirements.txt found under ${SERVERS_ROOT}/*"
+  fi
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+  --force)
+    FORCE=1
+    shift
+    ;;
+  --skip-gguf)
+    SKIP_GGUF=1
+    shift
+    ;;
+  --skip-antelope)
+    SKIP_ANTELOPE=1
+    shift
+    ;;
+  --skip-servers)
+    SKIP_SERVERS=1
+    shift
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "[setup-project] Unknown option: $1" >&2
+    usage
+    exit 1
+    ;;
+  esac
+done
+
+if [[ "${SKIP_GGUF}" -eq 0 || "${SKIP_ANTELOPE}" -eq 0 ]]; then
+  require_cmd curl
+fi
+if [[ "${SKIP_ANTELOPE}" -eq 0 ]]; then
+  require_cmd unzip
+fi
+if [[ "${SKIP_SERVERS}" -eq 0 ]]; then
+  require_cmd "${PYTHON_BIN}"
+fi
+
+mkdir -p "${GGUF_DEST_DIR}" "${ANTELOPE_DEST_DIR}"
+
+TMP_DIR="$(mktemp -d)"
+trap 'rm -rf "${TMP_DIR}"' EXIT
+
+if [[ "${SKIP_GGUF}" -eq 0 ]]; then
+  if [[ -f "${GGUF_DEST_PATH}" && "${FORCE}" -eq 0 ]]; then
+    echo "[setup-project] GGUF already exists: ${GGUF_DEST_PATH} (use --force to re-download)"
+  else
+    GGUF_TMP="${TMP_DIR}/${GGUF_REMOTE_FILE}"
+    download_file "${GGUF_URL}" "${GGUF_TMP}"
+    if [[ ! -s "${GGUF_TMP}" ]]; then
+      echo "[setup-project] GGUF download failed (empty file)." >&2
+      exit 1
+    fi
+    mv -f "${GGUF_TMP}" "${GGUF_DEST_PATH}"
+    echo "[setup-project] Installed GGUF: ${GGUF_DEST_PATH}"
+  fi
+fi
+
+if [[ "${SKIP_ANTELOPE}" -eq 0 ]]; then
+  ANTELOPE_ZIP="${TMP_DIR}/antelopev2.zip"
+  EXTRACT_DIR="${TMP_DIR}/extract-antelope"
+  mkdir -p "${EXTRACT_DIR}"
+
+  download_file "${ANTELOPE_ZIP_URL}" "${ANTELOPE_ZIP}"
+  unzip -q -o "${ANTELOPE_ZIP}" -d "${EXTRACT_DIR}"
+
+  # Works whether zip contains antelopev2/* directly or nested under another root folder.
+  FOUND_ANTELOPE_DIR="$(find "${EXTRACT_DIR}" -type d -name antelopev2 | head -n1 || true)"
+  if [[ -z "${FOUND_ANTELOPE_DIR}" ]]; then
+    echo "[setup-project] Could not find 'antelopev2' directory in downloaded archive." >&2
+    exit 1
+  fi
+
+  if [[ "${FORCE}" -eq 1 ]]; then
+    rm -f "${ANTELOPE_DEST_DIR}"/*.onnx
+  fi
+  cp -f "${FOUND_ANTELOPE_DIR}"/*.onnx "${ANTELOPE_DEST_DIR}/"
+  echo "[setup-project] Installed antelopev2 ONNX files in: ${ANTELOPE_DEST_DIR}"
+fi
+
+if [[ "${SKIP_SERVERS}" -eq 0 ]]; then
+  setup_server_venvs
+fi
+
+echo "[setup-project] Done."
