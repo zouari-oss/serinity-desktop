@@ -4,30 +4,175 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-APP_VERSION="1.0.0"
-APP_JAR="app-${APP_VERSION}.jar"
+APP_NAME="Serinity"
 OUT_DIR="app/target/native"
+DIST_DIR="app/target/dist"
 INPUT_DIR="app/target/dependency"
-APP_DIR="${OUT_DIR}/Serinity"
+APP_DIR="${OUT_DIR}/${APP_NAME}"
+
+usage() {
+  cat <<'EOF'
+Usage: ./scripts/deploy-native.sh [OPTIONS]
+
+Build and package Serinity desktop artifacts.
+
+Options:
+  -t, --type <list>   Comma-separated output types to generate.
+                      Supported values:
+                        jar, native (alias: app-image),
+                        deb, rpm (alias: rmp),
+                        dmg, pkg, exe, msi, all
+                      Examples:
+                        --type jar
+                        --type native,deb,rpm
+                        --type all
+  -h, --help          Show this help message.
+
+Notes:
+  - "all" generates: jar + native app-image + OS-default installer types.
+  - You can still use PACKAGE_TYPES env var (same values as --type).
+  - Installer generation is OS/tool dependent (e.g. rpmbuild for rpm, dpkg-deb for deb).
+EOF
+}
+
+detect_default_installers() {
+  case "$(uname -s)" in
+  Linux*) echo "deb rpm" ;;
+  Darwin*) echo "dmg pkg" ;;
+  MINGW* | MSYS* | CYGWIN*) echo "exe msi" ;;
+  *) echo "" ;;
+  esac
+}
+
+normalize_type() {
+  case "$1" in
+  app-image) echo "native" ;;
+  rmp) echo "rpm" ;;
+  *) echo "$1" ;;
+  esac
+}
+
+TARGETS_INPUT=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  -t | --type)
+    [[ $# -lt 2 ]] && {
+      echo "[deploy-native] Missing value for $1" >&2
+      exit 1
+    }
+    TARGETS_INPUT="$2"
+    shift 2
+    ;;
+  --type=*)
+    TARGETS_INPUT="${1#*=}"
+    shift
+    ;;
+  *)
+    echo "[deploy-native] Unknown option: $1" >&2
+    usage
+    exit 1
+    ;;
+  esac
+done
+
+if [[ -z "${TARGETS_INPUT}" && -n "${PACKAGE_TYPES:-}" ]]; then
+  TARGETS_INPUT="${PACKAGE_TYPES}"
+fi
+if [[ -z "${TARGETS_INPUT}" ]]; then
+  TARGETS_INPUT="all"
+fi
+
+TARGETS_INPUT="${TARGETS_INPUT//,/ }"
+REQUESTED_TARGETS=()
+for token in ${TARGETS_INPUT}; do
+  t="$(normalize_type "${token,,}")"
+  case "$t" in
+  all | jar | native | deb | rpm | dmg | pkg | exe | msi) REQUESTED_TARGETS+=("$t") ;;
+  *)
+    echo "[deploy-native] Unsupported type: ${token}" >&2
+    usage
+    exit 1
+    ;;
+  esac
+done
+
+contains_target() {
+  local needle="$1"
+  shift
+  local i
+  for i in "$@"; do
+    [[ "$i" == "$needle" ]] && return 0
+  done
+  return 1
+}
+
+EXPANDED_TARGETS=()
+if contains_target "all" "${REQUESTED_TARGETS[@]}"; then
+  EXPANDED_TARGETS+=(jar native)
+  for os_t in $(detect_default_installers); do
+    EXPANDED_TARGETS+=("${os_t}")
+  done
+else
+  EXPANDED_TARGETS=("${REQUESTED_TARGETS[@]}")
+fi
+
+NEEDS_NATIVE=0
+INSTALLER_TYPES=()
+for t in "${EXPANDED_TARGETS[@]}"; do
+  case "$t" in
+  native) NEEDS_NATIVE=1 ;;
+  deb | rpm | dmg | pkg | exe | msi)
+    NEEDS_NATIVE=1
+    INSTALLER_TYPES+=("$t")
+    ;;
+  esac
+done
 
 echo "[deploy-native] Building all modules (tests skipped) and collecting runtime deps..."
 mvn -pl app -am -Dmaven.test.skip=true package dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/dependency
 
-echo "[deploy-native] Ensuring app and OpenCV jars are included in package input..."
-cp -f "app/target/${APP_JAR}" "${INPUT_DIR}/"
-cp -f "access-control/lib/opencv-4130.jar" "${INPUT_DIR}/"
-
-echo "[deploy-native] Creating app image with jpackage..."
-rm -rf "${APP_DIR}"
-jpackage   --name Serinity   --input "${INPUT_DIR}"   --main-jar "${APP_JAR}"   --main-class com.serinity.app.Launcher   --type app-image   --dest "${OUT_DIR}"   --java-options "--enable-native-access=ALL-UNNAMED"
-
-if [[ -f ".env.example" ]]; then
-  cp -f ".env.example" "${APP_DIR}/.env.example"
-elif [[ -f ".env.development" ]]; then
-  cp -f ".env.development" "${APP_DIR}/.env.example"
+APP_JAR_PATH="$(ls app/target/app-*-all.jar 2>/dev/null | head -n1 || true)"
+if [[ -z "${APP_JAR_PATH}" || ! -f "${APP_JAR_PATH}" ]]; then
+  APP_JAR_PATH="$(ls app/target/app-*.jar | grep -v -- '-all\.jar$' | head -n1 || true)"
 fi
 
-cat > "${APP_DIR}/Serinity" << 'EOF'
+if [[ -z "${APP_JAR_PATH}" || ! -f "${APP_JAR_PATH}" ]]; then
+  echo "[deploy-native] Could not find app jar in app/target (expected fat jar app-*-all.jar)" >&2
+  exit 1
+fi
+APP_JAR="$(basename "${APP_JAR_PATH}")"
+
+mkdir -p "${DIST_DIR}"
+
+echo "[deploy-native] Ensuring app and OpenCV jars are included in package input..."
+cp -f "${APP_JAR_PATH}" "${INPUT_DIR}/"
+cp -f "access-control/lib/opencv-4130.jar" "${INPUT_DIR}/"
+if contains_target "jar" "${EXPANDED_TARGETS[@]}"; then
+  rm -f "${DIST_DIR}"/app-*.jar
+  cp -f "${APP_JAR_PATH}" "${DIST_DIR}/${APP_JAR}"
+fi
+
+if [[ "${NEEDS_NATIVE}" -eq 1 ]]; then
+  echo "[deploy-native] Creating app-image..."
+  rm -rf "${APP_DIR}"
+  jpackage \
+    --name "${APP_NAME}" \
+    --input "${INPUT_DIR}" \
+    --main-jar "${APP_JAR}" \
+    --main-class com.serinity.app.Launcher \
+    --type app-image \
+    --dest "${OUT_DIR}" \
+    --java-options "--enable-native-access=ALL-UNNAMED"
+
+  if [[ -f ".env.example" ]]; then
+    cp -f ".env.example" "${APP_DIR}/.env.example"
+  fi
+
+  cat >"${APP_DIR}/Serinity" <<'RUNNER'
 #!/usr/bin/env bash
 set -euo pipefail
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -42,8 +187,35 @@ source "$APP_DIR/.env"
 set +a
 export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:-} -Dserinity.env.dir=$APP_DIR"
 exec "$APP_DIR/bin/Serinity" "$@"
-EOF
-chmod +x "${APP_DIR}/Serinity"
+RUNNER
+  chmod +x "${APP_DIR}/Serinity"
+fi
+
+for TYPE in "${INSTALLER_TYPES[@]}"; do
+  if [[ "${TYPE}" == "rpm" ]] && ! command -v rpmbuild >/dev/null 2>&1; then
+    echo "[deploy-native] Skipping rpm: rpmbuild is not installed"
+    continue
+  fi
+
+  if [[ "${TYPE}" == "deb" ]] && ! command -v dpkg-deb >/dev/null 2>&1; then
+    echo "[deploy-native] Skipping deb: dpkg-deb is not installed"
+    continue
+  fi
+
+  echo "[deploy-native] Creating ${TYPE} installer..."
+  if [[ "$(uname -s)" == "Linux" ]]; then
+    jpackage --name "${APP_NAME}" --type "${TYPE}" --app-image "${APP_DIR}" --dest "${DIST_DIR}" --linux-package-name serinity
+  else
+    jpackage --name "${APP_NAME}" --type "${TYPE}" --app-image "${APP_DIR}" --dest "${DIST_DIR}"
+  fi
+done
 
 echo "[deploy-native] Done."
-echo "[deploy-native] Start app with: ${APP_DIR}/Serinity"
+if [[ "${NEEDS_NATIVE}" -eq 1 ]]; then
+  echo "[deploy-native] App image: ${APP_DIR}"
+fi
+if contains_target "jar" "${EXPANDED_TARGETS[@]}"; then
+  echo "[deploy-native] Jar: ${DIST_DIR}/${APP_JAR}"
+fi
+echo "[deploy-native] Installers output: ${DIST_DIR}"
+find "${DIST_DIR}" -maxdepth 1 -type f | sort
