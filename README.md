@@ -1,9 +1,9 @@
 <!-- PROJECT SHIELDS -->
 
-[![Contributors](https://img.shields.io/badge/CONTRIBUTORS-02-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/graphs/contributors)
+[![Contributors](https://img.shields.io/badge/CONTRIBUTORS-06-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/graphs/contributors)
 [![Forks](https://img.shields.io/badge/FORKS-00-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/network/members)
 [![Stargazers](https://img.shields.io/badge/STARS-03-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/stargazers)
-[![Issues](https://img.shields.io/badge/ISSUES-00-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/issues)
+[![Issues](https://img.shields.io/badge/ISSUES-04-blue?style=plastic)](https://github.com/ZouariOmar/AgriGO/issues)
 [![GPL3.0 License](https://img.shields.io/badge/LICENSE-GPL3.0-blue?style=plastic)](LICENSE)
 
 <!-- PROJECT HEADER -->
@@ -113,7 +113,7 @@ The platform integrates **Artificial Intelligence** to provide personalized emot
 ### 1. Clone the Repository and Navigate to the Project
 
 ```bash
-git clone https://github.com/zouari-oss/serinity-desktop/
+git clone https://github.com/zouari-oss/serinity-desktop
 cd serinity-desktop/project
 ```
 
@@ -126,7 +126,7 @@ mvn compile
 ### 3. Run the Application
 
 ```bash
-mvn -pl access-control javafx:run
+mvn -pl app javafx:run
 ```
 
 > [!TIP]
