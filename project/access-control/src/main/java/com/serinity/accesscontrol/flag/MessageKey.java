@@ -25,9 +25,13 @@ package com.serinity.accesscontrol.flag;
  *        </a>
  */
 public enum MessageKey {
+  /** Greeting message key. */
   GREETING("greeting"),
+  /** Login message key. */
   LOGIN("login"),
+  /** Exit message key. */
   EXIT("exit"),
+  /** Languages list message key. */
   LANGUAGES("languages");
 
   private final String value;
@@ -36,6 +40,11 @@ public enum MessageKey {
     this.value = value;
   }
 
+  /**
+   * Returns the i18n property key value.
+   *
+   * @return message key value
+   */
   public String getValue() {
     return value;
   }

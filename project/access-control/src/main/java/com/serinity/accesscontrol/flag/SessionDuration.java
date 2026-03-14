@@ -30,7 +30,9 @@ package com.serinity.accesscontrol.flag;
  *        </a>
  */
 public enum SessionDuration {
+  /** Session duration for admin users (days). */
   ADMIN_SESSION(1),
+  /** Session duration for standard users (days). */
   USER_SESSION(7);
 
   private final long duration;
@@ -39,6 +41,11 @@ public enum SessionDuration {
     this.duration = duration;
   }
 
+  /**
+   * Returns this duration in days.
+   *
+   * @return session duration in days
+   */
   public long getDuration() {
     return duration;
   }

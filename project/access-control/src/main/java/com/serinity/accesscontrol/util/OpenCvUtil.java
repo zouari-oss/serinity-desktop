@@ -37,6 +37,9 @@ import javafx.scene.image.Image;
  *      </a>
  */
 public final class OpenCvUtil {
+  /** Utility class; not meant to be instantiated. */
+  private OpenCvUtil() {
+  }
   /**
    * Converts an OpenCV {@link org.opencv.core.Mat} frame to a JavaFX
    * {@link javafx.scene.image.Image} by encoding it as PNG in memory.

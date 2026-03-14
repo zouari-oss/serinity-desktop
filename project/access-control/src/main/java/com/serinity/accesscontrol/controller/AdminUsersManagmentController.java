@@ -51,6 +51,10 @@ import javafx.scene.layout.VBox;
  */
 public final class AdminUsersManagmentController implements StackNavigable, StatusMessageProvider, StageTitled {
 
+  /** Creates a new user management controller. */
+  public AdminUsersManagmentController() {
+  }
+
   @Override
   public String getSceneTitleKey() {
     return "app.scene.title.user_management";
@@ -102,6 +106,7 @@ public final class AdminUsersManagmentController implements StackNavigable, Stat
     }
   }
 
+  /** Initializes user-management data and filters. */
   public void usersManagmentInit() {
     // Initialize filter dropdown
     roleFilterComboBox.getItems().addAll(

@@ -7,6 +7,7 @@ import java.nio.file.Path;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
+  /** Class documentation. */
 public final class DbConnection {
 
   private static final Dotenv dotenv = Dotenv.configure()
@@ -25,6 +26,7 @@ public final class DbConnection {
   private DbConnection() {
   }
 
+  /** Documents getConnection. */
   public static Connection getConnection() throws SQLException {
     Connection c = CN;
     if (c == null || c.isClosed()) {
@@ -38,6 +40,7 @@ public final class DbConnection {
     return c;
   }
 
+  /** Documents close. */
   public static void close() {
     synchronized (DbConnection.class) {
       if (CN != null) {

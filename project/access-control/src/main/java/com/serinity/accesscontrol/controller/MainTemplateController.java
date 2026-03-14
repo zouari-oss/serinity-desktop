@@ -18,7 +18,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+/**
+ * Controller for the shared application template shell.
+ */
 public class MainTemplateController {
+
+  /** Creates a new template controller. */
+  public MainTemplateController() {
+  }
 
   @FXML
   private Button btnDashboard;
@@ -54,6 +61,7 @@ public class MainTemplateController {
 
   private List<Button> navButtons;
 
+  /** Initializes navigation and localized labels. */
   @FXML
   public void initialize() {
     if (resources == null) {

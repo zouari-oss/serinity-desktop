@@ -40,7 +40,7 @@ import org.zouarioss.skinnedratorm.annotations.UpdateTimestamp;
  * manage timestamps automatically.
  * </p>
  *
- * @author @ZouariOmar <zouariomar20@gmail.com>
+ * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 2026-02-03
  *
@@ -52,11 +52,16 @@ import org.zouarioss.skinnedratorm.annotations.UpdateTimestamp;
  */
 @MappedSuperclass
 public abstract class TimestampedEntity extends IdentifiableEntity {
+  /** Creates a new timestamped entity. */
+  protected TimestampedEntity() {
+  }
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
+  /** Creation timestamp. */
   protected Instant createdAt;
 
   @UpdateTimestamp
   @Column(name = "updated_at", nullable = false)
+  /** Last update timestamp. */
   protected Instant updatedAt;
 } // TimestampedEntity abstract class

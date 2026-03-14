@@ -35,6 +35,10 @@ import javafx.scene.Scene;
  */
 final public class FXMLLoaderUtil {
 
+  /** Utility class; not meant to be instantiated. */
+  private FXMLLoaderUtil() {
+  }
+
   /**
    * Wrapper class that holds both the loaded FXML root node and its controller.
    *
@@ -51,15 +55,31 @@ final public class FXMLLoaderUtil {
     private final Parent root;
     private final T controller;
 
+    /**
+     * Creates a holder for a loaded view and its controller.
+     *
+     * @param root       loaded FXML root node
+     * @param controller controller instance resolved by FXMLLoader
+     */
     public ViewLoader(final Parent root, final T controller) {
       this.root = root;
       this.controller = controller;
     }
 
+    /**
+     * Returns the loaded root node.
+     *
+     * @return loaded root node
+     */
     public Parent getRoot() {
       return root;
     }
 
+    /**
+     * Returns the controller resolved by FXMLLoader.
+     *
+     * @return loaded controller
+     */
     public T getController() {
       return controller;
     }

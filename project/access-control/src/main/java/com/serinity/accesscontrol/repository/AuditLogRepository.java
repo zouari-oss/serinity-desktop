@@ -58,6 +58,11 @@ import com.serinity.accesscontrol.repository.base.BaseRepository;
  * @see com.serinity.accesscontrol.model.AuthSession
  */
 public final class AuditLogRepository extends BaseRepository<AuditLog, Long> {
+  /**
+   * Creates a repository instance for audit logs.
+   *
+   * @param em entity manager used for persistence operations
+   */
   public AuditLogRepository(final EntityManager em) {
     super(em, AuditLog.class);
   }

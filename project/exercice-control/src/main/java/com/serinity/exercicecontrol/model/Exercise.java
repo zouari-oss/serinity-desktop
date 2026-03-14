@@ -1,5 +1,6 @@
 package com.serinity.exercicecontrol.model;
 
+  /** Class documentation. */
 public class Exercise {
     private int id;
     private String title;
@@ -8,8 +9,10 @@ public class Exercise {
     private int durationMinutes;
     private String description;
 
+  /** Documents Exercise. */
     public Exercise() {}
 
+  /** Documents Exercise. */
     public Exercise(int id, String title, String type, int level, int durationMinutes, String description) {
         this.id = id;
         this.title = title;
@@ -19,6 +22,7 @@ public class Exercise {
         this.description = description;
     }
 
+  /** Documents Exercise. */
     public Exercise(String title, String type, int level, int durationMinutes, String description) {
         this.title = title;
         this.type = type;

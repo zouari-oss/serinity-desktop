@@ -28,6 +28,8 @@ package com.serinity.accesscontrol.flag;
  *      </a>
  */
 public enum PresenceStatus {
+  /** User is currently online. */
   ONLINE,
+  /** User is currently offline. */
   OFFLINE
 } // PresenceStatus enum

@@ -41,6 +41,9 @@ import java.security.SecureRandom;
  *      </a>
  */
 public class RandomPasswordGenerator {
+  /** Utility class; not meant to be instantiated. */
+  private RandomPasswordGenerator() {
+  }
   private static final String UPPER_CASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   private static final String LOWER_CASE = "abcdefghijklmnopqrstuvwxyz";
   private static final String NUMBERS = "0123456789";

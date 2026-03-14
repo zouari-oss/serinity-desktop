@@ -20,9 +20,13 @@ package com.serinity.accesscontrol.flag;
  *        </a>
  */
 public enum MessageStatus {
+  /** Success status. */
   SUCCESS("success", "/assets/root/icons8-success-50.png"),
+  /** Error status. */
   ERROR("error", "/assets/root/icons8-error-50.png"),
+  /** Warning status. */
   WARNING("warning", "/assets/root/icons8-warning-50.png"),
+  /** Informational status. */
   INFO("info", "/assets/root/icons8-info-50.png");
 
   private final String cssClass;

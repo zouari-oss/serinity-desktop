@@ -1,5 +1,6 @@
 package com.serinity.exercicecontrol.model;
 
+  /** Class documentation. */
 public class BreathingProtocol {
     private final String name;
     private final int totalSeconds;
@@ -12,6 +13,7 @@ public class BreathingProtocol {
 
     private final String benefit;
 
+  /** Documents BreathingProtocol. */
     public BreathingProtocol(String name, int totalSeconds,
                              int inhale, int hold1, int exhale, int hold2,
                              String benefit) {
@@ -24,16 +26,24 @@ public class BreathingProtocol {
         this.benefit = benefit;
     }
 
+  /** Documents getName. */
     public String getName() { return name; }
+  /** Documents getTotalSeconds. */
     public int getTotalSeconds() { return totalSeconds; }
 
+  /** Documents getInhale. */
     public int getInhale() { return inhale; }
+  /** Documents getHold1. */
     public int getHold1() { return hold1; }
+  /** Documents getExhale. */
     public int getExhale() { return exhale; }
+  /** Documents getHold2. */
     public int getHold2() { return hold2; }
 
+  /** Documents getBenefit. */
     public String getBenefit() { return benefit; }
 
+  /** Documents cycleSeconds. */
     public int cycleSeconds() {
         return inhale + hold1 + exhale + hold2;
     }

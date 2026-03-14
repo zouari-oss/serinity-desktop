@@ -36,6 +36,10 @@ import javafx.scene.web.WebView;
  */
 public final class FXMLAnimationUtil {
 
+  /** Utility class; not meant to be instantiated. */
+  private FXMLAnimationUtil() {
+  }
+
   /**
    * Animates a {@link WebView} by sliding it horizontally across the screen.
    *

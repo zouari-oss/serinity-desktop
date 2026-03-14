@@ -55,7 +55,7 @@ import com.serinity.accesscontrol.util.SystemInfo;
  * session integrity.
  * </p>
  *
- * @author @ZouariOmar <zouariomar20@gmail.com>
+ * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 2026-02-03
  * @see com.serinity.accesscontrol.model.User
@@ -70,6 +70,9 @@ import com.serinity.accesscontrol.util.SystemInfo;
 @Table(name = "audit_logs")
 @Index(name = "idx_audit_created", columnList = "created_at")
 public final class AuditLog extends IdentifiableEntity {
+  /** Creates an empty audit log entity. */
+  public AuditLog() {
+  }
   @Column(nullable = false, length = 100)
   private String action;
 
@@ -100,42 +103,92 @@ public final class AuditLog extends IdentifiableEntity {
   // ### GETTERS & SETTERS ###
   // #########################
 
+  /**
+   * Returns the action associated with this log entry.
+   *
+   * @return action value for this audit record
+   */
   public String getAction() {
     return action;
   }
 
+  /**
+   * Sets the action associated with this log entry.
+   *
+   * @param action audit action value to persist
+   */
   public void setAction(final String action) {
     this.action = action;
   }
 
+  /**
+   * Returns the operating system name captured at creation time.
+   *
+   * @return operating system name
+   */
   public String getOsName() {
     return osName;
   }
 
+  /**
+   * Returns the hostname captured at creation time.
+   *
+   * @return host name
+   */
   public String getHostname() {
     return hostname;
   }
 
+  /**
+   * Returns the private IP address captured at creation time.
+   *
+   * @return private IP address
+   */
   public String getPrivateIpAddress() {
     return privateIpAddress;
   }
 
+  /**
+   * Returns the MAC address captured at creation time.
+   *
+   * @return MAC address
+   */
   public String getMacAddress() {
     return macAddress;
   }
 
+  /**
+   * Returns the location metadata captured at creation time.
+   *
+   * @return location metadata
+   */
   public String getLocation() {
     return location;
   }
 
+  /**
+   * Returns the audit creation timestamp.
+   *
+   * @return creation timestamp
+   */
   public Instant getCreatedAt() {
     return createdAt;
   }
 
+  /**
+   * Returns the linked authentication session.
+   *
+   * @return linked authentication session
+   */
   public AuthSession getSession() {
     return session;
   }
 
+  /**
+   * Sets the linked authentication session.
+   *
+   * @param session authentication session related to this audit entry
+   */
   public void setSession(final AuthSession session) {
     this.session = session;
   }

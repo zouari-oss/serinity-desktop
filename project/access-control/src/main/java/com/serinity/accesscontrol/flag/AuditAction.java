@@ -45,21 +45,29 @@ package com.serinity.accesscontrol.flag;
  *      </a>
  */
 public enum AuditAction {
-  // Auth events
+  /** User registration event. */
   USER_SIGN_UP("USER_SIGN_UP"),
+  /** Successful credential-based login event. */
   USER_LOGIN("USER_LOGIN"),
+  /** Successful face-recognition login event. */
   USER_FACE_LOGIN("USER_FACE_LOGIN"),
+  /** User logout event. */
   USER_LOGOUT("USER_LOGOUT"),
+  /** Failed login attempt event. */
   USER_LOGIN_FAILED("USER_LOGIN_FAILED"),
+  /** Refresh token usage event. */
   TOKEN_REFRESH("TOKEN_REFRESH"),
+  /** Session revocation event. */
   SESSION_REVOKED("SESSION_REVOKED"),
 
-  // Security events
+  /** Password change event. */
   PASSWORD_CHANGED("PASSWORD_CHANGED"),
 
-  // User Management
+  /** User profile update event. */
   USER_UPDATED("USER_UPDATED"),
+  /** User deletion event. */
   USER_DELETED("USER_DELETED"),
+  /** User role update event. */
   ROLE_CHANGED("ROLE_CHANGED");
 
   private final String value;
@@ -68,6 +76,11 @@ public enum AuditAction {
     this.value = value;
   }
 
+  /**
+   * Returns the persisted action value.
+   *
+   * @return action value used in audit records
+   */
   public String getValue() {
     return value;
   }

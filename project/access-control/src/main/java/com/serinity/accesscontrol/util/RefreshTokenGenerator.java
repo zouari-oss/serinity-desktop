@@ -19,6 +19,9 @@ import java.util.Base64;
  *        </a>
  */
 public final class RefreshTokenGenerator {
+  /** Utility class; not meant to be instantiated. */
+  private RefreshTokenGenerator() {
+  }
   private static final SecureRandom RANDOM = new SecureRandom();
 
   /**

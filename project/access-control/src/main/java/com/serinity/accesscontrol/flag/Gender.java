@@ -23,7 +23,9 @@ import com.serinity.accesscontrol.util.I18nUtil;
  *      </a>
  */
 public enum Gender { // God made Adam and Eve, not Adam and Steve :)
+  /** Male gender value. */
   MALE("user.gender.male"),
+  /** Female gender value. */
   FEMALE("user.gender.female");
 
   private final String key;
@@ -32,6 +34,11 @@ public enum Gender { // God made Adam and Eve, not Adam and Steve :)
     this.key = key;
   }
 
+  /**
+   * Returns the i18n key for this gender.
+   *
+   * @return i18n key associated with the gender
+   */
   public String getKey() {
     return key;
   }

@@ -6,6 +6,7 @@ import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
 
+  /** Class documentation. */
 public final class Env {
 
     private static final Map<String, String> VALUES = new HashMap<>();
@@ -58,6 +59,7 @@ public final class Env {
         } catch (IOException ignored) {}
     }
 
+  /** Documents get. */
     public static String get(String key) {
         // priorité: variables d'environnement système
         String sys = System.getenv(key);
@@ -67,12 +69,14 @@ public final class Env {
         return VALUES.get(key);
     }
 
+  /** Documents getOrDefault. */
     public static String getOrDefault(String key, String def) {
         String v = get(key);
         return (v == null || v.isBlank()) ? def : v;
     }
 
     // ✅ Debug utile: où il a chargé .env
+  /** Documents debugWhereLoaded. */
     public static String debugWhereLoaded() {
         loadIfNeeded();
         return LOADED_FROM == null ? "(not found)" : LOADED_FROM.toString();

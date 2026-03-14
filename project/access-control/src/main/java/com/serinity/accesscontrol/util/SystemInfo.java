@@ -31,16 +31,28 @@ package com.serinity.accesscontrol.util;
 public final class SystemInfo {
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(SystemInfo.class);
+  /**
+   * Returns the current Java runtime version.
+   *
+   * @return Java version string
+   */
   public static String getJavaVersion() {
     return System.getProperty("java.version");
   }
 
+  /**
+   * Returns the current JavaFX runtime version.
+   *
+   * @return JavaFX version string
+   */
   public static String getJavafxVersion() {
     return System.getProperty("javafx.version");
   }
 
   /**
-   * Get the first active non-loopback(localhost) IPv4 address of the machine
+   * Gets the first active non-loopback IPv4 address of the machine.
+   *
+   * @return private IPv4 address, or {@code "unknown"} when unavailable
    */
   public static String getPrivateIpAddress() {
     try {
@@ -66,11 +78,11 @@ public final class SystemInfo {
   }
 
   /**
-   * Get the MAC address of the first active network interface
+   * Gets the MAC address of the first active network interface.
    *
-   * Source - https://stackoverflow.com/a/30879040
-   * Posted by BullyWiiPlaza
-   * Retrieved 2026-02-04, License - CC BY-SA 3.0
+   * <p>Source: https://stackoverflow.com/a/30879040</p>
+   *
+   * @return MAC address, or {@code "unknown"} when unavailable
    */
   public static String getMacAddress() {
     try {

@@ -37,6 +37,10 @@ import javafx.scene.layout.StackPane;
  */
 public final class ResetPasswordController implements StackNavigable, StatusMessageProvider, StageTitled {
 
+  /** Creates a new reset-password controller. */
+  public ResetPasswordController() {
+  }
+
   @Override
   public String getSceneTitleKey() {
     return "app.scene.title.reset_password";

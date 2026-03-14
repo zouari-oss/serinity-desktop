@@ -43,6 +43,10 @@ import javafx.stage.Stage;
  */
 public final class RootController implements StackNavigable, StatusMessageProvider {
 
+  /** Creates a new root controller. */
+  public RootController() {
+  }
+
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;
 

@@ -62,7 +62,7 @@ import com.serinity.accesscontrol.util.RefreshTokenGenerator;
  * session integrity.
  * </p>
  *
- * @author @ZouariOmar <zouariomar20@gmail.com>
+ * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 2026-02-03
  * @see com.serinity.accesscontrol.model.User
@@ -78,6 +78,9 @@ import com.serinity.accesscontrol.util.RefreshTokenGenerator;
 @Index(name = "idx_session_token", columnList = "refresh_token")
 @Index(name = "idx_session_user", columnList = "user_id")
 public final class AuthSession extends IdentifiableEntity {
+  /** Creates an empty authentication session. */
+  public AuthSession() {
+  }
   @Column(name = "refresh_token", nullable = false, unique = true, length = 255)
   private String refreshToken; // Pre-persist - From `RefreshTokenGenerator`
 
@@ -100,38 +103,83 @@ public final class AuthSession extends IdentifiableEntity {
   // #########################
   // ### GETTERS & SETTERS ###
   // #########################
+  /**
+   * Returns the refresh token for this session.
+   *
+   * @return refresh token value
+   */
   public String getRefreshToken() {
     return refreshToken;
   }
 
+  /**
+   * Returns the creation timestamp of this session.
+   *
+   * @return creation timestamp
+   */
   public Instant getCreatedAt() {
     return createdAt;
   }
 
+  /**
+   * Sets the creation timestamp of this session.
+   *
+   * @param createdAt creation timestamp to assign
+   */
   public void setCreatedAt(final Instant createdAt) {
     this.createdAt = createdAt;
   }
 
+  /**
+   * Returns the expiration timestamp for this session.
+   *
+   * @return expiration timestamp
+   */
   public Instant getExpiresAt() {
     return expiresAt;
   }
 
+  /**
+   * Sets the expiration timestamp for this session.
+   *
+   * @param expiresAt expiration timestamp to assign
+   */
   public void setExpiresAt(final Instant expiresAt) {
     this.expiresAt = expiresAt;
   }
 
+  /**
+   * Marks this session as revoked or active.
+   *
+   * @param revoked {@code true} to revoke the session
+   */
   public void setRevoked(final boolean revoked) {
     this.revoked = revoked;
   }
 
+  /**
+   * Indicates whether this session has been revoked.
+   *
+   * @return {@code true} if revoked
+   */
   public boolean isRevoked() {
     return revoked;
   }
 
+  /**
+   * Returns the user that owns this session.
+   *
+   * @return session owner
+   */
   public User getUser() {
     return user;
   }
 
+  /**
+   * Sets the user that owns this session.
+   *
+   * @param user session owner
+   */
   public void setUser(final User user) {
     this.user = user;
   }

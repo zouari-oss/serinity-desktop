@@ -123,6 +123,10 @@ import com.serinity.accesscontrol.config.EnvironmentVariableLoader;
  */
 public class FreeImageHostClient {
 
+  /** Creates a new FreeImage.host client holder. */
+  public FreeImageHostClient() {
+  }
+
   private static final String IMAGE_API_KEY;
   private static final String IMAGE_REQUEST_URL;
   private static final HttpClient httpClient;
@@ -135,6 +139,11 @@ public class FreeImageHostClient {
 
   /**
    * Uploads an image file to FreeImage.host and returns the public URL.
+   *
+   * @param imageFile image file to upload
+   * @return publicly accessible image URL
+   * @throws IOException if reading the file or HTTP transport fails
+   * @throws InterruptedException if the upload request is interrupted
    */
   public static String uploadImage(final File imageFile) throws IOException, InterruptedException {
     if (!imageFile.exists()) {
@@ -173,6 +182,9 @@ public class FreeImageHostClient {
 
   /**
    * Extracts "url" field from FreeImage.host JSON response using regex.
+   *
+   * @param jsonResponse raw JSON API response
+   * @return extracted image URL
    */
   public static String extractImageUrl(final String jsonResponse) {
     final int imageIndex = jsonResponse.indexOf("\"image\":{");

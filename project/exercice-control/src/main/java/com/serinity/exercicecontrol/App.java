@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+  /** Class documentation. */
 public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
@@ -33,6 +34,7 @@ public class App extends Application {
         stage.show();
     }
 
+  /** Documents main. */
     public static void main(String[] args) {
         launch();
     }

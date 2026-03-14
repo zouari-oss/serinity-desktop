@@ -62,6 +62,10 @@ import javafx.stage.Stage;
  */
 public final class CameraDesktopController {
 
+  /** Creates a new camera desktop controller. */
+  public CameraDesktopController() {
+  }
+
   private enum Mode {
     RECOGNIZE, ENROLL
   }

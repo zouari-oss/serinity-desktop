@@ -62,6 +62,9 @@ import com.serinity.accesscontrol.model.UserFace;
  *        </a>
  */
 public final class SkinnedRatOrmMigrator {
+  /** Utility class; not meant to be instantiated. */
+  private SkinnedRatOrmMigrator() {
+  }
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(SkinnedRatOrmMigrator.class);
   private static final SchemaGenerator generator = new SchemaGenerator(

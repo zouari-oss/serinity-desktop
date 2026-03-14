@@ -71,6 +71,12 @@ public final class AntelopeFaceService {
   private final String[] scoreOutputNames = new String[3];
   private final String[] bboxOutputNames = new String[3];
 
+  /**
+   * Creates a new face service and loads detection/recognition ONNX models.
+   *
+   * @param userFaceRepository repository used to fetch stored user embeddings
+   * @throws Exception if model loading fails
+   */
   public AntelopeFaceService(final UserFaceRepository userFaceRepository) throws Exception {
     this.userFaceRepository = userFaceRepository;
 
@@ -82,7 +88,13 @@ public final class AntelopeFaceService {
     resolveOutputNames();
   }
 
-  /** Returns the bounding box of the largest detected face, or {@code null}. */
+  /**
+   * Returns the bounding box of the largest detected face, or {@code null}.
+   *
+   * @param frame source frame to analyze
+   * @return largest detected face bounding box, or {@code null}
+   * @throws Exception if detection fails
+   */
   public Rect detectBestFace(final Mat frame) throws Exception {
     final List<Rect> faces = detectFaces(frame);
     if (faces.isEmpty())
@@ -90,7 +102,13 @@ public final class AntelopeFaceService {
     return Collections.max(faces, (a, b) -> Integer.compare((int) a.area(), (int) b.area()));
   }
 
-  /** Crops the face region from the frame, clamped to frame boundaries. */
+  /**
+   * Crops the face region from the frame, clamped to frame boundaries.
+   *
+   * @param frame source frame
+   * @param face detected face rectangle
+   * @return cropped face matrix
+   */
   public Mat cropFaceSafely(final Mat frame, final Rect face) {
     final int x = Math.max(0, face.x);
     final int y = Math.max(0, face.y);
@@ -102,6 +120,10 @@ public final class AntelopeFaceService {
   /**
    * Detects and recognizes a face in the full frame in one call.
    * Returns the matched {@link User} or {@code null}.
+   *
+   * @param face face crop to identify
+   * @return matched user, or {@code null} when no match is found
+   * @throws Exception if embedding extraction fails
    */
   public User recognizeUser(final Mat face) throws Exception {
     final float[] embedding = extractEmbedding(face);
@@ -123,7 +145,13 @@ public final class AntelopeFaceService {
     return bestUser;
   }
 
-  /** Extracts a 512-d L2-normalized ArcFace embedding from a face crop. */
+  /**
+   * Extracts a 512-d L2-normalized ArcFace embedding from a face crop.
+   *
+   * @param face face crop to embed
+   * @return embedding vector
+   * @throws Exception if inference fails
+   */
   public float[] extractEmbedding(final Mat face) throws Exception {
     final Mat aligned = AntelopeUtil.recognitionPreprocess(face);
     final float[][][][] tensorData = AntelopeUtil.recognitionMatToTensor(aligned);
@@ -139,6 +167,11 @@ public final class AntelopeFaceService {
     }
   }
 
+  /**
+   * Closes ONNX runtime resources used by this service.
+   *
+   * @throws OrtException if resource cleanup fails
+   */
   public void close() throws OrtException {
     detectionSession.close();
     recognitionSession.close();

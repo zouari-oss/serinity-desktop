@@ -28,8 +28,11 @@ import java.util.Locale;
  *        </a>
  */
 public enum SupportedLanguage {
+  /** Default language fallback. */
   DEFAULT(Locale.ENGLISH),
+  /** English language. */
   EN(Locale.ENGLISH),
+  /** French language. */
   FR(Locale.FRENCH);
 
   private final Locale locale;
@@ -38,10 +41,20 @@ public enum SupportedLanguage {
     this.locale = locale;
   }
 
+  /**
+   * Returns the locale represented by this language.
+   *
+   * @return locale value
+   */
   public Locale getLocale() {
     return locale;
   }
 
+  /**
+   * Returns the ISO language code.
+   *
+   * @return language code
+   */
   public String getCode() {
     return locale.getLanguage();
   }

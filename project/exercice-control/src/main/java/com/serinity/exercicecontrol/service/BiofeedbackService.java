@@ -4,8 +4,10 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
 
+  /** Class documentation. */
 public class BiofeedbackService {
 
+  /** Record documentation. */
     public record BioPoint(int bpm, int stress100) {}
 
     private final Random rnd = new Random();
@@ -14,10 +16,12 @@ public class BiofeedbackService {
     private final Deque<Integer> last = new ArrayDeque<>();
     private double phaseEffect = 0.0;
 
+  /** Documents setPhaseEffect. */
     public void setPhaseEffect(double effect) {
         this.phaseEffect = effect;
     }
 
+  /** Documents next. */
     public BioPoint next() {
         int noise = rnd.nextInt(5) - 2; // [-2..+2]
         int spike = (rnd.nextDouble() < 0.08) ? rnd.nextInt(12) : 0;

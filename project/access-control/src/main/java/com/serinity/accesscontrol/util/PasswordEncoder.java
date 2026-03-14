@@ -42,6 +42,10 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
  */
 public final class PasswordEncoder {
 
+  /** Utility class; not meant to be instantiated. */
+  private PasswordEncoder() {
+  }
+
   /**
    * Encodes a plain-text password using the BCrypt hashing algorithm.
    *

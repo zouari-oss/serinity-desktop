@@ -24,7 +24,7 @@ public class RecommendationService {
      * - pénalise "souvent abandonné"
      * - adapte la durée selon le score d’engagement
      *
-     * + Motivation & adhérence :
+     * + Motivation &amp; adhérence :
      * - action planning (créneau concret)
      * - graded tasks (durée progressive)
      * - streak intelligent (jours consécutifs complétés)

@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+  /** Class documentation. */
 public final class EnvConfig {
 
     private static final Map<String, String> ENV = new HashMap<>();
@@ -23,6 +24,7 @@ public final class EnvConfig {
     // PUBLIC API
     // =========================
 
+  /** Documents get. */
     public static String get(String key) {
         if (key == null || key.isBlank()) return null;
 
@@ -39,11 +41,13 @@ public final class EnvConfig {
         return System.getProperty(key);
     }
 
+  /** Documents get. */
     public static String get(String key, String defaultValue) {
         String v = get(key);
         return (v == null || v.isBlank()) ? defaultValue : v;
     }
 
+  /** Documents require. */
     public static String require(String key) {
         String v = get(key);
         if (v == null || v.isBlank()) {
@@ -54,6 +58,7 @@ public final class EnvConfig {
         return v;
     }
 
+  /** Documents getInt. */
     public static int getInt(String key, int defaultValue) {
         String v = get(key);
         if (v == null || v.isBlank()) return defaultValue;
@@ -64,6 +69,7 @@ public final class EnvConfig {
         }
     }
 
+  /** Documents getDouble. */
     public static double getDouble(String key, double defaultValue) {
         String v = get(key);
         if (v == null || v.isBlank()) return defaultValue;
@@ -74,6 +80,7 @@ public final class EnvConfig {
         }
     }
 
+  /** Documents getBoolean. */
     public static boolean getBoolean(String key, boolean defaultValue) {
         String v = get(key);
         if (v == null || v.isBlank()) return defaultValue;
@@ -86,6 +93,7 @@ public final class EnvConfig {
         };
     }
 
+  /** Documents has. */
     public static boolean has(String key) {
         String v = get(key);
         return v != null && !v.isBlank();

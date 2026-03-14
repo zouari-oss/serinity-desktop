@@ -1,7 +1,9 @@
 package com.serinity.exercicecontrol.service;
 
+  /** Class documentation. */
 public class ContextAwarePlanner {
 
+  /** Record documentation. */
     public record DailyContext(
             boolean raining,
             boolean eveningOrNight,
@@ -10,6 +12,7 @@ public class ContextAwarePlanner {
             double windKph
     ) {}
 
+  /** Record documentation. */
     public record DailyPlan(
             String contextLine,
             String activityTitle,
@@ -19,6 +22,7 @@ public class ContextAwarePlanner {
             String youtubeQuery,
             String why
     ) {}
+  /** Documents build. */
     public DailyPlan build(DailyContext c) {
         boolean tired = c.fatigueScore() >= 60;
 

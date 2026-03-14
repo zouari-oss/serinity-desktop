@@ -49,6 +49,9 @@ import java.sql.*;
  *        </a>
  */
 public class SkinnedRatOrmEntityManager {
+  /** Utility class; not meant to be instantiated. */
+  private SkinnedRatOrmEntityManager() {
+  }
   private static String resolveJdbcDriver() {
     final String configured = EnvironmentVariableLoader.getJdbcDriver();
     if (configured != null && !configured.isBlank()) {

@@ -27,7 +27,7 @@ import org.zouarioss.skinnedratorm.flag.GenerationType;
  * by child entity classes.
  * </p>
  *
- * @author @ZouariOmar <zouariomar20@gmail.com>
+ * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 2026-02-03
  *
@@ -39,10 +39,18 @@ import org.zouarioss.skinnedratorm.flag.GenerationType;
  */
 @MappedSuperclass
 public abstract class IdentifiableEntity {
+  /** Creates a new identifiable entity. */
+  protected IdentifiableEntity() {
+  }
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   protected UUID id;
 
+  /**
+   * Returns the unique identifier of this entity.
+   *
+   * @return entity identifier
+   */
   public UUID getId() {
     return id;
   }

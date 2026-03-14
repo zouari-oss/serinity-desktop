@@ -35,6 +35,10 @@ import javafx.scene.layout.StackPane;
  */
 public final class AdminDashboardController implements StackNavigable, StatusMessageProvider, StageTitled {
 
+  /** Creates a new admin dashboard controller. */
+  public AdminDashboardController() {
+  }
+
   @Override
   public String getSceneTitleKey() {
     return "app.scene.title.admin_dashboard";

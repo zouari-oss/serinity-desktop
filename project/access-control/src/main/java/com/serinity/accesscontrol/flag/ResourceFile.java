@@ -24,37 +24,60 @@ package com.serinity.accesscontrol.flag;
  *        </a>
  */
 public enum ResourceFile {
-  // FXML FILE(s)
+  /** Root layout FXML. */
   ROOT_FXML("/fxml/root.fxml"),
+  /** Login page FXML. */
   LOGIN_FXML("/fxml/login.fxml"),
+  /** User home page FXML. */
   USER_HOME_FXML("/fxml/user-home.fxml"),
+  /** User dashboard FXML. */
   USER_DAHBOARD_FXML("/fxml/user-dashboard.fxml"),
+  /** Admin dashboard FXML. */
   ADMIN_DASHBOARD_FXML("/fxml/admin-dashboard.fxml"),
+  /** Admin user management FXML. */
   ADMIN_USERS_MANAGMENT_FXML("/fxml/admin-users-management.fxml"),
+  /** Reset password FXML. */
   RESET_PASSWORD_FXML("/fxml/reset-password.fxml"),
+  /** Camera desktop FXML. */
   CAMERA_DESKTOP_FXML("/fxml/camera-desktop.fxml"),
+  /** Mood home FXML. */
   MOOD_HOME_FXML("/fxml/mood/MoodHome.fxml"),
+  /** Admin mood management FXML. */
   MOOD_ADMIN_MANAGMENT("/fxml/backoffice/admin-mood-managment.fxml"),
-    FORUM_HOME_FXML("/fxml/ForumPostsView.fxml"),
-    FORUM_ADMIN_FXML("/fxml/ForumBackoffice.fxml"),
+  /** Forum home FXML. */
+  FORUM_HOME_FXML("/fxml/ForumPostsView.fxml"),
+  /** Admin forum FXML. */
+  FORUM_ADMIN_FXML("/fxml/ForumBackoffice.fxml"),
 
-  // HTML FILE(s)
+  /** Login side HTML page. */
   LOGIN_SIDE_HTML("/html/login-side.html"),
+  /** Forgot-password HTML page. */
   FORGET_PASSWORD_HTML("/html/forgot-password.html"),
 
-  // ONNX FILE(s)
+  /** SCRFD detection model. */
   ANTELOPEV2_SCRFD_10G_BNKPS_ONNX("antelopev2/scrfd_10g_bnkps.onnx"),
+  /** ArcFace recognition model. */
   ANTELOPEV2_GLINTR100_ONNX("antelopev2/glintr100.onnx"),
 
-  // IMAGE(s)
+  /** Default user profile image. */
   USER_DEFAUL_PROFILE_PNG("/assets/user-dashboard/user-default-profile.png");
 
   private final String fileName;
 
+  /**
+   * Creates a resource-file enum entry.
+   *
+   * @param fileName classpath resource path
+   */
   private ResourceFile(final String fileName) {
     this.fileName = fileName;
   }
 
+  /**
+   * Returns the resource path.
+   *
+   * @return classpath resource path
+   */
   public final String getFileName() {
     return fileName;
   }

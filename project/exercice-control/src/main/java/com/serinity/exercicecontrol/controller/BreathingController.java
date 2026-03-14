@@ -19,6 +19,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
+  /** Class documentation. */
 public class BreathingController {
 
     @FXML private ComboBox<BreathingState> cbState;
@@ -85,6 +86,7 @@ public class BreathingController {
     // Glow
     private final DropShadow glow = new DropShadow();
 
+  /** Documents initialize. */
     @FXML
     public void initialize() {
         cbState.getItems().setAll(BreathingState.values());

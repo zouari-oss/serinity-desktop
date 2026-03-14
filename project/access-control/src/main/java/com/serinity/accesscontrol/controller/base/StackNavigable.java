@@ -58,18 +58,24 @@ public interface StackNavigable {
 
   /**
    * Returns the StackPane hosting dynamic views.
+   *
+   * @return the stack host that contains dynamic views
    */
   StackPane getStackHost();
 
   /**
-   * Inject the StackPane host.
+   * Injects the StackPane host.
+   *
+   * @param host stack host used for navigation
    */
   default void setStackHost(final StackPane host) {
     // Implementing class should override if needed
   }
 
   /**
-   * Inject the status message provider.
+   * Injects the status message provider.
+   *
+   * @param provider provider used to display status messages
    */
   default void setStatusProvider(final StatusMessageProvider provider) {
     // Implementing class should override if needed
@@ -78,8 +84,9 @@ public interface StackNavigable {
   /**
    * Push a new FXML view onto the stack.
    *
-   * @param fxml path to FXML
-   * @param <T>  type of controller
+   * @param fxml                  path to FXML
+   * @param controllerInitializer callback used to initialize controller state
+   * @param <T>                   type of controller
    */
   default <T> void push(
       final String fxml,
@@ -118,6 +125,12 @@ public interface StackNavigable {
     applySceneTitle(host, controller);
   }
 
+  /**
+   * Pushes a new FXML view without a controller initializer.
+   *
+   * @param fxml path to FXML
+   * @param <T>  type of controller
+   */
   default <T> void push(final String fxml) {
     push(fxml, null);
   }
@@ -134,8 +147,9 @@ public interface StackNavigable {
   /**
    * Replace the current view with a new FXML.
    *
-   * @param fxml path to FXML
-   * @param <T>  type of controller
+   * @param fxml                  path to FXML
+   * @param controllerInitializer callback used to initialize controller state
+   * @param <T>                   type of controller
    */
   default <T> void replace(final String fxml,
       final Consumer<T> controllerInitializer) {

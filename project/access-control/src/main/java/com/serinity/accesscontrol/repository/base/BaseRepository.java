@@ -12,6 +12,9 @@ import org.zouarioss.skinnedratorm.engine.QueryBuilder;
 /**
  * A base repository that support the common crud actions
  *
+ * @param <T>  entity type managed by the repository
+ * @param <ID> primary key type of the entity
+ *
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 2026-02-04
@@ -25,7 +28,9 @@ import org.zouarioss.skinnedratorm.engine.QueryBuilder;
 public abstract class BaseRepository<T, ID> {
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(BaseRepository.class);
+  /** Entity manager used for persistence operations. */
   protected final EntityManager em;
+  /** Runtime class of the managed entity. */
   protected final Class<T> entityClass;
 
   /**

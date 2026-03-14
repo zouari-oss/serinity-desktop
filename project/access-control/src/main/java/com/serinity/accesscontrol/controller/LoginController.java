@@ -50,6 +50,10 @@ import javafx.stage.Stage;
  */
 public final class LoginController implements StackNavigable, StatusMessageProvider, StageTitled {
 
+  /** Creates a new login controller. */
+  public LoginController() {
+  }
+
   @Override
   public String getSceneTitleKey() {
     return "app.scene.title.sign_in";
@@ -110,6 +114,11 @@ public final class LoginController implements StackNavigable, StatusMessageProvi
 
   private static User user;
 
+  /**
+   * Returns the authenticated user cached by the login flow.
+   *
+   * @return last authenticated user, or {@code null}
+   */
   public static User getUser() {
     return user;
   }

@@ -37,6 +37,11 @@ public final class CameraDesktopService {
   private boolean open;
   private final VideoCapture capture;
 
+  /**
+   * Creates a camera service bound to the given camera index.
+   *
+   * @param cameraIndex zero-based camera index
+   */
   public CameraDesktopService(final int cameraIndex) {
     lock.lock();
 
@@ -52,6 +57,11 @@ public final class CameraDesktopService {
     }
   }
 
+  /**
+   * Indicates whether the camera is open and usable.
+   *
+   * @return {@code true} when capture is available
+   */
   public boolean isOpen() {
     lock.lock();
     try {
@@ -72,6 +82,7 @@ public final class CameraDesktopService {
    *
    * @param frameConsumer callback invoked with each captured {@link Mat} frame
    * @param running       atomic flag; set to {@code false} to stop the loop
+   * @return capture thread that was started
    */
   public Thread startCapture(final Consumer<Mat> frameConsumer, final AtomicBoolean running) {
     final Thread thread = new Thread(() -> {

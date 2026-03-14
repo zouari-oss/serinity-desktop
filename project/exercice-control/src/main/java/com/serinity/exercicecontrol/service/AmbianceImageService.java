@@ -9,6 +9,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
+  /** Class documentation. */
 public class AmbianceImageService {
 
     private final HttpClient client = HttpClient.newBuilder()
@@ -22,6 +23,7 @@ public class AmbianceImageService {
         return "https://picsum.photos/1600/400?random=" + seed;
     }
 
+  /** Documents fetchImageBlocking. */
     public Image fetchImageBlocking() throws Exception {
 
         HttpRequest request = HttpRequest.newBuilder()

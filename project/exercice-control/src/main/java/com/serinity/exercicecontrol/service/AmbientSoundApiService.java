@@ -20,6 +20,7 @@ public class AmbientSoundApiService {
     private final HttpClient http = HttpClient.newHttpClient();
 
     // Ex: query = "relax" / "meditation" / "sleep"
+  /** Documents searchStations. */
     public List<Station> searchStations(String query, int limit) {
         try {
             String q = URLEncoder.encode(query, StandardCharsets.UTF_8);
@@ -98,5 +99,6 @@ public class AmbientSoundApiService {
         return s.replace("\\/", "/").replace("\\\"", "\"");
     }
 
+  /** Record documentation. */
     public record Station(String name, String streamUrl) {}
 }

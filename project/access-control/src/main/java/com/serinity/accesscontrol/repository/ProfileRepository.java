@@ -29,6 +29,11 @@ import com.serinity.accesscontrol.repository.base.BaseRepository;
 public final class ProfileRepository extends BaseRepository<Profile, Long> {
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(ProfileRepository.class);
+  /**
+   * Creates a repository instance for profiles.
+   *
+   * @param em entity manager used for persistence operations
+   */
   public ProfileRepository(final EntityManager em) {
     super(em, Profile.class);
   }

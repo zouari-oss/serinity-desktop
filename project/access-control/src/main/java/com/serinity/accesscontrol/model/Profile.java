@@ -26,7 +26,7 @@ import com.serinity.accesscontrol.util.UsernameGenerator;
  *
  * <p>
  * The {@code Profile} class extends
- * {@link com.serinity.accesscontrol.model.TimestampedEntity},
+ * {@link com.serinity.accesscontrol.model.base.TimestampedEntity},
  * which automatically provides {@code createdAt} and {@code updatedAt}
  * timestamps.
  * </p>
@@ -74,6 +74,9 @@ import com.serinity.accesscontrol.util.UsernameGenerator;
 @Table(name = "profiles")
 @UniqueConstraint(name = "uk_profile_username", columnNames = "username")
 public final class Profile extends TimestampedEntity {
+  /** Creates an empty user profile entity. */
+  public Profile() {
+  }
   @Column(nullable = false, updatable = false)
   private String username; // Pre-persist
 
@@ -110,82 +113,182 @@ public final class Profile extends TimestampedEntity {
   // ### GETTERS & SETTERS ###
   // #########################
 
+  /**
+   * Returns the unique username.
+   *
+   * @return username value
+   */
   public String getUsername() {
     return username;
   }
 
+  /**
+   * Sets the unique username.
+   *
+   * @param username username value
+   */
   public void setUsername(final String username) {
     this.username = username;
   }
 
+  /**
+   * Returns the first name.
+   *
+   * @return first name
+   */
   public String getFirstName() {
     return firstName;
   }
 
+  /**
+   * Sets the first name.
+   *
+   * @param firstName first name
+   */
   public void setFirstName(final String firstName) {
     this.firstName = firstName;
   }
 
+  /**
+   * Returns the last name.
+   *
+   * @return last name
+   */
   public String getLastName() {
     return lastName;
   }
 
+  /**
+   * Sets the last name.
+   *
+   * @param lastName last name
+   */
   public void setLastName(final String lastName) {
     this.lastName = lastName;
   }
 
+  /**
+   * Returns the phone number.
+   *
+   * @return phone number
+   */
   public String getPhone() {
     return phone;
   }
 
+  /**
+   * Sets the phone number.
+   *
+   * @param phone phone number
+   */
   public void setPhone(final String phone) {
     this.phone = phone;
   }
 
+  /**
+   * Returns the gender.
+   *
+   * @return gender value
+   */
   public Gender getGender() {
     return gender;
   }
 
+  /**
+   * Sets the gender.
+   *
+   * @param gender gender value
+   */
   public void setGender(final Gender gender) {
     this.gender = gender;
   }
 
+  /**
+   * Returns the profile image URL.
+   *
+   * @return profile image URL
+   */
   public String getProfileImageUrl() {
     return profileImageUrl;
   }
 
+  /**
+   * Sets the profile image URL.
+   *
+   * @param profileImageUrl profile image URL
+   */
   public void setProfileImageUrl(final String profileImageUrl) {
     this.profileImageUrl = profileImageUrl;
   }
 
+  /**
+   * Returns the country.
+   *
+   * @return country value
+   */
   public String getCountry() {
     return country;
   }
 
+  /**
+   * Sets the country.
+   *
+   * @param country country value
+   */
   public void setCountry(final String country) {
     this.country = country;
   }
 
+  /**
+   * Returns the state/region.
+   *
+   * @return state or region
+   */
   public String getState() {
     return state;
   }
 
+  /**
+   * Sets the state/region.
+   *
+   * @param state state or region
+   */
   public void setState(final String state) {
     this.state = state;
   }
 
+  /**
+   * Returns the short biography text.
+   *
+   * @return about-me text
+   */
   public String getAboutMe() {
     return aboutMe;
   }
 
+  /**
+   * Sets the short biography text.
+   *
+   * @param aboutMe about-me text
+   */
   public void setAboutMe(final String aboutMe) {
     this.aboutMe = aboutMe;
   }
 
+  /**
+   * Returns the owning user.
+   *
+   * @return owning user
+   */
   public User getUser() {
     return user;
   }
 
+  /**
+   * Sets the owning user.
+   *
+   * @param user owning user
+   */
   public void setUser(final User user) {
     this.user = user;
   }

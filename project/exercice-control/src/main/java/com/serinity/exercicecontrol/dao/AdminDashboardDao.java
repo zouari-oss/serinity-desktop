@@ -9,10 +9,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+  /** Class documentation. */
 public class AdminDashboardDao {
 
     private final Connection cnx;
 
+  /** Documents AdminDashboardDao. */
     public AdminDashboardDao() {
         try {
             this.cnx = DbConnection.getConnection();
@@ -21,6 +23,7 @@ public class AdminDashboardDao {
         }
     }
 
+  /** Documents findRecentSessionsFiltered. */
     public List<SessionSummary> findRecentSessionsFiltered(
             int userId,
             int days,
@@ -102,6 +105,7 @@ public class AdminDashboardDao {
         return out;
     }
 
+  /** Documents deleteSession. */
     public void deleteSession(int sessionId) throws SQLException {
         String sql = "DELETE FROM exercise_session WHERE id=?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {

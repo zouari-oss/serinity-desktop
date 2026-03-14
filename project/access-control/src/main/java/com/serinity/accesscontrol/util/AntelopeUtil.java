@@ -61,6 +61,9 @@ import ai.onnxruntime.OrtSession;
  *      </a>
  */
 public final class AntelopeUtil {
+  /** Utility class; not meant to be instantiated. */
+  private AntelopeUtil() {
+  }
   // SCRFD constants
   private static final float NMS_THRESHOLD = 0.4f;
 

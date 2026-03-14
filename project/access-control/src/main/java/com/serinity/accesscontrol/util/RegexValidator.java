@@ -32,6 +32,9 @@ import java.util.regex.Pattern;
  *        </a>
  */
 public final class RegexValidator {
+  /** Utility class; not meant to be instantiated. */
+  private RegexValidator() {
+  }
   private static final Pattern EMAIL_PATTERN = Pattern.compile(
       "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
@@ -50,14 +53,32 @@ public final class RegexValidator {
   private static final Pattern PASSWORD_PATTERN = Pattern.compile(
       "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
 
+  /**
+   * Validates email format.
+   *
+   * @param email email text to validate
+   * @return {@code true} when the email matches the expected format
+   */
   public static boolean isValidEmail(final String email) {
     return email != null && EMAIL_PATTERN.matcher(email).matches();
   }
 
+  /**
+   * Validates phone number format.
+   *
+   * @param phoneNumber phone number text to validate
+   * @return {@code true} when the phone number matches the expected format
+   */
   public static boolean isValidPhoneNumber(final String phoneNumber) {
     return phoneNumber != null && PHONE_NUMBER_PATTERN.matcher(phoneNumber).matches();
   }
 
+  /**
+   * Validates password format against complexity requirements.
+   *
+   * @param password password text to validate
+   * @return {@code true} when the password matches policy rules
+   */
   public static boolean isValidPassword(final String password) {
     return password != null && PASSWORD_PATTERN.matcher(password).matches();
   }

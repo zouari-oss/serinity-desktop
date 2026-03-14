@@ -26,9 +26,13 @@ package com.serinity.accesscontrol.flag;
  *        </a>
  */
 public enum PropertyBundle {
+  /** Bundle containing supported language labels. */
   SUPPORTED_LANGUAGES_BUNDLE("i18n.supported-languages"),
+  /** Default application messages bundle. */
   DEFAULT_MESSAGES_BUNDLE("i18n.messages"),
+  /** English application messages bundle. */
   ENGLISH_MESSAGES_BUNDLE("i18n.messages"),
+  /** French application messages bundle. */
   FRENCH_MESSAGES_BUNDLE("i18n.messages_fr");
 
   private final String baseName;
@@ -37,6 +41,11 @@ public enum PropertyBundle {
     this.baseName = baseName;
   }
 
+  /**
+   * Returns the base name used to resolve the bundle.
+   *
+   * @return bundle base name
+   */
   public final String getBaseName() {
     return baseName;
   }

@@ -31,7 +31,9 @@ import com.serinity.accesscontrol.util.I18nUtil;
  *      </a>
  */
 public enum AccountStatus {
+  /** User can access the application. */
   ACTIVE("user.status.active"),
+  /** User account is blocked. */
   DISABLED("user.status.disabled");
 
   private final String key;
@@ -40,6 +42,11 @@ public enum AccountStatus {
     this.key = key;
   }
 
+  /**
+   * Returns the i18n key for this status.
+   *
+   * @return i18n key associated with the status
+   */
   public String getKey() {
     return key;
   }

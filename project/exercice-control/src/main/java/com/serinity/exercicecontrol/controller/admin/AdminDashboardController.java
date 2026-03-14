@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+  /** Class documentation. */
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class AdminDashboardController {
 
@@ -79,6 +80,7 @@ public class AdminDashboardController {
     // TODO: remplacer par user connecté quand tu ajouteras users
     private int userId = 1;
 
+  /** Documents initialize. */
     @FXML
     public void initialize() {
         // Spinner days
@@ -117,6 +119,7 @@ public class AdminDashboardController {
         }
     }
 
+  /** Documents setOnBack. */
     public void setOnBack(Runnable onBack) {
         this.onBack = onBack;
     }
@@ -154,6 +157,7 @@ public class AdminDashboardController {
     // =============================
     // REFRESH ALL
     // =============================
+  /** Documents onRefreshAll. */
     @FXML
     public void onRefreshAll() {
         if (lblStatus != null) lblStatus.setText("Chargement…");

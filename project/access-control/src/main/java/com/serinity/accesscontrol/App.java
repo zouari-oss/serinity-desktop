@@ -30,6 +30,15 @@ public class App extends Application {
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(App.class);
 
+  /** Creates the JavaFX application instance. */
+  public App() {
+  }
+
+  /**
+   * Launches the JavaFX runtime.
+   *
+   * @param args CLI arguments forwarded by the JVM
+   */
   public static void main(final String[] args) {
     launch();
   }

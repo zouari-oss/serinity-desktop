@@ -42,6 +42,9 @@ import com.serinity.accesscontrol.model.base.TimestampedEntity;
 @Entity
 @Table(name = "users")
 public final class User extends TimestampedEntity {
+  /** Creates an empty user entity. */
+  public User() {
+  }
   @Column(nullable = false, unique = true, length = 150)
   private String email;
 
@@ -70,6 +73,11 @@ public final class User extends TimestampedEntity {
   // ### GETTERS & SETTERS ###
   // #########################
 
+  /**
+   * Returns the user email address.
+   *
+   * @return user email
+   */
   public String getEmail() {
     return email;
   }
@@ -78,6 +86,11 @@ public final class User extends TimestampedEntity {
     this.email = email;
   }
 
+  /**
+   * Returns the hashed password.
+   *
+   * @return password hash
+   */
   public String getPassword() {
     return password;
   }
@@ -86,6 +99,11 @@ public final class User extends TimestampedEntity {
     this.password = passwordHash;
   }
 
+  /**
+   * Returns the role assigned to this user.
+   *
+   * @return user role
+   */
   public UserRole getRole() {
     return role;
   }
@@ -94,6 +112,11 @@ public final class User extends TimestampedEntity {
     this.role = role;
   }
 
+  /**
+   * Returns the current presence status.
+   *
+   * @return presence status
+   */
   public PresenceStatus getPresenceStatus() {
     return presenceStatus;
   }
@@ -102,6 +125,11 @@ public final class User extends TimestampedEntity {
     this.presenceStatus = presenceStatus;
   }
 
+  /**
+   * Returns the account status.
+   *
+   * @return account status
+   */
   public AccountStatus getAccountStatus() {
     return accountStatus;
   }
@@ -110,6 +138,11 @@ public final class User extends TimestampedEntity {
     this.accountStatus = accountStatus;
   }
 
+  /**
+   * Indicates whether face recognition login is enabled.
+   *
+   * @return {@code true} if face recognition is enabled
+   */
   public boolean isFaceRecognitionEnabled() {
     return faceRecognitionEnabled;
   }

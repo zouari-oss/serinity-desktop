@@ -28,6 +28,8 @@ public interface StageTitled {
   /**
    * Returns the i18n message key for this scene's stage title
    * (e.g. {@code "app.scene.title.sign_in"}).
+   *
+   * @return i18n key for the current scene title
    */
   String getSceneTitleKey();
 } // StageTitled interface

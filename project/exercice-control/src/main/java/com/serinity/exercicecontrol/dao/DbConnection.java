@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+  /** Class documentation. */
 public class DbConnection {
 
     private static DbConnection instance;
@@ -28,6 +29,7 @@ public class DbConnection {
         }
     }
 
+  /** Documents getInstance. */
     public static DbConnection getInstance() {
         if (instance == null) {
             instance = new DbConnection();
@@ -35,6 +37,7 @@ public class DbConnection {
         return instance;
     }
 
+  /** Documents getConnection. */
     public Connection getConnection() {
         return connection;
     }

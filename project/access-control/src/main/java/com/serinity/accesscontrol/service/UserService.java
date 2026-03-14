@@ -69,7 +69,6 @@ public final class UserService {
    * <li>Profile, session, and audit log creation.</li>
    * <li>Persisting all entities using the corresponding repositories.</li>
    * </ul>
-   * </p>
    *
    * @param email           the user's email
    * @param password        the user's chosen password
@@ -144,7 +143,6 @@ public final class UserService {
    * <li>Returns a {@link ServiceResult} containing success or error
    * information.</li>
    * </ol>
-   * </p>
    *
    * @param usernameOrEmail the user's email or username
    * @param password        the plain-text password provided by the user

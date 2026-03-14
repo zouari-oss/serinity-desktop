@@ -4,8 +4,10 @@ import com.serinity.exercicecontrol.model.BreathingPlan;
 import com.serinity.exercicecontrol.model.BreathingProtocol;
 import com.serinity.exercicecontrol.model.BreathingState;
 
+  /** Class documentation. */
 public class BreathingService {
 
+  /** Documents recommend. */
     public BreathingPlan recommend(BreathingState state) {
         return switch (state) {
             case STRESS_AIGU -> new BreathingPlan(

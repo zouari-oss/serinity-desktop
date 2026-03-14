@@ -35,6 +35,11 @@ public class AuthSessionRepository extends BaseRepository<AuthSession, Long> {
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(AuthSessionRepository.class);
 
+  /**
+   * Creates a repository instance for auth sessions.
+   *
+   * @param em entity manager used for persistence operations
+   */
   public AuthSessionRepository(final EntityManager em) {
     super(em, AuthSession.class);
   }

@@ -59,7 +59,7 @@ import com.serinity.accesscontrol.flag.ResourceFile;
  * Exceptions:
  * </p>
  * <ul>
- * <li>{@link com.icegreen.greenmail.util.MailException} – Caught internally
+ * <li>{@code com.icegreen.greenmail.util.MailException} - Caught internally
  * and printed if the email cannot be sent.</li>
  * </ul>
  * 
@@ -81,6 +81,9 @@ import com.serinity.accesscontrol.flag.ResourceFile;
  *      </a>
  */
 public final class MailSenderService {
+  /** Utility class; not meant to be instantiated. */
+  private MailSenderService() {
+  }
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(MailSenderService.class);
 
