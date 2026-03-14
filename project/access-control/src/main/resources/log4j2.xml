@@ -81,13 +81,12 @@
       <AppenderRef ref="ErrorFileAppender" />
     </Logger>
 
-    <!-- Fallback for anything not under above
-    <Root level="TRACE">
+    <!-- Fallback for all other packages -->
+    <Root level="INFO">
       <AppenderRef ref="Console" />
       <AppenderRef ref="DebugFileAppender" />
       <AppenderRef ref="InfoFileAppender" />
       <AppenderRef ref="ErrorFileAppender" />
     </Root>
-    -->
   </Loggers>
 </Configuration>

@@ -122,7 +122,7 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
   @FXML
   void onNavBarExercisesButtonAction(final ActionEvent event) {
     setActiveNavButton(navBarExercisesButton);
-    replace("/fxml/exercice/ExerciseList.fxml");
+    replace("/fxml/ExerciseList.fxml");
   }
 
   @FXML
