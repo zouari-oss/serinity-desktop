@@ -106,7 +106,7 @@ public class MainTemplateController {
     if (clicked == btnMood) {
       loadIntoHost("/fxml/mood/MoodHome.fxml");
     } else if (clicked == btnSupport) {
-        loadIntoHost("/fxml/forum/ForumPostsView.fxml");
+        loadIntoHost("/fxml/ForumPostsView.fxml");
     } else {
       loadIntoHost("/fxml/pages/Blank.fxml");
     }

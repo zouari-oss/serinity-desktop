@@ -122,7 +122,7 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
   @FXML
   void onNavBarExercisesButtonAction(final ActionEvent event) {
     setActiveNavButton(navBarExercisesButton);
-    replace("/fxml/exercice/exercice/ExerciseList.fxml");
+    replace("/fxml/exercice/ExerciseList.fxml");
   }
 
   @FXML
@@ -134,7 +134,7 @@ public final class UserHomeController implements StackNavigable, StatusMessagePr
   @FXML
   void onNavBarSleepButtonAction(final ActionEvent event) {
     setActiveNavButton(navBarSleepButton);
-    replace("/fxml/sleepcontrol/sleep-page.fxml");
+    replace("/fxml/sleep-page.fxml");
   }
 
   @FXML

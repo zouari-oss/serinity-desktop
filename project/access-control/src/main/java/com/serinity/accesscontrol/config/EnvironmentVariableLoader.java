@@ -52,16 +52,37 @@ public class EnvironmentVariableLoader {
       .getLogger(EnvironmentVariableLoader.class);
   private final static Dotenv dotenv;
 
-  static {
+  private static Dotenv tryLoadFromDirectory(final String directory) {
     try {
-      dotenv = Dotenv.configure()
+      return Dotenv.configure()
+          .directory(directory)
           .filename(".env")
-          .ignoreIfMissing()
+          .ignoreIfMalformed()
           .load();
     } catch (final DotenvException e) {
-      _LOGGER.fatal("Failed to load .env configuration", e);
-      throw new RuntimeException();
+      return null;
     }
+  }
+
+  static {
+    Dotenv loaded = null;
+    final String[] candidates = { ".", "..", "../..", "access-control", "../access-control" };
+    for (final String candidate : candidates) {
+      loaded = tryLoadFromDirectory(candidate);
+      if (loaded != null) {
+        break;
+      }
+    }
+
+    if (loaded == null) {
+      loaded = Dotenv.configure()
+          .filename(".env")
+          .ignoreIfMalformed()
+          .ignoreIfMissing()
+          .load();
+    }
+
+    dotenv = loaded;
   }
 
   /** @return the {@code DATABASE_URL} environment variable value */

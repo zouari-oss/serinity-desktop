@@ -96,7 +96,7 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
   
     @FXML
     void onSleepManagmentButtonAction(ActionEvent event) {
-        replace("/fxml/sleepcontrol/admin-dashboard.fxml");
+        replace("/fxml/admin-dashboard.fxml");
     }
 
   @FXML

@@ -49,6 +49,24 @@ import java.sql.*;
  *        </a>
  */
 public class SkinnedRatOrmEntityManager {
+  private static String resolveJdbcDriver() {
+    final String configured = EnvironmentVariableLoader.getJdbcDriver();
+    if (configured != null && !configured.isBlank()) {
+      return configured;
+    }
+
+    final String url = EnvironmentVariableLoader.getDatabaseUrl();
+    if (url != null) {
+      if (url.startsWith("jdbc:mariadb:")) {
+        return "org.mariadb.jdbc.Driver";
+      }
+      if (url.startsWith("jdbc:mysql:")) {
+        return "com.mysql.cj.jdbc.Driver";
+      }
+    }
+
+    throw new IllegalStateException("JDBC driver is missing. Set JDBC_DRIVER in .env.");
+  }
   private static final org.apache.logging.log4j.Logger _LOGGER = org.apache.logging.log4j.LogManager
       .getLogger(SkinnedRatOrmEntityManager.class);
 
@@ -82,13 +100,14 @@ public class SkinnedRatOrmEntityManager {
    *                          connection cannot be established
    */
   public static EntityManager getEntityManager() {
-      try {
-          Class.forName(EnvironmentVariableLoader.getJdbcDriver());
-      } catch (final ClassNotFoundException e) {
-          _LOGGER.error("JDBC driver not found", e);
-          throw new RuntimeException(e);
-      }
+    try {
+      Class.forName(resolveJdbcDriver());
+    } catch (final ClassNotFoundException e) {
+      _LOGGER.error("JDBC driver not found", e);
+      throw new RuntimeException(e);
+    }
 
-      final Connection connection = getConnection();
-      return new EntityManager(connection);
-  }}// SkinnedRatOrmEntityManager class
+    final Connection connection = getConnection();
+    return new EntityManager(connection);
+  }
+} // SkinnedRatOrmEntityManager class

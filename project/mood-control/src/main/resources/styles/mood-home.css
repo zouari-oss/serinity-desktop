@@ -1,0 +1,401 @@
+/* =========================
+   PAGE HEADER
+   ========================= */
+.page-title {
+  -fx-text-fill: -text-primary;
+  -fx-font-size: 16px;
+  -fx-font-weight: 800;
+}
+
+.page-hint {
+  -fx-background-color: rgba(47, 111, 109, 0.20);
+  -fx-background-radius: 16;
+  -fx-padding: 10 22;
+  -fx-font-size: 14px;
+  -fx-font-weight: 900;
+  -fx-text-fill: #1F2933;
+}
+
+/* =========================
+   ICON BUTTONS / CLICKABLE ICONS
+   ========================= */
+.icon-btn {
+  -fx-background-color: transparent;
+  -fx-padding: 6;
+  -fx-background-insets: 0;
+  -fx-cursor: hand;
+}
+
+.icon-btn:hover {
+  -fx-background-color: rgba(47, 111, 109, 0.12);
+  -fx-background-radius: 999;
+}
+
+.icon-btn:pressed {
+  -fx-background-color: rgba(47, 111, 109, 0.18);
+  -fx-background-radius: 999;
+}
+
+.clickable-icon {
+  -fx-cursor: hand;
+  -fx-opacity: 0.90;
+  -fx-scale-x: 1;
+  -fx-scale-y: 1;
+}
+
+.clickable-icon:hover {
+  -fx-opacity: 1.0;
+  -fx-scale-x: 1.2;
+  -fx-scale-y: 1.2;
+}
+
+.clickable-icon.pressed {
+  -fx-opacity: 0.72;
+  -fx-scale-x: 1.02;
+  -fx-scale-y: 1.02;
+}
+
+#stats_icon {
+  -fx-image: url("../assets/icons/chart.png");
+}
+
+#insights_icon {
+  -fx-image: url("../assets/icons/insights.png");
+}
+
+/* =========================
+   MOOD HOME
+   ========================= */
+.mood-hub-row {
+  -fx-background-color: transparent;
+}
+
+.mood-host {
+  -fx-background-color: transparent;
+}
+
+.mood-card-grid {
+  -fx-background-color: transparent;
+}
+
+.mood-card {
+  -fx-alignment: center;
+  -fx-background-color: rgba(255, 255, 255, 0.92);
+  -fx-background-radius: 18;
+  -fx-border-radius: 18;
+  -fx-border-color: rgba(31, 41, 51, 0.08);
+  -fx-border-width: 1;
+  -fx-padding: 22;
+  -fx-cursor: hand;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 20, 0.15, 0, 6);
+  -fx-scale-x: 1;
+  -fx-scale-y: 1;
+  transition:
+    -fx-scale-x 0.2s ease,
+    -fx-scale-y 0.2s ease;
+}
+
+.mood-card:hover {
+  -fx-scale-x: 1.03;
+  -fx-scale-y: 1.03;
+}
+
+.mood-card:pressed {
+  -fx-scale-x: 0.995;
+  -fx-scale-y: 0.995;
+}
+
+.mood-card #mood_log,
+.mood-card #mood_history,
+.mood-card #mood_journal {
+  -fx-scale-x: 1;
+  -fx-scale-y: 1;
+  transition:
+    -fx-scale-x 0.5s ease,
+    -fx-scale-y 0.5s ease;
+}
+
+.mood-card #mood_log {
+  -fx-image: url("../assets/icons/mood_log.png");
+}
+
+.mood-card #mood_history {
+  -fx-image: url("../assets/icons/mood_history.png");
+}
+
+.mood-card #mood_journal {
+  -fx-image: url("../assets/icons/mood_journal.png");
+}
+
+.mood-card:hover #mood_log,
+.mood-card:hover #mood_history,
+.mood-card:hover #mood_journal {
+  -fx-scale-x: 1.5;
+  -fx-scale-y: 1.5;
+}
+
+.mood-card-title {
+  -fx-font-size: 16px;
+  -fx-font-weight: 900;
+  -fx-text-fill: -text-primary;
+}
+
+.mood-card-sub {
+  -fx-font-size: 12px;
+  -fx-font-weight: 600;
+  -fx-text-fill: -text-secondary;
+  -fx-wrap-text: true;
+  -fx-alignment: center;
+  -fx-max-width: 420;
+}
+
+/* =========================
+   DAILY ZEN (Quote Card)
+   ========================= */
+.boost-card {
+  -fx-alignment: center-left;
+  -fx-background-color: rgba(255, 255, 255, 0.92);
+  -fx-background-radius: 18;
+  -fx-border-radius: 18;
+  -fx-border-color: rgba(31, 41, 51, 0.08);
+  -fx-border-width: 1;
+  -fx-padding: 14 16;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 18, 0.12, 0, 5);
+}
+
+.boost-title {
+  -fx-font-size: 12px;
+  -fx-font-weight: 900;
+  -fx-text-fill: -text-secondary;
+  -fx-letter-spacing: 0.4px;
+}
+
+.boost-quote {
+  -fx-font-size: 14px;
+  -fx-font-weight: 700;
+  -fx-text-fill: -text-primary;
+}
+
+.boost-author {
+  -fx-font-size: 12px;
+  -fx-font-weight: 700;
+  -fx-text-fill: -text-secondary;
+}
+
+.boost-refresh {
+  -fx-background-color: rgba(47, 111, 109, 0.20);
+  -fx-background-radius: 14;
+  -fx-padding: 10 14;
+  -fx-font-size: 12px;
+  -fx-font-weight: 900;
+  -fx-text-fill: #1F2933;
+  -fx-cursor: hand;
+}
+
+.boost-refresh:hover {
+  -fx-background-color: rgba(47, 111, 109, 0.28);
+}
+
+.boost-refresh:disabled {
+  -fx-opacity: 0.7;
+  -fx-cursor: default;
+}
+
+/* =========================
+   Right-side Sheet (overlay)
+   ========================= */
+.sheet-overlay {
+  -fx-background-color: rgba(31, 41, 51, 0.30);
+}
+
+.sheet {
+  -fx-background-color: #F9FAFB;
+  -fx-border-color: rgba(47, 111, 109, 0.18);
+  -fx-border-width: 1 0 1 1;
+  -fx-background-radius: 18 0 0 18;
+  -fx-border-radius: 18 0 0 18;
+  -fx-padding: 16;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.22), 26, 0.22, -3, 0);
+}
+
+.sheet-header {
+  -fx-padding: 4 4 12 4;
+  -fx-border-color: rgba(47, 111, 109, 0.16);
+  -fx-border-width: 0 0 1 0;
+}
+
+.sheet-title {
+  -fx-text-fill: #1F2933;
+  -fx-font-size: 16px;
+  -fx-font-weight: 900;
+}
+
+.sheet-subtitle {
+  -fx-padding: 10 4 10 4;
+  -fx-text-fill: #5F6C7B;
+  -fx-font-size: 12.5px;
+  -fx-font-weight: 700;
+}
+
+.sheet-close {
+  -fx-background-color: rgba(136, 189, 188, 0.30);
+  -fx-background-radius: 999;
+  -fx-padding: 6 10 6 10;
+  -fx-cursor: hand;
+  -fx-text-fill: #1F2933;
+}
+
+.sheet-close:hover {
+  -fx-background-color: rgba(136, 189, 188, 0.45);
+}
+
+.sheet-footer {
+  -fx-padding: 12 0 0 0;
+}
+
+/* =========================
+   Mood Insights (sheet content)
+   ========================= */
+.insights-grid {
+  -fx-padding: 2 0 0 0;
+}
+
+.insight-panel {
+  -fx-padding: 10;
+  -fx-background-color: #E6F2F1;
+  -fx-background-radius: 16;
+  -fx-border-radius: 16;
+  -fx-border-color: rgba(47, 111, 109, 0.14);
+  -fx-border-width: 1;
+}
+
+.insight-col-title {
+  -fx-padding: 8 10 8 10;
+  -fx-background-color: rgba(47, 111, 109, 0.12);
+  -fx-background-radius: 12;
+  -fx-border-radius: 12;
+  -fx-border-color: rgba(47, 111, 109, 0.18);
+  -fx-border-width: 1;
+
+  -fx-text-fill: #2F6F6D;
+  -fx-font-size: 12.5px;
+  -fx-font-weight: 900;
+}
+
+/* NEW: header row under the title */
+.insight-header-row {
+  -fx-padding: 6 10 6 10;
+  -fx-background-color: rgba(136, 189, 188, 0.20);
+  -fx-background-radius: 12;
+  -fx-border-radius: 12;
+  -fx-border-color: rgba(47, 111, 109, 0.16);
+  -fx-border-width: 1;
+}
+
+/* left header (name) */
+.insight-h-name {
+  -fx-text-fill: #2F6F6D;
+  -fx-font-size: 11px;
+  -fx-font-weight: 900;
+}
+
+/* numeric headers */
+.insight-h-num {
+  -fx-text-fill: #2F6F6D;
+  -fx-font-size: 11px;
+  -fx-font-weight: 900;
+  -fx-font-family: "Consolas", "Menlo", "Monospaced";
+  -fx-min-width: 54px;
+  /* keeps columns consistent */
+  -fx-alignment: CENTER_RIGHT;
+}
+
+.insight-list {
+  -fx-background-color: transparent;
+  -fx-border-color: rgba(47, 111, 109, 0.18);
+  -fx-border-radius: 14;
+  -fx-background-radius: 14;
+  -fx-fixed-cell-size: 42px;
+  -fx-padding: 2;
+}
+
+.insight-list:focused {
+  -fx-faint-focus-color: transparent;
+  -fx-focus-color: transparent;
+  -fx-effect: null;
+}
+
+.insight-list .scroll-bar:horizontal {
+  -fx-opacity: 0;
+  -fx-max-height: 0;
+  -fx-pref-height: 0;
+}
+
+.insight-list .scroll-bar:vertical {
+  -fx-background-color: transparent;
+}
+
+.insight-list .scroll-bar:vertical .track {
+  -fx-background-color: transparent;
+}
+
+.insight-list .scroll-bar:vertical .thumb {
+  -fx-background-color: rgba(47, 111, 109, 0.35);
+  -fx-background-radius: 10;
+}
+
+.insight-list .list-cell {
+  -fx-background-color: transparent;
+  -fx-padding: 8 10 8 10;
+  -fx-border-color: rgba(31, 41, 51, 0.06);
+  -fx-border-width: 0 0 1 0;
+  -fx-font-size: 12.5px;
+}
+
+.insight-list .list-cell:hover {
+  -fx-background-color: rgba(136, 189, 188, 0.20);
+  -fx-background-radius: 12;
+}
+
+.insight-list .list-cell:selected {
+  -fx-background-color: rgba(136, 189, 188, 0.28);
+  -fx-background-radius: 12;
+  -fx-text-fill: #1F2933;
+}
+
+.btn-pill {
+  -fx-background-radius: 999;
+  -fx-padding: 6 12 6 12;
+  -fx-background-color: rgba(47, 111, 109, 0.16);
+  -fx-text-fill: #1F2933;
+  -fx-font-weight: 900;
+}
+
+.btn-pill:hover {
+  -fx-background-color: rgba(47, 111, 109, 0.22);
+}
+
+.btn-pill:pressed {
+  -fx-background-color: rgba(47, 111, 109, 0.28);
+}
+
+/* Row layout nodes (created in controller) */
+.insight-row {
+  -fx-alignment: CENTER_LEFT;
+}
+
+.insight-row .name {
+  -fx-font-weight: 900;
+  -fx-text-fill: #1F2933;
+  -fx-opacity: 0.95;
+  -fx-max-width: 290px;
+  -fx-text-overrun: ellipsis;
+}
+
+.insight-row .meta {
+  -fx-opacity: 0.85;
+  -fx-text-fill: #2F6F6D;
+  -fx-font-family: "Consolas", "Menlo", "Monospaced";
+  -fx-min-width: 150px;
+  -fx-alignment: CENTER_RIGHT;
+}

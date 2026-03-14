@@ -1,0 +1,206 @@
+/* SERINITY — Backend (Light, cards kept as-is; navbar/tabs/buttons improved) */
+
+.backend-root {
+    -fx-font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    -fx-font-size: 13px;
+
+    /* palette tokens */
+    -c-primary: #2F6F6D;      /* primary buttons / active nav */
+    -c-accent:  #88BDBC;      /* focus rings / hover / selection */
+    -c-secondary: #E6F2F1;    /* light surfaces (topbar / header strip) */
+
+    /* neutrals */
+    -c-bg: #EEF3F4;           /* page background */
+    -c-card: #FFFFFF;         /* cards */
+    -c-text: #1F2933;
+    -c-muted: #5F6C7B;
+
+    -c-stroke: rgba(31,41,51,.14);
+    -c-stroke-strong: rgba(31,41,51,.22);
+
+    /* status */
+    -c-danger: #D9534F;
+
+    -fx-background-color: -c-bg;
+}
+
+/* Top bar */
+.backend-topbar {
+    -fx-background-color: -c-secondary;
+    -fx-border-color: -c-stroke;
+    -fx-border-width: 0 0 1 0;
+}
+
+.backend-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-text-fill: -c-text;
+}
+
+.backend-status { -fx-text-fill: -c-muted; }
+.label { -fx-text-fill: -c-text; }
+
+/* Tabs: more "navbar" feel */
+.backend-tabs .tab-header-area {
+    -fx-padding: 8 12 0 12;
+}
+
+.backend-tabs .tab-header-background {
+    -fx-background-color: -c-secondary;
+    -fx-border-color: -c-stroke;
+    -fx-border-width: 0 0 1 0;
+}
+
+.backend-tabs .tab {
+    -fx-background-color: transparent;
+    -fx-padding: 7 12 7 12;
+    -fx-background-radius: 10 10 0 0;
+}
+
+.backend-tabs .tab .tab-label {
+    -fx-text-fill: -c-muted;
+    -fx-font-weight: 800;
+}
+
+/* Active tab sits on top like a pill */
+.backend-tabs .tab:selected {
+    -fx-background-color: -c-card;
+    -fx-border-color: -c-stroke;
+    -fx-border-width: 1 1 0 1;
+    -fx-border-radius: 10 10 0 0;
+}
+
+.backend-tabs .tab:selected .tab-label {
+    -fx-text-fill: -c-text;
+}
+
+/* Inputs */
+.text-field {
+    -fx-background-color: -c-card;
+    -fx-text-fill: -c-text;
+    -fx-prompt-text-fill: rgba(95,108,123,.75);
+
+    -fx-border-color: -c-stroke;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 10 12;
+}
+
+/* Accent focus ring */
+.text-field:focused {
+    -fx-border-color: -c-accent;
+    -fx-border-width: 1.8;
+    -fx-effect: dropshadow(gaussian, rgba(136,189,188,.35), 10, 0.25, 0, 0);
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: -c-card;
+    -fx-text-fill: -c-text;
+
+    -fx-border-color: -c-stroke;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+
+    -fx-padding: 9 14;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: rgba(136,189,188,.16);
+    -fx-border-color: rgba(136,189,188,.55);
+}
+
+.button:focused {
+    -fx-border-color: -c-accent;
+    -fx-border-width: 1.6;
+}
+
+/* Disabled buttons look intentional */
+.button:disabled {
+    -fx-opacity: 0.55;
+}
+
+/* Primary + Danger */
+.backend-primary {
+    -fx-background-color: -c-primary;
+    -fx-text-fill: white;
+    -fx-border-color: rgba(0,0,0,.06);
+}
+.backend-primary:hover {
+    -fx-background-color: derive(-c-primary, -8%);
+}
+
+.backend-danger {
+    -fx-background-color: -c-danger;
+    -fx-text-fill: white;
+    -fx-border-color: rgba(0,0,0,.06);
+}
+.backend-danger:hover {
+    -fx-background-color: derive(-c-danger, -8%);
+}
+
+/* Scroll */
+.backend-scroll { -fx-background-color: transparent; -fx-background: transparent; }
+.backend-scroll .viewport { -fx-background-color: transparent; }
+
+/* =========================
+   CARDS — KEEP AS-IS
+   ========================= */
+
+/* Cards */
+.backend-card {
+    -fx-background-color: -c-card;
+    -fx-border-color: -c-stroke;
+    -fx-border-radius: 16;
+    -fx-background-radius: 16;
+    -fx-padding: 12 14;
+    -fx-cursor: hand;
+
+    -fx-effect: dropshadow(gaussian, rgba(31,41,51,.18), 22, 0.18, 0, 8);
+}
+
+.backend-card:hover {
+    -fx-border-color: rgba(47,111,109,.35);
+    -fx-effect: dropshadow(gaussian, rgba(31,41,51,.22), 26, 0.20, 0, 10);
+}
+
+/* Text hierarchy inside cards */
+.backend-card-title {
+    -fx-font-weight: 900;
+    -fx-text-fill: -c-text;
+}
+
+.backend-card-meta {
+    -fx-text-fill: rgba(95,108,123,.92);
+}
+
+/* key/value rows (if you use them) */
+.backend-card-key {
+    -fx-text-fill: rgba(95,108,123,.95);
+    -fx-font-weight: 800;
+}
+
+.backend-card-value {
+    -fx-text-fill: -c-text;
+}
+
+/* Debug footer */
+.backend-card-foot {
+    -fx-text-fill: rgba(95,108,123,.75);
+    -fx-font-size: 11px;
+}
+
+/* Selected state */
+.backend-card-selected {
+    -fx-border-color: -c-accent;
+    -fx-border-width: 2;
+    -fx-background-color: rgba(136,189,188,.08);
+}
+
+/* Card button padding */
+.backend-card-btn {
+    -fx-padding: 7 12;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
