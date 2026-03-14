@@ -119,6 +119,20 @@ cd serinity-desktop/project
 
 ### 2. Compile the Project
 
+Before compiling/running, install and configure Java OpenCV on your machine:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/zouari-oss/cpkg/main/scripts/java/opencv4j2.sh | bash
+```
+
+Reference scripts:
+- https://github.com/zouari-oss/cpkg/blob/main/scripts/java/opencv4j2.sh
+- https://github.com/zouari-oss/cpkg/blob/main/scripts/java/opencv4j2.ps1
+
+> [!IMPORTANT]
+> After running the OpenCV setup script, copy the generated `opencv.jar` into:
+> `project/access-control/lib/`
+
 ```bash
 mvn compile
 ```
