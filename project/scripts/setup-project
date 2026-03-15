@@ -14,6 +14,8 @@
 #        -> access-control/src/main/resources/antelopev2/
 #     3) Python virtual environments for local servers
 #        -> servers/*/.venv + requirements installation
+#     4) MariaDB setup for SQL injection module
+#        -> root user password root + inject database from sql/*.sql
 #
 #   The script is idempotent by default and skips existing files unless --force
 #   is provided.
@@ -29,6 +31,7 @@
 #   ./setup-project --skip-gguf     # Install only antelopev2 model
 #   ./setup-project --skip-antelope # Install only gguf model
 #   ./setup-project --skip-servers  # Skip Python venv setup
+#   ./setup-project --skip-sql      # Skip MariaDB + SQL import setup
 # =========================================
 
 set -euo pipefail
@@ -51,11 +54,18 @@ ANTELOPE_DEST_DIR="access-control/src/main/resources/antelopev2"
 SERVERS_ROOT="servers"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 
+# SQL
+SQL_DIR="sql"
+DB_NAME="serinity"
+DB_ROOT_USER="root"
+DB_ROOT_PASSWORD="root"
+
 # Flags
 FORCE=0
 SKIP_GGUF=0
 SKIP_ANTELOPE=0
 SKIP_SERVERS=0
+SKIP_SQL=0
 
 usage() {
   cat <<'EOF'
@@ -68,12 +78,14 @@ Options:
   --skip-gguf        Skip GGUF model installation.
   --skip-antelope    Skip antelopev2 installation.
   --skip-servers     Skip Python venv + requirements setup under servers/*.
+  --skip-sql         Skip MariaDB + SQL import setup.
   -h, --help         Show this help message.
 
 Installed paths:
   - servers/sleep-ai-local-server/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
   - access-control/src/main/resources/antelopev2/*.onnx
   - servers/*/.venv
+  - MariaDB root password root + inject database populated from sql/*.sql
 EOF
 }
 
@@ -83,6 +95,15 @@ require_cmd() {
     echo "[setup-project] Missing required command: ${cmd}" >&2
     exit 1
   fi
+}
+
+run_as_root() {
+  if [[ "${EUID}" -eq 0 ]]; then
+    "$@"
+    return 0
+  fi
+  require_cmd sudo
+  sudo "$@"
 }
 
 download_file() {
@@ -122,6 +143,51 @@ setup_server_venvs() {
   fi
 }
 
+ensure_mariadb_running() {
+  if command -v systemctl >/dev/null 2>&1; then
+    run_as_root systemctl start mariadb 2>/dev/null || run_as_root systemctl start mysql 2>/dev/null || true
+  fi
+
+  if ! run_as_root mariadb-admin ping >/dev/null 2>&1; then
+    echo "[setup-project] MariaDB server is not running. Start it and rerun setup-project." >&2
+    exit 1
+  fi
+}
+
+setup_sql_injection_database() {
+  local sql_files=()
+  local sql_file
+
+  ensure_mariadb_running
+
+  echo "[setup-project] Configuring MariaDB root credentials..."
+  run_as_root mariadb <<SQL
+ALTER USER '${DB_ROOT_USER}'@'localhost' IDENTIFIED BY '${DB_ROOT_PASSWORD}';
+FLUSH PRIVILEGES;
+SQL
+
+  if ! mariadb -u"${DB_ROOT_USER}" -p"${DB_ROOT_PASSWORD}" -e "SELECT 1" >/dev/null 2>&1; then
+    echo "[setup-project] Could not authenticate with MariaDB root:${DB_ROOT_PASSWORD}." >&2
+    exit 1
+  fi
+
+  echo "[setup-project] Creating database: ${DB_NAME}"
+  mariadb -u"${DB_ROOT_USER}" -p"${DB_ROOT_PASSWORD}" -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;"
+
+  shopt -s nullglob
+  sql_files=("${ROOT_DIR}/${SQL_DIR}"/*.sql)
+  shopt -u nullglob
+  if [[ "${#sql_files[@]}" -eq 0 ]]; then
+    echo "[setup-project] No SQL files found under ${SQL_DIR}/" >&2
+    exit 1
+  fi
+
+  for sql_file in "${sql_files[@]}"; do
+    echo "[setup-project] Importing SQL file: ${sql_file}"
+    mariadb -u"${DB_ROOT_USER}" -p"${DB_ROOT_PASSWORD}" "${DB_NAME}" <"${sql_file}"
+  done
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
   --force)
@@ -138,6 +204,10 @@ while [[ $# -gt 0 ]]; do
     ;;
   --skip-servers)
     SKIP_SERVERS=1
+    shift
+    ;;
+  --skip-sql)
+    SKIP_SQL=1
     shift
     ;;
   -h | --help)
@@ -160,6 +230,10 @@ if [[ "${SKIP_ANTELOPE}" -eq 0 ]]; then
 fi
 if [[ "${SKIP_SERVERS}" -eq 0 ]]; then
   require_cmd "${PYTHON_BIN}"
+fi
+if [[ "${SKIP_SQL}" -eq 0 ]]; then
+  require_cmd mariadb
+  require_cmd mariadb-admin
 fi
 
 mkdir -p "${GGUF_DEST_DIR}" "${ANTELOPE_DEST_DIR}"
@@ -206,6 +280,10 @@ fi
 
 if [[ "${SKIP_SERVERS}" -eq 0 ]]; then
   setup_server_venvs
+fi
+
+if [[ "${SKIP_SQL}" -eq 0 ]]; then
+  setup_sql_injection_database
 fi
 
 echo "[setup-project] Done."

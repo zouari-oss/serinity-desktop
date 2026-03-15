@@ -126,8 +126,9 @@ curl -fsSL https://raw.githubusercontent.com/zouari-oss/cpkg/main/scripts/java/o
 ```
 
 Reference scripts:
-- https://github.com/zouari-oss/cpkg/blob/main/scripts/java/opencv4j2.sh
-- https://github.com/zouari-oss/cpkg/blob/main/scripts/java/opencv4j2.ps1
+
+- <https://github.com/zouari-oss/cpkg/blob/main/scripts/java/opencv4j2.sh>
+- <https://github.com/zouari-oss/cpkg/blob/main/scripts/java/opencv4j2.ps1>
 
 > [!IMPORTANT]
 > After running the OpenCV setup script, copy the generated `opencv.jar` into:
@@ -143,7 +144,7 @@ mvn compile
 mvn -pl app javafx:run
 ```
 
-### 4. Setup Local AI Assets (required for local AI features)
+### 4. Setup Database & Local AI Assets (required for local AI features)
 
 From the `project/` directory:
 
@@ -152,6 +153,8 @@ From the `project/` directory:
 ```
 
 This installs:
+
+- MariaDB setup for SQL injection module: sets `root` password to `root`, creates `serinity` database, and imports all `project/sql/*.sql` files
 - `Mistral-7B-Instruct-v0.3-Q4_K_M.gguf` into `servers/sleep-ai-local-server/`
 - `antelopev2` ONNX models into `access-control/src/main/resources/antelopev2/`
 - Python virtual environments for local servers in `servers/*/.venv` (from each `requirements.txt`)
@@ -163,9 +166,19 @@ Optional flags:
 ./scripts/setup-project --skip-gguf
 ./scripts/setup-project --skip-antelope
 ./scripts/setup-project --skip-servers
+./scripts/setup-project --skip-sql
 ```
 
 > [!IMPORTANT]
+> MariaDB must already be installed on your system (no auto-install in the script).
+>
+> `setup-project` needs `sudo` privileges for MariaDB service startup and root credential update.
+>
+> For SQL injection module setup, MariaDB root credentials are expected to be:
+>
+> - username: `root`
+> - password: `root`
+>
 > Start local AI servers in separate terminal sessions, each on a different port, so the desktop app can interact with all services correctly at the same time.
 
 ### 5. Build Native/Desktop Artifacts
