@@ -56,7 +56,7 @@
             <id>default-cli</id>
             <configuration>
               <mainClass>com.serinity.exercicecontrol.App</mainClass>
-              <skip>false</skip>
+              <skip>true</skip>
               <options>
                 <option>--enable-native-access=javafx.graphics</option>
                 <option>--enable-native-access=javafx.web</option>

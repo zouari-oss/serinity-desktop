@@ -26,6 +26,7 @@ public class SessionHistoryController {
     private final ObservableList<ExerciseSession> sessions = FXCollections.observableArrayList();
 
     private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private volatile String sessionExerciseColumn;
 
     // =========================
     // INITIALIZATION
@@ -143,17 +144,14 @@ public class SessionHistoryController {
 
         sessions.clear();
 
-        String sql = """
-                SELECT id, user_id, exercise_id, status, started_at, completed_at, feedback
-                FROM exercise_session
-                WHERE exercise_id = ?
-                ORDER BY started_at DESC
-                """;
-
         try {
-
-            // IMPORTANT: do NOT close singleton connection
             Connection cnx = DbConnection.getConnection();
+            String exerciseColumn = sessionExerciseColumn(cnx);
+            String sql = "SELECT id, user_id, " + exerciseColumn + " AS session_exercise_id, " +
+                    "status, started_at, completed_at, feedback " +
+                    "FROM exercise_session " +
+                    "WHERE " + exerciseColumn + " = ? " +
+                    "ORDER BY started_at DESC";
 
             try (PreparedStatement ps = cnx.prepareStatement(sql)) {
 
@@ -165,7 +163,7 @@ public class SessionHistoryController {
 
                         int id = rs.getInt("id");
                         int userId = rs.getInt("user_id");
-                        int exerciseId = rs.getInt("exercise_id");
+                        int exerciseId = readExerciseId(rs);
                         String status = rs.getString("status");
 
                         Timestamp st = rs.getTimestamp("started_at");
@@ -253,5 +251,45 @@ public class SessionHistoryController {
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.showAndWait();
+    }
+
+    private String sessionExerciseColumn(Connection cnx) throws SQLException {
+        String value = sessionExerciseColumn;
+        if (value != null) {
+            return value;
+        }
+        synchronized (this) {
+            if (sessionExerciseColumn == null) {
+                if (hasColumn(cnx, "exercise_session", "exercise_id")) {
+                    sessionExerciseColumn = "exercise_id";
+                } else if (hasColumn(cnx, "exercise_session", "exercice_id")) {
+                    sessionExerciseColumn = "exercice_id";
+                } else {
+                    sessionExerciseColumn = "exercise_id";
+                }
+            }
+            return sessionExerciseColumn;
+        }
+    }
+
+    private boolean hasColumn(Connection cnx, String table, String column) throws SQLException {
+        DatabaseMetaData metaData = cnx.getMetaData();
+        try (ResultSet rs = metaData.getColumns(cnx.getCatalog(), null, table, column)) {
+            return rs.next();
+        }
+    }
+
+    private int readExerciseId(ResultSet rs) throws SQLException {
+        try {
+            return rs.getInt("session_exercise_id");
+        } catch (SQLException ignored) {
+        }
+
+        try {
+            return rs.getInt("exercise_id");
+        } catch (SQLException ignored) {
+        }
+
+        return rs.getInt("exercice_id");
     }
 }

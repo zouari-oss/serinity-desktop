@@ -13,11 +13,13 @@ public class ServicePostInteraction {
     private Connection cnx;
     private ServiceNotification notificationService = new ServiceNotification();
     public ServicePostInteraction() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
+    }
+
+    private Connection connection() throws SQLException {
+        if (cnx == null || cnx.isClosed()) {
+            cnx = DbConnection.getConnection();
         }
+        return cnx;
     }
 
     public void upvote(int threadId, String userId) {
@@ -159,7 +161,7 @@ public class ServicePostInteraction {
                 "WHERE `id` = ?";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setInt(1, threadId);
             stmt.setInt(2, threadId);
             stmt.setInt(3, threadId);
@@ -180,7 +182,7 @@ public class ServicePostInteraction {
         String sql = "INSERT INTO `postinteraction` (`thread_id`, `user_id`, `follow`, `vote`) VALUES (?, ?, ?, ?)";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = connection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setInt(1, interaction.getThreadId());
             stmt.setString(2, interaction.getUserId());
             stmt.setBoolean(3, interaction.isFollow());
@@ -215,7 +217,7 @@ public class ServicePostInteraction {
         String sql = "UPDATE `postinteraction` SET `follow` = ?, `vote` = ? WHERE `id` = ?";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setBoolean(1, interaction.isFollow());
             stmt.setInt(2, interaction.getVote());
             stmt.setInt(3, interaction.getId());
@@ -235,7 +237,7 @@ public class ServicePostInteraction {
         String sql = "DELETE FROM `postinteraction` WHERE `id` = ?";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setInt(1, id);
 
             int rowsAffected = stmt.executeUpdate();
@@ -259,7 +261,7 @@ public class ServicePostInteraction {
             String sql = "DELETE FROM `postinteraction` WHERE `thread_id` = ? AND `user_id` = ?";
 
             try {
-                PreparedStatement stmt = cnx.prepareStatement(sql);
+                PreparedStatement stmt = connection().prepareStatement(sql);
                 stmt.setInt(1, threadId);
                 stmt.setString(2, userId);
 
@@ -284,7 +286,7 @@ public class ServicePostInteraction {
         String sql = "SELECT * FROM `postinteraction` WHERE `thread_id` = ? AND `user_id` = ?";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setInt(1, threadId);
             stmt.setString(2, userId);
             ResultSet rs = stmt.executeQuery();
@@ -305,7 +307,7 @@ public class ServicePostInteraction {
         String sql = "DELETE FROM `postinteraction` WHERE `thread_id` = ?";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setInt(1, threadId);
             int rowsAffected = stmt.executeUpdate();
 

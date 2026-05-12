@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.forumcontrol.controller.ForumPostsController">
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.serinity.forumcontrol.controller.ForumPostsController">
     <left>
         <VBox prefWidth="200" spacing="10" styleClass="forum-sidebar">
 

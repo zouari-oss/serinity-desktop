@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.net.URL;
 
 public class MainTemplateController {
+    private static final String SLEEP_DASHBOARD_FXML = "/fxml/sleep-admin-dashboard.fxml";
+    private static final String SLEEP_PAGE_FXML = "/fxml/sleep-page.fxml";
+    private static final String REVE_PAGE_FXML = "/fxml/reve-page.fxml";
 
     @FXML private StackPane contentHost;
 
@@ -39,7 +42,7 @@ public class MainTemplateController {
         if (userNameLabel != null) {
             userNameLabel.setText("Utilisateur");
         }
-        loadPage("/fxml/admin-dashboard.fxml");
+        loadPage(SLEEP_DASHBOARD_FXML);
     }
 
     // =========================
@@ -56,7 +59,7 @@ public class MainTemplateController {
         setActiveButton(clicked);
 
         if (clicked == btnDashboard) {
-            loadPage("/fxml/admin-dashboard.fxml");
+            loadPage(SLEEP_DASHBOARD_FXML);
         } else if (clicked == btnMood) {
             showInfoPage("Page Mood — module de vos collègues");
             // si tu as un vrai fxml, remplace par:
@@ -78,7 +81,7 @@ public class MainTemplateController {
         if (!menuSleep.getStyleClass().contains("nav-menu-btn-active")) {
             menuSleep.getStyleClass().add("nav-menu-btn-active");
         }
-        loadPage("/fxml/sleep-page.fxml");
+        loadPage(SLEEP_PAGE_FXML);
     }
 
     @FXML
@@ -87,7 +90,7 @@ public class MainTemplateController {
         if (!menuSleep.getStyleClass().contains("nav-menu-btn-active")) {
             menuSleep.getStyleClass().add("nav-menu-btn-active");
         }
-        loadPage("/fxml/reve-page.fxml");
+        loadPage(REVE_PAGE_FXML);
     }
 
     // =========================

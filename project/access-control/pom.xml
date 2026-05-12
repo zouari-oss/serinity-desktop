@@ -95,6 +95,7 @@
             <id>default-cli</id>
             <configuration>
               <mainClass>com.serinity.accesscontrol.App</mainClass>
+              <skip>true</skip>
               <options>
                 <option>--enable-native-access=javafx.graphics</option>
                 <option>--enable-native-access=javafx.web</option>

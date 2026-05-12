@@ -15,11 +15,13 @@ public class ServiceThread implements Services<Thread> {
     private Connection cnx;
 
     public ServiceThread() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
+    }
+
+    private Connection connection() throws SQLException {
+        if (cnx == null || cnx.isClosed()) {
+            cnx = DbConnection.getConnection();
         }
+        return cnx;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class ServiceThread implements Services<Thread> {
         String req = "INSERT INTO `threads` (`category_id`, `user_id`, `title`, `content`,`image_url`, `type`, `status`, `is_pinned`) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, thread.getCategoryId());
             pstm.setString(2, thread.getUserId());
             pstm.setString(3, thread.getTitle());
@@ -56,7 +58,7 @@ public class ServiceThread implements Services<Thread> {
         String req = "SELECT * FROM `threads` ORDER BY `is_pinned` DESC, `created_at` DESC";
 
         try {
-            Statement stm = this.cnx.createStatement();
+            Statement stm = connection().createStatement();
             ResultSet rs = stm.executeQuery(req);
 
             while (rs.next()) {
@@ -137,7 +139,7 @@ public class ServiceThread implements Services<Thread> {
 """;
 
         try {
-            PreparedStatement stm = this.cnx.prepareStatement(req);
+            PreparedStatement stm = connection().prepareStatement(req);
             stm.setString(1, currentUserId);  // already_interacted EXISTS postinteraction
             stm.setString(2, currentUserId);  // already_interacted EXISTS replies
             stm.setString(3, currentUserId);  // reply_count in cat_score
@@ -230,7 +232,7 @@ public class ServiceThread implements Services<Thread> {
             FROM final_score
             """;
 
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             ps.setLong(1, threadId);   // base CTE
             ps.setLong(2, threadId);   // recent_likes CTE
             ResultSet rs = ps.executeQuery();
@@ -248,7 +250,7 @@ public class ServiceThread implements Services<Thread> {
         String req = "UPDATE `threads` SET `category_id` = ?, `user_id` = ?, `title` = ?, `content` = ?, `image_url` = ?, `type` = ?, `status` = ?, `is_pinned` = ? WHERE `id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, thread.getCategoryId());
             pstm.setString(2, thread.getUserId());
             pstm.setString(3, thread.getTitle());
@@ -276,7 +278,7 @@ public class ServiceThread implements Services<Thread> {
         String req = "DELETE FROM `threads` WHERE `id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, thread.getId());
 
             int rowsAffected = pstm.executeUpdate();
@@ -296,7 +298,7 @@ public class ServiceThread implements Services<Thread> {
         String req = "SELECT * FROM `threads` WHERE `id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, id);
             ResultSet rs = pstm.executeQuery();
 
@@ -315,7 +317,7 @@ public class ServiceThread implements Services<Thread> {
         String req = "UPDATE `threads` SET `status` = ? WHERE `id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setString(1, status.getValue());
             pstm.setLong(2, threadId);
 
@@ -335,7 +337,7 @@ public class ServiceThread implements Services<Thread> {
         String req = "UPDATE `threads` SET `is_pinned` = NOT `is_pinned` WHERE `id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, threadId);
             pstm.executeUpdate();
             System.out.println("Thread pin status toggled!");
@@ -356,7 +358,7 @@ public class ServiceThread implements Services<Thread> {
                 "SELECT username FROM profiles WHERE user_id = ?";
 
         try (PreparedStatement ps =
-                     cnx.prepareStatement(sql)) {
+                     connection().prepareStatement(sql)) {
 
             ps.setString(1, userId);
 
@@ -377,7 +379,7 @@ public class ServiceThread implements Services<Thread> {
                 "SELECT role FROM users WHERE id = ?";
 
         try (PreparedStatement ps =
-                     cnx.prepareStatement(sql)) {
+                     connection().prepareStatement(sql)) {
 
             ps.setString(1, userId);
 
@@ -399,7 +401,7 @@ public class ServiceThread implements Services<Thread> {
                 "SELECT slug FROM categories WHERE id = ?";
 
         try (PreparedStatement ps =
-                     cnx.prepareStatement(sql)) {
+                     connection().prepareStatement(sql)) {
 
             ps.setLong(1, CategoryId);
 
@@ -419,7 +421,7 @@ public class ServiceThread implements Services<Thread> {
         String sql = "UPDATE `threads` SET `repliescount` = `repliescount` + ? WHERE `id` = ?";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setInt(1, change);
             stmt.setLong(2, threadId);
             stmt.executeUpdate();
@@ -451,7 +453,7 @@ public class ServiceThread implements Services<Thread> {
             }
 
             if (likeChange != 0 || dislikeChange != 0) {
-                PreparedStatement stmt = cnx.prepareStatement(sql);
+                PreparedStatement stmt = connection().prepareStatement(sql);
                 stmt.setInt(1, likeChange);
                 stmt.setInt(2, dislikeChange);
                 stmt.setInt(3, threadId);
@@ -484,7 +486,7 @@ public class ServiceThread implements Services<Thread> {
             }
 
             if (followChange != 0) {
-                PreparedStatement stmt = cnx.prepareStatement(sql);
+                PreparedStatement stmt = connection().prepareStatement(sql);
                 stmt.setInt(1, followChange);
                 stmt.setInt(2, threadId);
 

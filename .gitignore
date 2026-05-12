@@ -1,0 +1,38 @@
+# Build outputs
+**/target/
+**/build/
+**/dist/
+out/
+
+# Java / Maven artifacts
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# Local environment files
+.env
+project/.env
+
+# IDE / OS files
+.idea/
+.vscode/
+*.iml
+Thumbs.db
+.DS_Store
+
+# Temporary / scratch files
+*.tmp
+*.temp
+*.bak
+scratch/
+project/TempExerciseSchemaProbe.class
+project/access-control/cp.txt
+
+# Local libraries and generated docs
+project/access-control/lib/
+res/doc/apidocs/
+
+# Large local model files
+**/*.onnx

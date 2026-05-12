@@ -10,19 +10,13 @@ import java.util.List;
 
 public class FavoriteDao {
 
-    private final Connection cnx;
-
-    public FavoriteDao() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
-        }
+    private Connection connection() throws SQLException {
+        return DbConnection.getConnection();
     }
 
     public int insert(Favorite f) throws SQLException {
         String sql = "INSERT INTO favorite (user_id, favorite_type, item_id) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, f.getUserId());
             ps.setString(2, f.getFavoriteType());
             ps.setInt(3, f.getItemId());
@@ -37,7 +31,7 @@ public class FavoriteDao {
 
     public void delete(int id) throws SQLException {
         String sql = "DELETE FROM favorite WHERE id=?";
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
@@ -45,7 +39,7 @@ public class FavoriteDao {
 
     public void deleteByUserTypeAndItem(int userId, String favoriteType, int itemId) throws SQLException {
         String sql = "DELETE FROM favorite WHERE user_id=? AND favorite_type=? AND item_id=?";
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, favoriteType);
             ps.setInt(3, itemId);
@@ -55,7 +49,7 @@ public class FavoriteDao {
 
     public boolean exists(int userId, String favoriteType, int itemId) throws SQLException {
         String sql = "SELECT 1 FROM favorite WHERE user_id=? AND favorite_type=? AND item_id=? LIMIT 1";
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, favoriteType);
             ps.setInt(3, itemId);
@@ -68,7 +62,7 @@ public class FavoriteDao {
     public List<Favorite> findByUserId(int userId) throws SQLException {
         String sql = "SELECT * FROM favorite WHERE user_id=? ORDER BY id DESC";
         List<Favorite> list = new ArrayList<>();
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) list.add(mapRow(rs));

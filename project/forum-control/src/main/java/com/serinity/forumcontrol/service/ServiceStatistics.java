@@ -15,11 +15,13 @@ public class ServiceStatistics {
     private Connection cnx;
 
     public ServiceStatistics() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
+    }
+
+    private Connection connection() throws SQLException {
+        if (cnx == null || cnx.isClosed()) {
+            cnx = DbConnection.getConnection();
         }
+        return cnx;
     }
 
     /**
@@ -68,7 +70,7 @@ public class ServiceStatistics {
     private int getThreadsByStatus(String status) {
         String sql = "SELECT COUNT(*) as count FROM threads WHERE status = ?";
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setString(1, status);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -86,7 +88,7 @@ public class ServiceStatistics {
     private int getThreadsByType(String type) {
         String sql = "SELECT COUNT(*) as count FROM threads WHERE type = ?";
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setString(1, type);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -183,7 +185,7 @@ public class ServiceStatistics {
                 "LIMIT 10";
 
         try {
-            Statement stmt = cnx.createStatement();
+            Statement stmt = connection().createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
@@ -204,7 +206,7 @@ public class ServiceStatistics {
         String sql = "SELECT title, likecount FROM threads ORDER BY likecount DESC LIMIT 10";
 
         try {
-            Statement stmt = cnx.createStatement();
+            Statement stmt = connection().createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
@@ -233,7 +235,7 @@ public class ServiceStatistics {
                 "ORDER BY date DESC";
 
         try {
-            Statement stmt = cnx.createStatement();
+            Statement stmt = connection().createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
@@ -251,7 +253,7 @@ public class ServiceStatistics {
      */
     private int executeCountQuery(String sql) {
         try {
-            Statement stmt = cnx.createStatement();
+            Statement stmt = connection().createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
             if (rs.next()) {

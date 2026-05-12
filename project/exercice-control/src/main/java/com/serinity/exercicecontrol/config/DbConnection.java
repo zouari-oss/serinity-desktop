@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -17,11 +19,8 @@ public final class DbConnection {
       .ignoreIfMissing()
       .load();
 
-  private static final String URL = resolveAny("DATABASE_URL", "DB_URL");
-  private static final String USER = resolveAny("DATABASE_USERNAME", "DB_USER");
-  private static final String PASS = resolveAny("DATABASE_PASSWORD", "DB_PASSWORD");
-
   private static volatile Connection CN;
+  private static volatile Settings settings;
 
   private DbConnection() {
   }
@@ -33,7 +32,8 @@ public final class DbConnection {
       synchronized (DbConnection.class) {
         c = CN;
         if (c == null || c.isClosed()) {
-          CN = c = DriverManager.getConnection(URL, USER, PASS);
+          Settings cfg = settings();
+          CN = c = DriverManager.getConnection(cfg.url(), cfg.user(), cfg.pass());
         }
       }
     }
@@ -84,6 +84,38 @@ public final class DbConnection {
     return ".";
   }
 
+  private static Settings settings() throws SQLException {
+    Settings current = settings;
+    if (current != null) {
+      return current;
+    }
+
+    synchronized (DbConnection.class) {
+      current = settings;
+      if (current == null) {
+        current = new Settings(
+            requireAny("DATABASE_URL", "DB_URL"),
+            requireAny("DATABASE_USERNAME", "DB_USER"),
+            requireAny("DATABASE_PASSWORD", "DB_PASSWORD"));
+        settings = current;
+      }
+    }
+    return current;
+  }
+
+  private static String requireAny(final String... keys) throws SQLException {
+    String value = resolveAny(keys);
+    if (value != null) {
+      return value;
+    }
+
+    List<String> missing = new ArrayList<>();
+    for (String key : keys) {
+      missing.add(key);
+    }
+    throw new SQLException("Missing required environment variable(s): " + String.join(", ", missing));
+  }
+
   private static String resolveAny(final String... keys) {
     for (final String key : keys) {
       final String fromDotenv = dotenv.get(key);
@@ -97,6 +129,9 @@ public final class DbConnection {
       }
     }
 
-    throw new IllegalStateException("Missing required environment variable(s): " + String.join(", ", keys));
+    return null;
+  }
+
+  private record Settings(String url, String user, String pass) {
   }
 }

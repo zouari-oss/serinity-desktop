@@ -12,15 +12,8 @@ import java.util.List;
   /** Class documentation. */
 public class AdminDashboardDao {
 
-    private final Connection cnx;
-
-  /** Documents AdminDashboardDao. */
-    public AdminDashboardDao() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
-        }
+    private Connection connection() throws SQLException {
+        return DbConnection.getConnection();
     }
 
   /** Documents findRecentSessionsFiltered. */
@@ -53,7 +46,7 @@ public class AdminDashboardDao {
         """;
 
         List<SessionSummary> out = new ArrayList<>();
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             int i = 1;
             ps.setInt(i++, userId);
             ps.setInt(i++, Math.max(1, days));
@@ -108,7 +101,7 @@ public class AdminDashboardDao {
   /** Documents deleteSession. */
     public void deleteSession(int sessionId) throws SQLException {
         String sql = "DELETE FROM exercise_session WHERE id=?";
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             ps.setInt(1, sessionId);
             ps.executeUpdate();
         }

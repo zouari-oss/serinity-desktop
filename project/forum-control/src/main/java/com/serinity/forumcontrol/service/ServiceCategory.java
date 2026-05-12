@@ -13,11 +13,13 @@ public class ServiceCategory implements Services<Category> {
     private Connection cnx;
 
     public ServiceCategory() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
+    }
+
+    private Connection connection() throws SQLException {
+        if (cnx == null || cnx.isClosed()) {
+            cnx = DbConnection.getConnection();
         }
+        return cnx;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class ServiceCategory implements Services<Category> {
         }
         String req = "INSERT INTO `categories` (`name`, `slug`, `description`, `parent_id`) VALUES (?, ?, ?, ?)";
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setString(1, category.getName());
             pstm.setString(2, category.getSlug());
             pstm.setString(3, category.getDescription());
@@ -54,7 +56,7 @@ public class ServiceCategory implements Services<Category> {
         String req = "SELECT * FROM `categories`";
 
         try {
-            Statement stm = this.cnx.createStatement();
+            Statement stm = connection().createStatement();
             ResultSet rs = stm.executeQuery(req);
 
             while (rs.next()) {
@@ -91,7 +93,7 @@ public class ServiceCategory implements Services<Category> {
         String req = "UPDATE `categories` SET `name` = ?, `slug` = ?, `description` = ?, `parent_id` = ? WHERE `id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setString(1, category.getName());
             pstm.setString(2, category.getSlug());
             pstm.setString(3, category.getDescription());
@@ -121,7 +123,7 @@ public class ServiceCategory implements Services<Category> {
         String req = "DELETE FROM `categories` WHERE `id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, category.getId());
 
             int rowsAffected = pstm.executeUpdate();
@@ -141,7 +143,7 @@ public class ServiceCategory implements Services<Category> {
         String req = "SELECT * FROM `categories` WHERE `id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, id);
             ResultSet rs = pstm.executeQuery();
 
@@ -171,7 +173,7 @@ public class ServiceCategory implements Services<Category> {
         String req = "SELECT * FROM `categories` WHERE `slug` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setString(1, slug);
             ResultSet rs = pstm.executeQuery();
 
@@ -202,7 +204,7 @@ public class ServiceCategory implements Services<Category> {
         String req = "SELECT * FROM `categories` WHERE `parent_id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, parentId);
             ResultSet rs = pstm.executeQuery();
 
@@ -229,7 +231,7 @@ public class ServiceCategory implements Services<Category> {
         String req = "SELECT * FROM `categories` WHERE `parent_id` IS NULL";
 
         try {
-            Statement stm = this.cnx.createStatement();
+            Statement stm = connection().createStatement();
             ResultSet rs = stm.executeQuery(req);
 
             while (rs.next()) {
@@ -253,7 +255,7 @@ public class ServiceCategory implements Services<Category> {
         String req = "DELETE FROM `categories` WHERE `parent_id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, parentId);
 
             int rowsAffected = pstm.executeUpdate();

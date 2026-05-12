@@ -22,7 +22,7 @@ public class ExerciseSessionService {
         ExerciseSession s = new ExerciseSession();
         s.setUserId(userId);
         s.setExerciseId(exerciseId);
-        s.setStatus("STARTED");
+        s.setStatus("IN_PROGRESS");
         s.setStartedAt(LocalDateTime.now());
         s.setCompletedAt(null);
         s.setFeedback(null);
@@ -49,7 +49,7 @@ public class ExerciseSessionService {
         ExerciseSession s = sessionDao.findById(sessionId);
         if (s == null) throw new IllegalArgumentException("Session not found.");
 
-        s.setStatus("ABANDONED");
+        s.setStatus("ABORTED");
         s.setCompletedAt(LocalDateTime.now());
         s.setFeedback(feedback);
 

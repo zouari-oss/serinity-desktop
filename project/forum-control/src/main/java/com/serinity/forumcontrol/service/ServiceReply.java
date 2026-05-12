@@ -15,11 +15,13 @@ public class ServiceReply implements Services<Reply> {
     private ServiceNotification notificationService = new ServiceNotification();
 
     public ServiceReply() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
+    }
+
+    private Connection connection() throws SQLException {
+        if (cnx == null || cnx.isClosed()) {
+            cnx = DbConnection.getConnection();
         }
+        return cnx;
     }
 
     @Override
@@ -33,7 +35,7 @@ public class ServiceReply implements Services<Reply> {
         servicethread.updateThreadCommentCount(reply.getThreadId(), 1);
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, reply.getThreadId());
             pstm.setString(2, reply.getUserId());
 
@@ -61,7 +63,7 @@ public class ServiceReply implements Services<Reply> {
         String req = "SELECT * FROM `replies` ORDER BY `created_at` ASC";
 
         try {
-            Statement stm = this.cnx.createStatement();
+            Statement stm = connection().createStatement();
             ResultSet rs = stm.executeQuery(req);
 
             while (rs.next()) {
@@ -81,7 +83,7 @@ public class ServiceReply implements Services<Reply> {
         String req = "UPDATE `replies` SET `thread_id` = ?, `user_id` = ?, `parent_id` = ?, `content` = ? WHERE `id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, reply.getThreadId());
             pstm.setString(2, reply.getUserId());
 
@@ -112,7 +114,7 @@ public class ServiceReply implements Services<Reply> {
         ServiceThread servicethread = new ServiceThread();
         servicethread.updateThreadCommentCount(reply.getThreadId(), -1);
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, reply.getId());
 
             int rowsAffected = pstm.executeUpdate();
@@ -132,7 +134,7 @@ public class ServiceReply implements Services<Reply> {
         String req = "SELECT * FROM `replies` WHERE `id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, id);
             ResultSet rs = pstm.executeQuery();
 
@@ -152,7 +154,7 @@ public class ServiceReply implements Services<Reply> {
         String req = "SELECT * FROM `replies` WHERE `user_id` = ? ORDER BY `created_at` DESC";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setString(1, userId);
             ResultSet rs = pstm.executeQuery();
 
@@ -173,7 +175,7 @@ public class ServiceReply implements Services<Reply> {
         String req = "SELECT * FROM `replies` WHERE `thread_id` = ? AND `parent_id` IS NULL ORDER BY `created_at` ASC";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, threadId);
             ResultSet rs = pstm.executeQuery();
 
@@ -194,7 +196,7 @@ public class ServiceReply implements Services<Reply> {
         String req = "SELECT * FROM `replies` WHERE `parent_id` = ? ORDER BY `created_at` ASC";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, parentId);
             ResultSet rs = pstm.executeQuery();
 
@@ -214,7 +216,7 @@ public class ServiceReply implements Services<Reply> {
         String req = "DELETE FROM `replies` WHERE `thread_id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, threadId);
 
             int rowsAffected = pstm.executeUpdate();
@@ -229,7 +231,7 @@ public class ServiceReply implements Services<Reply> {
         String req = "DELETE FROM `replies` WHERE `parent_id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setLong(1, parentId);
 
             int rowsAffected = pstm.executeUpdate();
@@ -244,7 +246,7 @@ public class ServiceReply implements Services<Reply> {
         String req = "UPDATE `replies` SET `content` = ? WHERE `id` = ?";
 
         try {
-            PreparedStatement pstm = this.cnx.prepareStatement(req);
+            PreparedStatement pstm = connection().prepareStatement(req);
             pstm.setString(1, newContent);
             pstm.setLong(2, replyId);
 
@@ -266,7 +268,7 @@ public class ServiceReply implements Services<Reply> {
                 "SELECT username FROM profiles WHERE user_id = ?";
 
         try (PreparedStatement ps =
-                     cnx.prepareStatement(sql)) {
+                     connection().prepareStatement(sql)) {
 
             ps.setString(1, userId);
 

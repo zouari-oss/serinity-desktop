@@ -17,12 +17,14 @@ public class ServiceNotification {
     private ServiceThread threadService;
 
     public ServiceNotification() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
-        }
         this.threadService = new ServiceThread();
+    }
+
+    private Connection connection() throws SQLException {
+        if (cnx == null || cnx.isClosed()) {
+            cnx = DbConnection.getConnection();
+        }
+        return cnx;
     }
 
     public void createNotification(Long threadId, String type, String actorUserId) {
@@ -71,7 +73,7 @@ public class ServiceNotification {
                 "VALUES (?, ?, ?, ?)";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setLong(1, threadId);
             stmt.setString(2, type);
             stmt.setString(3, content);
@@ -94,7 +96,7 @@ public class ServiceNotification {
         String sql = "SELECT * FROM `notifications` WHERE `user_id` = ? ORDER BY `date` DESC, `id` DESC";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
 
@@ -117,7 +119,7 @@ public class ServiceNotification {
         String sql = "SELECT * FROM `notifications` WHERE `user_id` = ? AND `seen` = 0 ORDER BY `date` DESC, `id` DESC";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
 
@@ -139,7 +141,7 @@ public class ServiceNotification {
         String sql = "SELECT COUNT(*) as count FROM `notifications` WHERE `user_id` = ? AND `seen` = 0";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
 
@@ -161,7 +163,7 @@ public class ServiceNotification {
         String sql = "UPDATE `notifications` SET `seen` = 1 WHERE `user_id` = ?";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setString(1, userId);
             int rowsAffected = stmt.executeUpdate();
 
@@ -179,7 +181,7 @@ public class ServiceNotification {
         String sql = "UPDATE `notifications` SET `seen` = 1 WHERE `id` = ?";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setLong(1, notificationId);
             stmt.executeUpdate();
 
@@ -195,7 +197,7 @@ public class ServiceNotification {
         String sql = "DELETE FROM `notifications` WHERE `id` = ?";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setLong(1, notificationId);
             stmt.executeUpdate();
             System.out.println("Notification deleted: " + notificationId);
@@ -212,7 +214,7 @@ public class ServiceNotification {
         String sql = "DELETE FROM `notifications` WHERE `user_id` = ?";
 
         try {
-            PreparedStatement stmt = cnx.prepareStatement(sql);
+            PreparedStatement stmt = connection().prepareStatement(sql);
             stmt.setString(1, userId);
             int rowsAffected = stmt.executeUpdate();
             System.out.println("Deleted " + rowsAffected + " notifications for user " + userId);

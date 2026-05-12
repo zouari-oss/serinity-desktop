@@ -26,6 +26,7 @@ import javafx.geometry.Insets;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -167,16 +168,25 @@ public class ForumPostsController {
     @FXML
     private void onNewThread() {
         try {
+            URL viewUrl = getClass().getResource("/fxml/AddThread.fxml");
+            if (viewUrl == null) {
+                showAlert("Error Loading View",
+                        "AddThread.fxml was not found on the classpath.",
+                        Alert.AlertType.ERROR);
+                return;
+            }
 
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AddThread.fxml"));
+            FXMLLoader loader = new FXMLLoader(viewUrl);
             Parent addThreadView = loader.load();
 
             BorderPane borderPane = findBorderPane();
 
             if (borderPane != null) {
                 borderPane.setCenter(addThreadView);
-
+            } else {
+                showAlert("Navigation Error",
+                        "Forum root container was not found, so the thread form could not be displayed.",
+                        Alert.AlertType.ERROR);
             }
         } catch (IOException e) {
             e.printStackTrace();

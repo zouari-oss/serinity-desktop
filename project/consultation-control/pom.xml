@@ -68,7 +68,7 @@
             <id>default-cli</id>
             <configuration>
               <mainClass>com.serinity.consultationcontrol.App</mainClass>
-              <skip>false</skip>
+              <skip>true</skip>
               <options>
                 <option>--enable-native-access=javafx.graphics</option>
               </options>

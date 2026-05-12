@@ -10,21 +10,15 @@ import java.util.List;
 
 public class ExerciseDao {
 
-    private final Connection cnx;
-
-    public ExerciseDao() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
-        }
+    private Connection connection() throws SQLException {
+        return DbConnection.getConnection();
     }
 
     public int insert(Exercise ex) throws SQLException {
         String sql =
                 "INSERT INTO exercise(title, type, level, duration_minutes, description) " +
                         "VALUES(?,?,?,?,?)";
-        try (PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, ex.getTitle());
             ps.setString(2, ex.getType());
             ps.setInt(3, ex.getLevel());
@@ -44,7 +38,7 @@ public class ExerciseDao {
                 "UPDATE exercise " +
                         "SET title=?, type=?, level=?, duration_minutes=?, description=? " +
                         "WHERE id=?";
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             ps.setString(1, ex.getTitle());
             ps.setString(2, ex.getType());
             ps.setInt(3, ex.getLevel());
@@ -57,7 +51,7 @@ public class ExerciseDao {
 
     public void delete(int id) throws SQLException {
         String sql = "DELETE FROM exercise WHERE id=?";
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
@@ -65,7 +59,7 @@ public class ExerciseDao {
 
     public Exercise findById(int id) throws SQLException {
         String sql = "SELECT * FROM exercise WHERE id=?";
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return map(rs);
@@ -77,7 +71,7 @@ public class ExerciseDao {
     public List<Exercise> findAll() throws SQLException {
         String sql = "SELECT * FROM exercise ORDER BY id DESC";
         List<Exercise> list = new ArrayList<>();
-        try (PreparedStatement ps = cnx.prepareStatement(sql);
+        try (PreparedStatement ps = connection().prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) list.add(map(rs));
         }
@@ -87,7 +81,7 @@ public class ExerciseDao {
     public List<Exercise> findByType(String type) throws SQLException {
         String sql = "SELECT * FROM exercise WHERE type=? ORDER BY id DESC";
         List<Exercise> list = new ArrayList<>();
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             ps.setString(1, type);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) list.add(map(rs));
@@ -99,7 +93,7 @@ public class ExerciseDao {
     public List<Exercise> findByLevel(int level) throws SQLException {
         String sql = "SELECT * FROM exercise WHERE level=? ORDER BY id DESC";
         List<Exercise> list = new ArrayList<>();
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection().prepareStatement(sql)) {
             ps.setInt(1, level);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) list.add(map(rs));

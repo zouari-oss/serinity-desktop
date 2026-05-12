@@ -8,19 +8,77 @@ import java.sql.*;
 import java.time.LocalDateTime;
 
 public class SessionDAO {
+    private volatile Boolean hasActiveSeconds;
+    private volatile Boolean hasLastResumedAt;
+    private volatile String exerciseColumn;
+
+    private boolean hasColumn(Connection cnx, String table, String column) throws SQLException {
+        DatabaseMetaData metaData = cnx.getMetaData();
+        try (ResultSet rs = metaData.getColumns(cnx.getCatalog(), null, table, column)) {
+            return rs.next();
+        }
+    }
+
+    private String exerciseColumn(Connection cnx) throws SQLException {
+        String value = exerciseColumn;
+        if (value != null) {
+            return value;
+        }
+        synchronized (this) {
+            if (exerciseColumn == null) {
+                if (hasColumn(cnx, "exercise_session", "exercise_id")) {
+                    exerciseColumn = "exercise_id";
+                } else if (hasColumn(cnx, "exercise_session", "exercice_id")) {
+                    exerciseColumn = "exercice_id";
+                } else {
+                    exerciseColumn = "exercise_id";
+                }
+            }
+            return exerciseColumn;
+        }
+    }
+
+    private boolean hasActiveSeconds(Connection cnx) throws SQLException {
+        Boolean value = hasActiveSeconds;
+        if (value != null) {
+            return value;
+        }
+        synchronized (this) {
+            if (hasActiveSeconds == null) {
+                hasActiveSeconds = hasColumn(cnx, "exercise_session", "active_seconds");
+            }
+            return hasActiveSeconds;
+        }
+    }
+
+    private boolean hasLastResumedAt(Connection cnx) throws SQLException {
+        Boolean value = hasLastResumedAt;
+        if (value != null) {
+            return value;
+        }
+        synchronized (this) {
+            if (hasLastResumedAt == null) {
+                hasLastResumedAt = hasColumn(cnx, "exercise_session", "last_resumed_at");
+            }
+            return hasLastResumedAt;
+        }
+    }
 
     // =============================
     // CREATE (CREATED session)
     // =============================
     public int createCreatedSession(int userId, int exerciseId) throws SQLException {
-        String sql = """
-            INSERT INTO exercise_session
-                (user_id, exercise_id, status, started_at, completed_at, feedback, active_seconds, last_resumed_at)
-            VALUES
-                (?, ?, 'CREATED', NULL, NULL, NULL, 0, NULL)
-        """;
-
         Connection cnx = DbConnection.getConnection();
+        boolean withActiveSeconds = hasActiveSeconds(cnx);
+        boolean withLastResumedAt = hasLastResumedAt(cnx);
+        String exerciseColumn = exerciseColumn(cnx);
+        String sql = withActiveSeconds && withLastResumedAt
+                ? "INSERT INTO exercise_session " +
+                    "(user_id, " + exerciseColumn + ", status, started_at, completed_at, feedback, active_seconds, last_resumed_at) " +
+                    "VALUES (?, ?, 'CREATED', NULL, NULL, NULL, 0, NULL)"
+                : "INSERT INTO exercise_session " +
+                    "(user_id, " + exerciseColumn + ", status, started_at, completed_at, feedback) " +
+                    "VALUES (?, ?, 'CREATED', NULL, NULL, NULL)";
 
         try (PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, userId);
@@ -42,14 +100,19 @@ public class SessionDAO {
     // READ (FOR UPDATE)
     // =============================
     public SessionEntity findByIdForUpdate(int sessionId) throws SQLException {
+        Connection cnx = DbConnection.getConnection();
+        String activeSecondsExpr = hasActiveSeconds(cnx) ? "active_seconds" : "0";
+        String lastResumedExpr = hasLastResumedAt(cnx) ? "last_resumed_at" : "started_at";
         String sql = """
-            SELECT id, status, started_at, completed_at, feedback, active_seconds, last_resumed_at
+            SELECT id, status, started_at, completed_at, feedback,
+        """ + activeSecondsExpr + """
+             AS active_seconds,
+        """ + lastResumedExpr + """
+             AS last_resumed_at
             FROM exercise_session
             WHERE id = ?
             FOR UPDATE
         """;
-
-        Connection cnx = DbConnection.getConnection();
 
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, sessionId);
@@ -74,27 +137,37 @@ public class SessionDAO {
     // UPDATE
     // =============================
     public void update(SessionEntity s) throws SQLException {
-        String sql = """
+        Connection cnx = DbConnection.getConnection();
+        boolean withActiveSeconds = hasActiveSeconds(cnx);
+        boolean withLastResumedAt = hasLastResumedAt(cnx);
+        StringBuilder sql = new StringBuilder("""
             UPDATE exercise_session
             SET status = ?,
                 started_at = ?,
                 completed_at = ?,
-                feedback = ?,
-                active_seconds = ?,
-                last_resumed_at = ?
-            WHERE id = ?
-        """;
+                feedback = ?
+        """);
+        if (withActiveSeconds) {
+            sql.append(",\n                active_seconds = ?");
+        }
+        if (withLastResumedAt) {
+            sql.append(",\n                last_resumed_at = ?");
+        }
+        sql.append("\n            WHERE id = ?\n");
 
-        Connection cnx = DbConnection.getConnection();
-
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setString(1, s.status().name());
-            ps.setTimestamp(2, toTs(s.startedAt()));
-            ps.setTimestamp(3, toTs(s.completedAt()));
-            ps.setString(4, s.feedback());
-            ps.setInt(5, s.activeSeconds());
-            ps.setTimestamp(6, toTs(s.lastResumedAt()));
-            ps.setInt(7, s.id());
+        try (PreparedStatement ps = cnx.prepareStatement(sql.toString())) {
+            int index = 1;
+            ps.setString(index++, s.status().name());
+            ps.setTimestamp(index++, toTs(s.startedAt()));
+            ps.setTimestamp(index++, toTs(s.completedAt()));
+            ps.setString(index++, s.feedback());
+            if (withActiveSeconds) {
+                ps.setInt(index++, s.activeSeconds());
+            }
+            if (withLastResumedAt) {
+                ps.setTimestamp(index++, toTs(s.lastResumedAt()));
+            }
+            ps.setInt(index, s.id());
             ps.executeUpdate();
         }
     }
