@@ -270,6 +270,11 @@ public final class UserDashboardController implements StatusMessageProvider, Sta
 
   @FXML
   void onSaveButtonAction(final ActionEvent event) {
+    if (userProfile == null) {
+      showStatusMessage("Unable to load profile. Please sign in again.", MessageStatus.ERROR);
+      return;
+    }
+
     final String userProfileUsername = usernameTextField.getText();
     if (userProfileUsername.isBlank()) {
       showStatusMessage(I18nUtil.getValue("status.profile.username_blank"), MessageStatus.WARNING);
@@ -346,6 +351,9 @@ public final class UserDashboardController implements StatusMessageProvider, Sta
 
     Platform.runLater(() -> { // NOTE: After controller initialized
       initUserInfoLater();
+      if (userProfile == null) {
+        return;
+      }
       updateProfileCompletion();
       welcomeLabel.setText(welcomeLabel.getText() + userProfile.getUsername());
       loadActivityCards();
@@ -439,7 +447,18 @@ public final class UserDashboardController implements StatusMessageProvider, Sta
     if (userProfile == null) {
       final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
       final ProfileRepository profileRepository = new ProfileRepository(em);
-      userProfile = profileRepository.findByUserId(LoginController.getUser().getId());
+      try {
+        userProfile = profileRepository.findByUserId(LoginController.getUser().getId());
+      } catch (final Exception e) {
+        _LOGGER.error("Failed to load profile for user {}", LoginController.getUser().getId(), e);
+        userProfile = null;
+      }
+    }
+
+    if (userProfile == null) {
+      _LOGGER.error("No profile found for user {}", LoginController.getUser() != null ? LoginController.getUser().getId() : null);
+      showStatusMessage("Profile not found for the current account.", MessageStatus.ERROR);
+      return;
     }
 
     // Set user info

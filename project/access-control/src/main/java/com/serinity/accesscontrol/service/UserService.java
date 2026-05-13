@@ -98,6 +98,16 @@ public final class UserService {
       return ServiceResult.failure("User role must be specified.");
     }
 
+    final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+    final UserRepository userRepository = new UserRepository(em);
+    final ProfileRepository profileRepository = new ProfileRepository(em);
+    final AuthSessionRepository authSessionRepository = new AuthSessionRepository(em);
+    final AuditLogRepository auditLogRepository = new AuditLogRepository(em);
+
+    if (userRepository.findUserByEmail(email) != null) {
+      return ServiceResult.failure("This email is already in use.");
+    }
+
     final User user = new User();
     user.setEmail(email);
     user.setPasswordHash(PasswordEncoder.encode(password));
@@ -114,12 +124,16 @@ public final class UserService {
     auditLog.setSession(authSession);
 
     try {
-      final EntityManager em = SkinnedRatOrmEntityManager.getEntityManager();
+      userRepository.save(user);
+      profileRepository.save(profile);
+      authSessionRepository.save(authSession);
+      auditLogRepository.save(auditLog);
 
-      new UserRepository(em).save(user);
-      new ProfileRepository(em).save(profile);
-      new AuthSessionRepository(em).save(authSession);
-      new AuditLogRepository(em).save(auditLog);
+      final User persistedUser = userRepository.findUserByEmail(email);
+      if (persistedUser == null) {
+        throw new IllegalStateException("User persistence verification failed");
+      }
+      profileRepository.findByUserId(persistedUser.getId());
 
       _LOGGER.info("New user registered: {} with role {}", email, role);
 

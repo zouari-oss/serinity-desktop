@@ -46,7 +46,7 @@ import com.serinity.accesscontrol.util.SystemInfo;
 public final class MainTest {
   @Test
   public void testJavaVesion() {
-    assertEquals("25.0.2", SystemInfo.getJavaVersion());
+    assertEquals("25.0.3", SystemInfo.getJavaVersion());
   }
 
   @Test

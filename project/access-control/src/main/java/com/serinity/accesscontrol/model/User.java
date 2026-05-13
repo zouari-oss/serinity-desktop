@@ -1,6 +1,8 @@
 // `User` package name
 package com.serinity.accesscontrol.model;
 
+import java.time.LocalDateTime;
+
 // `zouarioss` import(s)
 import org.zouarioss.skinnedratorm.annotations.Column;
 import org.zouarioss.skinnedratorm.annotations.Entity;
@@ -45,8 +47,12 @@ public final class User extends TimestampedEntity {
   /** Creates an empty user entity. */
   public User() {
   }
+
   @Column(nullable = false, unique = true, length = 150)
   private String email;
+
+  @Column(name = "google_id", unique = true, length = 191, nullable = true)
+  private String googleId;
 
   @Column(name = "password", nullable = false)
   private String password;
@@ -64,7 +70,19 @@ public final class User extends TimestampedEntity {
   private AccountStatus accountStatus; // Pre-persist
 
   @Column(name = "face_recognition_enabled", nullable = false)
-  private boolean faceRecognitionEnabled; // Pre-persist
+  private Integer faceRecognitionEnabled; // tinyint(4), pre-persist
+
+  @Column(name = "totp_secret_encrypted", length = 255, nullable = true)
+  private String totpSecretEncrypted;
+
+  @Column(name = "is_two_factor_enabled", nullable = false)
+  private Integer isTwoFactorEnabled; // tinyint(4), pre-persist
+
+  @Column(name = "totp_enabled_at", nullable = true)
+  private LocalDateTime totpEnabledAt;
+
+  @Column(name = "risk_level", length = 20, nullable = true)
+  private String riskLevel;
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, optional = false) // User must have a profile
   private Profile profile;
@@ -84,6 +102,19 @@ public final class User extends TimestampedEntity {
 
   public void setEmail(final String email) {
     this.email = email;
+  }
+
+  /**
+   * Returns the linked Google account identifier.
+   *
+   * @return Google account id
+   */
+  public String getGoogleId() {
+    return googleId;
+  }
+
+  public void setGoogleId(final String googleId) {
+    this.googleId = googleId;
   }
 
   /**
@@ -144,11 +175,63 @@ public final class User extends TimestampedEntity {
    * @return {@code true} if face recognition is enabled
    */
   public boolean isFaceRecognitionEnabled() {
-    return faceRecognitionEnabled;
+    return faceRecognitionEnabled != null && faceRecognitionEnabled == 1;
   }
 
   public void setFaceRecognitionEnabled(final boolean faceRecognitionEnabled) {
-    this.faceRecognitionEnabled = faceRecognitionEnabled;
+    this.faceRecognitionEnabled = faceRecognitionEnabled ? 1 : 0;
+  }
+
+  /**
+   * Returns the encrypted TOTP secret.
+   *
+   * @return encrypted TOTP secret
+   */
+  public String getTotpSecretEncrypted() {
+    return totpSecretEncrypted;
+  }
+
+  public void setTotpSecretEncrypted(final String totpSecretEncrypted) {
+    this.totpSecretEncrypted = totpSecretEncrypted;
+  }
+
+  /**
+   * Indicates whether two-factor authentication is enabled.
+   *
+   * @return {@code true} if 2FA is enabled
+   */
+  public boolean isTwoFactorEnabled() {
+    return isTwoFactorEnabled != null && isTwoFactorEnabled == 1;
+  }
+
+  public void setTwoFactorEnabled(final boolean isTwoFactorEnabled) {
+    this.isTwoFactorEnabled = isTwoFactorEnabled ? 1 : 0;
+  }
+
+  /**
+   * Returns the timestamp when TOTP was enabled.
+   *
+   * @return TOTP enabled timestamp
+   */
+  public LocalDateTime getTotpEnabledAt() {
+    return totpEnabledAt;
+  }
+
+  public void setTotpEnabledAt(final LocalDateTime totpEnabledAt) {
+    this.totpEnabledAt = totpEnabledAt;
+  }
+
+  /**
+   * Returns the user's risk level.
+   *
+   * @return risk level
+   */
+  public String getRiskLevel() {
+    return riskLevel;
+  }
+
+  public void setRiskLevel(final String riskLevel) {
+    this.riskLevel = riskLevel;
   }
 
   // #############################
@@ -165,5 +248,13 @@ public final class User extends TimestampedEntity {
     // Set presenceStatus if not already set
     if (this.presenceStatus == null)
       this.presenceStatus = PresenceStatus.ONLINE;
+
+    if (this.faceRecognitionEnabled == null) {
+      this.faceRecognitionEnabled = 0;
+    }
+
+    if (this.isTwoFactorEnabled == null) {
+      this.isTwoFactorEnabled = 0;
+    }
   }
 } // User final class

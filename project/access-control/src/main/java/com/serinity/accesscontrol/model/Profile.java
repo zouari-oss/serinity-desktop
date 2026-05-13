@@ -96,6 +96,9 @@ public final class Profile extends TimestampedEntity {
   @Column(name = "profile_image_url", length = 512, nullable = true)
   private String profileImageUrl;
 
+  @Column(name = "anime_avatar_image_url", length = 512, nullable = true)
+  private String animeAvatarImageUrl;
+
   @Column(length = 100, nullable = true)
   private String country; // e.g., Tunisia, Marroc, ..
 
@@ -219,6 +222,24 @@ public final class Profile extends TimestampedEntity {
    */
   public void setProfileImageUrl(final String profileImageUrl) {
     this.profileImageUrl = profileImageUrl;
+  }
+
+  /**
+   * Returns the anime avatar image URL.
+   *
+   * @return anime avatar image URL
+   */
+  public String getAnimeAvatarImageUrl() {
+    return animeAvatarImageUrl;
+  }
+
+  /**
+   * Sets the anime avatar image URL.
+   *
+   * @param animeAvatarImageUrl anime avatar image URL
+   */
+  public void setAnimeAvatarImageUrl(final String animeAvatarImageUrl) {
+    this.animeAvatarImageUrl = animeAvatarImageUrl;
   }
 
   /**
