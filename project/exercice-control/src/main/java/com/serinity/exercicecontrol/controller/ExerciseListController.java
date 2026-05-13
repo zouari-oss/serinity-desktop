@@ -7,7 +7,6 @@ import com.serinity.exercicecontrol.model.Exercise;
 import com.serinity.exercicecontrol.service.ExerciseService;
 import com.serinity.exercicecontrol.service.RecommendationService;
 import com.serinity.exercicecontrol.service.ScoringService;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -141,7 +140,7 @@ public class ExerciseListController {
     @FXML
     private void onAddExercise() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseForm.fxml"));
             Parent root = loader.load();
 
             ExerciseFormController ctrl = loader.getController();
@@ -192,7 +191,7 @@ public class ExerciseListController {
             ctrl.setHost(host);
             ctrl.setContext(userId, allExercises, () -> {
                 try {
-                    FXMLLoader back = new FXMLLoader(getClass().getResource("/fxml/ExerciseList.fxml"));
+                    FXMLLoader back = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseList.fxml"));
                     Parent backRoot = back.load();
                     host.getChildren().setAll(backRoot);
                 } catch (Exception e) {
@@ -210,43 +209,43 @@ public class ExerciseListController {
     }
 
     // ===================== ADMIN  =====================
-    @FXML
-    private void onOpenAdminDashboard() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/AdminDashboard.fxml"));
-            Parent root = loader.load();
-
-            StackPane host = getContentHost();
-
-            AdminDashboardController ctrl = loader.getController();
-
-
-            ctrl.setOnBack(() -> {
-                try {
-                    FXMLLoader back = new FXMLLoader(getClass().getResource("/fxml/ExerciseList.fxml"));
-                    Parent backRoot = back.load();
-                    host.getChildren().setAll(backRoot);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showError("Erreur", "Impossible de revenir à la liste.\n" + e.getMessage());
-                }
-            });
-
-            host.getChildren().setAll(root);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Erreur", "Impossible d'ouvrir l'Admin Dashboard.\n" + e.getMessage());
-        }
-    }
-
-
+// @FXML
+//     private void onOpenAdminDashboard() {
+//         try {
+//             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/AdminDashboard.fxml"));
+//             Parent root = loader.load();
+// 
+//             StackPane host = getContentHost();
+// 
+//             AdminDashboardController ctrl = loader.getController();
+// 
+// 
+//             ctrl.setOnBack(() -> {
+//                 try {
+//                     FXMLLoader back = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseList.fxml"));
+//                     Parent backRoot = back.load();
+//                     host.getChildren().setAll(backRoot);
+//                 } catch (Exception e) {
+//                     e.printStackTrace();
+//                     showError("Erreur", "Impossible de revenir à la liste.\n" + e.getMessage());
+//                 }
+//             });
+// 
+//             host.getChildren().setAll(root);
+// 
+//         } catch (Exception e) {
+//             e.printStackTrace();
+//             showError("Erreur", "Impossible d'ouvrir l'Admin Dashboard.\n" + e.getMessage());
+//         }
+//     }
+// 
+// 
 
     public void openEdit(Exercise ex) {
         if (ex == null) return;
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseForm.fxml"));
             Parent root = loader.load();
 
             ExerciseFormController ctrl = loader.getController();
@@ -288,7 +287,7 @@ public class ExerciseListController {
         if (ex == null) return;
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseDetails.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseDetails.fxml"));
             Parent root = loader.load();
 
             ExerciseDetailsController ctrl = loader.getController();
@@ -355,7 +354,7 @@ public class ExerciseListController {
 
     private Parent loadExerciseCard(Exercise ex) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseCard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseCard.fxml"));
             Parent root = loader.load();
 
             ExerciseCardController ctrl = loader.getController();
@@ -514,7 +513,7 @@ public class ExerciseListController {
     @FXML
     private void onOpenPlan() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PlanDuJour.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/PlanDuJour.fxml"));
             Parent page = loader.load();
             setContentSafe(page);
         } catch (Exception e) {
@@ -527,9 +526,10 @@ public class ExerciseListController {
         if (cardsPane == null || cardsPane.getScene() == null) {
             throw new IllegalStateException("Scene non prête (cardsPane/scene null).");
         }
-        StackPane host = (StackPane) cardsPane.getScene().lookup("#contentHost");
-        if (host == null) host = (StackPane) cardsPane.getScene().lookup("#contentHostStackPane");
-        if (host == null) throw new IllegalStateException("contentHost introuvable dans Template.fxml");
+        StackPane host = resolveContentHost();
+        if (host == null) {
+            throw new IllegalStateException("contentHost/contentHostStackPane introuvable dans le shell.");
+        }
         return host;
     }
 
@@ -538,10 +538,17 @@ public class ExerciseListController {
             Platform.runLater(() -> setContentSafe(page));
             return;
         }
-        StackPane host = (StackPane) cardsPane.getScene().lookup("#contentHost");
-        if (host == null) host = (StackPane) cardsPane.getScene().lookup("#contentHostStackPane");
-        if (host == null) throw new IllegalStateException("contentHost introuvable dans Template.fxml");
+        StackPane host = resolveContentHost();
+        if (host == null) {
+            throw new IllegalStateException("contentHost/contentHostStackPane introuvable dans le shell.");
+        }
         host.getChildren().setAll(page);
+    }
+
+    private StackPane resolveContentHost() {
+        StackPane host = (StackPane) cardsPane.getScene().lookup("#contentHost");
+        if (host != null) return host;
+        return (StackPane) cardsPane.getScene().lookup("#contentHostStackPane");
     }
 
     private static String safe(String s, String def) {

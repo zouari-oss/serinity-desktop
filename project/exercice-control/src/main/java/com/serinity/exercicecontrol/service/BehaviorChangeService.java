@@ -10,17 +10,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import com.serinity.exercicecontrol.dao.ExerciseSessionDao;
-  /** Class documentation. */
 public class BehaviorChangeService {
 
     private final ExerciseSessionDao sessionDao;
 
-  /** Documents BehaviorChangeService. */
     public BehaviorChangeService() {
         this.sessionDao = new ExerciseSessionDao();
     }
 
-  /** Documents buildActionPlan. */
     public ActionPlan buildActionPlan(int userId, Exercise exercise, int targetMinutes) {
         int exerciseMinutes = exercise != null ? exercise.getDurationMinutes() : targetMinutes;
 

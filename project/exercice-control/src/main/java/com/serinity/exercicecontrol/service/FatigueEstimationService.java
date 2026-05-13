@@ -6,10 +6,7 @@ import java.time.LocalTime;
 
 public class FatigueEstimationService {
 
-    /**
-     * Combine un score utilisateur (slider) + contexte (heure + météo).
-     * Retourne fatigue 0..100 (plus haut = plus fatigué).
-     */
+
     public int estimate(int userFatigue, WeatherApiService.WeatherNow w) {
         int f = clamp(userFatigue);
 

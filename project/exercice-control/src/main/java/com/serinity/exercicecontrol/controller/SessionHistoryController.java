@@ -1,6 +1,6 @@
 package com.serinity.exercicecontrol.controller;
 
-import com.serinity.exercicecontrol.config.DbConnection;
+import com.serinity.exercicecontrol.dao.DbConnection;
 import com.serinity.exercicecontrol.model.Exercise;
 import com.serinity.exercicecontrol.model.ExerciseSession;
 import javafx.collections.FXCollections;
@@ -56,7 +56,7 @@ public class SessionHistoryController {
                 Label titleLbl = new Label(title);
                 titleLbl.getStyleClass().add("card-title");
 
-                // ===== STATUS (FR) =====
+                // ===== STATUS  =====
                 String raw = (s.getStatus() == null)
                         ? ""
                         : s.getStatus().trim().toUpperCase();
@@ -144,16 +144,16 @@ public class SessionHistoryController {
         sessions.clear();
 
         String sql = """
-                SELECT id, user_id, exercise_id, status, started_at, completed_at, feedback
-                FROM exercise_session
-                WHERE exercise_id = ?
+                SELECT id, user_id, exercice_id, status, started_at, completed_at, feedback
+                FROM exercice_control
+                WHERE exercice_id = ?
                 ORDER BY started_at DESC
                 """;
 
         try {
 
-            // IMPORTANT: do NOT close singleton connection
-            Connection cnx = DbConnection.getConnection();
+
+            Connection cnx = DbConnection.getInstance().getConnection();
 
             try (PreparedStatement ps = cnx.prepareStatement(sql)) {
 
@@ -164,8 +164,8 @@ public class SessionHistoryController {
                     while (rs.next()) {
 
                         int id = rs.getInt("id");
-                        int userId = rs.getInt("user_id");
-                        int exerciseId = rs.getInt("exercise_id");
+                        String userId = rs.getString("user_id");
+                        int exerciseId = rs.getInt("exercice_id");
                         String status = rs.getString("status");
 
                         Timestamp st = rs.getTimestamp("started_at");
@@ -182,7 +182,7 @@ public class SessionHistoryController {
 
                         sessions.add(new ExerciseSession(
                                 id,
-                                userId,
+                                0,
                                 exerciseId,
                                 status,
                                 startedAt,
@@ -211,7 +211,7 @@ public class SessionHistoryController {
         try {
 
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/ExerciseDetails.fxml")
+                    getClass().getResource("/fxml/exercice/ExerciseDetails.fxml")
             );
 
             Parent root = loader.load();
@@ -231,12 +231,13 @@ public class SessionHistoryController {
     private void setContent(Parent page) {
         StackPane host = (StackPane)
                 historyList.getScene().lookup("#contentHost");
-        if (host == null)
+        if (host == null) {
             host = (StackPane) historyList.getScene().lookup("#contentHostStackPane");
+        }
 
         if (host == null) {
             throw new IllegalStateException(
-                    "contentHost introuvable. Vérifie fx:id=\"contentHost\" dans Template.fxml"
+                    "contentHost/contentHostStackPane introuvable. Vérifie le shell FXML."
             );
         }
 

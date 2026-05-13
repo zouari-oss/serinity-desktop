@@ -54,14 +54,28 @@ public class ExerciseService {
 
         if (ex.getTitle() == null || ex.getTitle().trim().isEmpty())
             throw new IllegalArgumentException("Title is required.");
+        ex.setTitle(ex.getTitle().trim());
 
         if (ex.getType() == null || ex.getType().trim().isEmpty())
             throw new IllegalArgumentException("Type is required.");
+        ex.setType(ex.getType().trim());
 
         if (ex.getLevel() < 1 || ex.getLevel() > 5)
             throw new IllegalArgumentException("Level must be between 1 and 5.");
 
         if (ex.getDurationMinutes() <= 0)
             throw new IllegalArgumentException("Duration must be > 0 minutes.");
+
+        ex.setDescription(trimToNull(ex.getDescription()));
+        ex.setBenefits(trimToNull(ex.getBenefits()));
+        ex.setTips(trimToNull(ex.getTips()));
+        ex.setTheme(trimToNull(ex.getTheme()));
+        ex.setGuidedInstructions(trimToNull(ex.getGuidedInstructions()));
+    }
+
+    private String trimToNull(String value) {
+        if (value == null) return null;
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

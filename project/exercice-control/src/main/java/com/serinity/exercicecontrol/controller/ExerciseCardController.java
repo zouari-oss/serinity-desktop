@@ -29,16 +29,6 @@ public class ExerciseCardController {
         if (parent != null && exercise != null) parent.openDetails(exercise);
     }
 
-    @FXML
-    private void onEdit() {
-        if (parent != null && exercise != null) parent.openEdit(exercise);
-    }
-
-    @FXML
-    private void onDelete() {
-        if (parent != null && exercise != null) parent.deleteExercise(exercise);
-    }
-
     private String safe(String s) {
         return (s == null || s.isBlank()) ? "-" : s;
     }

@@ -2,35 +2,51 @@
    SERINITY — GLOBAL THEME
    ========================= */
 
-.root {
-    -fx-font-family: "Segoe UI Variable", "Segoe UI", "Inter", "Roboto", Arial;
+* {
+  -fx-font-family: "Segoe UI Variable", "Segoe UI", "Inter", "Roboto", Arial;
 
+  -ser-primary: #2F6F6D;
+  -ser-secondary: #E6F2F1;
+  -ser-accent: #88BDBC;
 
+  -ser-bg: #F6F8FA;
+  -ser-text: #1A232B;
+  -ser-text2: #667085;
 
+  -ser-success: #4CAF50;
+  -ser-warning: #F4B400;
+  -ser-error: #D9534F;
 }
 
-.app-bg { -fx-background-color: #F6F8FA; }
+.app-bg {
+  -fx-background-color: -ser-bg;
+}
 
 /* =========================
-   SCROLLPANE CLEAN
+     SCROLLPANE CLEAN
    ========================= */
 
-.transparent-scroll { -fx-background-color: transparent; }
-.transparent-scroll > .viewport { -fx-background-color: transparent; }
+.transparent-scroll {
+  -fx-background-color: transparent;
+}
+
+.transparent-scroll>.viewport {
+  -fx-background-color: transparent;
+}
 
 /* =========================
    TOP BAR
    ========================= */
 
 .topbar {
-    -fx-background-color: linear-gradient(to bottom, derive(#2F6F6D, 8%), #2F6F6D);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 18, 0.15, 0, 6);
+  -fx-background-color: linear-gradient(to bottom, derive(-ser-primary, 8%), -ser-primary);
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 18, 0.15, 0, 6);
 }
 
 .brand-title {
-    -fx-text-fill: white;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
+  -fx-text-fill: white;
+  -fx-font-size: 18px;
+  -fx-font-weight: 900;
 }
 
 /* =========================
@@ -38,21 +54,23 @@
    ========================= */
 
 .nav-btn {
-    -fx-background-color: transparent;
-    -fx-text-fill: rgba(255,255,255,0.88);
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-padding: 8 12;
-    -fx-background-radius: 12;
-    -fx-cursor: hand;
+  -fx-background-color: transparent;
+  -fx-text-fill: rgba(255, 255, 255, 0.88);
+  -fx-font-size: 13px;
+  -fx-font-weight: 700;
+  -fx-padding: 8 12;
+  -fx-background-radius: 12;
+  -fx-cursor: hand;
 }
+
 .nav-btn:hover {
-    -fx-background-color: rgba(255,255,255,0.14);
-    -fx-text-fill: white;
+  -fx-background-color: rgba(255, 255, 255, 0.14);
+  -fx-text-fill: white;
 }
+
 .nav-btn-active {
-    -fx-background-color: rgba(255,255,255,0.22);
-    -fx-text-fill: white;
+  -fx-background-color: rgba(255, 255, 255, 0.22);
+  -fx-text-fill: white;
 }
 
 /* =========================
@@ -60,15 +78,16 @@
    ========================= */
 
 .search {
-    -fx-background-color: rgba(255,255,255,0.18);
-    -fx-background-radius: 12;
-    -fx-padding: 6 10;
+  -fx-background-color: rgba(255, 255, 255, 0.18);
+  -fx-background-radius: 12;
+  -fx-padding: 6 10;
 }
+
 .search-field {
-    -fx-background-color: transparent;
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: rgba(255,255,255,0.70);
-    -fx-border-color: transparent;
+  -fx-background-color: transparent;
+  -fx-text-fill: white;
+  -fx-prompt-text-fill: rgba(255, 255, 255, 0.70);
+  -fx-border-color: transparent;
 }
 
 /* =========================
@@ -76,50 +95,53 @@
    ========================= */
 
 .footer-bar {
-    -fx-padding: 10 20;
-    -fx-background-color: linear-gradient(to right, #2f6f6d, #3b8f8b);
+  -fx-padding: 10 20;
+  -fx-background-color: linear-gradient(to right, #2f6f6d, #3b8f8b);
 }
+
 .footer-bar Label {
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-text-fill: rgba(255,255,255,0.75);
+  -fx-font-size: 12px;
+  -fx-font-weight: 800;
+  -fx-text-fill: rgba(255, 255, 255, 0.75);
 }
 
 /* =========================
    PAGE / TYPO
    ========================= */
 
-.page-root { -fx-background-color: transparent; }
+.page-root {
+  -fx-background-color: transparent;
+}
 
 .page-title {
-    -fx-text-fill: #1A232B;
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-text;
+  -fx-font-size: 24px;
+  -fx-font-weight: 900;
 }
 
 .section-title {
-    -fx-text-fill: #1A232B;
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-text;
+  -fx-font-size: 15px;
+  -fx-font-weight: 900;
 }
 
 .muted,
 .muted-text {
-    -fx-text-fill: #667085;
-    -fx-font-size: 12.5px;
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-text2;
+  -fx-font-size: 12.5px;
+  -fx-font-weight: 700;
 }
 
 .value {
-    -fx-text-fill: #1A232B;
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-text;
+  -fx-font-size: 15px;
+  -fx-font-weight: 900;
 }
 
 .rec-title {
-    -fx-text-fill: #1A232B;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-text;
+  -fx-font-size: 16px;
+  -fx-font-weight: 900;
 }
 
 /* =========================
@@ -127,35 +149,41 @@
    ========================= */
 
 .hero-banner {
-    -fx-background-radius: 20;
-    -fx-border-radius: 20;
-    -fx-min-height: 220;
-    -fx-max-height: 220;
-    -fx-background-color: #000;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 22, 0.22, 0, 8);
+  -fx-background-radius: 20;
+  -fx-border-radius: 20;
+  -fx-min-height: 220;
+  -fx-max-height: 220;
+  -fx-background-color: #000;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.20), 22, 0.22, 0, 8);
 }
+
 .hero-banner ImageView {
-    -fx-background-radius: 20;
-    -fx-border-radius: 20;
+  -fx-background-radius: 20;
+  -fx-border-radius: 20;
 }
+
 .hero-overlay {
-    -fx-background-radius: 20;
-    -fx-background-color: linear-gradient(to top,
-        rgba(0,0,0,0.72),
-        rgba(0,0,0,0.30),
-        rgba(0,0,0,0.05)
-    );
+  -fx-background-radius: 20;
+  -fx-background-color: linear-gradient(to top,
+      rgba(0, 0, 0, 0.72),
+      rgba(0, 0, 0, 0.30),
+      rgba(0, 0, 0, 0.05));
 }
-.hero-content { -fx-padding: 18; }
+
+.hero-content {
+  -fx-padding: 18;
+}
+
 .hero-title {
-    -fx-text-fill: white;
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
+  -fx-text-fill: white;
+  -fx-font-size: 20px;
+  -fx-font-weight: 900;
 }
+
 .hero-subtitle {
-    -fx-text-fill: rgba(255,255,255,0.80);
-    -fx-font-size: 12.5px;
-    -fx-font-weight: bold;
+  -fx-text-fill: rgba(255, 255, 255, 0.80);
+  -fx-font-size: 12.5px;
+  -fx-font-weight: 700;
 }
 
 /* =========================
@@ -163,45 +191,47 @@
    ========================= */
 
 .card {
-    -fx-background-color: white;
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-padding: 18;
-    -fx-border-color: rgba(0,0,0,0.05);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.09), 22, 0.18, 0, 7);
+  -fx-background-color: white;
+  -fx-background-radius: 18;
+  -fx-border-radius: 18;
+  -fx-padding: 18;
+  -fx-border-color: rgba(0, 0, 0, 0.05);
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.09), 22, 0.18, 0, 7);
 }
 
 /* Progress card */
 .progress-card {
-    -fx-background-color: linear-gradient(to right,
-        rgba(244,180,0,0.12),
-        rgba(47,111,109,0.06)
-    );
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(0,0,0,0.06);
-    -fx-border-width: 1;
-    -fx-padding: 18;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 20, 0.20, 0, 7);
+  -fx-background-color: linear-gradient(to right,
+      rgba(244, 180, 0, 0.12),
+      rgba(47, 111, 109, 0.06));
+  -fx-background-radius: 18;
+  -fx-border-radius: 18;
+  -fx-border-color: rgba(0, 0, 0, 0.06);
+  -fx-border-width: 1;
+  -fx-padding: 18;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 20, 0.20, 0, 7);
 }
+
 .progress-accent {
-    -fx-background-color: linear-gradient(to bottom, #F4B400, #2F6F6D);
-    -fx-background-radius: 6;
+  -fx-background-color: linear-gradient(to bottom, -ser-warning, -ser-primary);
+  -fx-background-radius: 6;
 }
 
 /* Metric cards (utilisé dans Session + Details) */
 .metric-card {
-    -fx-background-color: white;
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(0,0,0,0.05);
-    -fx-padding: 14;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 18, 0.18, 0, 6);
+  -fx-background-color: white;
+  -fx-background-radius: 18;
+  -fx-border-radius: 18;
+  -fx-border-color: rgba(0, 0, 0, 0.05);
+  -fx-padding: 14;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 18, 0.18, 0, 6);
 }
+
 .metric-value {
-    -fx-text-fill: #1A232B;
-    -fx-font-size: 16px; /* compromis unique (plus cohérent partout) */
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-text;
+  -fx-font-size: 16px;
+  /* compromis unique (plus cohérent partout) */
+  -fx-font-weight: 900;
 }
 
 /* =========================
@@ -209,28 +239,31 @@
    ========================= */
 
 .exercise-card {
-    -fx-background-color: white;
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(0,0,0,0.06);
-    -fx-border-width: 1;
-    -fx-padding: 16;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 20, 0.22, 0, 7);
+  -fx-background-color: white;
+  -fx-background-radius: 18;
+  -fx-border-radius: 18;
+  -fx-border-color: rgba(0, 0, 0, 0.06);
+  -fx-border-width: 1;
+  -fx-padding: 16;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 20, 0.22, 0, 7);
 }
+
 .exercise-card:hover {
-    -fx-translate-y: -3;
-    -fx-border-color: rgba(47,111,109,0.35);
-    -fx-effect: dropshadow(gaussian, rgba(47,111,109,0.20), 24, 0.28, 0, 10);
+  -fx-translate-y: -3;
+  -fx-border-color: rgba(47, 111, 109, 0.35);
+  -fx-effect: dropshadow(gaussian, rgba(47, 111, 109, 0.20), 24, 0.28, 0, 10);
 }
+
 .exercise-title {
-    -fx-font-size: 17px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1A232B;
+  -fx-font-size: 17px;
+  -fx-font-weight: 900;
+  -fx-text-fill: -ser-text;
 }
+
 .exercise-meta {
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #667085;
+  -fx-font-size: 13px;
+  -fx-font-weight: 600;
+  -fx-text-fill: -ser-text2;
 }
 
 /* =========================
@@ -238,41 +271,50 @@
    ========================= */
 
 .primary-btn {
-    -fx-background-color: #2F6F6D;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-background-radius: 12;
-    -fx-padding: 8 14;
-    -fx-cursor: hand;
+  -fx-background-color: -ser-primary;
+  -fx-text-fill: white;
+  -fx-font-weight: 800;
+  -fx-background-radius: 12;
+  -fx-padding: 8 14;
+  -fx-cursor: hand;
 }
-.primary-btn:hover { -fx-background-color: derive(#2F6F6D, 8%); }
+
+.primary-btn:hover {
+  -fx-background-color: derive(-ser-primary, 8%);
+}
 
 .secondary-btn {
-    -fx-background-color: rgba(47,111,109,0.12);
-    -fx-text-fill: #2F6F6D;
-    -fx-font-weight: bold;
-    -fx-background-radius: 12;
-    -fx-padding: 8 14;
-    -fx-cursor: hand;
+  -fx-background-color: rgba(47, 111, 109, 0.12);
+  -fx-text-fill: -ser-primary;
+  -fx-font-weight: 800;
+  -fx-background-radius: 12;
+  -fx-padding: 8 14;
+  -fx-cursor: hand;
 }
-.secondary-btn:hover { -fx-background-color: rgba(47,111,109,0.20); }
+
+.secondary-btn:hover {
+  -fx-background-color: rgba(47, 111, 109, 0.20);
+}
 
 .danger-btn {
-    -fx-background-color: #D9534F;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-background-radius: 12;
-    -fx-padding: 8 14;
-    -fx-cursor: hand;
+  -fx-background-color: -ser-error;
+  -fx-text-fill: white;
+  -fx-font-weight: 800;
+  -fx-background-radius: 12;
+  -fx-padding: 8 14;
+  -fx-cursor: hand;
 }
-.danger-btn:hover { -fx-background-color: derive(#D9534F, -8%); }
+
+.danger-btn:hover {
+  -fx-background-color: derive(-ser-error, -8%);
+}
 
 /* boutons plus compacts dans les cards */
 .exercise-card .secondary-btn,
 .exercise-card .danger-btn,
 .exercise-card .primary-btn {
-    -fx-padding: 7 12;
-    -fx-background-radius: 12;
+  -fx-padding: 7 12;
+  -fx-background-radius: 12;
 }
 
 /* =========================
@@ -280,68 +322,87 @@
    ========================= */
 
 .badge {
-    -fx-background-color: rgba(47,111,109,0.12);
-    -fx-text-fill: #2F6F6D;
-    -fx-padding: 4 10;
-    -fx-background-radius: 999;
-    -fx-font-weight: bold;
-    -fx-font-size: 11.5px;
+  -fx-background-color: rgba(47, 111, 109, 0.12);
+  -fx-text-fill: -ser-primary;
+  -fx-padding: 4 10;
+  -fx-background-radius: 999;
+  -fx-font-weight: 900;
+  -fx-font-size: 11.5px;
 }
 
 /* Chips (utilisé dans details/session) */
 .chip {
-    -fx-background-color: rgba(47,111,109,0.12);
-    -fx-text-fill: #2F6F6D;
-    -fx-padding: 4 10;
-    -fx-background-radius: 999;
-    -fx-font-weight: bold;
-    -fx-font-size: 11.5px;
+  -fx-background-color: rgba(47, 111, 109, 0.12);
+  -fx-text-fill: -ser-primary;
+  -fx-padding: 4 10;
+  -fx-background-radius: 999;
+  -fx-font-weight: 900;
+  -fx-font-size: 11.5px;
 }
+
 .chip-soft {
-    -fx-background-color: rgba(0,0,0,0.06);
-    -fx-text-fill: #1A232B;
+  -fx-background-color: rgba(0, 0, 0, 0.06);
+  -fx-text-fill: -ser-text;
 }
 
 .pill {
-    -fx-background-radius: 999;
-    -fx-padding: 4 10;
-    -fx-font-weight: bold;
-    -fx-font-size: 12px;
+  -fx-background-radius: 999;
+  -fx-padding: 4 10;
+  -fx-font-weight: 900;
+  -fx-font-size: 12px;
 }
-.pill-success { -fx-background-color: rgba(76,175,80,0.18); -fx-text-fill: #2E7D32; }
-.pill-info    { -fx-background-color: rgba(47,111,109,0.14); -fx-text-fill: #2F6F6D; }
-.pill-warn    { -fx-background-color: rgba(244,180,0,0.18); -fx-text-fill: #8A6A00; }
-.pill-error   { -fx-background-color: rgba(217,83,79,0.18); -fx-text-fill: #A62B28; }
+
+.pill-success {
+  -fx-background-color: rgba(76, 175, 80, 0.18);
+  -fx-text-fill: #2E7D32;
+}
+
+.pill-info {
+  -fx-background-color: rgba(47, 111, 109, 0.14);
+  -fx-text-fill: -ser-primary;
+}
+
+.pill-warn {
+  -fx-background-color: rgba(244, 180, 0, 0.18);
+  -fx-text-fill: #8A6A00;
+}
+
+.pill-error {
+  -fx-background-color: rgba(217, 83, 79, 0.18);
+  -fx-text-fill: #A62B28;
+}
 
 /* =========================
    RECOMMENDATION CARD
    ========================= */
 
 .recommend-card {
-    -fx-background-color: linear-gradient(to right,
-        rgba(47,111,109,0.10),
-        rgba(136,189,188,0.06)
-    );
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(47,111,109,0.18);
-    -fx-border-width: 1;
-    -fx-padding: 18;
-    -fx-effect: dropshadow(gaussian, rgba(47,111,109,0.18), 22, 0.22, 0, 8);
+  -fx-background-color: linear-gradient(to right,
+      rgba(47, 111, 109, 0.10),
+      rgba(136, 189, 188, 0.06));
+  -fx-background-radius: 18;
+  -fx-border-radius: 18;
+  -fx-border-color: rgba(47, 111, 109, 0.18);
+  -fx-border-width: 1;
+  -fx-padding: 18;
+  -fx-effect: dropshadow(gaussian, rgba(47, 111, 109, 0.18), 22, 0.22, 0, 8);
 }
+
 .recommend-accent {
-    -fx-background-color: linear-gradient(to bottom, #2F6F6D, #88BDBC);
-    -fx-background-radius: 6;
+  -fx-background-color: linear-gradient(to bottom, -ser-primary, -ser-accent);
+  -fx-background-radius: 6;
 }
+
 .recommend-title {
-    -fx-text-fill: #2F6F6D;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-primary;
+  -fx-font-size: 18px;
+  -fx-font-weight: 900;
 }
+
 .recommend-card .primary-btn {
-    -fx-background-color: linear-gradient(to right, #2F6F6D, derive(#2F6F6D, 15%));
-    -fx-background-radius: 14;
-    -fx-padding: 8 18;
+  -fx-background-color: linear-gradient(to right, -ser-primary, derive(-ser-primary, 15%));
+  -fx-background-radius: 14;
+  -fx-padding: 8 18;
 }
 
 /* =========================
@@ -349,43 +410,48 @@
    ========================= */
 
 .session-header {
-    -fx-background-color: rgba(255,255,255,0.70);
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(0,0,0,0.05);
-    -fx-padding: 14;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 18, 0.18, 0, 6);
+  -fx-background-color: rgba(255, 255, 255, 0.70);
+  -fx-background-radius: 18;
+  -fx-border-radius: 18;
+  -fx-border-color: rgba(0, 0, 0, 0.05);
+  -fx-padding: 14;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 18, 0.18, 0, 6);
 }
+
 .session-title {
-    -fx-text-fill: #1A232B;
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-text;
+  -fx-font-size: 20px;
+  -fx-font-weight: 900;
 }
+
 .body-text {
-    -fx-text-fill: #1A232B;
-    -fx-font-size: 13.5px;
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-text;
+  -fx-font-size: 13.5px;
+  -fx-font-weight: 650;
 }
+
 .audio-card {
-    -fx-background-color: linear-gradient(to right, rgba(47,111,109,0.10), rgba(136,189,188,0.06));
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(47,111,109,0.18);
-    -fx-padding: 18;
-    -fx-effect: dropshadow(gaussian, rgba(47,111,109,0.18), 22, 0.22, 0, 8);
+  -fx-background-color: linear-gradient(to right, rgba(47, 111, 109, 0.10), rgba(136, 189, 188, 0.06));
+  -fx-background-radius: 18;
+  -fx-border-radius: 18;
+  -fx-border-color: rgba(47, 111, 109, 0.18);
+  -fx-padding: 18;
+  -fx-effect: dropshadow(gaussian, rgba(47, 111, 109, 0.18), 22, 0.22, 0, 8);
 }
+
 .audio-title {
-    -fx-text-fill: #2F6F6D;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-primary;
+  -fx-font-size: 16px;
+  -fx-font-weight: 900;
 }
+
 .bottom-bar {
-    -fx-background-color: rgba(255,255,255,0.80);
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(0,0,0,0.05);
-    -fx-padding: 12;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 20, 0.18, 0, 6);
+  -fx-background-color: rgba(255, 255, 255, 0.80);
+  -fx-background-radius: 18;
+  -fx-border-radius: 18;
+  -fx-border-color: rgba(0, 0, 0, 0.05);
+  -fx-padding: 12;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 20, 0.18, 0, 6);
 }
 
 /* =========================
@@ -393,86 +459,351 @@
    ========================= */
 
 .details-header {
-    -fx-background-color: rgba(255,255,255,0.70);
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(0,0,0,0.05);
-    -fx-padding: 14;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 18, 0.18, 0, 6);
+  -fx-background-color: rgba(255, 255, 255, 0.70);
+  -fx-background-radius: 18;
+  -fx-border-radius: 18;
+  -fx-border-color: rgba(0, 0, 0, 0.05);
+  -fx-padding: 14;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 18, 0.18, 0, 6);
 }
+
 .details-title {
-    -fx-text-fill: #1A232B;
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-text;
+  -fx-font-size: 24px;
+  -fx-font-weight: 900;
 }
+
 .resources-grid {
-    -fx-background-color: rgba(0,0,0,0.02);
-    -fx-background-radius: 14;
-    -fx-border-radius: 14;
-    -fx-border-color: rgba(0,0,0,0.06);
+  -fx-background-color: rgba(0, 0, 0, 0.02);
+  -fx-background-radius: 14;
+  -fx-border-radius: 14;
+  -fx-border-color: rgba(0, 0, 0, 0.06);
 }
 
 /* =========================
    HISTORY LIST
    ========================= */
 
-.history-list { -fx-background-color: transparent; -fx-padding: 6; }
-.history-list .list-cell { -fx-background-color: transparent; -fx-padding: 8 6; }
+.history-list {
+  -fx-background-color: transparent;
+  -fx-padding: 6;
+}
+
+.history-list .list-cell {
+  -fx-background-color: transparent;
+  -fx-padding: 8 6;
+}
 
 .history-card {
-    -fx-background-color: white;
-    -fx-background-radius: 14;
-    -fx-padding: 14;
-    -fx-border-color: #E6ECEC;
-    -fx-border-radius: 14;
+  -fx-background-color: white;
+  -fx-background-radius: 14;
+  -fx-padding: 14;
+  -fx-border-color: #E6ECEC;
+  -fx-border-radius: 14;
 }
+
 .card-title {
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2F6F6D;
+  -fx-font-size: 16px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #2F6F6D;
 }
-.card-sub { -fx-text-fill: #5D6D6C; }
+
+.card-sub {
+  -fx-text-fill: #5D6D6C;
+}
 
 /* =========================
    FORMS (ExerciseForm / ResourceForm)
    ========================= */
 
 .form-label {
-    -fx-text-fill: #1A232B;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
+  -fx-text-fill: -ser-text;
+  -fx-font-size: 13px;
+  -fx-font-weight: 800;
 }
 
 .modern-input {
-    -fx-background-color: white;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-border-color: rgba(0,0,0,0.12);
-    -fx-border-width: 1;
-    -fx-padding: 10 12;
-    -fx-font-weight: bold;
+  -fx-background-color: white;
+  -fx-background-radius: 12;
+  -fx-border-radius: 12;
+  -fx-border-color: rgba(0, 0, 0, 0.12);
+  -fx-border-width: 1;
+  -fx-padding: 10 12;
+  -fx-font-weight: 700;
 }
+
 .modern-input:focused {
-    -fx-border-color: rgba(47,111,109,0.45);
-    -fx-effect: dropshadow(gaussian, rgba(47,111,109,0.15), 12, 0.25, 0, 0);
+  -fx-border-color: rgba(47, 111, 109, 0.45);
+  -fx-effect: dropshadow(gaussian, rgba(47, 111, 109, 0.15), 12, 0.25, 0, 0);
 }
 
 .modern-combo {
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-border-color: rgba(0,0,0,0.12);
-    -fx-border-width: 1;
-    -fx-font-weight: bold;
+  -fx-background-radius: 12;
+  -fx-border-radius: 12;
+  -fx-border-color: rgba(0, 0, 0, 0.12);
+  -fx-border-width: 1;
+  -fx-font-weight: 700;
 }
 
 .modern-textarea {
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-border-color: rgba(0,0,0,0.12);
-    -fx-border-width: 1;
-    -fx-padding: 10;
+  -fx-background-radius: 12;
+  -fx-border-radius: 12;
+  -fx-border-color: rgba(0, 0, 0, 0.12);
+  -fx-border-width: 1;
+  -fx-padding: 10;
 }
+
 .modern-textarea:focused {
-    -fx-border-color: rgba(47,111,109,0.45);
-    -fx-effect: dropshadow(gaussian, rgba(47,111,109,0.12), 12, 0.25, 0, 0);
+  -fx-border-color: rgba(47, 111, 109, 0.45);
+  -fx-effect: dropshadow(gaussian, rgba(47, 111, 109, 0.12), 12, 0.25, 0, 0);
 }
+
+/* ==========================
+   Breathing Module (WOW)
+   ========================== */
+
+.breath-card {
+  -fx-background-radius: 18;
+  -fx-background-color: rgba(0, 0, 0, 0.04);
+  -fx-padding: 14;
+}
+
+.breath-soft {
+  -fx-background-radius: 18;
+  -fx-background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Accent per state */
+.state-stress {
+  -fx-accent: #3c78f0;
+}
+
+.state-fatigue {
+  -fx-accent: #3cb45a;
+}
+
+.state-ruminations {
+  -fx-accent: #965adc;
+}
+
+.state-normal {
+  -fx-accent: #1e8ca0;
+}
+
+/* Badge background per state (base badge stays global) */
+.badge-stress {
+  -fx-background-color: rgba(60, 120, 240, 0.18);
+}
+
+.badge-fatigue {
+  -fx-background-color: rgba(60, 180, 90, 0.18);
+}
+
+.badge-ruminations {
+  -fx-background-color: rgba(150, 90, 220, 0.18);
+}
+
+.badge-normal {
+  -fx-background-color: rgba(30, 140, 160, 0.18);
+}
+
+/* Chips background per state (base chip stays global) */
+.chip-stress {
+  -fx-background-color: rgba(60, 120, 240, 0.12);
+}
+
+.chip-fatigue {
+  -fx-background-color: rgba(60, 180, 90, 0.12);
+}
+
+.chip-ruminations {
+  -fx-background-color: rgba(150, 90, 220, 0.12);
+}
+
+.chip-normal {
+  -fx-background-color: rgba(30, 140, 160, 0.12);
+}
+
+/* Progress uses -fx-accent from state-* parents */
+.progress-bar .bar {
+  -fx-background-insets: 0;
+  -fx-background-radius: 999;
+}
+
+.progress-bar .track {
+  -fx-background-radius: 999;
+  -fx-background-color: rgba(0, 0, 0, 0.10);
+}
+
+.progress-indicator {
+  -fx-progress-color: -fx-accent;
+}
+
+.badge {
+  -fx-padding: 4 10 4 10;
+  -fx-background-radius: 999;
+  -fx-font-size: 12px;
+  -fx-font-weight: 700;
+}
+
+.badge-green {
+  -fx-background-color: rgba(30, 160, 90, 0.18);
+  -fx-text-fill: #1e9a59;
+}
+
+.badge-orange {
+  -fx-background-color: rgba(255, 165, 0, 0.18);
+  -fx-text-fill: #d97b00;
+}
+
+.badge-red {
+  -fx-background-color: rgba(220, 60, 60, 0.18);
+  -fx-text-fill: #d03b3b;
+}
+
+<?xml version="1.0" encoding="UTF-8" ?><?import javafx.geometry.Insets?><?import javafx.scene.control.*?><?import javafx.scene.image.ImageView?><?import javafx.scene.layout.*?><ScrollPane xmlns="http://javafx.com/javafx/21"
+xmlns:fx="http://javafx.com/fxml/1"
+fx:controller="com.serinity.exercicecontrol.controller.ExerciseListController"
+fitToWidth="true"
+hbarPolicy="NEVER"
+styleClass="transparent-scroll"><content>< !-- ✅ important: empêche le contenu d'imposer une largeur -->
+ <VBox spacing="18"
+styleClass="page-root"
+maxWidth="Infinity"
+fillWidth="true"><padding><Insets top="18" right="18" bottom="18" left="18" /></padding>< !--=================HEADER=================--><HBox alignment="CENTER_LEFT" spacing="10" maxWidth="Infinity"><Label text="Exercices" styleClass="page-title" /><Label fx:id="lblCount" text="(0)" styleClass="muted-text" /><Region HBox.hgrow="ALWAYS" /><Button text="Ajouter" onAction="#onAddExercise" styleClass="primary-btn" /><Button text="Plan du jour" onAction="#onOpenPlan" styleClass="secondary-btn" /><Button text="Coach IA" onAction="#onOpenCoachDashboard" styleClass="secondary-btn" /><Button text="Actualiser" onAction="#onRefresh" styleClass="secondary-btn" /></HBox>< !--=================HERO BANNER=================--><StackPane fx:id="ambianceBox"
+styleClass="hero-banner"
+maxWidth="Infinity"><ImageView fx:id="imgAmbiance"
+preserveRatio="false"
+smooth="true"
+fitHeight="220" /><Region styleClass="hero-overlay" /><VBox spacing="6"
+styleClass="hero-content"
+StackPane.alignment="BOTTOM_LEFT"><Label text="Ambiance actuelle"
+styleClass="hero-subtitle" /><Label fx:id="lblAmbianceText"
+text="—"
+styleClass="hero-title" /></VBox></StackPane>< !--=================PROGRESS=================--><HBox spacing="14"
+styleClass="progress-card"
+maxWidth="Infinity"><Region prefWidth="6" styleClass="progress-accent" /><VBox spacing="14" HBox.hgrow="ALWAYS" maxWidth="Infinity"><HBox alignment="CENTER_LEFT" maxWidth="Infinity"><Label text="Votre progression"
+styleClass="section-title" /><Region HBox.hgrow="ALWAYS" /><Label fx:id="lblScorePill"
+text="—"
+styleClass="pill" /></HBox>< !-- ⚠️ si ta fenêtre devient petite,
+spacing=60 peut faire dépasser. On garde,
+mais si tu veux : passe à 30. --><HBox spacing="60" maxWidth="Infinity"><VBox spacing="4"><Label text="Score" styleClass="muted" /><Label fx:id="lblScore"
+text="—"
+styleClass="value" /></VBox><VBox spacing="4"><Label text="Série" styleClass="muted" /><Label fx:id="lblStreak"
+text="—"
+styleClass="value" /></VBox><VBox spacing="4"><Label text="Complétion" styleClass="muted" /><Label fx:id="lblCompletion"
+text="—"
+styleClass="value" /></VBox><VBox spacing="4"><Label text="Temps actif (7j)" styleClass="muted" /><Label fx:id="lblActive7d"
+text="—"
+styleClass="value" /></VBox></HBox></VBox></HBox>< !--=================RECOMMENDATION=================--><HBox spacing="14"
+styleClass="recommend-card"
+maxWidth="Infinity"><Region prefWidth="6" styleClass="recommend-accent" /><VBox spacing="12" HBox.hgrow="ALWAYS" maxWidth="Infinity"><HBox alignment="CENTER_LEFT" spacing="10" maxWidth="Infinity"><Label text="Recommandé pour vous"
+styleClass="section-title" /><Region HBox.hgrow="ALWAYS" /><Button fx:id="btnBreathing"
+text="Respiration guidée"
+onAction="#onOpenBreathing"
+styleClass="secondary-btn" /><Button fx:id="btnStartRecommended"
+text="Démarrer"
+onAction="#onStartRecommended"
+styleClass="primary-btn" /></HBox><Label fx:id="lblRecTitle"
+text="—"
+styleClass="recommend-title" /><Label fx:id="lblRecMeta"
+text="—"
+styleClass="muted" /><Label fx:id="lblRecReason"
+text="—"
+styleClass="muted" /></VBox></HBox>< !--=================FILTERS=================--><HBox spacing="12"
+alignment="CENTER_LEFT"
+styleClass="card"
+maxWidth="Infinity"><Label text="Type :" styleClass="muted-text" /><ComboBox fx:id="cbType" prefWidth="220" /><Label text="Niveau :" styleClass="muted-text" /><ComboBox fx:id="cbLevel" prefWidth="160" /><Region HBox.hgrow="ALWAYS" /><Button text="Appliquer"
+onAction="#onApplyFilters"
+styleClass="primary-btn" /><Button text="Effacer"
+onAction="#onClearFilters"
+styleClass="secondary-btn" /></HBox>< !--=================CARDS GRID=================-->< !-- ✅ FIX: prefWidth=0+maxWidth=Infinity=>évite le scroll horizontal --><TilePane fx:id="cardsPane"
+hgap="20"
+vgap="20"
+prefTileWidth="320"
+prefWidth="0.0"
+maxWidth="Infinity"
+tileAlignment="TOP_LEFT"><padding><Insets top="10" right="10" bottom="10" left="10" /></padding></TilePane></VBox></content></ScrollPane>
+/* =========================
+   CENTER HOST (Fix layout)
+   ========================= */
+
+.content-host {
+  -fx-alignment: top-center;
+  -fx-padding: 0 0 0 0;
+}
+
+/* Limite la largeur des pages (évite l'étalement) */
+.page-root {
+  -fx-max-width: 1100;
+}
+
+.page-wrapper {
+  -fx-padding: 0 0 0 0;
+}
+
+<?xml version="1.0" encoding="UTF-8" ?><?import javafx.geometry.Insets?><?import javafx.scene.control.*?><?import javafx.scene.image.ImageView?><?import javafx.scene.layout.*?><ScrollPane xmlns="http://javafx.com/javafx/21"
+xmlns:fx="http://javafx.com/fxml/1"
+fx:controller="com.serinity.exercicecontrol.controller.ExerciseListController"
+fitToWidth="true"
+hbarPolicy="NEVER"
+styleClass="transparent-scroll"><content><VBox spacing="16"
+styleClass="page-root"
+maxWidth="Infinity"
+fillWidth="true"><padding><Insets top="16" right="16" bottom="16" left="16" /></padding>< !--=================HEADER=================--><HBox alignment="CENTER_LEFT" spacing="8" maxWidth="Infinity" prefHeight="50"><Label text="Exercices" styleClass="page-title" /><Label fx:id="lblCount" text="(0)" styleClass="muted-text" /><Region HBox.hgrow="ALWAYS" />< !-- Boutons compacts --><HBox spacing="8" alignment="CENTER_RIGHT"><Button text="Ajouter" onAction="#onAddExercise" styleClass="primary-btn" /><Button text="Plan du jour" onAction="#onOpenPlan" styleClass="secondary-btn" /><Button text="Coach IA" onAction="#onOpenCoachDashboard" styleClass="secondary-btn" /><Button text="Actualiser" onAction="#onRefresh" styleClass="secondary-btn" /></HBox></HBox>< !--=================HERO BANNER=================--><StackPane fx:id="ambianceBox"
+styleClass="hero-banner"
+maxWidth="Infinity"
+prefHeight="200"><ImageView fx:id="imgAmbiance"
+preserveRatio="false"
+smooth="true"
+fitHeight="200"
+fitWidth="Infinity" /><Region styleClass="hero-overlay" /><VBox spacing="6"
+styleClass="hero-content"
+StackPane.alignment="BOTTOM_LEFT"><Label text="Ambiance actuelle"
+styleClass="hero-subtitle" /><Label fx:id="lblAmbianceText"
+text="—"
+styleClass="hero-title"
+wrapText="true" /></VBox></StackPane>< !--=================PROGRESS=================--><HBox spacing="14"
+styleClass="progress-card"
+maxWidth="Infinity"><Region prefWidth="6" styleClass="progress-accent" /><VBox spacing="12" HBox.hgrow="ALWAYS" maxWidth="Infinity"><HBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="8"><Label text="Votre progression"
+styleClass="section-title" /><Region HBox.hgrow="ALWAYS" /><Label fx:id="lblScorePill"
+text="—"
+styleClass="pill" /></HBox>< !-- Metrics: FlowPane pour responsive (pas de scroll H) --><FlowPane hgap="30" vgap="12" maxWidth="Infinity" prefWidth="Infinity"><VBox spacing="4"><Label text="Score" styleClass="muted" /><Label fx:id="lblScore"
+text="—"
+styleClass="value" /></VBox><VBox spacing="4"><Label text="Série" styleClass="muted" /><Label fx:id="lblStreak"
+text="—"
+styleClass="value" /></VBox><VBox spacing="4"><Label text="Complétion" styleClass="muted" /><Label fx:id="lblCompletion"
+text="—"
+styleClass="value" /></VBox><VBox spacing="4"><Label text="Temps actif (7j)" styleClass="muted" /><Label fx:id="lblActive7d"
+text="—"
+styleClass="value" /></VBox></FlowPane></VBox></HBox>< !--=================RECOMMENDATION=================--><HBox spacing="14"
+styleClass="recommend-card"
+maxWidth="Infinity"><Region prefWidth="6" styleClass="recommend-accent" /><VBox spacing="12" HBox.hgrow="ALWAYS" maxWidth="Infinity"><HBox alignment="CENTER_LEFT" spacing="8" maxWidth="Infinity"><Label text="Recommandé pour vous"
+styleClass="section-title" /><Region HBox.hgrow="ALWAYS" />< !-- Boutons compacts --><HBox spacing="8" alignment="CENTER_RIGHT"><Button fx:id="btnBreathing"
+text="Respiration guidée"
+onAction="#onOpenBreathing"
+styleClass="secondary-btn" /><Button fx:id="btnStartRecommended"
+text="Démarrer"
+onAction="#onStartRecommended"
+styleClass="primary-btn" /></HBox></HBox><Label fx:id="lblRecTitle"
+text="—"
+styleClass="recommend-title"
+wrapText="true" /><Label fx:id="lblRecMeta"
+text="—"
+styleClass="muted"
+wrapText="true" /><Label fx:id="lblRecReason"
+text="—"
+styleClass="muted"
+wrapText="true" /></VBox></HBox>< !--=================FILTERS=================--><VBox spacing="10"
+styleClass="card"
+maxWidth="Infinity"><Label text="Filtres" styleClass="section-title" /><FlowPane hgap="12" vgap="10" maxWidth="Infinity" prefWidth="Infinity"><HBox spacing="8" alignment="CENTER_LEFT"><Label text="Type :" styleClass="muted-text" /><ComboBox fx:id="cbType" prefWidth="180" /></HBox><HBox spacing="8" alignment="CENTER_LEFT"><Label text="Niveau :" styleClass="muted-text" /><ComboBox fx:id="cbLevel" prefWidth="140" /></HBox><Region HBox.hgrow="ALWAYS" /><HBox spacing="8" alignment="CENTER_RIGHT"><Button text="Appliquer"
+onAction="#onApplyFilters"
+styleClass="primary-btn" /><Button text="Effacer"
+onAction="#onClearFilters"
+styleClass="secondary-btn" /></HBox></FlowPane></VBox>< !--=================CARDS GRID=================--><TilePane fx:id="cardsPane"
+hgap="16"
+vgap="16"
+prefTileWidth="300"
+prefWidth="0.0"
+maxWidth="Infinity"
+tileAlignment="TOP_LEFT"><padding><Insets top="8" right="8" bottom="8" left="8" /></padding></TilePane></VBox></content></ScrollPane>

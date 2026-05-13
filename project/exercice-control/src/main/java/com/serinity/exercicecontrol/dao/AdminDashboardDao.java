@@ -1,7 +1,5 @@
 package com.serinity.exercicecontrol.dao;
 
-import com.serinity.exercicecontrol.config.DbConnection;
-
 import com.serinity.exercicecontrol.dao.ExerciseSessionDao.SessionSummary;
 
 import java.sql.*;
@@ -9,21 +7,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-  /** Class documentation. */
 public class AdminDashboardDao {
 
     private final Connection cnx;
 
-  /** Documents AdminDashboardDao. */
     public AdminDashboardDao() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
-        }
+        this.cnx = DbConnection.getInstance().getConnection();
     }
 
-  /** Documents findRecentSessionsFiltered. */
     public List<SessionSummary> findRecentSessionsFiltered(
             int userId,
             int days,
@@ -35,17 +26,17 @@ public class AdminDashboardDao {
 
         String sql = """
             SELECT
-              id, user_id, exercise_id, status, started_at, completed_at,
+              id, user_id, exercice_id, status, started_at, completed_at,
               CASE
                 WHEN started_at IS NOT NULL AND completed_at IS NOT NULL
                 THEN TIMESTAMPDIFF(SECOND, started_at, completed_at)
                 ELSE 0
               END AS active_seconds_calc,
               feedback
-            FROM exercise_session
+            FROM exercice_control
             WHERE user_id = ?
               AND ( started_at IS NULL OR started_at >= (NOW() - INTERVAL ? DAY) )
-              AND ( ? IS NULL OR exercise_id = ? )
+              AND ( ? IS NULL OR exercice_id = ? )
               AND ( ? IS NULL OR UPPER(status) = UPPER(?) )
               AND ( ? IS NULL OR feedback LIKE ? )
             ORDER BY COALESCE(started_at, completed_at) DESC
@@ -92,7 +83,7 @@ public class AdminDashboardDao {
                     out.add(new SessionSummary(
                             rs.getInt("id"),
                             rs.getInt("user_id"),
-                            rs.getInt("exercise_id"),
+                            rs.getInt("exercice_id"),
                             rs.getString("status"),
                             toLdt(rs.getTimestamp("started_at")),
                             toLdt(rs.getTimestamp("completed_at")),
@@ -105,9 +96,8 @@ public class AdminDashboardDao {
         return out;
     }
 
-  /** Documents deleteSession. */
     public void deleteSession(int sessionId) throws SQLException {
-        String sql = "DELETE FROM exercise_session WHERE id=?";
+        String sql = "DELETE FROM exercice_control WHERE id=?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, sessionId);
             ps.executeUpdate();

@@ -11,6 +11,8 @@ import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExerciseFormController {
 
@@ -20,17 +22,21 @@ public class ExerciseFormController {
     @FXML private ComboBox<String> cbType;
     @FXML private ComboBox<Integer> cbLevel;
 
-    // IMPORTANT: must match ExerciseForm.fxml fx:id="txtDuration"
     @FXML private TextField txtDuration;
 
     @FXML private TextArea txtDescription;
+    @FXML private TextArea txtBenefits;
+    @FXML private TextArea txtTips;
+    @FXML private TextField txtTheme;
+    @FXML private TextArea txtGuidedInstructions;
+    @FXML private CheckBox chkIsActive;
 
     @FXML private Button btnSave;
 
     private final ExerciseService exerciseService = new ExerciseService();
 
-    private Exercise editing;          // null => create
-    private Runnable onDoneRefresh;    // callback after save (ex: refresh list)
+    private Exercise editing;
+    private Runnable onDoneRefresh;
 
     @FXML
     public void initialize() {
@@ -42,11 +48,6 @@ public class ExerciseFormController {
         cbLevel.setValue(1);
     }
 
-    // =============================
-    // MODES
-    // =============================
-
-    /** Mode création + retour liste */
     public void setModeCreateReturnToList(Runnable onDoneRefresh) {
         this.editing = null;
         this.onDoneRefresh = onDoneRefresh;
@@ -56,7 +57,6 @@ public class ExerciseFormController {
         clearFields();
     }
 
-    /** Mode édition + retour liste */
     public void setModeEditReturnToList(Exercise ex, Runnable onDoneRefresh) {
         this.editing = ex;
         this.onDoneRefresh = onDoneRefresh;
@@ -70,12 +70,13 @@ public class ExerciseFormController {
             cbLevel.setValue(ex.getLevel());
             txtDuration.setText(String.valueOf(ex.getDurationMinutes()));
             txtDescription.setText(nullToEmpty(ex.getDescription()));
+            txtBenefits.setText(nullToEmpty(ex.getBenefits()));
+            txtTips.setText(nullToEmpty(ex.getTips()));
+            txtTheme.setText(nullToEmpty(ex.getTheme()));
+            txtGuidedInstructions.setText(guidedInstructionsToTextarea(ex.getGuidedInstructions()));
+            chkIsActive.setSelected(ex.isActive());
         }
     }
-
-    // =============================
-    // ACTIONS
-    // =============================
 
     @FXML
     private void onSave() {
@@ -94,6 +95,11 @@ public class ExerciseFormController {
             ex.setDurationMinutes(dur);
 
             ex.setDescription(txtDescription.getText());
+            ex.setBenefits(txtBenefits.getText());
+            ex.setTips(txtTips.getText());
+            ex.setTheme(txtTheme.getText());
+            ex.setGuidedInstructions(serializeGuidedInstructions(txtGuidedInstructions.getText()));
+            ex.setIsActive(chkIsActive.isSelected());
 
             if (editing == null) {
                 exerciseService.addExercise(ex);
@@ -103,7 +109,9 @@ public class ExerciseFormController {
                 showInfo("Mise à jour", "Exercice modifié avec succès.");
             }
 
-            if (onDoneRefresh != null) onDoneRefresh.run();
+            if (onDoneRefresh != null) {
+                onDoneRefresh.run();
+            }
             goBackToList();
 
         } catch (NumberFormatException e) {
@@ -115,23 +123,19 @@ public class ExerciseFormController {
         }
     }
 
-
     @FXML
     private void onBack() {
         goBackToList();
     }
 
-    // (kept in case something calls it)
     @FXML
     private void onCancel() {
         goBackToList();
     }
 
-
-
     private void goBackToList() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseList.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseList.fxml"));
             Parent root = loader.load();
             setContent(root);
         } catch (IOException e) {
@@ -141,14 +145,15 @@ public class ExerciseFormController {
     }
 
     private void setContent(Parent page) {
-        StackPane host = (StackPane) btnSave.getScene().lookup("#contentHost"); if (host == null) host = (StackPane) btnSave.getScene().lookup("#contentHostStackPane");
+        StackPane host = (StackPane) btnSave.getScene().lookup("#contentHost");
         if (host == null) {
-            throw new IllegalStateException("contentHost introuvable. Vérifie fx:id=\"contentHost\" dans Template.fxml");
+            host = (StackPane) btnSave.getScene().lookup("#contentHostStackPane");
+        }
+        if (host == null) {
+            throw new IllegalStateException("contentHost/contentHostStackPane introuvable. Vérifie le shell FXML.");
         }
         host.getChildren().setAll(page);
     }
-
-
 
     private void clearFields() {
         txtTitle.clear();
@@ -156,10 +161,221 @@ public class ExerciseFormController {
         cbLevel.setValue(1);
         txtDuration.clear();
         txtDescription.clear();
+        txtBenefits.clear();
+        txtTips.clear();
+        txtTheme.clear();
+        txtGuidedInstructions.clear();
+        chkIsActive.setSelected(true);
     }
 
     private String nullToEmpty(String s) {
         return s == null ? "" : s;
+    }
+
+    private String serializeGuidedInstructions(String rawText) {
+        if (rawText == null || rawText.isBlank()) {
+            return null;
+        }
+
+        String[] lines = rawText.split("\\R");
+        StringBuilder steps = new StringBuilder("[");
+        int stepIndex = 1;
+        boolean hasSteps = false;
+
+        for (String line : lines) {
+            String trimmed = line == null ? "" : line.trim();
+            if (trimmed.isEmpty()) {
+                continue;
+            }
+
+            if (hasSteps) {
+                steps.append(',');
+            }
+
+            steps.append("{\"title\":\"")
+                    .append(escapeJson("Étape " + stepIndex++))
+                    .append("\",\"description\":\"")
+                    .append(escapeJson(trimmed))
+                    .append("\"}");
+            hasSteps = true;
+        }
+
+        if (!hasSteps) {
+            return null;
+        }
+
+        steps.append(']');
+        return steps.toString();
+    }
+
+    private String guidedInstructionsToTextarea(String storedValue) {
+        if (storedValue == null || storedValue.isBlank()) {
+            return "";
+        }
+
+        List<String> lines = extractDescriptions(storedValue);
+        if (lines.isEmpty()) {
+            return "";
+        }
+
+        return String.join(System.lineSeparator(), lines);
+    }
+
+    private List<String> extractDescriptions(String json) {
+        List<String> lines = new ArrayList<>();
+        int searchFrom = 0;
+
+        while (searchFrom < json.length()) {
+            int keyIndex = json.indexOf("\"description\"", searchFrom);
+            if (keyIndex < 0) {
+                break;
+            }
+
+            int colonIndex = json.indexOf(':', keyIndex + "\"description\"".length());
+            if (colonIndex < 0) {
+                break;
+            }
+
+            int valueStart = skipWhitespace(json, colonIndex + 1);
+            if (valueStart >= json.length() || json.charAt(valueStart) != '"') {
+                searchFrom = colonIndex + 1;
+                continue;
+            }
+
+            ParsedJsonString parsed = readJsonString(json, valueStart);
+            if (parsed == null) {
+                return new ArrayList<>();
+            }
+
+            String description = parsed.value().trim();
+            if (!description.isEmpty()) {
+                lines.add(description);
+            }
+            searchFrom = parsed.nextIndex();
+        }
+
+        return lines;
+    }
+
+    private int skipWhitespace(String text, int index) {
+        int cursor = index;
+        while (cursor < text.length() && Character.isWhitespace(text.charAt(cursor))) {
+            cursor++;
+        }
+        return cursor;
+    }
+
+    private ParsedJsonString readJsonString(String text, int openingQuoteIndex) {
+        if (openingQuoteIndex >= text.length() || text.charAt(openingQuoteIndex) != '"') {
+            return null;
+        }
+
+        StringBuilder value = new StringBuilder();
+        int cursor = openingQuoteIndex + 1;
+
+        while (cursor < text.length()) {
+            char current = text.charAt(cursor);
+            if (current == '"') {
+                return new ParsedJsonString(value.toString(), cursor + 1);
+            }
+
+            if (current == '\\') {
+                if (cursor + 1 >= text.length()) {
+                    return null;
+                }
+
+                char escaped = text.charAt(cursor + 1);
+                switch (escaped) {
+                    case '"':
+                    case '\\':
+                    case '/':
+                        value.append(escaped);
+                        cursor += 2;
+                        break;
+                    case 'b':
+                        value.append('\b');
+                        cursor += 2;
+                        break;
+                    case 'f':
+                        value.append('\f');
+                        cursor += 2;
+                        break;
+                    case 'n':
+                        value.append('\n');
+                        cursor += 2;
+                        break;
+                    case 'r':
+                        value.append('\r');
+                        cursor += 2;
+                        break;
+                    case 't':
+                        value.append('\t');
+                        cursor += 2;
+                        break;
+                    case 'u':
+                        if (cursor + 5 >= text.length()) {
+                            return null;
+                        }
+                        String hex = text.substring(cursor + 2, cursor + 6);
+                        try {
+                            value.append((char) Integer.parseInt(hex, 16));
+                        } catch (NumberFormatException e) {
+                            return null;
+                        }
+                        cursor += 6;
+                        break;
+                    default:
+                        return null;
+                }
+                continue;
+            }
+
+            value.append(current);
+            cursor++;
+        }
+
+        return null;
+    }
+
+    private String escapeJson(String value) {
+        StringBuilder escaped = new StringBuilder(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            char current = value.charAt(i);
+            switch (current) {
+                case '"':
+                    escaped.append("\\\"");
+                    break;
+                case '\\':
+                    escaped.append("\\\\");
+                    break;
+                case '\b':
+                    escaped.append("\\b");
+                    break;
+                case '\f':
+                    escaped.append("\\f");
+                    break;
+                case '\n':
+                    escaped.append("\\n");
+                    break;
+                case '\r':
+                    escaped.append("\\r");
+                    break;
+                case '\t':
+                    escaped.append("\\t");
+                    break;
+                default:
+                    if (current < 0x20) {
+                        escaped.append(String.format("\\u%04x", (int) current));
+                    } else {
+                        escaped.append(current);
+                    }
+                    break;
+            }
+        }
+        return escaped.toString();
+    }
+
+    private record ParsedJsonString(String value, int nextIndex) {
     }
 
     private void showError(String title, String msg) {

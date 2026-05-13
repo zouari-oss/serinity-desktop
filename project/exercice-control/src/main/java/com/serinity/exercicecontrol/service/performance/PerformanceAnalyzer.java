@@ -20,7 +20,7 @@ public class PerformanceAnalyzer {
         List<Row> rows = sessions.stream()
                 .filter(s -> s.userId() == userId)
                 .map(this::toRow)
-                .sorted(Comparator.<Row, java.time.LocalDate>comparing(Row::day))
+                .sorted(Comparator.comparing(Row::day)) // ✅ record accessor
                 .toList();
 
         int total = rows.size();

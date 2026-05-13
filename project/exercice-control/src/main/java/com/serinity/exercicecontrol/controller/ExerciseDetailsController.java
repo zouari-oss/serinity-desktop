@@ -5,7 +5,7 @@ import com.serinity.exercicecontrol.model.Exercise;
 import com.serinity.exercicecontrol.model.Resource;
 import com.serinity.exercicecontrol.service.ExerciseService;
 import com.serinity.exercicecontrol.service.ResourceService;
-import com.serinity.exercicecontrol.service.SessionService;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,6 +16,7 @@ import javafx.scene.layout.TilePane;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class ExerciseDetailsController {
 
@@ -29,6 +30,9 @@ public class ExerciseDetailsController {
     // -------- Resources UI ----------
     @FXML private Label lblResourcesInfo;
     @FXML private TilePane resourcesPane;
+
+    // (optionnel) si tu as un bouton "Démarrer l’exercice" dans le fxml
+    @FXML private Button btnStartExercise;
 
     private final ResourceService resourceService = new ResourceService();
     private final ExerciseService exerciseService = new ExerciseService();
@@ -63,9 +67,7 @@ public class ExerciseDetailsController {
 
         try {
             List<Resource> list = resourceService.getResourcesByExerciseId(exercise.getId());
-            if (lblResourcesInfo != null) {
-                lblResourcesInfo.setText("(" + list.size() + ")");
-            }
+            if (lblResourcesInfo != null) lblResourcesInfo.setText("(" + list.size() + ")");
             renderResources(list);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,7 +86,7 @@ public class ExerciseDetailsController {
 
     private Parent loadResourceCard(Resource r) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ResourceCard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ResourceCard.fxml"));
             Parent root = loader.load();
 
             ResourceCardController ctrl = loader.getController();
@@ -101,7 +103,7 @@ public class ExerciseDetailsController {
         if (exercise == null) return;
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ResourceForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ResourceForm.fxml"));
             Parent root = loader.load();
 
             ResourceFormController ctrl = loader.getController();
@@ -118,7 +120,7 @@ public class ExerciseDetailsController {
         if (exercise == null || r == null) return;
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ResourceForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ResourceForm.fxml"));
             Parent root = loader.load();
 
             ResourceFormController ctrl = loader.getController();
@@ -157,10 +159,11 @@ public class ExerciseDetailsController {
         if (exercise == null) return;
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseForm.fxml"));
             Parent root = loader.load();
 
             ExerciseFormController ctrl = loader.getController();
+            // si tu veux revenir à la liste après save, garde ton mode existant
             ctrl.setModeEditReturnToList(exercise, null);
 
             setContent(root);
@@ -190,32 +193,49 @@ public class ExerciseDetailsController {
         }
     }
 
-    // ✅ Start session (accessible à tous)
+    // ===================== START SESSION (✅ corrigé: async, pas de freeze) =====================
+
     @FXML
     private void onStart() {
         if (exercise == null) return;
 
-        try {
-            int userId = 1; // TODO: remplacer par l'utilisateur connecté
+        int userId = 1; // TODO: user connecté
 
-            SessionDAO dao = new SessionDAO();
-            SessionService service = new SessionService(dao);
+        if (btnStartExercise != null) btnStartExercise.setDisable(true);
 
-            int sessionId = dao.createCreatedSession(userId, exercise.getId());
-            service.start(sessionId);
+        CompletableFuture
+                .supplyAsync(() -> {
+                    try {
+                        SessionDAO dao = new SessionDAO();
+                        // crée la session en CREATED
+                        return dao.createCreatedSession(userId, exercise.getId());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .thenAccept(sessionId -> Platform.runLater(() -> {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/SessionRun.fxml"));
+                        Parent root = loader.load();
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SessionRun.fxml"));
-            Parent root = loader.load();
+                        SessionRunController ctrl = loader.getController();
+                        ctrl.init(sessionId, exercise);
 
-            SessionRunController ctrl = loader.getController();
-            ctrl.init(sessionId, exercise);
+                        setContent(root);
 
-            setContent(root);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Erreur", "Impossible de démarrer la session.\n" + e.getMessage());
-        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showError("Erreur", "Impossible d'ouvrir la session.\n" + e.getMessage());
+                        if (btnStartExercise != null) btnStartExercise.setDisable(false);
+                    }
+                }))
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> {
+                        showError("Erreur", "Impossible de démarrer la session.\n" + rootMsg(ex));
+                        if (btnStartExercise != null) btnStartExercise.setDisable(false);
+                    });
+                    return null;
+                });
     }
 
     @FXML
@@ -223,7 +243,7 @@ public class ExerciseDetailsController {
         if (exercise == null) return;
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SessionHistory.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/SessionHistory.fxml"));
             Parent root = loader.load();
 
             SessionHistoryController ctrl = loader.getController();
@@ -239,7 +259,7 @@ public class ExerciseDetailsController {
     @FXML
     private void onBack() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseList.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseList.fxml"));
             Parent root = loader.load();
             setContent(root);
         } catch (IOException e) {
@@ -251,12 +271,17 @@ public class ExerciseDetailsController {
     // ===================== TEMPLATE HOST =====================
 
     private void setContent(Parent page) {
-        StackPane host = (StackPane) lblTitle.getScene().lookup("#contentHost"); if (host == null) host = (StackPane) lblTitle.getScene().lookup("#contentHostStackPane");
+        StackPane host = (StackPane) lblTitle.getScene().lookup("#contentHost");
         if (host == null) {
-            throw new IllegalStateException("contentHost introuvable. Vérifie fx:id=\"contentHost\" dans Template.fxml");
+            host = (StackPane) lblTitle.getScene().lookup("#contentHostStackPane");
+        }
+        if (host == null) {
+            throw new IllegalStateException("contentHost/contentHostStackPane introuvable. Vérifie le shell FXML.");
         }
         host.getChildren().setAll(page);
     }
+
+    // ===================== Helpers =====================
 
     private String nvl(String s, String def) {
         return (s == null || s.isBlank()) ? def : s;
@@ -270,12 +295,9 @@ public class ExerciseDetailsController {
         a.showAndWait();
     }
 
-    @SuppressWarnings("unused")
-    private void showInfo(String title, String msg) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.setTitle(title);
-        a.setHeaderText(null);
-        a.setContentText(msg);
-        a.showAndWait();
+    private static String rootMsg(Throwable t) {
+        Throwable x = t;
+        while (x.getCause() != null) x = x.getCause();
+        return x.getMessage() == null ? x.toString() : x.getMessage();
     }
 }

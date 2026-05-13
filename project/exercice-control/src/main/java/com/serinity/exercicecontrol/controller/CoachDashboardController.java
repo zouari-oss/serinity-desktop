@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-  /** Class documentation. */
 public class CoachDashboardController {
 
     @FXML private ComboBox<Exercise> cbExercise;
@@ -59,7 +58,6 @@ public class CoachDashboardController {
 
     private record CoachResult(PerformanceReport report, CoachAnswer answer) {}
 
-  /** Documents initialize. */
     @FXML
     public void initialize() {
         daysSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(7, 90, 28));
@@ -87,7 +85,6 @@ public class CoachDashboardController {
         });
     }
 
-  /** Documents setHost. */
     public void setHost(StackPane contentHost) {
         this.contentHost = contentHost;
     }
@@ -191,7 +188,7 @@ public class CoachDashboardController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseList.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseList.fxml"));
             Parent backRoot = loader.load();
             contentHost.getChildren().setAll(backRoot);
         } catch (Exception e) {

@@ -24,9 +24,9 @@ public class ResourceFormController {
 
     private final ResourceService resourceService = new ResourceService();
 
-    private Exercise returnExercise;       // pour revenir à Details
-    private Resource editing;              // null => create, sinon edit
-    private Runnable onDoneRefresh;        // callback après save
+    private Exercise returnExercise;
+    private Resource editing;
+    private Runnable onDoneRefresh;
 
     @FXML
     public void initialize() {
@@ -120,7 +120,7 @@ public class ResourceFormController {
             if (returnExercise == null) return;
 
             javafx.fxml.FXMLLoader loader =
-                    new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/ExerciseDetails.fxml"));
+                    new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseDetails.fxml"));
             Parent page = loader.load();
 
             ExerciseDetailsController ctrl = loader.getController();
@@ -134,9 +134,12 @@ public class ResourceFormController {
     }
 
     private void setContent(Parent page) {
-        StackPane host = (StackPane) btnSave.getScene().lookup("#contentHost"); if (host == null) host = (StackPane) btnSave.getScene().lookup("#contentHostStackPane");
+        StackPane host = (StackPane) btnSave.getScene().lookup("#contentHost");
         if (host == null) {
-            throw new IllegalStateException("contentHost introuvable. Vérifie fx:id=\"contentHost\" dans Template.fxml");
+            host = (StackPane) btnSave.getScene().lookup("#contentHostStackPane");
+        }
+        if (host == null) {
+            throw new IllegalStateException("contentHost/contentHostStackPane introuvable. Vérifie le shell FXML.");
         }
         host.getChildren().setAll(page);
     }

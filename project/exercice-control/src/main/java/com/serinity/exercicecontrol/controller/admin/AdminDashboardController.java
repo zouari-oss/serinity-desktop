@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-  /** Class documentation. */
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class AdminDashboardController {
 
@@ -77,10 +76,9 @@ public class AdminDashboardController {
 
     private Runnable onBack;
 
-    // TODO: remplacer par user connecté quand tu ajouteras users
+
     private int userId = 1;
 
-  /** Documents initialize. */
     @FXML
     public void initialize() {
         // Spinner days
@@ -119,7 +117,6 @@ public class AdminDashboardController {
         }
     }
 
-  /** Documents setOnBack. */
     public void setOnBack(Runnable onBack) {
         this.onBack = onBack;
     }
@@ -141,11 +138,14 @@ public class AdminDashboardController {
 
         // 2) fallback garanti : on recharge ExerciseList dans le contentHost du Template.fxml
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseList.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseList.fxml"));
             Parent page = loader.load();
 
-            StackPane host = (StackPane) lblStatus.getScene().lookup("#contentHost"); if (host == null) host = (StackPane) lblStatus.getScene().lookup("#contentHostStackPane");
-            if (host == null) throw new IllegalStateException("contentHost introuvable (Template.fxml)");
+            StackPane host = (StackPane) lblStatus.getScene().lookup("#contentHost");
+            if (host == null) {
+                host = (StackPane) lblStatus.getScene().lookup("#contentHostStackPane");
+            }
+            if (host == null) throw new IllegalStateException("contentHost/contentHostStackPane introuvable.");
 
             host.getChildren().setAll(page);
 
@@ -157,7 +157,6 @@ public class AdminDashboardController {
     // =============================
     // REFRESH ALL
     // =============================
-  /** Documents onRefreshAll. */
     @FXML
     public void onRefreshAll() {
         if (lblStatus != null) lblStatus.setText("Chargement…");
@@ -193,6 +192,7 @@ public class AdminDashboardController {
         colExType.setCellValueFactory(new PropertyValueFactory<>("type"));
         colExLevel.setCellValueFactory(new PropertyValueFactory<>("level"));
         colExDuration.setCellValueFactory(new PropertyValueFactory<>("durationMinutes"));
+        colExId.setVisible(false);
 
         tvExercises.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
@@ -200,7 +200,7 @@ public class AdminDashboardController {
     @FXML
     private void onAddExercise() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseForm.fxml"));
             Parent root = loader.load();
 
             ExerciseFormController form = loader.getController();
@@ -225,7 +225,7 @@ public class AdminDashboardController {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseForm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseForm.fxml"));
             Parent root = loader.load();
 
             ExerciseFormController form = loader.getController();
@@ -307,6 +307,7 @@ public class AdminDashboardController {
         colSeId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colSeExercise.setCellValueFactory(new PropertyValueFactory<>("exerciseId"));
         colSeStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        colSeId.setVisible(false);
 
         colSeStart.setCellValueFactory(cd -> new SimpleStringProperty(
                 cd.getValue().startedAt() == null ? "—" : cd.getValue().startedAt().toString()
@@ -505,7 +506,7 @@ public class AdminDashboardController {
         Map<LocalDate, Long> perDayAll = sessions.stream()
                 .map(s -> {
                     var dt = (s.startedAt() != null) ? s.startedAt() : s.completedAt();
-                    return (LocalDate)(dt == null ? LocalDate.now() : dt.toLocalDate());
+                    return dt == null ? LocalDate.now() : dt.toLocalDate();
                 })
                 .collect(Collectors.groupingBy(d -> d, Collectors.counting()));
 
@@ -513,7 +514,7 @@ public class AdminDashboardController {
                 .filter(s -> "COMPLETED".equalsIgnoreCase(s.status()))
                 .map(s -> {
                     var dt = (s.completedAt() != null) ? s.completedAt() : s.startedAt();
-                    return (LocalDate)(dt == null ? LocalDate.now() : dt.toLocalDate());
+                    return dt == null ? LocalDate.now() : dt.toLocalDate();
                 })
                 .collect(Collectors.groupingBy(d -> d, Collectors.counting()));
 

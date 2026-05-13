@@ -1,10 +1,9 @@
 package com.serinity.exercicecontrol.dao;
 
-import com.serinity.exercicecontrol.config.DbConnection;
-
 import com.serinity.exercicecontrol.model.ExerciseSession;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,23 +12,24 @@ public class ExerciseSessionDao {
     private final Connection cnx;
 
     public ExerciseSessionDao() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
-        }
+        this.cnx = DbConnection.getInstance().getConnection();
     }
 
+
+
     public int insert(ExerciseSession s) throws SQLException {
-        String sql = "INSERT INTO exercise_session (user_id, exercise_id, status, started_at, completed_at, feedback) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO exercice_control (user_id, exercice_id, status, started_at, completed_at, feedback, created_at, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, s.getUserId());
+            Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+            ps.setString(1, resolveExistingUserId(s.getUserId()));
             ps.setInt(2, s.getExerciseId());
             ps.setString(3, s.getStatus());
             ps.setTimestamp(4, s.getStartedAt() != null ? Timestamp.valueOf(s.getStartedAt()) : null);
             ps.setTimestamp(5, s.getCompletedAt() != null ? Timestamp.valueOf(s.getCompletedAt()) : null);
             ps.setString(6, s.getFeedback());
+            ps.setTimestamp(7, now);
+            ps.setTimestamp(8, now);
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -40,10 +40,10 @@ public class ExerciseSessionDao {
     }
 
     public void update(ExerciseSession s) throws SQLException {
-        String sql = "UPDATE exercise_session SET user_id=?, exercise_id=?, status=?, started_at=?, completed_at=?, feedback=? " +
+        String sql = "UPDATE exercice_control SET user_id=?, exercice_id=?, status=?, started_at=?, completed_at=?, feedback=? " +
                 "WHERE id=?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setInt(1, s.getUserId());
+            ps.setString(1, resolveExistingUserId(s.getUserId()));
             ps.setInt(2, s.getExerciseId());
             ps.setString(3, s.getStatus());
             ps.setTimestamp(4, s.getStartedAt() != null ? Timestamp.valueOf(s.getStartedAt()) : null);
@@ -55,7 +55,7 @@ public class ExerciseSessionDao {
     }
 
     public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM exercise_session WHERE id=?";
+        String sql = "DELETE FROM exercice_control WHERE id=?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
@@ -63,7 +63,7 @@ public class ExerciseSessionDao {
     }
 
     public ExerciseSession findById(int id) throws SQLException {
-        String sql = "SELECT * FROM exercise_session WHERE id=?";
+        String sql = "SELECT * FROM exercice_control WHERE id=?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -73,8 +73,9 @@ public class ExerciseSessionDao {
         return null;
     }
 
+
     public List<ExerciseSession> findByUserId(int userId) throws SQLException {
-        String sql = "SELECT * FROM exercise_session WHERE user_id=? ORDER BY started_at DESC";
+        String sql = "SELECT * FROM exercice_control WHERE user_id=? ORDER BY started_at DESC";
         List<ExerciseSession> list = new ArrayList<>();
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, userId);
@@ -86,7 +87,7 @@ public class ExerciseSessionDao {
     }
 
     public List<ExerciseSession> findByUserAndExercise(int userId, int exerciseId) throws SQLException {
-        String sql = "SELECT * FROM exercise_session WHERE user_id=? AND exercise_id=? ORDER BY started_at DESC";
+        String sql = "SELECT * FROM exercice_control WHERE user_id=? AND exercice_id=? ORDER BY started_at DESC";
         List<ExerciseSession> list = new ArrayList<>();
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, userId);
@@ -101,13 +102,12 @@ public class ExerciseSessionDao {
     private ExerciseSession mapRow(ResultSet rs) throws SQLException {
         ExerciseSession s = new ExerciseSession();
         s.setId(rs.getInt("id"));
-        s.setUserId(rs.getInt("user_id"));
-        s.setExerciseId(rs.getInt("exercise_id"));
+        s.setUserId(parseLegacyUserId(rs.getString("user_id")));
+        s.setExerciseId(rs.getInt("exercice_id"));
         s.setStatus(rs.getString("status"));
 
         Timestamp started = rs.getTimestamp("started_at");
         Timestamp completed = rs.getTimestamp("completed_at");
-
         s.setStartedAt(started != null ? started.toLocalDateTime() : null);
         s.setCompletedAt(completed != null ? completed.toLocalDateTime() : null);
 
@@ -115,52 +115,278 @@ public class ExerciseSessionDao {
         return s;
     }
 
-    public List<SessionSummary> findRecent(int userId, Integer exerciseId, int days, int limit) throws SQLException {
-        StringBuilder sql = new StringBuilder(
-            "SELECT id, user_id, exercise_id, status, started_at, completed_at, " +
-            "TIMESTAMPDIFF(SECOND, started_at, COALESCE(completed_at, NOW())) AS active_seconds, " +
-            "feedback FROM exercise_session WHERE user_id=?");
-        if (exerciseId != null) sql.append(" AND exercise_id=?");
-        if (days > 0) sql.append(" AND started_at >= DATE_SUB(NOW(), INTERVAL ? DAY)");
-        sql.append(" ORDER BY started_at DESC");
-        if (limit > 0) sql.append(" LIMIT ?");
+    private String resolveExistingUserId(int requestedUserId) throws SQLException {
+        String requested = String.valueOf(requestedUserId);
 
-        List<SessionSummary> list = new ArrayList<>();
-        try (PreparedStatement ps = cnx.prepareStatement(sql.toString())) {
-            int idx = 1;
-            ps.setInt(idx++, userId);
-            if (exerciseId != null) ps.setInt(idx++, exerciseId);
-            if (days > 0) ps.setInt(idx++, days);
-            if (limit > 0) ps.setInt(idx++, limit);
+        String exactSql = "SELECT id FROM users WHERE id = ? LIMIT 1";
+        try (PreparedStatement ps = cnx.prepareStatement(exactSql)) {
+            ps.setString(1, requested);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getString("id");
+            }
+        }
+
+        String fallbackSql = "SELECT id FROM users ORDER BY created_at ASC LIMIT 1";
+        try (PreparedStatement ps = cnx.prepareStatement(fallbackSql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getString("id");
+        }
+
+        throw new SQLException("No existing Symfony user found in users table for session start.");
+    }
+
+    private static int parseLegacyUserId(String rawUserId) {
+        if (rawUserId == null || rawUserId.isBlank()) return 0;
+        try {
+            return Integer.parseInt(rawUserId);
+        } catch (NumberFormatException ignored) {
+            return 0;
+        }
+    }
+
+
+
+
+    public record SessionSummary(
+            int id,
+            int userId,
+            int exerciseId,
+            String status,
+            LocalDateTime startedAt,
+            LocalDateTime completedAt,
+            int activeSeconds,
+            String feedback
+    ) {}
+
+
+
+    public List<SessionSummary> findRecent(int userId, Integer exerciseId, int days, int limit) throws SQLException {
+        String sql = """
+            SELECT
+              id, user_id, exercice_id, status, started_at, completed_at,
+              COALESCE(
+                /* si la colonne existe, MySQL la prendra, sinon on calcule avec TIMESTAMPDIFF */
+                CASE
+                  WHEN started_at IS NOT NULL AND completed_at IS NOT NULL
+                  THEN TIMESTAMPDIFF(SECOND, started_at, completed_at)
+                  ELSE 0
+                END
+              ) AS active_seconds_calc,
+              feedback
+            FROM exercice_control
+            WHERE user_id = ?
+              AND ( ? IS NULL OR exercice_id = ? )
+              AND ( started_at IS NULL OR started_at >= (NOW() - INTERVAL ? DAY) )
+            ORDER BY COALESCE(started_at, completed_at) DESC
+            LIMIT ?
+        """;
+
+        List<SessionSummary> out = new ArrayList<>();
+        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+
+            if (exerciseId == null) {
+                ps.setNull(2, Types.INTEGER);
+                ps.setNull(3, Types.INTEGER);
+            } else {
+                ps.setInt(2, exerciseId);
+                ps.setInt(3, exerciseId);
+            }
+
+            ps.setInt(4, Math.max(1, days));
+            ps.setInt(5, Math.max(1, limit));
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Timestamp started = rs.getTimestamp("started_at");
-                    Timestamp completed = rs.getTimestamp("completed_at");
-                    list.add(new SessionSummary(
-                        rs.getInt("id"),
-                        rs.getInt("user_id"),
-                        rs.getInt("exercise_id"),
-                        rs.getString("status"),
-                        started != null ? started.toLocalDateTime() : null,
-                        completed != null ? completed.toLocalDateTime() : null,
-                        rs.getInt("active_seconds"),
-                        rs.getString("feedback")
+                    out.add(new SessionSummary(
+                            rs.getInt("id"),
+                            rs.getInt("user_id"),
+                            rs.getInt("exercice_id"),
+                            rs.getString("status"),
+                            toLdt(rs.getTimestamp("started_at")),
+                            toLdt(rs.getTimestamp("completed_at")),
+                            rs.getInt("active_seconds_calc"),
+                            rs.getString("feedback")
                     ));
                 }
             }
         }
-        return list;
+        return out;
     }
 
-    public record SessionSummary(
-        int id, int userId, int exerciseId,
-        String status,
-        java.time.LocalDateTime startedAt,
-        java.time.LocalDateTime completedAt,
-        int activeSeconds,
-        String feedback
-    ) {
-        public boolean completed() { return "completed".equalsIgnoreCase(status) || "COMPLETED".equalsIgnoreCase(status); }
-        public java.time.LocalDate day() { return startedAt != null ? startedAt.toLocalDate() : java.time.LocalDate.now(); }
+    private static LocalDateTime toLdt(Timestamp ts) {
+        return ts == null ? null : ts.toLocalDateTime();
+    }
+    // ======== ========
+
+
+    public record CompletionStats(int total, int completed, int completionRatePercent, int avgActiveSeconds) {}
+
+
+    public record DaySummary(String day, int sessions, int completed) {}
+
+
+    public record TopExercise(int exerciseId, String exerciseTitle, int sessions, int completed) {}
+
+    public List<SessionSummary> findRecentAnyUser(Integer exerciseId, int days, int limit) throws SQLException {
+        String sql = """
+        SELECT
+          id, user_id, exercice_id, status, started_at, completed_at,
+          COALESCE(
+            CASE
+              WHEN started_at IS NOT NULL AND completed_at IS NOT NULL
+              THEN TIMESTAMPDIFF(SECOND, started_at, completed_at)
+              ELSE 0
+            END
+          ) AS active_seconds_calc,
+          feedback
+        FROM exercice_control
+        WHERE ( ? IS NULL OR exercice_id = ? )
+          AND ( started_at IS NULL OR started_at >= (NOW() - INTERVAL ? DAY) )
+        ORDER BY COALESCE(started_at, completed_at) DESC
+        LIMIT ?
+    """;
+
+        List<SessionSummary> out = new ArrayList<>();
+        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+
+            if (exerciseId == null) {
+                ps.setNull(1, Types.INTEGER);
+                ps.setNull(2, Types.INTEGER);
+            } else {
+                ps.setInt(1, exerciseId);
+                ps.setInt(2, exerciseId);
+            }
+
+            ps.setInt(3, Math.max(1, days));
+            ps.setInt(4, Math.max(1, limit));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    out.add(new SessionSummary(
+                            rs.getInt("id"),
+                            rs.getInt("user_id"),
+                            rs.getInt("exercice_id"),
+                            rs.getString("status"),
+                            toLdt(rs.getTimestamp("started_at")),
+                            toLdt(rs.getTimestamp("completed_at")),
+                            rs.getInt("active_seconds_calc"),
+                            rs.getString("feedback")
+                    ));
+                }
+            }
+        }
+        return out;
+    }
+
+    /** Completion rate + avg activeSeconds, tous users. */
+    public CompletionStats completionStatsAnyUser(Integer exerciseId, int days) throws SQLException {
+        String sql = """
+        SELECT
+          COUNT(*) AS total,
+          SUM(CASE WHEN status IS NOT NULL AND UPPER(status)='COMPLETED' THEN 1 ELSE 0 END) AS completed,
+          AVG(
+            CASE
+              WHEN started_at IS NOT NULL AND completed_at IS NOT NULL
+              THEN TIMESTAMPDIFF(SECOND, started_at, completed_at)
+              ELSE 0
+            END
+          ) AS avg_active
+        FROM exercice_control
+        WHERE ( ? IS NULL OR exercice_id = ? )
+          AND ( started_at IS NULL OR started_at >= (NOW() - INTERVAL ? DAY) )
+    """;
+
+        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            if (exerciseId == null) {
+                ps.setNull(1, Types.INTEGER);
+                ps.setNull(2, Types.INTEGER);
+            } else {
+                ps.setInt(1, exerciseId);
+                ps.setInt(2, exerciseId);
+            }
+            ps.setInt(3, Math.max(1, days));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int total = rs.getInt("total");
+                    int completed = rs.getInt("completed");
+                    int rate = (total == 0) ? 0 : (completed * 100) / total;
+                    int avg = (int) Math.round(rs.getDouble("avg_active"));
+                    return new CompletionStats(total, completed, rate, Math.max(0, avg));
+                }
+            }
+        }
+        return new CompletionStats(0, 0, 0, 0);
+    }
+
+
+    public List<DaySummary> sessionsPerDayAnyUser(Integer exerciseId, int days) throws SQLException {
+        String sql = """
+        SELECT
+          DATE(COALESCE(started_at, completed_at)) AS day,
+          COUNT(*) AS sessions,
+          SUM(CASE WHEN status IS NOT NULL AND UPPER(status)='COMPLETED' THEN 1 ELSE 0 END) AS completed
+        FROM exercice_control
+        WHERE ( ? IS NULL OR exercice_id = ? )
+          AND ( started_at IS NULL OR started_at >= (NOW() - INTERVAL ? DAY) )
+        GROUP BY DATE(COALESCE(started_at, completed_at))
+        ORDER BY day DESC
+    """;
+
+        List<DaySummary> out = new ArrayList<>();
+        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            if (exerciseId == null) {
+                ps.setNull(1, Types.INTEGER);
+                ps.setNull(2, Types.INTEGER);
+            } else {
+                ps.setInt(1, exerciseId);
+                ps.setInt(2, exerciseId);
+            }
+            ps.setInt(3, Math.max(1, days));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String day = rs.getDate("day") != null ? rs.getDate("day").toString() : "—";
+                    out.add(new DaySummary(day, rs.getInt("sessions"), rs.getInt("completed")));
+                }
+            }
+        }
+        return out;
+    }
+
+
+    public List<TopExercise> topExercises(int days, int limit) throws SQLException {
+        String sql = """
+        SELECT
+          es.exercice_id AS ex_id,
+          COALESCE(e.title, CONCAT('#', es.exercice_id)) AS title,
+          COUNT(*) AS sessions,
+          SUM(CASE WHEN es.status IS NOT NULL AND UPPER(es.status)='COMPLETED' THEN 1 ELSE 0 END) AS completed
+        FROM exercice_control es
+        LEFT JOIN exercice e ON e.id = es.exercice_id
+        WHERE ( es.started_at IS NULL OR es.started_at >= (NOW() - INTERVAL ? DAY) )
+        GROUP BY es.exercice_id, COALESCE(e.title, CONCAT('#', es.exercice_id))
+        ORDER BY sessions DESC
+        LIMIT ?
+    """;
+
+        List<TopExercise> out = new ArrayList<>();
+        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            ps.setInt(1, Math.max(1, days));
+            ps.setInt(2, Math.max(1, limit));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    out.add(new TopExercise(
+                            rs.getInt("ex_id"),
+                            rs.getString("title"),
+                            rs.getInt("sessions"),
+                            rs.getInt("completed")
+                    ));
+                }
+            }
+        }
+        return out;
     }
 }

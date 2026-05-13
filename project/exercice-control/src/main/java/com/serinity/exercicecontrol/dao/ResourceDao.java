@@ -1,7 +1,5 @@
 package com.serinity.exercicecontrol.dao;
 
-import com.serinity.exercicecontrol.config.DbConnection;
-
 import com.serinity.exercicecontrol.model.Resource;
 
 import java.sql.*;
@@ -13,28 +11,22 @@ public class ResourceDao {
     private final Connection cnx;
 
 
-    private static final String TABLE = "resource";
+    private static final String TABLE = "exercice_resource";
 
     public ResourceDao() {
-        try {
-            this.cnx = DbConnection.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize DB connection", e);
-        }
+        this.cnx = DbConnection.getInstance().getConnection();
     }
 
     public int insert(Resource r) throws SQLException {
         String sql =
-                "INSERT INTO " + TABLE + " (title, media_type, url, content, duration_seconds, exercise_id) " +
-                        "VALUES (?,?,?,?,?,?)";
+                "INSERT INTO " + TABLE + " (title, resource_type, resource_url, exercice_id) " +
+                        "VALUES (?,?,?,?)";
 
         try (PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, r.getTitle());
             ps.setString(2, r.getMediaType());
             ps.setString(3, r.getUrl());
-            ps.setString(4, r.getContent());
-            ps.setInt(5, r.getDurationSeconds());
-            ps.setInt(6, r.getExerciseId());
+            ps.setInt(4, r.getExerciseId());
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -47,17 +39,15 @@ public class ResourceDao {
     public void update(Resource r) throws SQLException {
         String sql =
                 "UPDATE " + TABLE + " " +
-                        "SET title=?, media_type=?, url=?, content=?, duration_seconds=?, exercise_id=? " +
+                        "SET title=?, resource_type=?, resource_url=?, exercice_id=? " +
                         "WHERE id=?";
 
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setString(1, r.getTitle());
             ps.setString(2, r.getMediaType());
             ps.setString(3, r.getUrl());
-            ps.setString(4, r.getContent());
-            ps.setInt(5, r.getDurationSeconds());
-            ps.setInt(6, r.getExerciseId());
-            ps.setInt(7, r.getId());
+            ps.setInt(4, r.getExerciseId());
+            ps.setInt(5, r.getId());
             ps.executeUpdate();
         }
     }
@@ -92,7 +82,7 @@ public class ResourceDao {
     }
 
     public List<Resource> findByExerciseId(int exerciseId) throws SQLException {
-        String sql = "SELECT * FROM " + TABLE + " WHERE exercise_id=? ORDER BY id DESC";
+        String sql = "SELECT * FROM " + TABLE + " WHERE exercice_id=? ORDER BY id DESC";
         List<Resource> list = new ArrayList<>();
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, exerciseId);
@@ -107,11 +97,11 @@ public class ResourceDao {
         Resource r = new Resource();
         r.setId(rs.getInt("id"));
         r.setTitle(rs.getString("title"));
-        r.setMediaType(rs.getString("media_type"));
-        r.setUrl(rs.getString("url"));
-        r.setContent(rs.getString("content"));
-        r.setDurationSeconds(rs.getInt("duration_seconds"));
-        r.setExerciseId(rs.getInt("exercise_id"));
+        r.setMediaType(rs.getString("resource_type"));
+        r.setUrl(rs.getString("resource_url"));
+        r.setContent(null);
+        r.setDurationSeconds(0);
+        r.setExerciseId(rs.getInt("exercice_id"));
         return r;
     }
 }

@@ -1,8 +1,8 @@
 package com.serinity.forumcontrol.controller;
 
-import com.serinity.moodcontrol.controller.LoginController;
+import com.serinity.accesscontrol.controller.LoginController;
 import com.serinity.accesscontrol.flag.UserRole;
-import com.serinity.moodcontrol.model.User;
+import com.serinity.accesscontrol.model.User;
 import com.serinity.forumcontrol.model.Category;
 import com.serinity.forumcontrol.model.ThreadType;
 import javafx.application.Platform;

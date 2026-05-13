@@ -19,7 +19,6 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
-  /** Class documentation. */
 public class BreathingController {
 
     @FXML private ComboBox<BreathingState> cbState;
@@ -86,7 +85,6 @@ public class BreathingController {
     // Glow
     private final DropShadow glow = new DropShadow();
 
-  /** Documents initialize. */
     @FXML
     public void initialize() {
         cbState.getItems().setAll(BreathingState.values());
@@ -181,10 +179,14 @@ public class BreathingController {
     @FXML
     private void onBack() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseList.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseList.fxml"));
             Parent root = loader.load();
-            StackPane host = (StackPane) lblPhaseBig.getScene().lookup("#contentHost"); if (host == null) host = (StackPane) lblPhaseBig.getScene().lookup("#contentHostStackPane");
-            if (host != null) host.getChildren().setAll(root);
+            StackPane host = (StackPane) lblPhaseBig.getScene().lookup("#contentHost");
+            if (host == null) {
+                host = (StackPane) lblPhaseBig.getScene().lookup("#contentHostStackPane");
+            }
+            if (host == null) throw new IllegalStateException("contentHost/contentHostStackPane introuvable.");
+            host.getChildren().setAll(root);
         } catch (IOException e) {
             new Alert(Alert.AlertType.ERROR, "Retour impossible.").showAndWait();
         }
@@ -216,7 +218,7 @@ public class BreathingController {
             btnStart.setDisable(false);
             btnStop.setDisable(true);
 
-            lblPhaseBig.setText("✅ Terminé");
+            lblPhaseBig.setText(" Terminé");
             lblPhaseSmall.setText("Bien joué.");
             lblHint.setText("Séance terminée. Tu peux relancer ou changer d’état.");
 

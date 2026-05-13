@@ -28,7 +28,7 @@ public class MainTemplateController {
     @FXML private Label footerLabel;
     @FXML private Label userNameLabel;
 
-    // ✅ same bundle as App.java
+    //  same bundle as App.java
     private final ResourceBundle bundle =
             ResourceBundle.getBundle("i18n.messages", Locale.getDefault());
 
@@ -40,7 +40,7 @@ public class MainTemplateController {
         setActive(btnExercises);
 
         // Default page on launch
-        loadPage("ExerciseList.fxml");
+        loadPage("exercice/ExerciseList.fxml");
     }
 
     @FXML
@@ -61,7 +61,7 @@ public class MainTemplateController {
             loadPage("Blank.fxml");
         } else if (src == btnExercises) {
             setActive(btnExercises);
-            loadPage("ExerciseList.fxml");
+            loadPage("exercice/ExerciseList.fxml");
         } else if (src == btnAppointments) {
             setActive(btnAppointments);
             loadPage("Blank.fxml");

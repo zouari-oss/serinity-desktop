@@ -23,7 +23,10 @@ public final class PageNavigator {
 
             StackPane host = (StackPane) anyNodeInScene.getScene().lookup("#contentHost");
             if (host == null) {
-                throw new IllegalStateException("contentHost introuvable (Template.fxml). Vérifie fx:id=\"contentHost\".");
+                host = (StackPane) anyNodeInScene.getScene().lookup("#contentHostStackPane");
+            }
+            if (host == null) {
+                throw new IllegalStateException("contentHost/contentHostStackPane introuvable. Vérifie le shell FXML.");
             }
             host.getChildren().setAll(page);
 

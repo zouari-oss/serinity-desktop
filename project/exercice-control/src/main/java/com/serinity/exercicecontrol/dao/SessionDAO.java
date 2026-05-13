@@ -1,7 +1,5 @@
 package com.serinity.exercicecontrol.dao;
 
-import com.serinity.exercicecontrol.config.DbConnection;
-
 import com.serinity.exercicecontrol.service.SessionStatus;
 
 import java.sql.*;
@@ -14,17 +12,20 @@ public class SessionDAO {
     // =============================
     public int createCreatedSession(int userId, int exerciseId) throws SQLException {
         String sql = """
-            INSERT INTO exercise_session
-                (user_id, exercise_id, status, started_at, completed_at, feedback, active_seconds, last_resumed_at)
+            INSERT INTO exercice_control
+                (user_id, exercice_id, status, started_at, completed_at, feedback, active_seconds, created_at, updated_at)
             VALUES
-                (?, ?, 'CREATED', NULL, NULL, NULL, 0, NULL)
+                (?, ?, 'CREATED', NULL, NULL, NULL, 0, ?, ?)
         """;
 
-        Connection cnx = DbConnection.getConnection();
+        Connection cnx = DbConnection.getInstance().getConnection();
 
         try (PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, userId);
+            Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+            ps.setString(1, resolveExistingUserId(cnx, userId));
             ps.setInt(2, exerciseId);
+            ps.setTimestamp(3, now);
+            ps.setTimestamp(4, now);
 
             ps.executeUpdate();
 
@@ -39,17 +40,17 @@ public class SessionDAO {
     }
 
     // =============================
-    // READ (FOR UPDATE)
+    // READ
     // =============================
     public SessionEntity findByIdForUpdate(int sessionId) throws SQLException {
         String sql = """
-            SELECT id, status, started_at, completed_at, feedback, active_seconds, last_resumed_at
-            FROM exercise_session
+            SELECT id, status, started_at, completed_at, feedback, active_seconds
+            FROM exercice_control
             WHERE id = ?
             FOR UPDATE
         """;
 
-        Connection cnx = DbConnection.getConnection();
+        Connection cnx = DbConnection.getInstance().getConnection();
 
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, sessionId);
@@ -57,14 +58,18 @@ public class SessionDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) return null;
 
+                SessionStatus status = SessionStatus.fromDb(rs.getString("status"));
+                LocalDateTime startedAt = toLdt(rs.getTimestamp("started_at"));
+                LocalDateTime lastResumedAt = status == SessionStatus.IN_PROGRESS ? startedAt : null;
+
                 return new SessionEntity(
                         rs.getInt("id"),
-                        SessionStatus.fromDb(rs.getString("status")),
-                        toLdt(rs.getTimestamp("started_at")),
+                        status,
+                        startedAt,
                         toLdt(rs.getTimestamp("completed_at")),
                         rs.getString("feedback"),
                         rs.getInt("active_seconds"),
-                        toLdt(rs.getTimestamp("last_resumed_at"))
+                        lastResumedAt
                 );
             }
         }
@@ -75,17 +80,16 @@ public class SessionDAO {
     // =============================
     public void update(SessionEntity s) throws SQLException {
         String sql = """
-            UPDATE exercise_session
+            UPDATE exercice_control
             SET status = ?,
                 started_at = ?,
                 completed_at = ?,
                 feedback = ?,
-                active_seconds = ?,
-                last_resumed_at = ?
+                active_seconds = ?
             WHERE id = ?
         """;
 
-        Connection cnx = DbConnection.getConnection();
+        Connection cnx = DbConnection.getInstance().getConnection();
 
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setString(1, s.status().name());
@@ -93,17 +97,14 @@ public class SessionDAO {
             ps.setTimestamp(3, toTs(s.completedAt()));
             ps.setString(4, s.feedback());
             ps.setInt(5, s.activeSeconds());
-            ps.setTimestamp(6, toTs(s.lastResumedAt()));
-            ps.setInt(7, s.id());
+            ps.setInt(6, s.id());
             ps.executeUpdate();
         }
     }
 
-    // =============================
-    // TRANSACTION WRAPPER
-    // =============================
+
     public void withTransaction(SqlRunnable block) throws SQLException {
-        Connection cnx = DbConnection.getConnection();
+        Connection cnx = DbConnection.getInstance().getConnection();
         boolean oldAuto = cnx.getAutoCommit();
 
         cnx.setAutoCommit(false);
@@ -118,9 +119,7 @@ public class SessionDAO {
         }
     }
 
-    // =============================
-    // Helpers
-    // =============================
+
     private static LocalDateTime toLdt(Timestamp ts) {
         return ts == null ? null : ts.toLocalDateTime();
     }
@@ -129,14 +128,32 @@ public class SessionDAO {
         return ldt == null ? null : Timestamp.valueOf(ldt);
     }
 
+    private static String resolveExistingUserId(Connection cnx, int requestedUserId) throws SQLException {
+        String requested = String.valueOf(requestedUserId);
+
+        String exactSql = "SELECT id FROM users WHERE id = ? LIMIT 1";
+        try (PreparedStatement ps = cnx.prepareStatement(exactSql)) {
+            ps.setString(1, requested);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getString("id");
+            }
+        }
+
+        String fallbackSql = "SELECT id FROM users ORDER BY created_at ASC LIMIT 1";
+        try (PreparedStatement ps = cnx.prepareStatement(fallbackSql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getString("id");
+        }
+
+        throw new SQLException("No existing Symfony user found in users table for session start.");
+    }
+
     @FunctionalInterface
     public interface SqlRunnable {
         void run() throws SQLException;
     }
 
-    // =============================
-    // Internal DTO
-    // =============================
+
     public record SessionEntity(
             int id,
             SessionStatus status,

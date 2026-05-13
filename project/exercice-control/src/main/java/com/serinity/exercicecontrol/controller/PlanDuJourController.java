@@ -123,7 +123,7 @@ public class PlanDuJourController {
                 // 3) moment
                 boolean eveningOrNight = isEveningOrNight();
 
-                // 4) Planner (fusion météo + fatigue + moment + temp/vent)
+                // 4) Planner
                 DailyContext ctx = new DailyContext(
                         w.isRaining(),
                         eveningOrNight,
@@ -216,7 +216,7 @@ public class PlanDuJourController {
     @FXML
     private void onBack() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseList.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseList.fxml"));
             Parent page = loader.load();
             setContent(page);
         } catch (Exception e) {
@@ -227,8 +227,10 @@ public class PlanDuJourController {
 
     private void setContent(Parent page) {
         StackPane host = (StackPane) lblContext.getScene().lookup("#contentHost");
-        if (host == null) host = (StackPane) lblContext.getScene().lookup("#contentHostStackPane");
-        if (host == null) throw new IllegalStateException("contentHost introuvable. Vérifie Template.fxml");
+        if (host == null) {
+            host = (StackPane) lblContext.getScene().lookup("#contentHostStackPane");
+        }
+        if (host == null) throw new IllegalStateException("contentHost/contentHostStackPane introuvable. Vérifie le shell FXML.");
         host.getChildren().setAll(page);
     }
 

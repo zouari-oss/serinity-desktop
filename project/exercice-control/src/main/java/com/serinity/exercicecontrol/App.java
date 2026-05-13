@@ -1,16 +1,15 @@
 package com.serinity.exercicecontrol;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-  /** Class documentation. */
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 public class App extends Application {
+
     @Override
     public void start(Stage stage) throws Exception {
 
@@ -34,7 +33,6 @@ public class App extends Application {
         stage.show();
     }
 
-  /** Documents main. */
     public static void main(String[] args) {
         launch();
     }

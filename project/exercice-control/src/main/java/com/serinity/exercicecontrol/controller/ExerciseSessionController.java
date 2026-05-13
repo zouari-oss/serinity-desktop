@@ -60,7 +60,7 @@ public class ExerciseSessionController {
     private void onStart() {
         if (exercise == null) return;
 
-        // Create session in DB only once
+
         if (sessionId <= 0) {
             try {
                 sessionId = sessionService.startSession(currentUserId, exercise.getId());
@@ -143,7 +143,7 @@ public class ExerciseSessionController {
     private void onBack() {
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ExerciseDetails.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/exercice/ExerciseDetails.fxml"));
             Parent root = loader.load();
 
             ExerciseDetailsController ctrl = loader.getController();
@@ -157,9 +157,12 @@ public class ExerciseSessionController {
     }
 
     private void setContent(Parent page) {
-        StackPane host = (StackPane) lblTitle.getScene().lookup("#contentHost"); if (host == null) host = (StackPane) lblTitle.getScene().lookup("#contentHostStackPane");
+        StackPane host = (StackPane) lblTitle.getScene().lookup("#contentHost");
         if (host == null) {
-            throw new IllegalStateException("contentHost introuvable. Vérifie fx:id=\"contentHost\" dans Template.fxml");
+            host = (StackPane) lblTitle.getScene().lookup("#contentHostStackPane");
+        }
+        if (host == null) {
+            throw new IllegalStateException("contentHost/contentHostStackPane introuvable. Vérifie le shell FXML.");
         }
         host.getChildren().setAll(page);
     }

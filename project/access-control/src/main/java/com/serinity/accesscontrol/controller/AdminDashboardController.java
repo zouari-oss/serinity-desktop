@@ -92,16 +92,20 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
     replace(ResourceFile.MOOD_ADMIN_MANAGMENT.getFileName());
   }
 
-    @FXML
-    void onForumManagmentButtonAction(ActionEvent event) {
-        replace(ResourceFile.FORUM_ADMIN_FXML.getFileName());
-    }
+  @FXML
+  void onExerciceButtonAction(ActionEvent event) {
+    replace(ResourceFile.EXERCISE_ADMIN_DASHBOARD_FXML.getFileName());
+  }
 
-  
-    @FXML
-    void onSleepManagmentButtonAction(ActionEvent event) {
-        replace("/fxml/admin-dashboard.fxml");
-    }
+  @FXML
+  void onForumManagmentButtonAction(ActionEvent event) {
+    replace(ResourceFile.FORUM_ADMIN_FXML.getFileName());
+  }
+
+  @FXML
+  void onSleepManagmentButtonAction(ActionEvent event) {
+    replace("/fxml/admin-dashboard.fxml");
+  }
 
   @FXML
   void onConsultationButtonAction(final ActionEvent event) {
@@ -110,7 +114,8 @@ public final class AdminDashboardController implements StackNavigable, StatusMes
 
   @FXML
   void onLogoutButtonAction(final ActionEvent event) {
-
+    // Stage stage = (Stage) contentHost.getScene().getWindow();
+    // new App().start(stage);
   }
 
   @FXML
