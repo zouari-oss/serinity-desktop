@@ -1,75 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
+
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.serinity.consultationcontrol.controller.doctor.ConsultationFormController"
-      spacing="20"
-      styleClass="content">
+      spacing="18"
+      styleClass="content,embedded-page"
+      stylesheets="@../../styles/app.css">
 
     <padding>
-        <Insets top="22" right="26" bottom="22" left="26"/>
+        <Insets top="24" right="28" bottom="24" left="28"/>
     </padding>
 
-    <!-- ===== HEADER ===== -->
-    <HBox spacing="12" alignment="CENTER_LEFT">
-        <Button text="← Retour"
+    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="page-back-row">
+        <Button text="Back"
                 onAction="#back"
                 styleClass="secondary-btn"/>
-
-        <Label text="Nouvelle Consultation Médicale"
-               styleClass="page-title"/>
     </HBox>
 
-    <!-- ===== MEDICAL CARD ===== -->
-    <VBox spacing="18" styleClass="rdv-card">
-
-        <!-- DIAGNOSTIC -->
-        <VBox spacing="6">
-            <Label text="🩺 Diagnostic"
-                   styleClass="section-title"/>
-
-            <TextArea fx:id="diagnosticField"
-                      promptText="Décrivez le diagnostic médical du patient..."
-                      wrapText="true"
-                      prefRowCount="4"
-                      styleClass="consult-input"/>
+    <HBox alignment="CENTER_LEFT" spacing="14" styleClass="hero-card">
+        <VBox spacing="5">
+            <Label text="Medical consultation" styleClass="hero-title"/>
+            <Label text="Capture the diagnosis, prescription, and follow-up notes in a single structured form."
+                   styleClass="hero-subtitle"
+                   wrapText="true"/>
         </VBox>
+    </HBox>
 
-        <!-- PRESCRIPTION -->
-        <VBox spacing="6">
-            <Label text="💊 Prescription"
-                   styleClass="section-title"/>
+    <VBox spacing="14" styleClass="rdv-card">
+        <Label text="Diagnosis" styleClass="label"/>
+        <TextArea fx:id="diagnosticField"
+                  promptText="Describe the medical diagnosis"
+                  wrapText="true"
+                  prefRowCount="4"
+                  styleClass="consult-input"/>
 
-            <TextArea fx:id="prescriptionField"
-                      promptText="Médicaments, posologie, durée du traitement..."
-                      wrapText="true"
-                      prefRowCount="4"
-                      styleClass="consult-input"/>
-        </VBox>
+        <Label text="Prescription" styleClass="label"/>
+        <TextArea fx:id="prescriptionField"
+                  promptText="Medication, dosage, and treatment duration"
+                  wrapText="true"
+                  prefRowCount="4"
+                  styleClass="consult-input"/>
 
-        <!-- NOTES -->
-        <VBox spacing="6">
-            <Label text="📝 Notes complémentaires"
-                   styleClass="section-title"/>
+        <Label text="Additional notes" styleClass="label"/>
+        <TextArea fx:id="notesField"
+                  promptText="Observations, recommendations, or further exams"
+                  wrapText="true"
+                  prefRowCount="5"
+                  styleClass="consult-input"/>
 
-            <TextArea fx:id="notesField"
-                      promptText="Observations supplémentaires, recommandations, examens..."
-                      wrapText="true"
-                      prefRowCount="5"
-                      styleClass="consult-input"/>
-        </VBox>
-
-        <!-- ACTION BUTTON -->
         <HBox alignment="CENTER_RIGHT">
-            <Button text="💾 Enregistrer la consultation"
+            <Button text="Save Consultation"
                     onAction="#save"
-                    styleClass="primary-btn"/>
+                    styleClass="primary-btn,big-btn"/>
         </HBox>
-
     </VBox>
 
 </VBox>

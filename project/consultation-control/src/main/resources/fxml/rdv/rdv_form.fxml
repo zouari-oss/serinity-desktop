@@ -1,44 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
+
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.serinity.consultationcontrol.controller.rdv.RdvFormController"
-      spacing="20" styleClass="content">
-    <HBox alignment="CENTER_LEFT" spacing="12">
+      spacing="18"
+      styleClass="content,embedded-page"
+      stylesheets="@../../styles/app.css">
 
-        <Button text="← Retour"
+    <padding>
+        <Insets top="24" right="28" bottom="24" left="28"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="page-back-row">
+        <Button text="Back"
                 onAction="#back"
-                styleClass="secondary-btn"/>
-
-
+                styleClass="secondary-btn consultation-back-btn"/>
     </HBox>
-    <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
 
-    <Label text="Prendre Rendez-vous" styleClass="page-title"/>
+    <HBox alignment="CENTER_LEFT" spacing="14" styleClass="hero-card">
+        <VBox spacing="5">
+            <Label text="Book an appointment" styleClass="hero-title"/>
+            <Label text="Share the reason for your visit and choose the date and time that suit you."
+                   styleClass="hero-subtitle"
+                   wrapText="true"/>
+        </VBox>
+    </HBox>
 
     <VBox spacing="14" styleClass="rdv-card">
+        <Label text="Reason for consultation" styleClass="label"/>
+        <TextField fx:id="motifField"
+                   promptText="Example: dental pain, routine checkup"
+                   styleClass="input"/>
 
-        <Label text="Motif de consultation"/>
-        <TextField fx:id="motifField" promptText="Ex: Douleur dentaire, contrôle..." styleClass="input"/>
-
-        <Label text="Décrire votre problème"/>
-        <TextArea fx:id="descriptionArea" prefRowCount="4"
-                  promptText="Décrivez vos symptômes..."
+        <Label text="Describe your concern" styleClass="label"/>
+        <TextArea fx:id="descriptionArea"
+                  prefRowCount="4"
+                  promptText="Describe your symptoms or what you would like to discuss"
                   styleClass="input"/>
 
-        <Label text="Date souhaitée"/>
+        <Label text="Preferred date" styleClass="label"/>
         <DatePicker fx:id="datePicker"/>
 
-        <Label text="Heure souhaitée"/>
-        <TextField fx:id="timeField" promptText="HH:mm" styleClass="input"/>
+        <Label text="Preferred time" styleClass="label"/>
+        <TextField fx:id="timeField"
+                   promptText="HH:mm"
+                   styleClass="input"/>
 
-        <Button text="Confirmer le rendez-vous"
+        <Button text="Confirm Appointment"
                 onAction="#save"
-                styleClass="primary-btn"/>
-
+                styleClass="primary-btn big-btn consultation-cta-btn"/>
     </VBox>
 
 </VBox>

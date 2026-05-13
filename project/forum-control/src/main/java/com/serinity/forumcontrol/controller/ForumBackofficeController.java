@@ -10,9 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,6 +25,7 @@ public class ForumBackofficeController {
     @FXML private Label totalCategoriesLabel;
     @FXML private Label parentCategoriesLabel;
     @FXML private Label subCategoriesLabel;
+
 
     private ServiceCategory categoryService = new ServiceCategory();
 
@@ -116,18 +115,59 @@ public class ForumBackofficeController {
             AddCategoryController controller = loader.getController();
             controller.setAddMode();
 
-            BorderPane root = findBorderPane();
-            if (root != null) {
-                root.setCenter(addCategoryView);
+            // Replace this view's content inside its parent
+            Parent thisView = categoriesGrid.getScene().getRoot();
+            javafx.scene.Node node = categoriesGrid;
+            while (node.getParent() != null) {
+                node = node.getParent();
             }
+            // Swap inside the immediate parent container
+            replaceInParent(addCategoryView);
 
         } catch (IOException e) {
-            System.err.println("Error loading AddCategory view: " + e.getMessage());
             e.printStackTrace();
             showAlert("Error", "Could not open Add Category page.", Alert.AlertType.ERROR);
         }
     }
 
+    private void replaceInParent(Parent newView) {
+        javafx.scene.Node thisRoot = categoriesGrid;
+
+        // Walk up until we find a node whose PARENT is a StackPane
+        while (thisRoot.getParent() != null) {
+            if (thisRoot.getParent() instanceof StackPane) break;
+            if (thisRoot.getParent() instanceof Pane) break; // fallback
+            thisRoot = thisRoot.getParent();
+        }
+
+        if (thisRoot.getParent() == null) {
+            System.err.println("Could not find StackPane or Pane parent");
+            showAlert("Error", "Could not navigate.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        System.out.println("Found parent: " + thisRoot.getParent().getClass().getName());
+
+        if (thisRoot.getParent() instanceof StackPane sp) {
+            if (newView instanceof Region r) {
+                r.prefWidthProperty().bind(sp.widthProperty());
+                r.prefHeightProperty().bind(sp.heightProperty());
+                r.setMaxWidth(Double.MAX_VALUE);
+                r.setMaxHeight(Double.MAX_VALUE);
+                StackPane.setAlignment(r, javafx.geometry.Pos.TOP_LEFT);
+            }
+            sp.getChildren().setAll(newView);
+        } else if (thisRoot.getParent() instanceof Pane pane) {
+            if (newView instanceof Region r) {
+                r.prefWidthProperty().bind(pane.widthProperty());
+                r.prefHeightProperty().bind(pane.heightProperty());
+                r.setMaxWidth(Double.MAX_VALUE);
+                r.setMaxHeight(Double.MAX_VALUE);
+            }
+            int idx = pane.getChildren().indexOf(thisRoot);
+            pane.getChildren().set(idx, newView);
+        }
+    }
     @FXML
     private void onStatistics() {
         try {
@@ -136,13 +176,9 @@ public class ForumBackofficeController {
             );
             Parent statisticsView = loader.load();
 
-            BorderPane root = findBorderPane();
-            if (root != null) {
-                root.setCenter(statisticsView);
-            }
+            replaceInParent(statisticsView);
 
         } catch (IOException e) {
-            System.err.println("Error loading Statistics view: " + e.getMessage());
             e.printStackTrace();
             showAlert("Error", "Could not open Statistics page.", Alert.AlertType.ERROR);
         }
@@ -156,21 +192,7 @@ public class ForumBackofficeController {
     }
 
 
-    private BorderPane findBorderPane() {
-        if (categoriesGrid != null && categoriesGrid.getScene() != null) {
-            javafx.scene.Node node = categoriesGrid.getScene().getRoot();
-            if (node instanceof BorderPane) {
-                return (BorderPane) node;
-            }
-            while (node != null) {
-                if (node instanceof BorderPane) {
-                    return (BorderPane) node;
-                }
-                node = node.getParent();
-            }
-        }
-        return null;
-    }
+
 
     private void showAlert(String title, String message, Alert.AlertType type) {
         Alert alert = new Alert(type);

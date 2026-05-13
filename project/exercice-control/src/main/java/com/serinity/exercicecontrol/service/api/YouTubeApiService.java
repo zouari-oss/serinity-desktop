@@ -12,7 +12,6 @@ public class YouTubeApiService {
     private final ApiClient client = new ApiClient();
     private final Gson gson = new Gson();
 
-    // ✅ FIX: on lit la clé depuis .env ou variable d’environnement
     private final String apiKey = EnvConfig.require("YOUTUBE_API_KEY");
 
     public List<VideoSuggestion> searchMeditationOrYoga(String query, int maxResults) throws Exception {

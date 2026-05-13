@@ -1,121 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.serinity.consultationcontrol.controller.doctor.DoctorListController"
-            styleClass="root"
-            stylesheets="@../../styles/app.css">
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.serinity.consultationcontrol.controller.doctor.DoctorListController"
+      styleClass="root,embedded-page"
+      spacing="18"
+      stylesheets="@../../styles/app.css">
 
-    <!-- ================= NAVBAR ================= -->
-    <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="navbar">
+    <padding>
+        <Insets top="24" right="28" bottom="24" left="28"/>
+    </padding>
 
-            <!-- Logo -->
-            <Label text="🏥 MedLink" styleClass="nav-logo"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <!-- Navigation -->
-             <Button text="👨‍⚕️ Médecins" styleClass="nav-btn active-nav"/>
-            <Button text="📅 Rendez-vous" onAction="#goMyAppointments" styleClass="nav-btn"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <!-- AI -->
-            <Button text="🤖 Assistant IA"
-                    fx:id="aiButton"
-                    onAction="#openAI"
-                    styleClass="nav-ai"/>
-
-            <!-- Logout -->
-            <Button text="⎋ Déconnexion"
-
-                    styleClass="logout-btn"/>
-
-        </HBox>
-    </top>
-
-    <!-- ================= CENTER CONTENT ================= -->
-    <center>
-        <VBox spacing="20" styleClass="content">
-
-            <padding>
-                <Insets top="22" right="26" bottom="22" left="26"/>
-            </padding>
-
-            <!-- HEADER -->
-            <HBox alignment="CENTER_LEFT" spacing="14" styleClass="header-card">
-
-                <VBox spacing="4">
-                    <Label text="Trouver un médecin" styleClass="page-title"/>
-                    <Label text="Prenez rendez-vous facilement avec un spécialiste"
-                           styleClass="subtitle"/>
-                </VBox>
-
-                <Region HBox.hgrow="ALWAYS"/>
-
-                <!-- MES RDV BUTTON -->
-                <Button text="📅 Mes rendez-vous"
-                        onAction="#goMyAppointments"
-                        styleClass="nav-rdv-btn"/>
-
-                <Label text="🏥 TheDoctor" styleClass="brand-title"/>
-            </HBox>
-
-            <!-- SEARCH BAR -->
-            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="toolbar">
-
-                <Label text="Recherche :" styleClass="label"/>
-
-                <TextField fx:id="searchField"
-                           promptText="Nom du médecin ou spécialité..."
-                           prefWidth="340"
-                           styleClass="search-field"/>
-
-                <Region HBox.hgrow="ALWAYS"/>
-
-                <Button text="Actualiser"
-                        onAction="#refresh"
-                        styleClass="secondary-btn"/>
-            </HBox>
-
-            <!-- DOCTOR LIST -->
-            <StackPane VBox.vgrow="ALWAYS">
-
-                <ScrollPane fitToWidth="true"
-                            VBox.vgrow="ALWAYS"
-                            style="-fx-background-color:transparent;">
-
-                    <content>
-                        <FlowPane fx:id="cardsPane"
-                                  hgap="20"
-                                  vgap="20"
-                                  prefWrapLength="1000"/>
-                    </content>
-
-                </ScrollPane>
-
-                <!-- EMPTY -->
-                <VBox fx:id="emptyBox"
-                      alignment="CENTER"
-                      spacing="10"
-                      visible="false">
-
-                    <Label text="Aucun médecin trouvé"
-                           styleClass="empty-title"/>
-
-                    <Label text="Essayez une autre spécialité"
-                           styleClass="empty-subtitle"/>
-
-                </VBox>
-
-            </StackPane>
-
+    <HBox alignment="CENTER_LEFT" spacing="14" styleClass="hero-card">
+        <VBox spacing="5">
+            <Label text="Find a doctor" styleClass="hero-title"/>
+            <Label text="Browse therapists and reserve an appointment without leaving your dashboard."
+                   styleClass="hero-subtitle"
+                   wrapText="true"/>
         </VBox>
-    </center>
 
-</BorderPane>
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button text="My Appointments"
+                onAction="#goMyAppointments"
+                styleClass="action-chip"/>
+
+        <Button text="AI Assistant"
+                fx:id="aiButton"
+                onAction="#openAI"
+                styleClass="primary-btn"/>
+    </HBox>
+
+    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="section-surface">
+        <Label text="Search" styleClass="label"/>
+
+        <TextField fx:id="searchField"
+                   promptText="Doctor name or speciality"
+                   prefWidth="360"
+                   styleClass="search-field"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button text="Refresh"
+                onAction="#refresh"
+                styleClass="secondary-btn"/>
+    </HBox>
+
+    <StackPane VBox.vgrow="ALWAYS" styleClass="stack-surface">
+        <ScrollPane fitToWidth="true"
+                    VBox.vgrow="ALWAYS"
+                    styleClass="embedded-scroll">
+            <content>
+                <FlowPane fx:id="cardsPane"
+                          hgap="18"
+                          vgap="18"
+                          prefWrapLength="980"/>
+            </content>
+        </ScrollPane>
+
+        <VBox fx:id="emptyBox"
+              alignment="CENTER"
+              spacing="10"
+              visible="false">
+            <Label text="No doctors found"
+                   styleClass="empty-title"/>
+
+            <Label text="Try another speciality or refresh the list."
+                   styleClass="empty-subtitle"/>
+        </VBox>
+    </StackPane>
+
+</VBox>

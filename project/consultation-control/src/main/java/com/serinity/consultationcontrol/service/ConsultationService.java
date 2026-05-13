@@ -4,25 +4,36 @@ import com.serinity.consultationcontrol.model.Consultation;
 import com.serinity.consultationcontrol.util.DateTimeUtil;
 import com.serinity.consultationcontrol.util.Mydatabase;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ConsultationService {
     private final Connection cnx = Mydatabase.getInstance().getConnection();
 
+    private static final String NAME_EXPR = "COALESCE(NULLIF(TRIM(CONCAT(COALESCE(%s.firstName, ''), ' ', COALESCE(%s.lastName, ''))), ''), %s.username, %s.email)";
+    private static final String BASE_SELECT = """
+            SELECT c.*,
+                   %s AS doctor_name,
+                   %s AS patient_name
+            FROM consultation c
+            JOIN users du ON du.id = c.doctor_id
+            LEFT JOIN profiles dp ON dp.user_id = du.id
+            JOIN rapport rm ON rm.id = c.rapport_id
+            JOIN users pu ON pu.id = rm.patient_id
+            LEFT JOIN profiles pp ON pp.user_id = pu.id
+            """.formatted(
+            NAME_EXPR.formatted("dp", "dp", "dp", "du"),
+            NAME_EXPR.formatted("pp", "pp", "pp", "pu"));
+
     public List<Consultation> findAll(){
         List<Consultation> list = new ArrayList<>();
-        String sql = """
-            SELECT c.*,
-                   d.full_name AS doctor_name,
-                   p.full_name AS patient_name
-            FROM consultations c
-            JOIN user d ON d.id = c.doctor_id
-            JOIN rapports rm ON rm.id = c.rapport_id
-            JOIN user p ON p.id = rm.patient_id
-            ORDER BY c.date_consultation DESC
-        """;
+        String sql = BASE_SELECT + " ORDER BY c.date_consultation DESC";
         try(Statement st = cnx.createStatement();
             ResultSet rs = st.executeQuery(sql)){
             while(rs.next()){
@@ -31,8 +42,9 @@ public class ConsultationService {
         } catch (SQLException e){ e.printStackTrace(); }
         return list;
     }
+
     public boolean existsByRdv(int rdvId){
-        String sql = "SELECT COUNT(*) FROM consultations WHERE rendez_vous_id = ?";
+        String sql = "SELECT COUNT(*) FROM consultation WHERE rendez_vous_id = ?";
 
         try(PreparedStatement ps = cnx.prepareStatement(sql)){
 
@@ -50,16 +62,7 @@ public class ConsultationService {
     }
 
     public Consultation findById(int id){
-        String sql = """
-            SELECT c.*,
-                   d.full_name AS doctor_name,
-                   p.full_name AS patient_name
-            FROM consultations c
-            JOIN user d ON d.id = c.doctor_id
-            JOIN rapports rm ON rm.id = c.rapport_id
-            JOIN user p ON p.id = rm.patient_id
-            WHERE c.id=?
-        """;
+        String sql = BASE_SELECT + " WHERE c.id=?";
         try(PreparedStatement ps = cnx.prepareStatement(sql)){
             ps.setInt(1, id);
             try(ResultSet rs = ps.executeQuery()){
@@ -71,14 +74,14 @@ public class ConsultationService {
 
     public void insert(Consultation c){
         String sql = """
-            INSERT INTO consultations(rapport_id, rendez_vous_id, doctor_id, date_consultation, diagnostic, prescription, notes)
+            INSERT INTO consultation(rapport_id, rendez_vous_id, doctor_id, date_consultation, diagnostic, prescription, notes)
             VALUES(?,?,?,?,?,?,?)
         """;
         try(PreparedStatement ps = cnx.prepareStatement(sql)){
             ps.setInt(1, c.getRapportId());
             if(c.getRendezVousId() == 0) ps.setNull(2, Types.INTEGER);
             else ps.setInt(2, c.getRendezVousId());
-            ps.setInt(3, c.getDoctorId());
+            ps.setString(3, c.getDoctorId());
             ps.setTimestamp(4, DateTimeUtil.toTimestamp(c.getDateConsultation()));
             ps.setString(5, c.getDiagnostic());
             ps.setString(6, c.getPrescription());
@@ -89,7 +92,7 @@ public class ConsultationService {
 
     public void update(Consultation c){
         String sql = """
-            UPDATE consultations
+            UPDATE consultation
             SET rapport_id=?, rendez_vous_id=?, doctor_id=?, date_consultation=?, diagnostic=?, prescription=?, notes=?
             WHERE id=?
         """;
@@ -97,7 +100,7 @@ public class ConsultationService {
             ps.setInt(1, c.getRapportId());
             if(c.getRendezVousId() == 0) ps.setNull(2, Types.INTEGER);
             else ps.setInt(2, c.getRendezVousId());
-            ps.setInt(3, c.getDoctorId());
+            ps.setString(3, c.getDoctorId());
             ps.setTimestamp(4, DateTimeUtil.toTimestamp(c.getDateConsultation()));
             ps.setString(5, c.getDiagnostic());
             ps.setString(6, c.getPrescription());
@@ -108,7 +111,7 @@ public class ConsultationService {
     }
 
     public void delete(int id){
-        try(PreparedStatement ps = cnx.prepareStatement("DELETE FROM consultations WHERE id=?")){
+        try(PreparedStatement ps = cnx.prepareStatement("DELETE FROM consultation WHERE id=?")){
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e){ e.printStackTrace(); }
@@ -119,7 +122,7 @@ public class ConsultationService {
         c.setId(rs.getInt("id"));
         c.setRapportId(rs.getInt("rapport_id"));
         c.setRendezVousId(rs.getInt("rendez_vous_id"));
-        c.setDoctorId(rs.getInt("doctor_id"));
+        c.setDoctorId(rs.getString("doctor_id"));
         c.setDateConsultation(DateTimeUtil.toLocalDateTime(rs.getTimestamp("date_consultation")));
         c.setDiagnostic(rs.getString("diagnostic"));
         c.setPrescription(rs.getString("prescription"));

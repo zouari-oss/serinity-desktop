@@ -4,7 +4,11 @@ import com.serinity.consultationcontrol.model.RapportMedical;
 import com.serinity.consultationcontrol.util.DateTimeUtil;
 import com.serinity.consultationcontrol.util.Mydatabase;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +18,11 @@ public class RapportMedicalService {
     public List<RapportMedical> findAll(){
         List<RapportMedical> list = new ArrayList<>();
         String sql = """
-            SELECT rm.*, u.full_name AS patient_name
-            FROM rapports rm
-            JOIN user u ON u.id = rm.patient_id
+            SELECT rm.*,
+                   COALESCE(NULLIF(TRIM(CONCAT(COALESCE(p.firstName, ''), ' ', COALESCE(p.lastName, ''))), ''), p.username, u.email) AS patient_name
+            FROM rapport rm
+            JOIN users u ON u.id = rm.patient_id
+            LEFT JOIN profiles p ON p.user_id = u.id
             ORDER BY rm.date_creation DESC
         """;
         try(Statement st = cnx.createStatement();
@@ -30,9 +36,11 @@ public class RapportMedicalService {
 
     public RapportMedical findById(int id){
         String sql = """
-            SELECT rm.*, u.full_name AS patient_name
-            FROM rapports rm
-            JOIN user u ON u.id = rm.patient_id
+            SELECT rm.*,
+                   COALESCE(NULLIF(TRIM(CONCAT(COALESCE(p.firstName, ''), ' ', COALESCE(p.lastName, ''))), ''), p.username, u.email) AS patient_name
+            FROM rapport rm
+            JOIN users u ON u.id = rm.patient_id
+            LEFT JOIN profiles p ON p.user_id = u.id
             WHERE rm.id=?
         """;
         try(PreparedStatement ps = cnx.prepareStatement(sql)){
@@ -45,9 +53,9 @@ public class RapportMedicalService {
     }
 
     public void insert(RapportMedical r){
-        String sql = "INSERT INTO rapports(patient_id, date_creation, resume_general) VALUES(?,?,?)";
+        String sql = "INSERT INTO rapport(patient_id, date_creation, resume_general) VALUES(?,?,?)";
         try(PreparedStatement ps = cnx.prepareStatement(sql)){
-            ps.setInt(1, r.getPatientId());
+            ps.setString(1, r.getPatientId());
             ps.setDate(2, DateTimeUtil.toSqlDate(r.getDateCreation()));
             ps.setString(3, r.getResumeGeneral());
             ps.executeUpdate();
@@ -55,9 +63,9 @@ public class RapportMedicalService {
     }
 
     public void update(RapportMedical r){
-        String sql = "UPDATE rapports SET patient_id=?, date_creation=?, resume_general=? WHERE id=?";
+        String sql = "UPDATE rapport SET patient_id=?, date_creation=?, resume_general=? WHERE id=?";
         try(PreparedStatement ps = cnx.prepareStatement(sql)){
-            ps.setInt(1, r.getPatientId());
+            ps.setString(1, r.getPatientId());
             ps.setDate(2, DateTimeUtil.toSqlDate(r.getDateCreation()));
             ps.setString(3, r.getResumeGeneral());
             ps.setInt(4, r.getId());
@@ -66,7 +74,7 @@ public class RapportMedicalService {
     }
 
     public void delete(int id){
-        try(PreparedStatement ps = cnx.prepareStatement("DELETE FROM rapports WHERE id=?")){
+        try(PreparedStatement ps = cnx.prepareStatement("DELETE FROM rapport WHERE id=?")){
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e){ e.printStackTrace(); }
@@ -75,7 +83,7 @@ public class RapportMedicalService {
     private RapportMedical map(ResultSet rs) throws SQLException{
         RapportMedical r = new RapportMedical();
         r.setId(rs.getInt("id"));
-        r.setPatientId(rs.getInt("patient_id"));
+        r.setPatientId(rs.getString("patient_id"));
         r.setDateCreation(DateTimeUtil.toLocalDate(rs.getDate("date_creation")));
         r.setResumeGeneral(rs.getString("resume_general"));
         r.setPatientName(rs.getString("patient_name"));

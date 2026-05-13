@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 public class RendezVous {
     private int id;
-    private int patientId;
-    private int doctorId;
+    private String patientId;
+    private String doctorId;
     private String motif;
     private LocalDateTime dateTime;
     private RdvStatus status;
@@ -23,11 +23,11 @@ public class RendezVous {
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public int getPatientId() { return patientId; }
-    public void setPatientId(int patientId) { this.patientId = patientId; }
+    public String getPatientId() { return patientId; }
+    public void setPatientId(String patientId) { this.patientId = patientId; }
 
-    public int getDoctorId() { return doctorId; }
-    public void setDoctorId(int doctorId) { this.doctorId = doctorId; }
+    public String getDoctorId() { return doctorId; }
+    public void setDoctorId(String doctorId) { this.doctorId = doctorId; }
 
     public String getMotif() { return motif; }
     public void setMotif(String motif) { this.motif = motif; }

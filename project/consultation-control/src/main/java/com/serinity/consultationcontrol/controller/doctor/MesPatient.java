@@ -1,8 +1,8 @@
 package com.serinity.consultationcontrol.controller.doctor;
 
-import com.serinity.consultationcontrol.util.Router;
 import com.serinity.consultationcontrol.model.User;
 import com.serinity.consultationcontrol.service.RendezVousService;
+import com.serinity.consultationcontrol.util.Router;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,8 +17,7 @@ public class MesPatient {
     private FlowPane patientsPane;
 
     private final RendezVousService service = new RendezVousService();
-
-    private final int doctorId = 2; // TODO: replace with logged doctor
+    private final String doctorId = "ed42f2dc-1f14-40cd-a89b-4de2f0d4e6d6";
 
     @FXML
     public void initialize(){
@@ -30,16 +29,10 @@ public class MesPatient {
             List<User> patients = service.findPatientsByDoctor(doctorId);
 
             for(User u : patients){
-
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/fxml/doctor/patient_card.fxml")
-                );
-
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/doctor/patient_card.fxml"));
                 VBox card = loader.load();
-
                 PatientCardController controller = loader.getController();
                 controller.setData(u);
-
                 patientsPane.getChildren().add(card);
             }
 
@@ -50,16 +43,13 @@ public class MesPatient {
 
     public void goRdv(ActionEvent event) {
         Router.go("/fxml/doctor/doctor_rdv_list.fxml","Mes RDV");
-
     }
 
     public void goConsultations(ActionEvent event) {
-        Router.go("/fxml/doctor/doctor_rdv_list.fxml","Mes RDV");
-
+        Router.go("/fxml/doctor/mesPatient.fxml","Mes Patients");
     }
 
     public void goDashboard(ActionEvent event) {
-        Router.go("/fxml/doctor/dashboard.fxml","Mes RDV");
-
+        Router.go("/fxml/doctor/dashboard.fxml","Doctor Dashboard");
     }
 }

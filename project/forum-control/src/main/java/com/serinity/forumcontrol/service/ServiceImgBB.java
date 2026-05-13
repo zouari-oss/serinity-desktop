@@ -11,7 +11,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class ServiceImgBB {
-    private static final Dotenv dotenv = Dotenv.load();
+  private static final Dotenv dotenv = Dotenv.configure()
+      .filename("../.env")
+      .ignoreIfMalformed()
+      .ignoreIfMissing()
+      .load();
 
     private static final String IMGBB_API_URL = "https://api.imgbb.com/1/upload";
 

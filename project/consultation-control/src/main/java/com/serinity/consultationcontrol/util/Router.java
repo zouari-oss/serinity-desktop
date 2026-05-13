@@ -10,8 +10,13 @@ import java.util.function.Consumer;
 
 public class Router {
 
+    public interface EmbeddedNavigator {
+        void go(String fxml, String title, Consumer<Object> controllerConsumer);
+    }
+
     private static Stage primaryStage;
     private static Scene mainScene;
+    private static EmbeddedNavigator embeddedNavigator;
 
     public static void init(Stage stage){
         primaryStage = stage;
@@ -21,8 +26,14 @@ public class Router {
         primaryStage.centerOnScreen();
     }
 
+    public static void setEmbeddedNavigator(EmbeddedNavigator navigator) {
+        embeddedNavigator = navigator;
+    }
+
     private static Stage getStage() {
-        if (primaryStage != null) return primaryStage;
+        if (primaryStage != null) {
+            return primaryStage;
+        }
         return Window.getWindows().stream()
             .filter(w -> w instanceof Stage && w.isShowing())
             .map(w -> (Stage) w)
@@ -30,31 +41,39 @@ public class Router {
             .orElse(null);
     }
 
-    // NORMAL NAVIGATION
     public static void go(String fxml, String title){
-        go(fxml,title,null);
+        go(fxml, title, null);
     }
 
-    // NAVIGATION WITH DATA (🔥 IMPORTANT)
+    @SuppressWarnings("unchecked")
     public static <T> void go(String fxml, String title, Consumer<T> controllerConsumer){
         try{
+            if (embeddedNavigator != null) {
+                embeddedNavigator.go(
+                    fxml,
+                    title,
+                    controllerConsumer == null ? null : controller -> controllerConsumer.accept((T) controller));
+                return;
+            }
+
             Stage stage = getStage();
-            if (stage == null) return;
+            if (stage == null) {
+                return;
+            }
 
             FXMLLoader loader = new FXMLLoader(Router.class.getResource(fxml));
             Parent root = loader.load();
 
             if(mainScene == null){
                 mainScene = new Scene(root);
-                String css = Router.class.getResource("/styles/app.css") != null
-                    ? Router.class.getResource("/styles/app.css").toExternalForm() : null;
-                if (css != null) mainScene.getStylesheets().add(css);
+                if (Router.class.getResource("/styles/app.css") != null) {
+                    mainScene.getStylesheets().add(Router.class.getResource("/styles/app.css").toExternalForm());
+                }
                 stage.setScene(mainScene);
-            }else{
+            } else {
                 mainScene.setRoot(root);
             }
 
-            // IMPORTANT: get controller AFTER root is set
             if(controllerConsumer != null){
                 T controller = loader.getController();
                 controllerConsumer.accept(controller);
@@ -63,7 +82,7 @@ public class Router {
             stage.setTitle(title);
             stage.show();
 
-        }catch(Exception e){
+        } catch(Exception e){
             e.printStackTrace();
         }
     }

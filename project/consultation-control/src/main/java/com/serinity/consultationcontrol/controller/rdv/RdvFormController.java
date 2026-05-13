@@ -1,16 +1,21 @@
 package com.serinity.consultationcontrol.controller.rdv;
 
-import com.serinity.consultationcontrol.util.Router;
 import com.serinity.consultationcontrol.model.RendezVous;
 import com.serinity.consultationcontrol.model.User;
 import com.serinity.consultationcontrol.service.EmailService;
 import com.serinity.consultationcontrol.service.EmailTemplate;
+import com.serinity.consultationcontrol.service.ProfanityService;
 import com.serinity.consultationcontrol.service.RendezVousService;
 import com.serinity.consultationcontrol.service.UserLookupService;
 import com.serinity.consultationcontrol.util.AppSession;
+import com.serinity.consultationcontrol.util.Router;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import com.serinity.consultationcontrol.service.ProfanityService;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -20,75 +25,92 @@ public class RdvFormController {
     @FXML private TextArea descriptionArea;
     @FXML private DatePicker datePicker;
     @FXML private TextField timeField;
-    @FXML
-    public void back(){
-        Router.go("/fxml/doctor/doctor_list.fxml","Doctors");
-    }
+
     private final RendezVousService service = new RendezVousService();
     private final UserLookupService userService = new UserLookupService();
     private final EmailService emailService = new EmailService();
 
     @FXML
+    public void back(){
+        Router.go("/fxml/doctor/doctor_list.fxml", "Doctors");
+    }
+
+    @FXML
     public void save(){
+        String patientId = AppSession.getCurrentUserId();
+        String doctorId = AppSession.getSelectedDoctorId();
+
+        if(patientId == null || patientId.isBlank()){
+            alert("Aucun utilisateur connecte.");
+            return;
+        }
+
+        if(doctorId == null || doctorId.isBlank()){
+            alert("Veuillez selectionner un medecin.");
+            return;
+        }
 
         if(motifField.getText().isBlank()){
             alert("Veuillez entrer un motif.");
             return;
         }
 
-        if(datePicker.getValue()==null){
+        if(datePicker.getValue() == null){
             alert("Choisissez une date.");
             return;
         }
 
-        LocalTime t;
+        LocalTime time;
         try{
-            t = LocalTime.parse(timeField.getText());
-        }catch(Exception e){
+            time = LocalTime.parse(timeField.getText());
+        } catch(Exception e){
             alert("Format heure HH:mm");
             return;
         }
 
-        RendezVous r = new RendezVous();
+        RendezVous rendezVous = new RendezVous();
+        rendezVous.setPatientId(patientId);
+        rendezVous.setDoctorId(doctorId);
+        rendezVous.setMotif(motifField.getText());
 
-        r.setPatientId(AppSession.getCurrentUserId());
-        r.setDoctorId(AppSession.getSelectedDoctorId());
-        r.setMotif(motifField.getText());
         String original = descriptionArea.getText();
         String filtered = ProfanityService.cleanText(original);
-
-// si l'API a modifié le texte → on informe l'utilisateur
         if(!original.equals(filtered)){
             Alert warn = new Alert(Alert.AlertType.WARNING);
-            warn.setHeaderText("Message modifié automatiquement");
-            warn.setContentText("Certains mots inappropriés ont été remplacés par ****.");
+            warn.setHeaderText("Message modifie automatiquement");
+            warn.setContentText("Certains mots inappropries ont ete remplaces par ****.");
             warn.showAndWait();
         }
 
-        r.setDescription(filtered);        r.setDateTime(LocalDateTime.of(datePicker.getValue(), t));
+        rendezVous.setDescription(filtered);
+        rendezVous.setDateTime(LocalDateTime.of(datePicker.getValue(), time));
 
-        service.insert(r);
+        try{
+            if(!service.insert(rendezVous)){
+                alert("Le rendez-vous n'a pas pu etre enregistre.");
+                return;
+            }
+        } catch(RuntimeException e){
+            alert("Erreur lors de l'enregistrement du rendez-vous : " + e.getMessage());
+            return;
+        }
 
-        alert("Rendez-vous envoyé au médecin ✔");
-    //    User patient = userService.findById(AppSession.getCurrentUserId());
-      //  User doctor = userService.findById(AppSession.getSelectedDoctorId());
+        User doctor = userService.findById(doctorId);
+        User patient = userService.findById(patientId);
+        if(doctor != null && patient != null){
+            String html = EmailTemplate.rdvReceived(patient, doctor, rendezVous.getDateTime());
+            emailService.sendEmail(
+                    patient.getEmail(),
+                    "Votre demande de rendez-vous a ete recue",
+                    html
+            );
+        }
 
-        User doctor = userService.findById(1);
-        User patient = userService.findById(1);
-// construire le mail
-        String html = EmailTemplate.rdvReceived(patient, doctor, r.getDateTime());
-
-// envoyer email
-        emailService.sendEmail(
-                patient.getEmail(),
-                "Votre demande de rendez-vous a été reçue",
-                html
-        );
-
-        Router.go("/fxml/rdv/rdv_list.fxml","Mes rendez-vous");
+        alert("Rendez-vous envoye au medecin.");
+        Router.go("/fxml/rdv/rdv_list.fxml", "Mes rendez-vous");
     }
 
     private void alert(String msg){
-        new Alert(Alert.AlertType.INFORMATION,msg,ButtonType.OK).showAndWait();
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
     }
 }

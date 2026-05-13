@@ -1,55 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.serinity.consultationcontrol.controller.AIAssistantController"
-      spacing="20"
-      alignment="TOP_CENTER"
-      styleClass="content">
-    <HBox spacing="12" alignment="CENTER_LEFT">
-        <Button text="← Retour"
-                onAction="#back"
-                styleClass="secondary-btn"/>
+      spacing="18"
+      styleClass="content,embedded-page"
+      stylesheets="@../../styles/app.css">
 
-        <Label text="Dossier Médical Patient"
-               styleClass="page-title"/>
-    </HBox>
     <padding>
-        <Insets top="25" left="25" right="25" bottom="25"/>
+        <Insets top="24" right="28" bottom="24" left="28"/>
     </padding>
 
-    <Label text="🧠 Assistant Médical Intelligent"
-           style="-fx-font-size:22px; -fx-font-weight:bold;"/>
+    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="page-back-row">
+        <Button text="Back to doctors"
+                onAction="#back"
+                styleClass="secondary-btn consultation-back-btn"/>
+    </HBox>
 
-    <Label text="Décrivez vos symptômes :"/>
+    <HBox alignment="CENTER_LEFT" spacing="14" styleClass="hero-card">
+        <VBox spacing="5">
+            <Label text="AI triage assistant" styleClass="hero-title"/>
+            <Label text="Get a local urgency estimate, emotional context, and suggested next steps from the consultation workspace."
+                   styleClass="hero-subtitle"
+                   wrapText="true"/>
+        </VBox>
 
-    <TextArea fx:id="symptomArea"
-              prefHeight="150"
-              wrapText="true"
-              promptText="Ex: j’ai une forte douleur dans la poitrine et je respire difficilement..."/>
+        <Region HBox.hgrow="ALWAYS"/>
 
-    <Button text="Analyser avec IA"
-            onAction="#analyze"
-            styleClass="primary-btn"/>
+        <Label fx:id="assistantStatusLabel"
+               text="Checking local AI server..."
+               styleClass="assistant-status"/>
+    </HBox>
 
-    <Separator/>
+    <HBox spacing="18" VBox.vgrow="ALWAYS">
+        <VBox spacing="14" styleClass="rdv-card" HBox.hgrow="ALWAYS">
+            <Label text="Describe the symptoms" styleClass="section-title"/>
+            <Label text="Include the main issue, how long it has been happening, and any warning signs."
+                   styleClass="hero-subtitle"
+                   wrapText="true"/>
 
-    <Label text="Résultat de l'analyse :" style="-fx-font-weight:bold;"/>
+            <TextArea fx:id="symptomArea"
+                      prefRowCount="10"
+                      wrapText="true"
+                      promptText="Example: I have chest pain, shortness of breath, and dizziness since this morning."
+                      styleClass="input,assistant-textarea"/>
 
-    <Label text="Niveau d'urgence :" />
-    <Label fx:id="urgencyLabel" style="-fx-font-size:16px; -fx-font-weight:bold;"/>
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Button text="Analyze symptoms"
+                        onAction="#analyze"
+                        styleClass="primary-btn big-btn consultation-cta-btn assistant-analyze-btn"/>
+                <Label fx:id="assistantEndpointLabel"
+                       text="Endpoint"
+                       styleClass="assistant-endpoint"
+                       wrapText="true"/>
+            </HBox>
+        </VBox>
 
-    <Label text="Emotion détectée :" />
-    <Label fx:id="emotionLabel"/>
+        <VBox spacing="14" styleClass="chart-panel assistant-results-panel" HBox.hgrow="ALWAYS">
+            <Label text="Assessment" styleClass="section-title"/>
 
-    <Label text="Recommandation :" />
-    <TextArea fx:id="recommendationArea"
-              editable="false"
-              wrapText="true"
-              prefHeight="120"/>
+            <HBox spacing="14">
+                <VBox spacing="8" styleClass="assistant-metric-card">
+                    <Label text="Urgency" styleClass="label"/>
+                    <Label fx:id="urgencyLabel"
+                           text="Waiting"
+                           styleClass="assistant-urgency"/>
+                </VBox>
+
+                <VBox spacing="8" styleClass="assistant-metric-card">
+                    <Label text="Emotional tone" styleClass="label"/>
+                    <Label fx:id="emotionLabel"
+                           text="Not analyzed yet"
+                           styleClass="assistant-emotion"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="10" styleClass="assistant-recommendation-card" VBox.vgrow="ALWAYS">
+                <Label text="Recommendation" styleClass="label"/>
+                <TextArea fx:id="recommendationArea"
+                          editable="false"
+                          wrapText="true"
+                          prefRowCount="10"
+                          styleClass="assistant-output"/>
+            </VBox>
+        </VBox>
+    </HBox>
 
 </VBox>

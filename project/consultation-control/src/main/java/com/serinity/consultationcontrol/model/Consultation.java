@@ -6,7 +6,7 @@ public class Consultation {
     private int id;
     private int rapportId;
     private int rendezVousId;
-    private int doctorId;
+    private String doctorId;
     private LocalDateTime dateConsultation;
     private String diagnostic;
     private String prescription;
@@ -25,8 +25,8 @@ public class Consultation {
     public int getRendezVousId() { return rendezVousId; }
     public void setRendezVousId(int rendezVousId) { this.rendezVousId = rendezVousId; }
 
-    public int getDoctorId() { return doctorId; }
-    public void setDoctorId(int doctorId) { this.doctorId = doctorId; }
+    public String getDoctorId() { return doctorId; }
+    public void setDoctorId(String doctorId) { this.doctorId = doctorId; }
 
     public LocalDateTime getDateConsultation() { return dateConsultation; }
     public void setDateConsultation(LocalDateTime dateConsultation) { this.dateConsultation = dateConsultation; }

@@ -3,17 +3,17 @@ package com.serinity.consultationcontrol.util;
 public class AppSession {
 
     // id du patient "connecté" (tu as demandé toujours 1)
-    private static int currentUserId = 1;
+    private static String currentUserId;
 
     // navigation / sélection
     private static int selectedRdvId;
-    private static int selectedDoctorId;
+    private static String selectedDoctorId;
 
-    public static int getCurrentUserId() {
+    public static String getCurrentUserId() {
         return currentUserId;
     }
 
-    public static void setCurrentUserId(int id) {
+    public static void setCurrentUserId(String id) {
         currentUserId = id;
     }
 
@@ -25,16 +25,16 @@ public class AppSession {
         selectedRdvId = id;
     }
 
-    public static int getSelectedDoctorId() {
+    public static String getSelectedDoctorId() {
         return selectedDoctorId;
     }
 
-    public static void setSelectedDoctorId(int id) {
+    public static void setSelectedDoctorId(String id) {
         selectedDoctorId = id;
     }
 
     public static void clearSelection() {
         selectedRdvId = 0;
-        selectedDoctorId = 0;
+        selectedDoctorId = null;
     }
 }

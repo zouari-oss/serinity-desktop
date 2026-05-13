@@ -1,10 +1,11 @@
 package com.serinity.consultationcontrol.controller.doctor;
 
-import com.serinity.consultationcontrol.util.Router;
 import com.serinity.consultationcontrol.model.Consultation;
 import com.serinity.consultationcontrol.model.RapportMedical;
 import com.serinity.consultationcontrol.service.ConsultationService;
 import com.serinity.consultationcontrol.service.RapportMedicalService;
+import com.serinity.consultationcontrol.util.AppSession;
+import com.serinity.consultationcontrol.util.Router;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -20,19 +21,12 @@ public class ConsultationFormController {
     @FXML private TextArea prescriptionField;
     @FXML private TextArea notesField;
 
-    @FXML
-    public void back(){
-        Router.go("/fxml/doctor/doctor_rdv_list.fxml","Mes RDV");
-    }
     private final ConsultationService consultationService = new ConsultationService();
     private final RapportMedicalService rapportService = new RapportMedicalService();
 
-    private Consultation editing = null;
-
-    private int patientId = -1;
+    private Consultation editing;
+    private String patientId;
     private int rdvId = -1;
-
-    // FLAG: UI ready
     private boolean uiReady = false;
 
     @FXML
@@ -41,25 +35,28 @@ public class ConsultationFormController {
         populateIfNeeded();
     }
 
-    // called from RDV card
-    public void setRdvData(int patientId, int rdvId){
+    @FXML
+    public void back(){
+        Router.go("/fxml/doctor/doctor_rdv_list.fxml", "Mes RDV");
+    }
+
+    public void setRdvData(String patientId, int rdvId){
         this.patientId = patientId;
         this.rdvId = rdvId;
         populateIfNeeded();
     }
 
-    // called when editing consultation
-    public void setConsultation(Consultation c, int patientId, int rdvId){
-        this.editing = c;
+    public void setConsultation(Consultation consultation, String patientId, int rdvId){
+        this.editing = consultation;
         this.patientId = patientId;
         this.rdvId = rdvId;
         populateIfNeeded();
     }
 
     private void populateIfNeeded(){
-
-        if(!uiReady) return;
-        if(editing == null) return;
+        if(!uiReady || editing == null){
+            return;
+        }
 
         Platform.runLater(() -> {
             diagnosticField.setText(editing.getDiagnostic());
@@ -70,65 +67,64 @@ public class ConsultationFormController {
 
     @FXML
     private void save(){
+        if(patientId == null || patientId.isBlank() || rdvId == -1){
+            new Alert(Alert.AlertType.ERROR, "Erreur: consultation non liee a un rendez-vous").show();
+            return;
+        }
 
-        if(patientId == -1 || rdvId == -1){
-            new Alert(Alert.AlertType.ERROR,
-                    "Erreur: consultation non liée à un rendez-vous").show();
+        String doctorId = AppSession.getCurrentUserId();
+        if(doctorId == null || doctorId.isBlank()){
+            new Alert(Alert.AlertType.ERROR, "Aucun medecin connecte.").show();
             return;
         }
 
         RapportMedical rapport = findOrCreateRapport(patientId);
-
-        // ADD
-        if(editing == null){
-
-            Consultation c = new Consultation();
-            c.setDoctorId(2);
-            c.setRapportId(rapport.getId());
-            c.setRendezVousId(rdvId);
-            c.setDateConsultation(LocalDateTime.now());
-            c.setDiagnostic(diagnosticField.getText());
-            c.setPrescription(prescriptionField.getText());
-            c.setNotes(notesField.getText());
-
-            consultationService.insert(c);
+        if(rapport == null){
+            new Alert(Alert.AlertType.ERROR, "Impossible de charger le dossier patient.").show();
+            return;
         }
-        // EDIT
-        else{
+
+        if(editing == null){
+            Consultation consultation = new Consultation();
+            consultation.setDoctorId(doctorId);
+            consultation.setRapportId(rapport.getId());
+            consultation.setRendezVousId(rdvId);
+            consultation.setDateConsultation(LocalDateTime.now());
+            consultation.setDiagnostic(diagnosticField.getText());
+            consultation.setPrescription(prescriptionField.getText());
+            consultation.setNotes(notesField.getText());
+            consultationService.insert(consultation);
+        } else {
             editing.setDiagnostic(diagnosticField.getText());
             editing.setPrescription(prescriptionField.getText());
             editing.setNotes(notesField.getText());
-
             consultationService.update(editing);
         }
 
         Router.go(
                 "/fxml/doctor/patient_report.fxml",
                 "Dossier Patient",
-                (PatientReportController controller) ->
-                        controller.setPatientId(patientId)
+                (PatientReportController controller) -> controller.setPatientId(patientId)
         );
     }
 
-    private RapportMedical findOrCreateRapport(int patientId){
-
-        List<RapportMedical> list = rapportService.findAll();
-
-        for(RapportMedical r : list){
-            if(r.getPatientId()==patientId)
-                return r;
+    private RapportMedical findOrCreateRapport(String patientId){
+        List<RapportMedical> rapports = rapportService.findAll();
+        for(RapportMedical rapport : rapports){
+            if(patientId.equals(rapport.getPatientId())){
+                return rapport;
+            }
         }
 
-        RapportMedical r = new RapportMedical();
-        r.setPatientId(patientId);
-        r.setDateCreation(LocalDate.now());
-        r.setResumeGeneral("Dossier médical du patient");
-
-        rapportService.insert(r);
+        RapportMedical rapport = new RapportMedical();
+        rapport.setPatientId(patientId);
+        rapport.setDateCreation(LocalDate.now());
+        rapport.setResumeGeneral("Dossier medical du patient");
+        rapportService.insert(rapport);
 
         return rapportService.findAll()
                 .stream()
-                .filter(x->x.getPatientId()==patientId)
+                .filter(item -> patientId.equals(item.getPatientId()))
                 .findFirst()
                 .orElse(null);
     }

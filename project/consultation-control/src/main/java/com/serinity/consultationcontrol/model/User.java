@@ -3,7 +3,7 @@ package com.serinity.consultationcontrol.model;
 import java.time.LocalDateTime;
 
 public class User {
-    private int id;
+    private String id;
     private String fullName;
     private String email;
     private String phone;
@@ -16,7 +16,7 @@ public class User {
 
     public User() {}
 
-    public User(int id, String fullName, String email, String phone, UserRole role, String speciality) {
+    public User(String id, String fullName, String email, String phone, UserRole role, String speciality) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
@@ -25,8 +25,8 @@ public class User {
         this.speciality = speciality;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }

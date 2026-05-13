@@ -1,60 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.serinity.consultationcontrol.controller.doctor.MesPatient"
-            styleClass="root">
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.serinity.consultationcontrol.controller.doctor.MesPatient"
+      styleClass="root,embedded-page"
+      spacing="18"
+      stylesheets="@../../styles/app.css">
 
-    <!-- SIDEBAR -->
-    <left>
-        <VBox spacing="10" styleClass="sidebar">
+    <padding>
+        <Insets top="24" right="28" bottom="24" left="28"/>
+    </padding>
 
-            <Label text="🏥 MedLink" styleClass="sidebar-logo"/>
-
-            <Separator/>
-            <Button text="🏠 Dashboard"
-                    onAction="#goDashboard"
-                    styleClass="side-btn"/>
-            <Button text="📅 Rendez-vous" onAction="#goRdv" styleClass="side-btn"/>
-            <Button text="🧾 Consultations" onAction="#goConsultations" styleClass="side-btn"/>
-            <Button text="👥 Mes Patients" styleClass="side-btn active-side"/>
-
-            <Region VBox.vgrow="ALWAYS"/>
-
-            <Button text="⎋ Déconnexion" styleClass="logout-btn"/>
-
+    <HBox alignment="CENTER_LEFT" spacing="14" styleClass="hero-card">
+        <VBox spacing="5">
+            <Label text="My patients" styleClass="hero-title"/>
+            <Label text="Open each patient record, review visits, and continue from the same doctor workspace."
+                   styleClass="hero-subtitle"
+                   wrapText="true"/>
         </VBox>
-    </left>
 
-    <!-- CONTENT -->
-    <center>
-        <VBox spacing="20" styleClass="content">
+        <Region HBox.hgrow="ALWAYS"/>
 
-            <padding>
-                <Insets top="20" right="25" bottom="20" left="25"/>
-            </padding>
+        <Button text="Dashboard" onAction="#goDashboard" styleClass="action-chip"/>
+        <Button text="Appointments" onAction="#goRdv" styleClass="action-chip"/>
+    </HBox>
 
-            <!-- HEADER -->
-            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-card">
-                <Label text="👥 Mes Patients" styleClass="page-title"/>
-                <Region HBox.hgrow="ALWAYS"/>
-            </HBox>
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="embedded-scroll">
+        <content>
+            <FlowPane fx:id="patientsPane"
+                      hgap="18"
+                      vgap="18"
+                      prefWrapLength="1000"/>
+        </content>
+    </ScrollPane>
 
-            <!-- PATIENTS GRID -->
-            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
-                <content>
-                    <FlowPane fx:id="patientsPane"
-                              hgap="18"
-                              vgap="18"
-                              prefWrapLength="1000"/>
-                </content>
-            </ScrollPane>
-
-        </VBox>
-    </center>
-
-</BorderPane>
+</VBox>

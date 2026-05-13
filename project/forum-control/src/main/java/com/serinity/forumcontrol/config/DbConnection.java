@@ -10,8 +10,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 public final class DbConnection {
 
   private static final Dotenv dotenv = Dotenv.configure()
-      .directory(resolveEnvDirectory())
-      .filename(".env")
+      .filename("../.env")
       .ignoreIfMalformed()
       .ignoreIfMissing()
       .load();
@@ -69,12 +68,12 @@ public final class DbConnection {
     }
 
     final Path cwd = Path.of(".").toAbsolutePath().normalize();
-    if (java.nio.file.Files.exists(cwd.resolve(".env"))) {
+    if (java.nio.file.Files.exists(cwd.resolve("../.env"))) {
       return cwd.toString();
     }
 
     final Path parent = cwd.getParent();
-    if (parent != null && java.nio.file.Files.exists(parent.resolve(".env"))) {
+    if (parent != null && java.nio.file.Files.exists(parent.resolve("../.env"))) {
       return parent.toString();
     }
 

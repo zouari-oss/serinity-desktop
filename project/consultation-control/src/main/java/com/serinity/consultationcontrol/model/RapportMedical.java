@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class RapportMedical {
     private int id;
-    private int patientId;
+    private String patientId;
     private LocalDate dateCreation;
     private String resumeGeneral;
 
@@ -14,8 +14,8 @@ public class RapportMedical {
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public int getPatientId() { return patientId; }
-    public void setPatientId(int patientId) { this.patientId = patientId; }
+    public String getPatientId() { return patientId; }
+    public void setPatientId(String patientId) { this.patientId = patientId; }
 
     public LocalDate getDateCreation() { return dateCreation; }
     public void setDateCreation(LocalDate dateCreation) { this.dateCreation = dateCreation; }

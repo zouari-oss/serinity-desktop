@@ -1,125 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.serinity.consultationcontrol.controller.rdv.RdvListController"
-            styleClass="root">
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.serinity.consultationcontrol.controller.rdv.RdvListController"
+      styleClass="root,embedded-page"
+      spacing="18"
+      stylesheets="@../../styles/app.css">
 
-    <!-- ================= NAVBAR ================= -->
-    <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="navbar">
+    <padding>
+        <Insets top="24" right="28" bottom="24" left="28"/>
+    </padding>
 
-            <!-- Logo -->
-            <Label text="🏥 MedLink" styleClass="nav-logo"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <!-- Navigation -->
-             <Button text="👨‍⚕️ Médecins" onAction="#goDoctors" styleClass="nav-btn"/>
-            <Button text="📅 Rendez-vous" styleClass="nav-btn active-nav"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="🤖 Assistant IA"
-                    fx:id="aiButton"
-                    onAction="#openAI"
-                    styleClass="nav-ai"/>
-
-
-            <!-- Logout -->
-            <Button text="⎋ Déconnexion"
-                     styleClass="logout-btn"/>
-
-        </HBox>
-    </top>
-
-    <!-- ================= PAGE CONTENT ================= -->
-    <center>
-        <VBox spacing="20" styleClass="content">
-
-            <padding>
-                <Insets top="22" right="26" bottom="22" left="26"/>
-            </padding>
-
-            <!-- ===== HEADER ===== -->
-            <HBox alignment="CENTER_LEFT" spacing="14" styleClass="header-card">
-
-                <VBox spacing="4">
-                    <Label text="Mes Rendez-vous" styleClass="page-title"/>
-                    <Label text="Suivez vos demandes et l'état de validation du médecin"
-                           styleClass="subtitle"/>
-                </VBox>
-
-                <Region HBox.hgrow="ALWAYS"/>
-
-                <!-- GO TO DOCTORS -->
-                <Button text="🔎 Trouver un médecin"
-                        onAction="#goDoctors"
-                        styleClass="secondary-btn"/>
-
-                <!-- NEW RDV -->
-                <Button text="📅 Nouveau RDV"
-                        onAction="#goNew"
-                        styleClass="primary-btn"/>
-
-            </HBox>
-
-            <!-- ===== SEARCH + FILTER BAR ===== -->
-            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="toolbar">
-
-                <Label text="Rechercher :" styleClass="label"/>
-
-                <TextField fx:id="searchField"
-                           promptText="Nom du médecin, motif..."
-                           styleClass="search-field"
-                           prefWidth="320"/>
-
-                <Region HBox.hgrow="ALWAYS"/>
-
-                <Button text="Actualiser"
-                        onAction="#refresh"
-                        styleClass="secondary-btn"/>
-            </HBox>
-
-            <!-- ===== LIST AREA ===== -->
-            <StackPane VBox.vgrow="ALWAYS">
-
-                <ScrollPane fitToWidth="true"
-                            style="-fx-background-color:transparent;"
-                            VBox.vgrow="ALWAYS">
-
-                    <content>
-                        <FlowPane fx:id="cardsPane"
-                                  hgap="18"
-                                  vgap="18"
-                                  prefWrapLength="980"/>
-                    </content>
-
-                </ScrollPane>
-
-                <!-- EMPTY STATE -->
-                <VBox fx:id="emptyBox"
-                      alignment="CENTER"
-                      spacing="10"
-                      visible="false">
-
-                    <Label text="Aucun rendez-vous pour le moment"
-                           styleClass="empty-title"/>
-
-                    <Label text="Prenez votre premier rendez-vous avec un médecin"
-                           styleClass="empty-subtitle"/>
-
-                    <Button text="Prendre un rendez-vous"
-                            onAction="#goNew"
-                            styleClass="primary-btn"/>
-                </VBox>
-
-            </StackPane>
-
+    <HBox alignment="CENTER_LEFT" spacing="14" styleClass="hero-card">
+        <VBox spacing="5">
+            <Label text="My Appointments" styleClass="hero-title"/>
+            <Label text="Track your reservations, review doctor responses, and start a new booking."
+                   styleClass="hero-subtitle"
+                   wrapText="true"/>
         </VBox>
-    </center>
 
-</BorderPane>
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button text="Find a Doctor"
+                onAction="#goDoctors"
+                styleClass="action-chip"/>
+
+        <Button text="New Appointment"
+                onAction="#goNew"
+                styleClass="primary-btn"/>
+    </HBox>
+
+    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="section-surface">
+        <Label text="Search" styleClass="label"/>
+
+        <TextField fx:id="searchField"
+                   promptText="Doctor name or reason"
+                   styleClass="search-field"
+                   prefWidth="320"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button text="Refresh"
+                onAction="#refresh"
+                styleClass="secondary-btn"/>
+
+        <Button text="AI Assistant"
+                fx:id="aiButton"
+                onAction="#openAI"
+                styleClass="secondary-btn"/>
+    </HBox>
+
+    <StackPane VBox.vgrow="ALWAYS" styleClass="stack-surface">
+        <ScrollPane fitToWidth="true"
+                    VBox.vgrow="ALWAYS"
+                    styleClass="embedded-scroll">
+            <content>
+                <FlowPane fx:id="cardsPane"
+                          hgap="18"
+                          vgap="18"
+                          prefWrapLength="980"/>
+            </content>
+        </ScrollPane>
+
+        <VBox fx:id="emptyBox"
+              alignment="CENTER"
+              spacing="10"
+              visible="false">
+            <Label text="No appointments yet"
+                   styleClass="empty-title"/>
+
+            <Label text="Reserve your first appointment with a doctor."
+                   styleClass="empty-subtitle"/>
+
+            <Button text="Book an Appointment"
+                    onAction="#goNew"
+                    styleClass="primary-btn"/>
+        </VBox>
+    </StackPane>
+
+</VBox>
