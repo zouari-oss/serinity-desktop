@@ -1,6 +1,6 @@
 package com.serinity.moodcontrol.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.serinity.moodcontrol.model.JournalEntry;
 import javafx.fxml.FXML;
@@ -11,7 +11,9 @@ import javafx.scene.layout.VBox;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -105,6 +107,8 @@ public class JournalCardController {
     for (Map<String, Object> obj : arr) {
       Object tagObj = obj.get("tag");
       if (tagObj == null)
+        tagObj = obj.get("label");
+      if (tagObj == null)
         continue;
 
       String tag = String.valueOf(tagObj).trim().toLowerCase();
@@ -121,12 +125,87 @@ public class JournalCardController {
 
   private List<Map<String, Object>> parseJsonArray(final String json) {
     try {
-      return MAPPER.readValue(json, new TypeReference<List<Map<String, Object>>>() {
-      });
+      JsonNode root = MAPPER.readTree(json);
+      return normalizeTags(root);
     } catch (Exception e) {
       // If JSON is malformed, just hide chips rather than crash UI
       return Collections.emptyList();
     }
+  }
+
+  private List<Map<String, Object>> normalizeTags(final JsonNode root) {
+    if (root == null || root.isNull())
+      return Collections.emptyList();
+
+    // Handle double-encoded JSON: "\"{...}\"" or "\"[...]\""
+    if (root.isTextual()) {
+      final String nested = root.asText();
+      if (nested != null && !nested.trim().isEmpty()) {
+        try {
+          return normalizeTags(MAPPER.readTree(nested));
+        } catch (Exception ignored) {
+          return Collections.emptyList();
+        }
+      }
+      return Collections.emptyList();
+    }
+
+    // Native Java format: [{"tag":"fear","score":0.28571}, ...]
+    // Also accept direct web label array: [{"label":"neutral","score":0.99}, ...]
+    if (root.isArray()) {
+      return normalizeLabelArray(root);
+    }
+
+    // Web format object:
+    // {"top_label":"neutral","labels":[{"label":"neutral","score":0.99}], ...}
+    if (root.isObject()) {
+      JsonNode labels = root.get("labels");
+      if (labels != null) {
+        if (labels.isArray())
+          return normalizeLabelArray(labels);
+        if (labels.isTextual()) {
+          try {
+            return normalizeTags(MAPPER.readTree(labels.asText()));
+          } catch (Exception ignored) {
+            // Fall through to top_label fallback
+          }
+        }
+      }
+
+      JsonNode topLabel = root.get("top_label");
+      if (topLabel != null && !topLabel.isNull() && !topLabel.asText("").trim().isEmpty()) {
+        Map<String, Object> mapped = new LinkedHashMap<>();
+        mapped.put("tag", topLabel.asText());
+        return List.of(mapped);
+      }
+    }
+
+    return Collections.emptyList();
+  }
+
+  private List<Map<String, Object>> normalizeLabelArray(final JsonNode arr) {
+    List<Map<String, Object>> out = new ArrayList<>();
+    for (JsonNode item : arr) {
+      if (item == null || item.isNull())
+        continue;
+
+      JsonNode labelNode = item.get("tag");
+      if (labelNode == null || labelNode.isNull())
+        labelNode = item.get("label");
+
+      if (labelNode == null || labelNode.isNull() || labelNode.asText("").trim().isEmpty())
+        continue;
+
+      Map<String, Object> mapped = new LinkedHashMap<>();
+      mapped.put("tag", labelNode.asText());
+
+      JsonNode score = item.get("score");
+      if (score != null && score.isNumber())
+        mapped.put("score", score.numberValue());
+
+      out.add(mapped);
+    }
+    return out;
   }
 
   private String capitalize(String s) {
