@@ -1,5 +1,6 @@
 package com.serinity.sleepcontrol.controller;
 
+import com.serinity.accesscontrol.controller.LoginController;
 import com.serinity.sleepcontrol.model.Sommeil;
 import com.serinity.sleepcontrol.service.SommeilService;
 import javafx.animation.FadeTransition;
@@ -385,6 +386,12 @@ public class SommeilFormController {
 
             boolean isNew = (sommeil.getId() == 0);
             if (isNew) {
+                if (LoginController.getUser() == null || LoginController.getUser().getId() == null) {
+                    showStyledError("Utilisateur non connecté",
+                            "Impossible d'enregistrer un sommeil sans utilisateur connecté.");
+                    return;
+                }
+                sommeil.setUserId(LoginController.getUser().getId().toString());
                 sommeilService.creer(sommeil);
                 showStyledSuccess("🌙 Ajout réussi !", "Votre nuit a été enregistrée avec succès.");
             } else {

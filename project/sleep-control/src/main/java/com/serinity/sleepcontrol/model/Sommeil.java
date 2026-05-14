@@ -11,6 +11,7 @@ import java.util.Objects;
 public class Sommeil {
 
     private int id;
+    private String userId;
     private LocalDate dateNuit;
     private LocalTime heureCoucher;
     private LocalTime heureReveil;
@@ -157,6 +158,9 @@ public class Sommeil {
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
     public LocalDate getDateNuit() { return dateNuit; }
     public void setDateNuit(LocalDate dateNuit) { this.dateNuit = dateNuit; }

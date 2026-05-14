@@ -1,5 +1,6 @@
 package com.serinity.sleepcontrol.service;
 
+import com.serinity.accesscontrol.controller.LoginController;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -39,6 +40,15 @@ public class SommeilService {
             throw new IllegalArgumentException("La date de nuit est obligatoire");
         if (sommeil.getHeureCoucher() == null || sommeil.getHeureReveil() == null)
             throw new IllegalArgumentException("Les heures de coucher et réveil sont obligatoires");
+
+        if ((sommeil.getUserId() == null || sommeil.getUserId().isBlank())
+                && LoginController.getUser() != null
+                && LoginController.getUser().getId() != null) {
+            sommeil.setUserId(LoginController.getUser().getId().toString());
+        }
+
+        if (sommeil.getUserId() == null || sommeil.getUserId().isBlank())
+            throw new IllegalArgumentException("L'utilisateur connecté est requis");
         sommeil.setDureeSommeil(sommeil.calculerDuree());
         sommeilDao.ajouter(sommeil);
     }

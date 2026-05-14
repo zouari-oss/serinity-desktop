@@ -18,23 +18,28 @@ public class SommeilDaoJdbc implements SommeilDao {
 
     @Override
     public void ajouter(Sommeil sommeil) throws SQLException {
-        String sql = "INSERT INTO sommeil (date_nuit, heure_coucher, heure_reveil, qualite, " +
+        if (sommeil.getUserId() == null || sommeil.getUserId().isBlank()) {
+            throw new SQLException("Insertion refusée: user_id manquant pour l'entrée sommeil");
+        }
+
+        String sql = "INSERT INTO sommeil (user_id, date_nuit, heure_coucher, heure_reveil, qualite, " +
                 "commentaire, duree_sommeil, interruptions, humeur_reveil, environnement, " +
-                "temperature, bruit_niveau) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "temperature, bruit_niveau) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = getConn().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setDate(1, Date.valueOf(sommeil.getDateNuit()));
-            stmt.setTime(2, Time.valueOf(sommeil.getHeureCoucher()));
-            stmt.setTime(3, Time.valueOf(sommeil.getHeureReveil()));
-            stmt.setString(4, sommeil.getQualite());
-            stmt.setString(5, sommeil.getCommentaire());
+            stmt.setString(1, sommeil.getUserId());
+            stmt.setDate(2, Date.valueOf(sommeil.getDateNuit()));
+            stmt.setTime(3, Time.valueOf(sommeil.getHeureCoucher()));
+            stmt.setTime(4, Time.valueOf(sommeil.getHeureReveil()));
+            stmt.setString(5, sommeil.getQualite());
+            stmt.setString(6, sommeil.getCommentaire());
             // dureeSommeil déjà calculée dans le modèle (setHeureCoucher/Reveil)
-            stmt.setDouble(6, sommeil.getDureeSommeil());
-            stmt.setInt(7, sommeil.getInterruptions());
-            stmt.setString(8, sommeil.getHumeurReveil());
-            stmt.setString(9, sommeil.getEnvironnement());
-            stmt.setDouble(10, sommeil.getTemperature());
-            stmt.setString(11, sommeil.getNiveauBruit());
+            stmt.setDouble(7, sommeil.getDureeSommeil());
+            stmt.setInt(8, sommeil.getInterruptions());
+            stmt.setString(9, sommeil.getHumeurReveil());
+            stmt.setString(10, sommeil.getEnvironnement());
+            stmt.setDouble(11, sommeil.getTemperature());
+            stmt.setString(12, sommeil.getNiveauBruit());
             stmt.executeUpdate();
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
